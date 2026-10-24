@@ -1,0 +1,19 @@
+// Design tokens — the single source of truth for colours, spacing and typography.
+// Bootstrap variables are derived from these so components never hard-code values.
+
+$ty-color-primary: #8b1e3f;
+$ty-color-secondary: #d4a017;
+$ty-color-dark: #1f1a17;
+$ty-color-light: #faf6f0;
+
+$ty-font-family-base:
+  'Inter',
+  system-ui,
+  -apple-system,
+  'Segoe UI',
+  Roboto,
+  sans-serif;
+$ty-font-family-heading: 'Playfair Display', Georgia, serif;
+
+$ty-spacer: 1rem;
+$ty-border-radius: 0.5rem;
