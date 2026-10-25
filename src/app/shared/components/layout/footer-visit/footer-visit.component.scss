@@ -1,0 +1,80 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+@use 'footer';
+
+:host {
+  display: block;
+}
+
+.heading {
+  @include footer.heading;
+}
+
+a {
+  @include footer.link;
+}
+
+.fmap {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 250px;
+  margin-bottom: 16px;
+  border: 1px solid t.$color-line;
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  span {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    background: t.$color-amber;
+    color: t.$color-ink;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: t.$radius-pill;
+  }
+
+  &:hover span {
+    background: t.$color-cream;
+  }
+}
+
+.fdl {
+  margin: 0 0 16px;
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 8px 12px;
+  font-size: 14px;
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 62px 1fr;
+    font-size: 13px;
+  }
+
+  dt {
+    font-weight: 700;
+    color: t.$color-amber;
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+a.inline {
+  display: inline;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.directions {
+  display: inline-block;
+  font-weight: 700;
+  text-decoration: underline;
+}

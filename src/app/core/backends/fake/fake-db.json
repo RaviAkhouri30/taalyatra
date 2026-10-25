@@ -1,0 +1,45 @@
+{
+  "home": {
+    "hero": {
+      "eyebrow": "Drum circles for everyone",
+      "title": "Find your rhythm.",
+      "highlight": "Share the beat.",
+      "lead": "Taal Yatra brings people together through facilitated drum circles and music workshops — for teams at work, families at home, and anyone who wants a fresh, joyful way to spend time. No experience needed.",
+      "primaryCta": "Request proposal",
+      "whatsAppCta": "WhatsApp us",
+      "callCtaPrefix": "Call",
+      "audiences": ["Corporate teams", "Family functions", "Friends & fun"],
+      "gameCta": "Play the rhythm game"
+    },
+    "marquee": [
+      "Drum Circle",
+      "Boombastic",
+      "Body Percussion",
+      "Harmonica",
+      "Trash Jam",
+      "Lezim Workshop"
+    ],
+    "trust": [
+      {
+        "icon": "sparkle",
+        "title": "Facilitator-led",
+        "text": "A trained facilitator guides every beat, from the warm-up to the finale."
+      },
+      {
+        "icon": "djembe",
+        "title": "A drum for everyone",
+        "text": "Every participant plays. Nobody sits and watches."
+      },
+      {
+        "icon": "group",
+        "title": "10 to 5,000 people",
+        "text": "From one small team to a full auditorium."
+      },
+      {
+        "icon": "home",
+        "title": "Indoors or outdoors",
+        "text": "Offices, lawns, banquet halls and stages."
+      }
+    ]
+  }
+}

@@ -1,0 +1,50 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: contents;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+img {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: t.$color-logo-ground;
+
+  @include bp.down(bp.$phone) {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+b {
+  display: block;
+  font-family: t.$font-display;
+  font-size: 21px;
+  line-height: 1;
+
+  @include bp.down(bp.$phone) {
+    font-size: 19px;
+  }
+}
+
+span {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: t.$color-amber;
+  font-weight: 700;
+  margin-top: 4px;
+
+  @include bp.down(bp.$phone) {
+    display: none;
+  }
+}

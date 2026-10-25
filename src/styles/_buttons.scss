@@ -1,0 +1,77 @@
+// Button styles applied by the `appButton` directive (shared/directives/button.directive.ts).
+// Global because the directive decorates native <a>/<button> elements across components.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: t.$color-amber;
+  color: t.$color-ink;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 13px 25px;
+  border-radius: t.$radius-pill;
+  border: 0;
+  cursor: pointer;
+  min-height: 48px;
+  box-sizing: border-box;
+  transition:
+    transform 0.2s,
+    background 0.2s;
+
+  &:hover {
+    background: t.$color-ivory;
+    color: t.$color-ink;
+    transform: translateY(-2px);
+  }
+
+  @include bp.down(bp.$phone) {
+    min-height: 44px;
+    padding: 10px 18px;
+    font-size: 15px;
+  }
+
+  @include bp.down(bp.$phone-sm) {
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+}
+
+/// Outlined button on dark surfaces (prototype: `.ghost`, `.btn.dk`).
+.btn--ghost {
+  background: transparent;
+  color: t.$color-cream;
+  border: 2px solid t.$color-bronze;
+
+  &:hover {
+    border-color: t.$color-ivory;
+  }
+}
+
+/// Solid dark button on accent surfaces (prototype: `.btn.dark`).
+.btn--dark {
+  background: t.$color-ink;
+  color: t.$color-ivory;
+}
+
+/// Outlined dark button on accent surfaces (prototype: `.btn.line`).
+.btn--line {
+  background: transparent;
+  color: t.$color-ink;
+  border: 2px solid t.$color-ink;
+
+  &:hover {
+    background: t.$color-ink;
+    color: t.$color-ivory;
+  }
+}
+
+/// Header-sized button (prototype: inline `padding:12px 22px;font-size:16px`).
+.btn--compact {
+  padding: 12px 22px;
+  font-size: 16px;
+}

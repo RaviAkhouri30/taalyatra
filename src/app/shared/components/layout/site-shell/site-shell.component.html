@@ -1,0 +1,21 @@
+@let chrome = model.chrome();
+@let site = model.site();
+<div class="shell" [class.shell--action-bar]="chrome">
+  @if (chrome && site) {
+    <app-utility-bar [contact]="site.contact" [socials]="site.socials" />
+    <app-header [brand]="site.brand" [chrome]="chrome" />
+  }
+  <main id="main-content">
+    <router-outlet />
+  </main>
+  @if (chrome && site) {
+    <app-footer [site]="site" [chrome]="chrome" />
+    @if (site.promotion; as promotion) {
+      <app-promo-badge [promotion]="promotion" [variant]="chrome.promo" />
+    }
+    <app-mobile-action-bar [contact]="site.contact" [cta]="chrome.actionBarCta" />
+    @if (chrome.showWhatsAppFab) {
+      <app-whatsapp-fab [phone]="site.contact.phone" />
+    }
+  }
+</div>

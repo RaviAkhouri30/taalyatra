@@ -1,0 +1,34 @@
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { type ILayoutChrome } from '@shared/interfaces/i-layout-chrome';
+import { HOME_CHROME, PAGE_CHROME, SITE, texts } from '@shared/testing/fixtures';
+import { FooterComponent } from './footer.component';
+
+describe('FooterComponent', () => {
+  function render(chrome: ILayoutChrome): HTMLElement {
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    const fixture = TestBed.createComponent(FooterComponent);
+    fixture.componentRef.setInput('site', SITE);
+    fixture.componentRef.setInput('chrome', chrome);
+    fixture.detectChanges();
+    return fixture.nativeElement as HTMLElement;
+  }
+
+  it('should render the compact footer with pages and contact columns', () => {
+    const element = render(PAGE_CHROME);
+
+    expect(texts(element, '.heading')).toEqual(['Pages', 'Contact']);
+    expect(element.querySelector('.fine')?.textContent).toContain(
+      '© 2026 Taal Yatra · Taalyatra drum circle · taalyatra.in',
+    );
+    expect(element.querySelector('.fgrid')).toBeNull();
+  });
+
+  it('should render the full footer with visit details and back-to-top', () => {
+    const element = render(HOME_CHROME);
+
+    expect(texts(element, '.heading')).toEqual(['Experiences', 'Explore', 'Visit us']);
+    expect(element.querySelector('.domain')?.textContent).toBe('taalyatra.in');
+    expect(texts(element, '.fbot-links a')).toEqual(['Admin', 'Back to top ↑']);
+  });
+});

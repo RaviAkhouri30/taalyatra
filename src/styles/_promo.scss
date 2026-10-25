@@ -1,0 +1,38 @@
+// Styles shared by both promo badge variants.
+@use 'tokens' as t;
+
+@mixin badge {
+  position: fixed;
+  z-index: t.$z-promo;
+  display: flex;
+  background: t.$color-promo-gradient;
+  color: t.$color-ink;
+  border: 1px solid t.$color-amber-soft;
+}
+
+@mixin icon-tile {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin dismiss {
+  border: 0;
+  color: t.$color-ink;
+  line-height: 1;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+@keyframes promo-in {
+  from {
+    opacity: 0;
+    transform: translateX(26px) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

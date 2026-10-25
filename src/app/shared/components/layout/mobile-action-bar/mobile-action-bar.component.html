@@ -1,0 +1,14 @@
+<nav class="mbar" aria-label="Quick actions">
+  <a [href]="telHref()">
+    <app-icon [name]="icons.Phone" [size]="19" />
+    <span>Call</span>
+  </a>
+  <a [href]="whatsAppUrl()">
+    <app-icon [name]="icons.WhatsApp" [size]="19" />
+    <span>WhatsApp</span>
+  </a>
+  <a class="mbar-cta" [routerLink]="cta().route" [fragment]="cta().fragment">
+    <app-icon [name]="icons.ChatBubble" [size]="19" />
+    <span>{{ cta().label }}</span>
+  </a>
+</nav>

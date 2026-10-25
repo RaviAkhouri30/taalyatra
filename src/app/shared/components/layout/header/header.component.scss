@@ -1,0 +1,32 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+// The host is the sticky element: it is a direct child of the tall page shell, so it stays
+// pinned for the whole page (a sticky element only sticks within its parent).
+:host {
+  position: sticky;
+  top: 0;
+  z-index: t.$z-header;
+  display: block;
+  background: t.$color-header-glass;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid t.$color-line;
+}
+
+.hdr-in {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  gap: 16px;
+
+  @include bp.down(bp.$phone) {
+    height: 64px;
+  }
+}
+
+.hdr-cta {
+  @include bp.down(bp.$phone) {
+    display: none;
+  }
+}

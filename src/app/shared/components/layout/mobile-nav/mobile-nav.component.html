@@ -1,0 +1,7 @@
+<nav class="mnav" [class.open]="open()" [id]="navId()" aria-label="Mobile">
+  @for (link of links(); track link.label) {
+    <a [routerLink]="link.route" [fragment]="link.fragment" (click)="navigate.emit()">{{
+      link.label
+    }}</a>
+  }
+</nav>

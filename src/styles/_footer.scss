@@ -1,0 +1,22 @@
+// Footer link style shared by the footer and its child components (each has encapsulated styles).
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+@mixin link {
+  display: block;
+  padding: 6px 0;
+  font-size: 15px;
+
+  &:hover {
+    color: t.$color-amber;
+  }
+
+  @include bp.down(bp.$phone) {
+    font-size: 14px;
+  }
+}
+
+/// Column heading: an eyebrow in body colour instead of the accent.
+@mixin heading {
+  color: t.$color-cream;
+}

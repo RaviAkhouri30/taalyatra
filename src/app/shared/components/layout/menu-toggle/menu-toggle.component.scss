@@ -1,0 +1,48 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: contents;
+}
+
+.hamb {
+  display: none;
+  width: 48px;
+  height: 48px;
+  border: 2px solid t.$color-cream;
+  border-radius: 14px;
+  background: transparent;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0;
+
+  @include bp.down(bp.$tablet) {
+    display: flex;
+  }
+}
+
+span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: t.$color-cream;
+  border-radius: 2px;
+  transition:
+    transform 0.25s,
+    opacity 0.2s;
+}
+
+.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}

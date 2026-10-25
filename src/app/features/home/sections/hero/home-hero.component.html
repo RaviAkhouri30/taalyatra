@@ -1,0 +1,46 @@
+<section id="top" class="hero">
+  <img class="sky" ngSrc="/images/home/hero-sky.svg" fill alt="" priority />
+  <div class="wrap hero-grid">
+    <div>
+      @if (model.data(); as hero) {
+        <p class="eyebrow">{{ hero.eyebrow }}</p>
+        <h1 class="d h1 title">
+          {{ hero.title }} <span class="hl">{{ hero.highlight }}</span>
+        </h1>
+        <p class="lead">{{ hero.lead }}</p>
+        <div class="hbtns">
+          <a appButton [routerLink]="hero.proposal.route" [fragment]="hero.proposal.fragment">{{
+            hero.proposal.label
+          }}</a>
+          <a appButton [variant]="buttonVariant.Ghost" [href]="hero.whatsApp.href">{{
+            hero.whatsApp.label
+          }}</a>
+          <a appButton [variant]="buttonVariant.Ghost" [href]="hero.call.href">{{
+            hero.call.label
+          }}</a>
+        </div>
+        <div class="pills">
+          @for (audience of hero.audiences; track audience) {
+            <span class="pill">{{ audience }}</span>
+          }
+          <a
+            class="pill pill--cta"
+            [routerLink]="hero.game.route"
+            [fragment]="hero.game.fragment"
+            >{{ hero.game.label }}</a
+          >
+        </div>
+      }
+    </div>
+    <div>
+      <img
+        class="stage"
+        ngSrc="/images/home/hero-stage.svg"
+        [width]="stageSize"
+        [height]="stageSize"
+        [alt]="stageAlt"
+        priority
+      />
+    </div>
+  </div>
+</section>

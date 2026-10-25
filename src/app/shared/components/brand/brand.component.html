@@ -1,0 +1,26 @@
+<ng-template #mark>
+  <img
+    [ngSrc]="brand().logoUrl"
+    [width]="logoSize"
+    [height]="logoSize"
+    [alt]="logoAlt()"
+    [priority]="priority()"
+  />
+  <div>
+    <b>{{ brand().name }}</b
+    ><span>{{ brand().tagline }}</span>
+  </div>
+</ng-template>
+
+@if (link(); as link) {
+  <a
+    class="brand"
+    [routerLink]="link.route"
+    [fragment]="link.fragment"
+    [attr.aria-label]="link.label"
+  >
+    <ng-container [ngTemplateOutlet]="mark" />
+  </a>
+} @else {
+  <div class="brand"><ng-container [ngTemplateOutlet]="mark" /></div>
+}

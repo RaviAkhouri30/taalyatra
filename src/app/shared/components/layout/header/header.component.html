@@ -1,0 +1,25 @@
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <app-brand [brand]="brand()" [link]="chrome().brandLink" [priority]="true" />
+    <app-main-nav [links]="chrome().mainNav" />
+    <a
+      appButton
+      class="hdr-cta"
+      [size]="buttonSize.Compact"
+      [routerLink]="chrome().headerCta.route"
+      [fragment]="chrome().headerCta.fragment"
+      >{{ chrome().headerCta.label }}</a
+    >
+    <app-menu-toggle
+      [open]="model.menuOpen()"
+      [controls]="mobileNavId"
+      (toggled)="model.toggleMenu()"
+    />
+  </div>
+  <app-mobile-nav
+    [links]="chrome().mobileNav"
+    [open]="model.menuOpen()"
+    [navId]="mobileNavId"
+    (navigate)="model.closeMenu()"
+  />
+</header>

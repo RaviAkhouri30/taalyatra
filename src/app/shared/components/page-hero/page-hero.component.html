@@ -1,0 +1,15 @@
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">{{ eyebrow() }}</p>
+    <h1 class="d h1 title">
+      {{ title() }}
+      @if (highlight()) {
+        <span class="hl">{{ highlight() }}</span>
+      }
+    </h1>
+    @if (lead()) {
+      <p class="lead" [class.lead--relaxed]="isRelaxed()">{{ lead() }}</p>
+    }
+    <ng-content />
+  </div>
+</section>

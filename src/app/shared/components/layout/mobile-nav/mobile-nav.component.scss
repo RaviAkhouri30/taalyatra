@@ -1,0 +1,43 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: contents;
+}
+
+.mnav {
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 24px 20px;
+  background: t.$color-ink;
+  border-top: 1px solid t.$color-line;
+
+  @include bp.down(bp.$tablet) {
+    &.open {
+      display: flex;
+    }
+  }
+}
+
+a {
+  font-family: t.$font-display;
+  font-size: 24px;
+  font-weight: 700;
+  padding: 14px 4px;
+  border-bottom: 1px solid t.$color-line;
+  min-height: 48px;
+  box-sizing: border-box;
+
+  &:last-child {
+    border-bottom: 0;
+    margin-top: 12px;
+    background: t.$color-amber;
+    color: t.$color-ink;
+    border-radius: t.$radius-pill;
+    text-align: center;
+    font-family: t.$font-body;
+    font-size: 18px;
+    padding: 14px;
+  }
+}
