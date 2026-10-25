@@ -1,0 +1,22 @@
+<div class="promo">
+  <span class="fx" aria-hidden="true">
+    @for (slot of sparks; track slot) {
+      <span class="spark"></span>
+    }
+  </span>
+  <a class="promo-l" [routerLink]="promotion().link.route" [fragment]="promotion().link.fragment">
+    <span class="promo-ico"><app-diya-icon [palette]="diya" /></span>
+    <span class="promo-t">
+      <b>{{ promotion().link.label }}</b
+      ><small>{{ promotion().subtitle }}</small>
+    </span>
+  </a>
+  <button
+    class="promo-x"
+    type="button"
+    [attr.aria-label]="promotion().dismissLabel"
+    (click)="dismiss.emit()"
+  >
+    &times;
+  </button>
+</div>

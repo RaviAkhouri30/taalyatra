@@ -10,9 +10,18 @@ export abstract class BasePage {
 
   protected constructor(protected readonly page: Page) {}
 
-  /** Navigates to the page and waits for the network to settle. */
+  /**
+   * Navigates to the page and waits until it is visually settled: network idle, web fonts loaded,
+   * and the site chrome styled. The dev server loads component styles separately, so checks that
+   * run earlier would measure unstyled elements.
+   */
   public async open(): Promise<void> {
     await this.page.goto(this.path);
     await this.page.waitForLoadState('networkidle');
+    await this.page.evaluate(async () => document.fonts.ready);
+    await this.page.waitForFunction(() => {
+      const header = document.querySelector('app-header');
+      return header !== null && getComputedStyle(header).position === 'sticky';
+    });
   }
 }

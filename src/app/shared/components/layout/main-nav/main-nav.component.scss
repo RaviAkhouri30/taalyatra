@@ -1,0 +1,40 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: contents;
+}
+
+.links {
+  display: flex;
+  gap: 26px;
+
+  @include bp.down(bp.$tablet) {
+    display: none;
+  }
+}
+
+a {
+  font-size: 16px;
+  font-weight: 500;
+  padding: 12px 2px;
+  border-bottom: 2px solid transparent;
+
+  &:hover,
+  &.cur {
+    border-color: t.$color-amber;
+  }
+}
+
+.navhome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: t.$color-amber;
+  font-weight: 700;
+}
+
+.navhot {
+  color: t.$color-amber-soft;
+  font-weight: 700;
+}

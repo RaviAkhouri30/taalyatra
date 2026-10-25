@@ -1,0 +1,38 @@
+<footer class="foot" [class.foot--full]="isFull()">
+  <div class="wrap">
+    @if (isFull()) {
+      <div class="fgrid">
+        <div>
+          <app-brand [brand]="site().brand" />
+          <p class="about">{{ site().brand.description }}</p>
+          <p class="domain">{{ site().brand.domain }}</p>
+        </div>
+        @for (column of chrome().footerColumns; track column.heading) {
+          <app-footer-links [column]="column" />
+        }
+        <app-footer-visit [contact]="site().contact" />
+      </div>
+      <div class="fbot">
+        <span>{{ copyright() }}</span>
+        <span class="fbot-links">
+          <a class="admin" [routerLink]="adminRoute">Admin</a>
+          <a [routerLink]="homeRoute" [fragment]="topAnchor">Back to top &uarr;</a>
+        </span>
+      </div>
+    } @else {
+      <div class="top">
+        <div>
+          <app-brand [brand]="site().brand" />
+          <p class="about about--compact">{{ site().brand.description }}</p>
+        </div>
+        @for (column of chrome().footerColumns; track column.heading) {
+          <app-footer-links [column]="column" />
+        }
+        <app-footer-links [column]="contactColumn()" />
+      </div>
+      <p class="fine">
+        <a class="admin admin--float" [routerLink]="adminRoute">Admin</a>{{ copyright() }}
+      </p>
+    }
+  </div>
+</footer>

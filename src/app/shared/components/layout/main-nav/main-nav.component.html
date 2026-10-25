@@ -1,0 +1,17 @@
+<nav class="links" aria-label="Main">
+  @for (link of links(); track link.label) {
+    <a
+      [routerLink]="link.route"
+      [fragment]="link.fragment"
+      routerLinkActive="cur"
+      [routerLinkActiveOptions]="activeOptions"
+      [class.navhome]="link.emphasis === emphasis.Home"
+      [class.navhot]="link.emphasis === emphasis.Hot"
+    >
+      @if (link.icon; as icon) {
+        <app-icon [name]="icon" [size]="15" [strokeWidth]="2.1" />
+      }
+      {{ link.label }}
+    </a>
+  }
+</nav>

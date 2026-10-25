@@ -1,0 +1,8 @@
+<p class="eyebrow heading">{{ column().heading }}</p>
+@for (link of column().links; track link.label) {
+  @if (link.kind === linkKind.Internal) {
+    <a [routerLink]="link.route" [fragment]="link.fragment">{{ link.label }}</a>
+  } @else {
+    <a [href]="link.href" [attr.aria-label]="link.ariaLabel">{{ link.label }}</a>
+  }
+}

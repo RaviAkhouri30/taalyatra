@@ -1,0 +1,76 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.trust {
+  background: t.$color-surface-raised;
+  border-bottom: 1px solid t.$color-line;
+  padding: 26px 0;
+
+  @include bp.down(bp.$phone) {
+    padding: 16px 0;
+  }
+}
+
+.trust-in {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 26px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.tcard {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+
+  b {
+    display: block;
+    font-family: t.$font-display;
+    font-size: 16px;
+    margin-bottom: 3px;
+
+    @include bp.down(bp.$phone) {
+      font-size: 15px;
+    }
+  }
+
+  p {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: t.$color-muted;
+
+    @include bp.down(bp.$phone) {
+      font-size: 12.5px;
+    }
+  }
+}
+
+.tico {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: #2e241d;
+  color: t.$color-amber;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @include bp.down(bp.$phone) {
+    width: 34px;
+    height: 34px;
+  }
+}

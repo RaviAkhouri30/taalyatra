@@ -1,0 +1,27 @@
+<div class="wrap util-in">
+  <div class="util-l">
+    <a [href]="telHref()">
+      <app-icon [name]="icons.Phone" [size]="15" />
+      <span>{{ contact().phone.display }}</span>
+    </a>
+    <a [href]="mailHref()">
+      <app-icon [name]="icons.Mail" [size]="15" />
+      <span>{{ contact().email }}</span>
+    </a>
+    <a [href]="contact().mapsUrl">
+      <app-icon [name]="icons.MapPin" [size]="15" />
+      <span>{{ contact().locality }}</span>
+    </a>
+  </div>
+  <div class="util-r">
+    @for (social of socials(); track social.platform) {
+      <a [href]="social.href" [attr.aria-label]="social.label">
+        <app-icon [name]="social.icon" [size]="17" [strokeWidth]="1.9" />
+      </a>
+    }
+    <a class="util-login" [routerLink]="adminRoute" aria-label="Admin login">
+      <app-icon [name]="icons.Lock" [size]="13" />
+      <span>Login</span>
+    </a>
+  </div>
+</div>

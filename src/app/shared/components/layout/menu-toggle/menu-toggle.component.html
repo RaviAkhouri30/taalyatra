@@ -1,0 +1,11 @@
+<button
+  type="button"
+  class="hamb"
+  [class.open]="open()"
+  aria-label="Open or close the menu"
+  [attr.aria-expanded]="open()"
+  [attr.aria-controls]="controls()"
+  (click)="toggled.emit()"
+>
+  <span></span><span></span><span></span>
+</button>

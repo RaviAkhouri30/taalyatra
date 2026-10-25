@@ -1,0 +1,35 @@
+<svg
+  [attr.width]="size()"
+  [attr.height]="size()"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  [attr.stroke-width]="strokeWidth()"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  @for (node of nodes(); track $index) {
+    @if (node.tag === 'path') {
+      <svg:path [attr.d]="node.d" />
+    } @else if (node.tag === 'circle') {
+      <svg:circle [attr.cx]="node.cx" [attr.cy]="node.cy" [attr.r]="node.r" />
+    } @else if (node.tag === 'ellipse') {
+      <svg:ellipse
+        [attr.cx]="node.cx"
+        [attr.cy]="node.cy"
+        [attr.rx]="node.rx"
+        [attr.ry]="node.ry"
+      />
+    } @else {
+      <svg:rect
+        [attr.x]="node.x"
+        [attr.y]="node.y"
+        [attr.width]="node.width"
+        [attr.height]="node.height"
+        [attr.rx]="node.rx"
+      />
+    }
+  }
+</svg>

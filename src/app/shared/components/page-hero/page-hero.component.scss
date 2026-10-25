@@ -1,0 +1,53 @@
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.hero {
+  position: relative;
+  padding: 40px 0 54px;
+  overflow: hidden;
+  background:
+    radial-gradient(1000px 560px at 76% 34%, rgb(201 107 60 / 22%), transparent 70%),
+    radial-gradient(760px 460px at 10% 90%, rgb(138 106 78 / 20%), transparent 72%),
+    linear-gradient(165deg, #1e1714 0%, #171210 48%, #120e0c 100%);
+
+  @include bp.desktop-short {
+    padding: 26px 0 34px;
+  }
+}
+
+// Base sizes come from the global `.h1` scale; the hero overrides it on desktop exactly as the
+// prototype's cascade does (compact on short screens, very large on tall wide screens).
+.title {
+  font-weight: 800;
+  max-width: 900px;
+
+  @include bp.desktop-short {
+    font-size: 44px;
+  }
+
+  @include bp.up-tall(bp.$wide) {
+    font-size: 104px;
+  }
+
+  @include bp.up-tall(bp.$ultra) {
+    font-size: 136px;
+  }
+}
+
+.lead {
+  margin-top: 20px;
+  max-width: 50ch;
+
+  @include bp.desktop-short {
+    font-size: 16px;
+    margin-bottom: 18px;
+    max-width: 46ch;
+  }
+}
+
+.lead--relaxed {
+  margin-top: 24px;
+}

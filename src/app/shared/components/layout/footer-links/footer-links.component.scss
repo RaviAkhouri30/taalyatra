@@ -1,0 +1,13 @@
+@use 'footer';
+
+:host {
+  display: block;
+}
+
+.heading {
+  @include footer.heading;
+}
+
+a {
+  @include footer.link;
+}

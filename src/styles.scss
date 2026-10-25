@@ -1,2 +1,6 @@
-/* Global styles: Bootstrap (selective) + design tokens. Component styles stay in components. */
-@import 'styles/bootstrap';
+/* Global styles: Bootstrap grid/utilities, then the Taal Yatra design system. */
+@use 'styles/bootstrap';
+@use 'styles/base';
+@use 'styles/layout';
+@use 'styles/typography';
+@use 'styles/buttons';

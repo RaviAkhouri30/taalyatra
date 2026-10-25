@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+<style>.tw{transform-box:fill-box;transform-origin:center;animation:tw 2.4s ease-in-out infinite}@keyframes tw{0%,100%{transform:scale(.3);opacity:.2}50%{transform:scale(1);opacity:1}}@media(prefers-reduced-motion:reduce){*{animation:none!important}}</style>
+<defs>
+<radialGradient id="bkA"><stop offset="0" stop-color="#C96B3C" stop-opacity=".34"/><stop offset="1" stop-color="#C96B3C" stop-opacity="0"/></radialGradient>
+<radialGradient id="bkB"><stop offset="0" stop-color="#E9A552" stop-opacity=".20"/><stop offset="1" stop-color="#E9A552" stop-opacity="0"/></radialGradient>
+<radialGradient id="bkC"><stop offset="0" stop-color="#8A6A4E" stop-opacity=".18"/><stop offset="1" stop-color="#8A6A4E" stop-opacity="0"/></radialGradient>
+<path id="st" d="M0 -7 L1.6 -1.6 L7 0 L1.6 1.6 L0 7 L-1.6 1.6 L-7 0 L-1.6 -1.6Z"/>
+</defs>
+<circle cx="150" cy="170" r="230" fill="url(#bkC)"/>
+<circle cx="1250" cy="140" r="250" fill="url(#bkA)"/>
+<circle cx="430" cy="650" r="230" fill="url(#bkC)"/>
+<circle cx="1360" cy="580" r="220" fill="url(#bkB)"/>
+<circle cx="60" cy="470" r="200" fill="url(#bkA)"/>
+<circle cx="1040" cy="700" r="210" fill="url(#bkC)"/>
+<g transform="translate(1303 291) scale(1.01)"><use href="#st" class="tw" fill="#F5EDE1" style="animation-delay:2.54s"/></g>
+<g transform="translate(1415 697) scale(1.14)"><use href="#st" class="tw" fill="#E9A552" style="animation-delay:0.09s"/></g>
+<g transform="translate(1223 285) scale(0.94)"><use href="#st" class="tw" fill="#F5EDE1" style="animation-delay:2.88s"/></g>
+<g transform="translate(1042 410) scale(0.8)"><use href="#st" class="tw" fill="#D8C6AE" style="animation-delay:0.79s"/></g>
+<g transform="translate(1263 134) scale(0.88)"><use href="#st" class="tw" fill="#FFD79A" style="animation-delay:0.04s"/></g>
+<g transform="translate(1095 447) scale(0.66)"><use href="#st" class="tw" fill="#F5EDE1" style="animation-delay:2.93s"/></g>
+<g transform="translate(1377 428) scale(0.57)"><use href="#st" class="tw" fill="#E9A552" style="animation-delay:2.55s"/></g>
+<g transform="translate(1056 662) scale(0.91)"><use href="#st" class="tw" fill="#F5EDE1" style="animation-delay:0.41s"/></g>
+<g transform="translate(985 35) scale(0.61)"><use href="#st" class="tw" fill="#D8C6AE" style="animation-delay:0.69s"/></g>
+<g transform="translate(1069 200) scale(0.67)"><use href="#st" class="tw" fill="#FFD79A" style="animation-delay:3.08s"/></g>
+<g transform="translate(1261 724) scale(0.92)"><use href="#st" class="tw" fill="#F5EDE1" style="animation-delay:0.58s"/></g>
+<g transform="translate(1338 231) scale(1.17)"><use href="#st" class="tw" fill="#E9A552" style="animation-delay:2.86s"/></g>
+<g transform="translate(1137 52) scale(0.72)"><use href="#st" class="tw" fill="#F5EDE1" style="animation-delay:0.53s"/></g>
+<g transform="translate(1059 300) scale(0.5)"><use href="#st" class="tw" fill="#D8C6AE" style="animation-delay:0.96s"/></g>
+<g transform="translate(1293 630) scale(0.45)"><use href="#st" class="tw" fill="#FFD79A" style="animation-delay:2.17s"/></g>
+<g transform="translate(1158 97) scale(0.68)"><use href="#st" class="tw" fill="#F5EDE1" style="animation-delay:2.62s"/></g>
+<g transform="translate(1231 353) scale(0.59)"><use href="#st" class="tw" fill="#E9A552" style="animation-delay:1.51s"/></g>
+<g transform="translate(1075 88) scale(0.64)"><use href="#st" class="tw" fill="#F5EDE1" style="animation-delay:3.0s"/></g>
+<g transform="translate(1368 396) scale(1.08)"><use href="#st" class="tw" fill="#D8C6AE" style="animation-delay:0.06s"/></g>
+<g transform="translate(1388 458) scale(0.72)"><use href="#st" class="tw" fill="#FFD79A" style="animation-delay:1.85s"/></g>
+<g transform="translate(989 493) scale(0.49)"><use href="#st" class="tw" fill="#F5EDE1" style="animation-delay:0.58s"/></g>
+<g transform="translate(1085 151) scale(1.02)"><use href="#st" class="tw" fill="#E9A552" style="animation-delay:2.97s"/></g>
+<g transform="translate(1221 382) scale(0.83)"><use href="#st" class="tw" fill="#F5EDE1" style="animation-delay:2.86s"/></g>
+<g transform="translate(1113 503) scale(0.53)"><use href="#st" class="tw" fill="#D8C6AE" style="animation-delay:2.39s"/></g>
+<g transform="translate(1393 406) scale(1.09)"><use href="#st" class="tw" fill="#FFD79A" style="animation-delay:0.12s"/></g>
+<g transform="translate(1031 243) scale(0.71)"><use href="#st" class="tw" fill="#F5EDE1" style="animation-delay:1.95s"/></g>
+<circle class="tw" cx="1065" cy="374" r="1.4" fill="#F5EDE1" style="animation-delay:2.25s"/>
+<circle class="tw" cx="1037" cy="345" r="1.9" fill="#F5EDE1" style="animation-delay:0.98s"/>
+<circle class="tw" cx="1398" cy="106" r="1.8" fill="#F5EDE1" style="animation-delay:2.31s"/>
+<circle class="tw" cx="1148" cy="521" r="1.3" fill="#F5EDE1" style="animation-delay:0.16s"/>
+<circle class="tw" cx="1297" cy="572" r="2.1" fill="#F5EDE1" style="animation-delay:0.1s"/>
+<circle class="tw" cx="1369" cy="634" r="1.5" fill="#F5EDE1" style="animation-delay:0.8s"/>
+<circle class="tw" cx="1323" cy="457" r="1.3" fill="#F5EDE1" style="animation-delay:3.13s"/>
+<circle class="tw" cx="1316" cy="59" r="2.0" fill="#F5EDE1" style="animation-delay:1.07s"/>
+<circle class="tw" cx="1096" cy="159" r="2.2" fill="#F5EDE1" style="animation-delay:1.8s"/>
+<circle class="tw" cx="1057" cy="671" r="2.1" fill="#F5EDE1" style="animation-delay:1.32s"/>
+<circle class="tw" cx="1076" cy="470" r="1.5" fill="#F5EDE1" style="animation-delay:0.19s"/>
+<circle class="tw" cx="1205" cy="327" r="1.3" fill="#F5EDE1" style="animation-delay:2.95s"/>
+</svg>

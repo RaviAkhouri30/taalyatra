@@ -1,0 +1,23 @@
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+// `overflow-x: clip` (not hidden) stops sideways scroll without creating a scroll container,
+// so the sticky header keeps working.
+.shell {
+  width: 100%;
+  overflow-x: clip;
+}
+
+// Room for the fixed action bar on phones (design value).
+.shell--action-bar {
+  @include bp.down(bp.$phone) {
+    padding-bottom: 58px;
+  }
+}
+
+main {
+  display: block;
+}

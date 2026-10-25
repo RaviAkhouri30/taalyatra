@@ -1,0 +1,65 @@
+// Page container, section rhythm and surface colours (design prototype values).
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+/// Centred content column.
+.wrap {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 32px;
+  box-sizing: border-box;
+
+  @include bp.down(bp.$phone) {
+    padding: 0 16px;
+  }
+
+  @include bp.down(bp.$phone-sm) {
+    padding: 0 13px;
+  }
+
+  @include bp.up(bp.$wide) {
+    max-width: 1280px;
+  }
+
+  @include bp.up(bp.$ultra) {
+    max-width: 1560px;
+  }
+}
+
+/// Vertical rhythm for a page section.
+.sec {
+  padding: 78px 0;
+
+  @include bp.desktop-short {
+    padding: 62px 0;
+  }
+
+  @include bp.down(bp.$tablet) {
+    padding: 60px 0;
+  }
+
+  @include bp.down(bp.$phone) {
+    padding: 44px 0;
+  }
+
+  @include bp.up(bp.$wide) {
+    padding: 96px 0;
+  }
+
+  @include bp.up(bp.$ultra) {
+    padding: 124px 0;
+  }
+}
+
+.dark {
+  background: t.$color-ink;
+}
+
+.light {
+  background: t.$color-ivory;
+  color: t.$color-ink;
+}
+
+.surface {
+  background: t.$color-surface;
+}

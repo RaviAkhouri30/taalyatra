@@ -1,0 +1,7 @@
+@if (!model.dismissed()) {
+  @if (isPill()) {
+    <app-promo-pill [promotion]="promotion()" (dismiss)="model.dismiss()" />
+  } @else {
+    <app-promo-card [promotion]="promotion()" (dismiss)="model.dismiss()" />
+  }
+}

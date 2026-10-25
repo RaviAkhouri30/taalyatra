@@ -110,6 +110,8 @@ export default defineConfig(
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/consistent-type-imports': ['error', { fixStyle: 'inline-type-imports' }],
       '@typescript-eslint/member-ordering': 'error',
+      // A leading underscore marks a parameter required by an interface but unused here.
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       // Angular classes are configured by decorators, so an empty decorated class is valid.
       '@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
       '@typescript-eslint/naming-convention': [
@@ -163,7 +165,7 @@ export default defineConfig(
   },
   {
     // Tests may use async/await and Promises (rule 12) and long describe blocks.
-    files: ['**/*.spec.ts', 'e2e/**/*.ts', 'playwright.config.ts'],
+    files: ['**/*.spec.ts', 'src/app/**/testing/**/*.ts', 'e2e/**/*.ts', 'playwright.config.ts'],
     rules: {
       'no-restricted-syntax': 'off',
       'max-lines-per-function': 'off',
@@ -171,6 +173,8 @@ export default defineConfig(
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
       'sonarjs/no-hardcoded-passwords': 'off',
+      '@angular-eslint/component-max-inline-declarations': 'off',
+      'security/detect-object-injection': 'off',
     },
   },
   {

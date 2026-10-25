@@ -1,42 +1,36 @@
-// Bootstrap is imported selectively (CLAUDE.md §10): add a partial here only when a
-// component actually needs it, to keep the initial CSS bundle small.
-@import 'tokens';
+// Bootstrap is used for its grid and utility classes only (ADR-0004).
+// Reboot, typography and component partials are deliberately excluded: the design system is
+// custom and pixel-matched to the prototype, which uses no reset.
+@use 'tokens' as t;
 
-// 1. Configuration — must come first so overrides apply.
 @import 'bootstrap/scss/functions';
 
-$primary: $ty-color-primary;
-$secondary: $ty-color-secondary;
-$dark: $ty-color-dark;
-$light: $ty-color-light;
-$font-family-base: $ty-font-family-base;
-$headings-font-family: $ty-font-family-heading;
-$spacer: $ty-spacer;
-$border-radius: $ty-border-radius;
+$primary: t.$color-amber;
+$secondary: t.$color-clay;
+$dark: t.$color-ink;
+$light: t.$color-ivory;
+$body-bg: t.$color-ink;
+$body-color: t.$color-cream;
+$font-family-base: t.$font-body;
+$headings-font-family: t.$font-display;
 $enable-negative-margins: true;
+
+// Grid tiers aligned with the prototype's breakpoints (≤380, ≤620, ≤1000, ≥1600, ≥2200).
+$grid-breakpoints: (
+  xs: 0,
+  sm: 381px,
+  md: 621px,
+  lg: 1001px,
+  xl: 1600px,
+  xxl: 2200px,
+);
 
 @import 'bootstrap/scss/variables';
 @import 'bootstrap/scss/variables-dark';
 @import 'bootstrap/scss/maps';
 @import 'bootstrap/scss/mixins';
 @import 'bootstrap/scss/utilities';
-
-// 2. Base layout & content.
 @import 'bootstrap/scss/root';
-@import 'bootstrap/scss/reboot';
-@import 'bootstrap/scss/type';
-@import 'bootstrap/scss/images';
-@import 'bootstrap/scss/containers';
 @import 'bootstrap/scss/grid';
-
-// 3. Components — enable as features need them.
-@import 'bootstrap/scss/buttons';
-@import 'bootstrap/scss/forms';
-@import 'bootstrap/scss/nav';
-@import 'bootstrap/scss/navbar';
-@import 'bootstrap/scss/card';
-@import 'bootstrap/scss/spinners';
 @import 'bootstrap/scss/helpers';
-
-// 4. Utilities API — generates utility classes, keep last.
 @import 'bootstrap/scss/utilities/api';

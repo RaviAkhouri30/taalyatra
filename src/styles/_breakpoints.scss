@@ -1,0 +1,38 @@
+// Breakpoints mirror the design prototype's media queries exactly.
+// Order of use inside a rule matters (it reproduces the prototype's cascade):
+//   base → desktop-short → down(tablet) → down(phone) → down(phone-sm) → up(wide) → up(ultra)
+
+$phone-sm: 380px;
+$phone: 620px;
+$tablet: 1000px;
+$wide: 1600px;
+$ultra: 2200px;
+$short-height: 900px;
+
+/// Viewports up to and including `$max` wide.
+@mixin down($max) {
+  @media (max-width: $max) {
+    @content;
+  }
+}
+
+/// Viewports at least `$min` wide.
+@mixin up($min) {
+  @media (min-width: $min) {
+    @content;
+  }
+}
+
+/// Desktop viewports that are short (laptops): the prototype compacts the hero here.
+@mixin desktop-short {
+  @media (min-width: $tablet + 1) and (max-height: $short-height) {
+    @content;
+  }
+}
+
+/// Wide viewports that are NOT short — needed where the prototype's wide rule loses to the short rule.
+@mixin up-tall($min) {
+  @media (min-width: $min) and (min-height: $short-height + 1) {
+    @content;
+  }
+}

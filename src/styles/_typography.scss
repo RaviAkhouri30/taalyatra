@@ -1,0 +1,109 @@
+// Shared type styles (design prototype values). Section-specific sizes live in components.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+/// Display face for headings.
+.d {
+  font-family: t.$font-display;
+  margin: 0;
+  letter-spacing: t.$letter-spacing-display;
+  line-height: 1.1;
+}
+
+/// Small uppercase label above a heading.
+.eyebrow {
+  font-size: 13px;
+  letter-spacing: t.$letter-spacing-eyebrow;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: t.$color-amber;
+  margin: 0 0 12px;
+
+  @include bp.down(bp.$phone) {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+}
+
+.light .eyebrow {
+  color: #9a4f1c;
+}
+
+/// Introductory paragraph.
+.lead {
+  font-size: 18px;
+  line-height: 1.62;
+  max-width: 62ch;
+
+  @include bp.down(bp.$phone) {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  @include bp.up(bp.$wide) {
+    font-size: 19px;
+  }
+
+  @include bp.up(bp.$ultra) {
+    font-size: 22px;
+  }
+}
+
+/// Page title scale.
+.h1 {
+  font-size: 54px;
+
+  @include bp.down(bp.$tablet) {
+    font-size: 42px;
+  }
+
+  @include bp.down(bp.$phone) {
+    font-size: 34px;
+  }
+
+  @include bp.down(bp.$phone-sm) {
+    font-size: 30px;
+  }
+
+  @include bp.up(bp.$wide) {
+    font-size: 66px;
+  }
+
+  @include bp.up(bp.$ultra) {
+    font-size: 84px;
+  }
+}
+
+/// Section title scale.
+.h2 {
+  font-size: 40px;
+
+  @include bp.desktop-short {
+    font-size: 34px;
+  }
+
+  @include bp.down(bp.$tablet) {
+    font-size: 32px;
+  }
+
+  @include bp.down(bp.$phone) {
+    font-size: 27px;
+  }
+
+  @include bp.down(bp.$phone-sm) {
+    font-size: 24px;
+  }
+
+  @include bp.up(bp.$wide) {
+    font-size: 48px;
+  }
+
+  @include bp.up(bp.$ultra) {
+    font-size: 58px;
+  }
+}
+
+/// Accent-coloured run inside a heading.
+.hl {
+  color: t.$color-amber;
+}

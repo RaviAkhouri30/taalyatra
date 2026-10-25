@@ -1,0 +1,10 @@
+// Layout-transparent host: the <svg> takes part in the parent's flex/inline layout directly,
+// exactly like the prototype's inline icons.
+:host {
+  display: contents;
+}
+
+// Icons never shrink inside flex rows.
+svg {
+  flex: none;
+}

@@ -6,7 +6,8 @@ import { defineConfig, devices } from '@playwright/test';
  * Runs every journey on desktop, tablet and mobile viewports so pixel-perfect layouts are
  * verified at each breakpoint. The dev server is started automatically for local runs.
  */
-const PORT = 4200;
+// Own port, so e2e never reuses a developer's long-running (possibly stale) dev server on 4200.
+const PORT = 4210;
 const BASE_URL = `http://localhost:${PORT}`;
 const isCi = Boolean(process.env['CI']);
 
@@ -24,6 +25,8 @@ export default defineConfig({
   },
   use: {
     baseURL: BASE_URL,
+    // The design system drops animations under reduced motion: screenshots and a11y scans are stable.
+    contextOptions: { reducedMotion: 'reduce' },
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -33,7 +36,7 @@ export default defineConfig({
     { name: 'mobile', use: { ...devices['Pixel 7'] } },
   ],
   webServer: {
-    command: 'npm start -- --port 4200',
+    command: `npm start -- --port ${String(PORT)}`,
     url: BASE_URL,
     reuseExistingServer: !isCi,
     timeout: 120_000,

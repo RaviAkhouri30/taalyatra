@@ -1,0 +1,103 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+@use 'footer';
+
+:host {
+  display: block;
+}
+
+.foot {
+  padding: 64px 0 36px;
+  border-top: 1px solid t.$color-surface;
+}
+
+.foot--full {
+  padding: 76px 0 36px;
+  border-top: 0;
+}
+
+a {
+  @include footer.link;
+}
+
+.about {
+  margin-top: 16px;
+  font-size: 16px;
+  max-width: 300px;
+}
+
+.about--compact {
+  margin-top: 14px;
+}
+
+.domain {
+  margin-top: 14px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+// ---- Compact (inner pages) ----
+.top {
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+
+.fine {
+  font-size: 15px;
+  border-top: 1px solid t.$color-surface;
+  padding-top: 22px;
+}
+
+.admin {
+  color: t.$color-muted-strong;
+}
+
+.admin--float {
+  display: inline;
+  padding: 0;
+  float: right;
+}
+
+// ---- Full (home page) ----
+.fgrid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.8fr 0.8fr 1.15fr;
+  gap: 40px;
+  margin-bottom: 44px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fbot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  border-top: 1px solid t.$color-line;
+  padding-top: 24px;
+
+  @include bp.down(bp.$phone) {
+    font-size: 13px;
+  }
+
+  a {
+    font-weight: 700;
+  }
+}
+
+.fbot-links {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}

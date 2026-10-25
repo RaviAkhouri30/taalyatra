@@ -1,19 +1,36 @@
-// Design tokens — the single source of truth for colours, spacing and typography.
-// Bootstrap variables are derived from these so components never hard-code values.
+// Design tokens — the single source of truth for colours, type, radii and layers.
+// Values are taken from the design prototype's computed styles (warm brand palette, v11).
+// Components and global partials consume these; never hard-code a value elsewhere.
 
-$ty-color-primary: #8b1e3f;
-$ty-color-secondary: #d4a017;
-$ty-color-dark: #1f1a17;
-$ty-color-light: #faf6f0;
+// ---- Colours -------------------------------------------------------------
+$color-ink: #171210; // page background, text on light surfaces
+$color-ink-deep: #120e0c; // utility bar
+$color-cream: #efe6d9; // body text on dark
+$color-ivory: #f5ede1; // light surface, button hover fill
+$color-amber: #e9a552; // primary accent
+$color-amber-soft: #ffd79a; // highlight on accent ("hot" nav, promo border)
+$color-amber-pale: #fff0d2;
+$color-clay: #c96b3c; // secondary accent
+$color-surface: #241c17; // cards, alternate sections
+$color-surface-raised: #1e1813; // action bar, trust row
+$color-line: #3a2e25; // borders on dark
+$color-bronze: #6e5b49; // ghost button border
+$color-muted: #c6b8a6; // secondary text
+$color-muted-strong: #a89883; // fine print, admin link
+$color-logo-ground: #fdf9f3;
+$color-promo-ink: #3a2213;
+$color-header-glass: rgb(23 18 16 / 94%);
+$color-promo-gradient: linear-gradient(135deg, $color-amber, $color-clay);
 
-$ty-font-family-base:
-  'Inter',
-  system-ui,
-  -apple-system,
-  'Segoe UI',
-  Roboto,
-  sans-serif;
-$ty-font-family-heading: 'Playfair Display', Georgia, serif;
+// ---- Typography ----------------------------------------------------------
+$font-display: 'Bricolage Grotesque', sans-serif;
+$font-body: 'DM Sans', sans-serif;
+$letter-spacing-display: -0.02em;
+$letter-spacing-eyebrow: 0.16em;
 
-$ty-spacer: 1rem;
-$ty-border-radius: 0.5rem;
+// ---- Shape & layers ------------------------------------------------------
+$radius-pill: 999px;
+$z-header: 20;
+$z-promo: 44;
+$z-action-bar: 48;
+$z-fab: 50;
