@@ -1,0 +1,39 @@
+@use 'tokens' as t;
+
+:host {
+  display: block;
+}
+
+.fchips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 26px 0 30px;
+}
+
+.fc {
+  background: transparent;
+  color: t.$color-cream;
+  border: 2px solid t.$color-bronze;
+  border-radius: t.$radius-pill;
+  padding: 7px 18px;
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+  min-height: 44px;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+
+  &:hover {
+    background: #2e241d;
+    border-color: t.$color-amber;
+  }
+
+  &.sel {
+    background: t.$color-amber;
+    border-color: t.$color-amber;
+    color: t.$color-ink;
+    font-weight: 700;
+  }
+}

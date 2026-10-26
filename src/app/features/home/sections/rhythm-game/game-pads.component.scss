@@ -1,0 +1,256 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.padsbox {
+  position: relative;
+  max-width: 440px;
+  width: 100%;
+  margin: 0 auto;
+  border-radius: 50%;
+  padding: 22px;
+  background: radial-gradient(circle, #2e241d 0%, #221a15 66%, #171210 100%);
+  box-sizing: border-box;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+    border: 2px dashed t.$color-line;
+    animation: spin 40s linear infinite;
+  }
+
+  @include bp.down(bp.$phone) {
+    padding: 14px;
+    max-width: 320px;
+  }
+}
+
+.pads {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+
+  @include bp.down(bp.$phone) {
+    gap: 10px;
+  }
+}
+
+.pad {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 5px solid t.$color-ivory;
+  cursor: pointer;
+  font-family: t.$font-display;
+  font-size: 22px;
+  font-weight: 800;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.08s,
+    box-shadow 0.12s,
+    filter 0.12s;
+  color: t.$color-ink;
+  position: relative;
+  padding: 0;
+
+  @include bp.down(bp.$phone) {
+    font-size: 17px;
+    border-width: 4px;
+  }
+
+  @include bp.down(bp.$phone-sm) {
+    font-size: 15px;
+  }
+
+  small {
+    font-family: t.$font-body;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.75;
+
+    @include bp.down(bp.$phone) {
+      font-size: 9px;
+    }
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 14px;
+    border-radius: 50%;
+    border: 3px solid rgb(0 0 0 / 25%);
+    pointer-events: none;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.p0 {
+  background: radial-gradient(circle at 50% 35%, #f3c078, #e9a552 62%);
+}
+
+.p1 {
+  background: radial-gradient(circle at 50% 35%, #fffdf8, #efe3d0 62%);
+}
+
+.p2 {
+  background: radial-gradient(circle at 50% 35%, #b6c48c, #7e8a55 70%);
+}
+
+.p3 {
+  background: radial-gradient(circle at 50% 35%, #3a2e25, #1c1511 70%);
+  color: t.$color-ivory;
+}
+
+.p2::after,
+.p3::after {
+  border-color: rgb(255 255 255 / 25%);
+}
+
+.pad.lit {
+  transform: scale(0.93);
+  box-shadow:
+    0 0 0 9px rgb(233 165 82 / 32%),
+    0 0 60px 8px rgb(233 165 82 / 75%);
+  filter: brightness(1.25);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 4px solid #f3c078;
+    animation: ripple 0.55s ease-out forwards;
+    pointer-events: none;
+  }
+}
+
+.core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 30%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: t.$color-ink;
+  border: 4px solid t.$color-amber;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+  text-align: center;
+  line-height: 1.1;
+
+  small {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: t.$color-amber;
+
+    @include bp.down(bp.$phone) {
+      font-size: 8px;
+    }
+  }
+
+  b {
+    font-family: t.$font-display;
+    font-size: 24px;
+    font-weight: 800;
+
+    @include bp.down(bp.$phone) {
+      font-size: 19px;
+    }
+  }
+
+  &.pulse {
+    animation: core-pulse 0.6s ease-in-out infinite alternate;
+  }
+}
+
+.pop {
+  position: absolute;
+  z-index: 3;
+  font-family: t.$font-display;
+  font-weight: 800;
+  font-size: 26px;
+  color: #f3c078;
+  pointer-events: none;
+  animation: float-up 0.85s ease-out forwards;
+}
+
+.q0 {
+  left: 18%;
+  top: 20%;
+}
+
+.q1 {
+  right: 18%;
+  top: 20%;
+}
+
+.q2 {
+  left: 18%;
+  bottom: 24%;
+}
+
+.q3 {
+  right: 18%;
+  bottom: 24%;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ripple {
+  from {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+@keyframes core-pulse {
+  from {
+    box-shadow: 0 0 0 0 rgb(254 127 45 / 60%);
+  }
+
+  to {
+    box-shadow: 0 0 0 14px rgb(254 127 45 / 0%);
+  }
+}
+
+@keyframes float-up {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(0.8);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-60px) scale(1.3);
+  }
+}

@@ -1,6 +1,25 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { HomeAssistantComponent } from './sections/assistant/home-assistant.component';
+import { HomeAudiencesComponent } from './sections/audiences/home-audiences.component';
+import { HomeCitiesComponent } from './sections/cities/home-cities.component';
+import { HomeDrumCircleComponent } from './sections/drum-circle/home-drum-circle.component';
+import { HomeFaqComponent } from './sections/faq/home-faq.component';
+import { HomeContactComponent } from './sections/contact/home-contact.component';
+import { HomeGalleryComponent } from './sections/gallery/home-gallery.component';
+import { HomeExperiencesComponent } from './sections/experiences/home-experiences.component';
 import { HomeHeroComponent } from './sections/hero/home-hero.component';
+import { HomeIntroComponent } from './sections/intro/home-intro.component';
+import { HomeMidCtaComponent } from './sections/mid-cta/home-mid-cta.component';
+import { HomeOfferComponent } from './sections/offer/home-offer.component';
+import { HomeHowComponent } from './sections/how/home-how.component';
+import { HomeInstagramComponent } from './sections/instagram/home-instagram.component';
 import { HomeMarqueeComponent } from './sections/marquee/home-marquee.component';
+import { HomePhilosophyComponent } from './sections/philosophy/home-philosophy.component';
+import { HomeProofComponent } from './sections/proof/home-proof.component';
+import { HomeRhythmGameComponent } from './sections/rhythm-game/home-rhythm-game.component';
+import { HomeShowsComponent } from './sections/shows/home-shows.component';
+import { HomeVideosComponent } from './sections/videos/home-videos.component';
+import { HomeTeamComponent } from './sections/team/home-team.component';
 import { HomeTrustComponent } from './sections/trust/home-trust.component';
 
 /**
@@ -10,7 +29,30 @@ import { HomeTrustComponent } from './sections/trust/home-trust.component';
  */
 @Component({
   selector: 'app-home-page',
-  imports: [HomeHeroComponent, HomeMarqueeComponent, HomeTrustComponent],
+  imports: [
+    HomeAssistantComponent,
+    HomeAudiencesComponent,
+    HomeCitiesComponent,
+    HomeDrumCircleComponent,
+    HomeExperiencesComponent,
+    HomeFaqComponent,
+    HomeContactComponent,
+    HomeGalleryComponent,
+    HomeHeroComponent,
+    HomeIntroComponent,
+    HomeHowComponent,
+    HomeInstagramComponent,
+    HomeMarqueeComponent,
+    HomeMidCtaComponent,
+    HomeOfferComponent,
+    HomePhilosophyComponent,
+    HomeProofComponent,
+    HomeRhythmGameComponent,
+    HomeShowsComponent,
+    HomeTeamComponent,
+    HomeTrustComponent,
+    HomeVideosComponent,
+  ],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { PromoVariant } from '@shared/enums/variant.enums';
+import { OverlayStateService } from '@shared/services/overlay-state.service';
 import { SITE, queryAll } from '@shared/testing/fixtures';
 import { PromoBadgeComponent } from './promo-badge.component';
 import { PromoBadgeViewModel } from './promo-badge.view-model';
@@ -22,6 +23,19 @@ describe('PromoBadgeComponent', () => {
     expect(element.querySelector('small')?.textContent).toBe('Light up your celebration');
     expect(queryAll(element, '.spark')).toHaveLength(6);
     expect(element.querySelector('.promo-l')?.getAttribute('href')).toBe('/#diwali');
+  });
+
+  it('should step aside while a floating panel is open', () => {
+    const { fixture, element } = render(PromoVariant.Pill);
+    const overlay = TestBed.inject(OverlayStateService);
+
+    overlay.setPanelOpen(true);
+    fixture.detectChanges();
+    expect(element.querySelector('app-promo-pill')).toBeNull();
+
+    overlay.setPanelOpen(false);
+    fixture.detectChanges();
+    expect(element.querySelector('app-promo-pill')).not.toBeNull();
   });
 
   it('should render the pill style with bursts and fourteen sparks', () => {
@@ -49,7 +63,7 @@ describe('PromoBadgeComponent', () => {
 
 describe('PromoBadgeViewModel', () => {
   it('should start visible and remember a dismissal', () => {
-    const model = new PromoBadgeViewModel();
+    const model = TestBed.runInInjectionContext(() => new PromoBadgeViewModel());
 
     expect(model.dismissed()).toBe(false);
     model.dismiss();

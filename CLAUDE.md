@@ -42,6 +42,7 @@ npm run typecheck      # tsc for app, spec and e2e configs
 npm test               # Vitest, single run                  (test:watch for watch mode)
 npm run test:coverage  # Vitest + coverage, fails below 90%  → coverage/taal-yatra/
 npm run e2e            # Playwright: desktop, tablet, mobile (e2e:install once for browsers)
+npm run e2e:visual:update  # re-record visual baselines after an approved visual change
 npm run sonar          # SonarQube scan (needs SONAR_HOST_URL and SONAR_TOKEN env vars)
 npm run verify         # format:check + lint + typecheck + test:coverage + build
 ```
@@ -197,13 +198,16 @@ src/app/
 ├── core/          tokens/ factories/ interfaces/(ports) backends/(adapters) services/
 │                  interceptors/ guards/ config/(provideXxx helpers)
 ├── shared/        base/ components/ directives/ pipes/ models/ interfaces/ enums/ constants/ utils/
-├── layout/        shell, header, footer, nav
+├── shared/components/layout/   shell, header, footer, nav (page chrome)
 └── features/<feature>/
     ├── components/<name>/   *.component.ts|html|scss|spec.ts
     ├── view-models/         *.view-model.ts (+ spec)
     ├── services/            *.service.ts (+ spec)
     ├── models/              *.model.ts, i-*.ts (DTOs)
     └── <feature>.routes.ts  lazy-loaded
+    (A page built from many sections, like home, uses one folder per section instead:
+     sections/<name>/ holding i-*.ts, *.model.ts, *.service.ts, *.view-model.ts, *.component.*
+     with presentational children in sub-folders, plus testing/ for spec fixtures.)
 src/styles/        _tokens.scss (design tokens), _bootstrap.scss (selective imports)
 e2e/               specs/*.e2e.ts, pages/ (Page Objects), fixtures/
 docs/              architecture, ADRs, AIDLC records
@@ -238,7 +242,8 @@ docs/              architecture, ADRs, AIDLC records
 - Signal APIs only: `input()`, `output()`, `model()`, `viewChild()`, `computed()`, `linkedSignal()`.
 - Control flow `@if` / `@for` (with `track`) / `@switch` / `@defer`. No `*ngIf` / `*ngFor`.
 - Templates contain bindings only. Logic goes in `computed()` or pure pipes. No inline styles.
-- Lazy-load every feature route. Wrap below-the-fold sections in `@defer (on viewport)`.
+- Lazy-load every feature route. Wrap below-the-fold sections in `@defer (on viewport)`, or
+  `@defer (on idle)` when anchor links must reach them (ADR-0007).
 - Functional guards, resolvers and interceptors. Typed Reactive Forms, with validators in classes.
 - `NgOptimizedImage` (`ngSrc`) for every image (lint-enforced).
 - `host: {}` metadata instead of `@HostBinding` / `@HostListener` (lint-enforced).

@@ -1,0 +1,132 @@
+@let text = copy();
+<div class="panel">
+  <form class="pform" [formGroup]="form()" (ngSubmit)="onSubmit()" novalidate>
+    <div class="prow">
+      <label
+        ><span>{{ text.fields.need }}</span>
+        <select class="inp2" formControlName="need">
+          @for (option of text.needs; track option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
+      </label>
+      <label
+        ><span>{{ text.fields.eventType }}</span>
+        <select class="inp2" formControlName="eventType">
+          @for (option of text.eventTypes; track option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
+      </label>
+    </div>
+    <div class="prow">
+      <label
+        ><span>{{ text.fields.experience }}</span>
+        <select class="inp2" formControlName="experience">
+          @for (group of text.experienceGroups; track group.label) {
+            <optgroup [label]="group.label">
+              @for (option of group.options; track option) {
+                <option [value]="option">{{ option }}</option>
+              }
+            </optgroup>
+          }
+          <option [value]="text.experienceFallback">{{ text.experienceFallback }}</option>
+        </select>
+      </label>
+      <label
+        ><span>{{ text.fields.groupSize }}</span>
+        <select class="inp2" formControlName="groupSize">
+          @for (option of text.groupSizes; track option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
+      </label>
+    </div>
+    <div class="prow">
+      <label
+        ><span>{{ text.fields.date }}</span>
+        <input class="inp2" type="date" formControlName="date" />
+      </label>
+      <label
+        ><span>{{ text.fields.name }}</span>
+        <input
+          class="inp2"
+          type="text"
+          formControlName="name"
+          autocomplete="name"
+          required
+          [placeholder]="text.placeholders.name"
+          [attr.aria-invalid]="showError('name')"
+          [attr.aria-describedby]="showError('name') ? 'proposal-name-error' : null"
+        />
+        @if (showError('name')) {
+          <small class="err" id="proposal-name-error">{{ text.errors.name }}</small>
+        }
+      </label>
+    </div>
+    <div class="prow">
+      <label
+        ><span>{{ text.fields.phone }}</span>
+        <input
+          class="inp2"
+          type="tel"
+          inputmode="tel"
+          formControlName="phone"
+          autocomplete="tel"
+          required
+          [placeholder]="text.placeholders.phone"
+          [attr.aria-invalid]="showError('phone')"
+          [attr.aria-describedby]="showError('phone') ? 'proposal-phone-error' : null"
+        />
+        @if (showError('phone')) {
+          <small class="err" id="proposal-phone-error">{{ text.errors.phone }}</small>
+        }
+      </label>
+      <label
+        ><span
+          >{{ text.fields.email }} <i>{{ text.fields.optional }}</i></span
+        >
+        <input
+          class="inp2"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          [placeholder]="text.placeholders.email"
+          [attr.aria-invalid]="showError('email')"
+          [attr.aria-describedby]="showError('email') ? 'proposal-email-error' : null"
+        />
+        @if (showError('email')) {
+          <small class="err" id="proposal-email-error">{{ text.errors.email }}</small>
+        }
+      </label>
+    </div>
+    <label
+      ><span
+        >{{ text.fields.message }} <i>{{ text.fields.optional }}</i></span
+      >
+      <textarea
+        class="inp2 ta"
+        rows="2"
+        formControlName="message"
+        [placeholder]="text.placeholders.message"
+      ></textarea>
+    </label>
+    <div class="pbtns">
+      <button appButton type="submit" [disabled]="sending()">
+        {{ sending() ? text.sending : text.submit }}
+      </button>
+      <a appButton [variant]="buttonVariant.Ghost" [href]="whatsAppHref()"
+        ><app-icon [name]="whatsAppIcon" [size]="18" /> {{ text.whatsApp }}</a
+      >
+    </div>
+    @switch (status()) {
+      @case (proposalStatus.Sent) {
+        <p class="note" role="status">{{ text.sent }}</p>
+      }
+      @case (proposalStatus.Failed) {
+        <p class="note note--error" role="alert">{{ text.failed }}</p>
+      }
+    }
+    <p class="fineprint">{{ text.finePrint }}</p>
+  </form>
+</div>

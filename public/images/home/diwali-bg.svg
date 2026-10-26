@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+<style>.tw{transform-box:fill-box;transform-origin:center;animation:tw 2.4s ease-in-out infinite}@keyframes tw{0%,100%{transform:scale(.3);opacity:.2}50%{transform:scale(1);opacity:1}}@media(prefers-reduced-motion:reduce){*{animation:none!important}}</style>
+<g stroke="#FFD79A" stroke-opacity=".30" fill="none" stroke-width="2">
+<circle cx="70" cy="40" r="120"/><circle cx="70" cy="40" r="90"/><circle cx="70" cy="40" r="60"/>
+<circle cx="1380" cy="490" r="130"/><circle cx="1380" cy="490" r="96"/><circle cx="1380" cy="490" r="62"/>
+</g>
+<g stroke="#FFD79A" stroke-opacity=".36" stroke-width="2" fill="none">
+<path d="M250 0v54"/><path d="M420 0v96"/><path d="M620 0v40"/><path d="M860 0v86"/><path d="M1060 0v52"/><path d="M1220 0v104"/>
+</g>
+<g fill="#FFD79A" fill-opacity=".40">
+<ellipse cx="250" cy="62" rx="15" ry="10"/><ellipse cx="420" cy="104" rx="15" ry="10"/><ellipse cx="620" cy="48" rx="15" ry="10"/>
+<ellipse cx="860" cy="94" rx="15" ry="10"/><ellipse cx="1060" cy="60" rx="15" ry="10"/><ellipse cx="1220" cy="112" rx="15" ry="10"/>
+</g>
+<g fill="#FFD79A" fill-opacity=".5">
+<path class="tw" d="M160 300l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/>
+<path class="tw" style="animation-delay:.7s" d="M1290 180l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/>
+<path class="tw" style="animation-delay:1.3s" d="M520 420l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/>
+<path class="tw" style="animation-delay:1.9s" d="M980 400l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/>
+</g>
+</svg>

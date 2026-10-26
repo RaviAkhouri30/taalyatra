@@ -1,0 +1,113 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: contents;
+}
+
+.lb {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgb(10 8 7 / 95%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 44px 74px 60px;
+  animation: fade-in 0.2s ease;
+
+  @include bp.down(bp.$tablet) {
+    padding: 20px 14px 56px;
+  }
+
+  img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 76vh;
+    border-radius: 14px;
+    display: block;
+    box-shadow: 0 30px 80px rgb(0 0 0 / 60%);
+  }
+}
+
+%round-button {
+  position: absolute;
+  border-radius: 50%;
+  background: t.$color-surface;
+  border: 1px solid #4a3a2c;
+  color: t.$color-cream;
+  cursor: pointer;
+  font-family: inherit;
+
+  &:hover {
+    background: t.$color-amber;
+    color: t.$color-ink;
+    border-color: t.$color-amber;
+  }
+}
+
+.lbx {
+  @extend %round-button;
+
+  top: 20px;
+  right: 22px;
+  width: 44px;
+  height: 44px;
+  font-size: 22px;
+}
+
+.lbnav {
+  @extend %round-button;
+
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  font-size: 26px;
+  line-height: 1;
+
+  @include bp.down(bp.$tablet) {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
+}
+
+.prev {
+  left: 18px;
+
+  @include bp.down(bp.$phone) {
+    left: 8px;
+  }
+}
+
+.next {
+  right: 18px;
+
+  @include bp.down(bp.$phone) {
+    right: 8px;
+  }
+}
+
+.lbcap {
+  position: absolute;
+  bottom: 22px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 14px;
+  color: t.$color-muted;
+  padding: 0 20px;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

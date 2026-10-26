@@ -1,0 +1,25 @@
+@if (model.data(); as section) {
+  <section class="sec" [id]="anchor">
+    <div class="wrap">
+      <app-section-header [eyebrow]="section.eyebrow" [title]="section.title">
+        <a appButton [variant]="buttonVariant.Ghost" [routerLink]="section.showsPage.route">{{
+          section.showsPage.label
+        }}</a>
+      </app-section-header>
+      <p class="lead">{{ section.lead }}</p>
+      <div class="showgrid">
+        @for (format of section.formats; track format.title) {
+          <a class="shc" [routerLink]="section.showsPage.route">
+            <span class="sico"
+              ><app-icon [name]="format.icon" [size]="20" [strokeWidth]="1.9"
+            /></span>
+            <div>
+              <b>{{ format.title }}</b>
+              <p>{{ format.text }}</p>
+            </div>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+}

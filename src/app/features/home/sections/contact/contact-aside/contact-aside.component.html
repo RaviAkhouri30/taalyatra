@@ -1,0 +1,18 @@
+@let content = aside();
+<aside class="caside" [attr.aria-label]="content.title">
+  <p class="asideh">{{ content.title }}</p>
+  @for (row of content.rows; track row.href) {
+    <a class="crow" [href]="row.href">
+      <span class="cico"><app-icon [name]="row.icon" [size]="18" /></span>
+      <span class="ctxt"
+        ><b>{{ row.title }}</b
+        ><small>{{ row.detail }}</small></span
+      >
+      <span class="carr" aria-hidden="true">→</span>
+    </a>
+  }
+  <div class="cnote">
+    <b>{{ content.noteTitle }}</b>
+    <p>{{ content.noteText }}</p>
+  </div>
+</aside>

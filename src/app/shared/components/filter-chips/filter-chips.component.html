@@ -1,0 +1,13 @@
+<div class="fchips" role="group" [attr.aria-label]="label()">
+  @for (option of options(); track option) {
+    <button
+      type="button"
+      class="fc"
+      [class.sel]="option === selected()"
+      [attr.aria-pressed]="option === selected()"
+      (click)="selected.set(option)"
+    >
+      {{ option }}
+    </button>
+  }
+</div>

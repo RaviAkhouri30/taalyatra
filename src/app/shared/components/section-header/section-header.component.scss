@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+.ighead {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 26px;
+}
+
+.title {
+  font-weight: 800;
+}

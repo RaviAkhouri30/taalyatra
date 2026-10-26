@@ -73,4 +73,30 @@ classDiagram
 ```
 
 The same port → adapter → factory shape applies to `IAuthService`, `IEmailService` and
-`IMediaService`. Add them here when they are implemented.
+`IMediaService`. `IEmailService` is implemented (1.1.0):
+
+```mermaid
+classDiagram
+  direction LR
+  class IEmailService {
+    <<abstract port>>
+    +send(message: IEmailMessage) Observable~void~
+  }
+  class EmailJsEmailService {
+    -config: emailJs settings
+    +send(message) Observable~void~
+  }
+  class FakeEmailService {
+    -latencyMs: number
+    +send(message) Observable~void~
+  }
+  class emailServiceFactory {
+    <<function>>
+  }
+  IEmailService <|.. EmailJsEmailService
+  IEmailService <|.. FakeEmailService
+  emailServiceFactory ..> IEmailService : creates
+```
+
+The home page's section classes (contact, assistant) are in
+[aidlc/0003-home-page/02-design.md](../aidlc/0003-home-page/02-design.md).

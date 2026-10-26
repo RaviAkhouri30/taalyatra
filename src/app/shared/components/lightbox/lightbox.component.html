@@ -1,0 +1,26 @@
+<div class="lb" role="dialog" aria-modal="true" [attr.aria-label]="labels().label">
+  <button
+    #closeButton
+    class="lbx"
+    type="button"
+    [attr.aria-label]="labels().close"
+    (click)="closed.emit()"
+  >
+    &times;
+  </button>
+  <button
+    class="lbnav prev"
+    type="button"
+    [attr.aria-label]="labels().previous"
+    (click)="previous.emit()"
+  >
+    &lsaquo;
+  </button>
+  @if (image(); as photo) {
+    <img [ngSrc]="photo.src" [width]="photo.width" [height]="photo.height" [alt]="photo.alt" />
+  }
+  <button class="lbnav next" type="button" [attr.aria-label]="labels().next" (click)="next.emit()">
+    &rsaquo;
+  </button>
+  <p class="lbcap">{{ caption() }}</p>
+</div>

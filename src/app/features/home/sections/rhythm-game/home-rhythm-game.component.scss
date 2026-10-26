@@ -1,0 +1,174 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.title {
+  font-weight: 800;
+  max-width: 820px;
+  margin-bottom: 20px;
+}
+
+.arena {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 56px;
+  align-items: center;
+  margin-top: 48px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gside {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tabs2 {
+  display: flex;
+  gap: 8px;
+  background: t.$color-surface;
+  border-radius: t.$radius-pill;
+  padding: 6px;
+  align-self: flex-start;
+  flex-wrap: wrap;
+
+  button {
+    background: transparent;
+    color: t.$color-cream;
+    border: 0;
+    border-radius: t.$radius-pill;
+    padding: 8px 18px;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    min-height: 44px;
+
+    &.sel {
+      background: t.$color-amber;
+      color: t.$color-ink;
+    }
+  }
+}
+
+.gstats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  div {
+    background: t.$color-surface;
+    border-radius: 14px;
+    padding: 12px 14px;
+
+    @include bp.down(bp.$phone) {
+      padding: 10px 12px;
+    }
+  }
+
+  b {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: t.$color-amber;
+  }
+
+  span {
+    font-family: t.$font-display;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.1;
+
+    @include bp.down(bp.$phone) {
+      font-size: 24px;
+    }
+  }
+}
+
+.glife {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+}
+
+.hearts {
+  display: flex;
+  gap: 6px;
+}
+
+.heart {
+  width: 30px;
+  height: 30px;
+  transition:
+    transform 0.3s,
+    opacity 0.3s;
+
+  path {
+    fill: t.$color-amber;
+  }
+
+  &.off {
+    opacity: 0.2;
+    transform: scale(0.7);
+  }
+}
+
+.rank {
+  background: t.$color-surface-raised;
+  border: 2px solid t.$color-line;
+  border-radius: 16px;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+
+  b {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: t.$color-amber;
+  }
+
+  span {
+    font-family: t.$font-display;
+    font-size: 26px;
+    font-weight: 800;
+    color: t.$color-amber;
+    line-height: 1.15;
+  }
+
+  small {
+    font-size: 14px;
+    color: t.$color-muted;
+  }
+}
+
+.gmsg {
+  font-size: 18px;
+  font-weight: 700;
+  min-height: 34px;
+  color: t.$color-amber;
+
+  @include bp.down(bp.$phone) {
+    font-size: 16px;
+  }
+}
+
+.gbtns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}

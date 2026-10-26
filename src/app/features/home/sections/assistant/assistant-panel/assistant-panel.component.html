@@ -1,0 +1,44 @@
+@let chat = assistant();
+<div
+  class="chat"
+  role="dialog"
+  [id]="panelId()"
+  [class.open]="open()"
+  [attr.aria-label]="chat.title"
+  [inert]="!open()"
+>
+  <div class="chat-h">
+    <img class="av" [ngSrc]="chat.avatarUrl" [width]="avatarSize" [height]="avatarSize" alt="" />
+    <div class="ct">
+      <b>{{ chat.title }}</b>
+      <span><i class="dot"></i>{{ chat.status }}</span>
+    </div>
+    <button #close type="button" [attr.aria-label]="chat.labels.close" (click)="onClose()">
+      <app-icon [name]="icon.Close" [size]="16" [strokeWidth]="3" />
+    </button>
+  </div>
+  <app-assistant-messages
+    [messages]="messages()"
+    [typing]="typing()"
+    [label]="chat.labels.messages"
+    [typingLabel]="chat.labels.typing"
+  />
+  <div class="qr">
+    @for (quick of chat.quickReplies; track quick) {
+      <button type="button" (click)="onAsk(quick)">{{ quick }}</button>
+    }
+  </div>
+  <form class="chat-f" (submit)="onSend($event)">
+    <input
+      type="text"
+      autocomplete="off"
+      [formControl]="question()"
+      [placeholder]="chat.labels.placeholder"
+      [attr.aria-label]="chat.labels.input"
+    />
+    <button type="submit" [attr.aria-label]="chat.labels.send">
+      <app-icon [name]="icon.Send" [size]="20" [strokeWidth]="2.4" />
+    </button>
+  </form>
+  <a class="chat-w" [href]="chat.whatsAppHref">{{ chat.whatsAppLink }}</a>
+</div>

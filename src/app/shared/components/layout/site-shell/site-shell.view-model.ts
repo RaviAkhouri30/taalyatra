@@ -1,6 +1,7 @@
 import { Injectable, computed, inject } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { type Observable, combineLatest, distinctUntilChanged, filter, map, tap } from 'rxjs';
+import { AnchorScrollService } from '@core/services/anchor-scroll.service';
 import { ViewModel } from '@shared/base/view-model';
 import { LAYOUT_CHROME } from '@shared/constants/navigation.constants';
 import { type ILayoutChrome } from '@shared/interfaces/i-layout-chrome';
@@ -23,6 +24,7 @@ export class SiteShellViewModel extends ViewModel<IShellState> {
 
   private readonly router = inject(Router);
   private readonly siteConfigService = inject(SiteConfigService);
+  private readonly anchorScroll = inject(AnchorScrollService);
 
   /**
    * Waits for the first completed navigation before drawing any chrome, so the home page never
@@ -39,5 +41,10 @@ export class SiteShellViewModel extends ViewModel<IShellState> {
         this.setData({ site, layout });
       }),
     );
+  }
+
+  /** Scrolls to linked sections once they have rendered (they load their data asynchronously). */
+  protected override attachCommandHandler(): Observable<unknown> {
+    return this.anchorScroll.attachAnchorScrolling();
   }
 }

@@ -1,0 +1,75 @@
+@use 'breakpoints' as bp;
+
+:host {
+  display: contents;
+}
+
+.fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.fp {
+  position: absolute;
+  left: var(--l);
+  top: var(--t);
+  opacity: 0;
+  animation-delay: var(--d);
+  animation-iteration-count: infinite;
+}
+
+// ---- Theme: sparks (design: `.a-sparks`) ----
+.a-sparks .fp {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fff4dc;
+  box-shadow:
+    0 0 16px 5px rgb(255 230 184 / 95%),
+    0 0 5px 1px #fff;
+  animation-name: burst;
+  animation-duration: 1.9s;
+  animation-timing-function: ease-out;
+
+  @include bp.down(bp.$phone) {
+    width: 8px;
+    height: 8px;
+  }
+
+  &:nth-child(3n) {
+    width: 7px;
+    height: 7px;
+    background: #ffd79a;
+    box-shadow: 0 0 12px 4px rgb(255 200 120 / 90%);
+  }
+
+  &:nth-child(5n) {
+    width: 14px;
+    height: 14px;
+    animation-duration: 2.5s;
+  }
+}
+
+@keyframes burst {
+  0% {
+    transform: scale(0.15) translateY(20px);
+    opacity: 0;
+  }
+
+  18% {
+    transform: scale(1.35) translateY(0);
+    opacity: 1;
+  }
+
+  58% {
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: scale(0.3) translateY(-56px);
+    opacity: 0;
+  }
+}

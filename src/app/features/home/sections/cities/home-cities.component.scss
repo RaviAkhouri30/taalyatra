@@ -1,0 +1,47 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+
+:host {
+  display: block;
+}
+
+.sec {
+  padding-top: 0;
+}
+
+.title {
+  font-weight: 800;
+  max-width: 720px;
+}
+
+.lead {
+  margin-top: 12px;
+  margin-bottom: 26px;
+}
+
+.cities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.city {
+  display: block;
+  border: 2px dashed t.$color-bronze;
+  border-radius: t.$radius-pill;
+  padding: 8px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: t.$color-muted-strong;
+}
+
+.on {
+  border-style: solid;
+  border-color: t.$color-amber;
+  background: t.$color-amber;
+  color: t.$color-ink;
+  font-weight: 700;
+}

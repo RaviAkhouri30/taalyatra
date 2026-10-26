@@ -1,0 +1,80 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.sec {
+  padding-top: 0;
+}
+
+.iggrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include bp.down(bp.$phone) {
+    gap: 12px;
+  }
+}
+
+.igc {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+
+  &:hover {
+    img {
+      transform: scale(1.06);
+    }
+
+    p {
+      color: t.$color-cream;
+    }
+  }
+
+  p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: t.$color-muted;
+
+    @include bp.down(bp.$phone) {
+      font-size: 13px;
+    }
+  }
+}
+
+.igthumb {
+  position: relative;
+  display: block;
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 1;
+
+  // NgOptimizedImage `fill`: the frame sets the size, the photo is cropped to it.
+  img {
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s;
+  }
+}
+
+.igbadge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgb(23 18 16 / 72%);
+  color: t.$color-amber-soft;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

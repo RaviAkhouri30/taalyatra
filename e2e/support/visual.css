@@ -1,0 +1,17 @@
+/* Hides fixed chrome that would otherwise sit on top of section screenshots, and the random
+   festive particles; visibility keeps their layout space so nothing shifts. */
+app-header,
+app-utility-bar,
+app-promo-badge,
+app-mobile-action-bar,
+app-home-assistant,
+app-festive-effects,
+.fp {
+  visibility: hidden !important;
+}
+
+/* The hero stage is an animated SVG <img>: Playwright's emulated reduced motion does not reach
+   image documents, so its own reduced-motion rule never applies in tests. */
+#top .stage {
+  visibility: hidden !important;
+}

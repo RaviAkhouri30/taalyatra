@@ -1,0 +1,34 @@
+@if (model.data(); as offer) {
+  <section class="diwali" [id]="anchor">
+    <img class="dbg" ngSrc="/images/home/diwali-bg.svg" fill alt="" />
+    <app-festive-effects [theme]="offer.theme" />
+    <div class="wrap diwali-in">
+      <p class="eyebrow">{{ offer.eyebrow }}</p>
+      <h2 class="d title">{{ offer.title }}</h2>
+      <p class="lead">{{ offer.lead }}</p>
+      <div class="dgrid">
+        @for (card of offer.cards; track card.title) {
+          <div class="dcard">
+            <span class="dico"><app-diya-icon [palette]="diya" /></span>
+            <h3 class="d">{{ card.title }}</h3>
+            <p>{{ card.text }}</p>
+            <p class="dnote">{{ card.note }}</p>
+          </div>
+        }
+      </div>
+      <div class="dbtns">
+        <a
+          appButton
+          [variant]="buttonVariant.Dark"
+          [routerLink]="offer.proposal.route"
+          [fragment]="offer.proposal.fragment"
+          >{{ offer.proposal.label }}</a
+        >
+        <a appButton [variant]="buttonVariant.Line" [href]="offer.whatsApp.href">{{
+          offer.whatsApp.label
+        }}</a>
+      </div>
+      <p class="dsmall">{{ offer.footnote }}</p>
+    </div>
+  </section>
+}

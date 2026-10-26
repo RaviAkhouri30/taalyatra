@@ -9,3 +9,9 @@ export enum PromoVariant {
   Card = 'card',
   Pill = 'pill',
 }
+
+/** Video card layouts: home teaser (caption below) and Videos page library (category above). */
+export enum VideoCardVariant {
+  Teaser = 'teaser',
+  Library = 'library',
+}

@@ -38,3 +38,9 @@ npm run e2e
   `vite` 8.3.5 (dev server and tests). Remove an override once its upstream package ships the fix.
 - The Sonar scanner is not a devDependency, because its `node-forge` dependency has an unpatched
   advisory. It runs on demand via `npx @sonar/scan@5.0.2`.
+- E2E starts its own dev server on port **4210**, so it never reuses a stale server on 4200.
+- Visual baselines (`e2e/specs/home-visual.e2e.ts-snapshots/`) are per platform. After an approved
+  visual change, run `npm run e2e:visual:update` and review the new images against the prototype.
+  `e2e/support/visual.css` hides fixed chrome and random particles during screenshots.
+- Playwright's emulated reduced motion does not reach SVGs loaded through `<img>`, so the hero's
+  animated stage is hidden in screenshots.

@@ -1,0 +1,26 @@
+<a
+  class="card"
+  [class.feat]="featured()"
+  [routerLink]="experience().link.route"
+  [fragment]="experience().link.fragment"
+>
+  <span class="ph"
+    ><img [ngSrc]="experience().image.src" fill [alt]="experience().image.alt"
+  /></span>
+  <div class="in">
+    <span class="tag">{{ experience().tag }}</span>
+    <h3 class="d">{{ experience().name }}</h3>
+    <p>{{ experience().description }}</p>
+    <ul class="cspec">
+      @for (spec of experience().specs; track $index) {
+        <li>
+          <app-icon [name]="specIcons[$index]!" [size]="15" />
+          <span>{{ spec }}</span>
+        </li>
+      }
+    </ul>
+    @if (cta()) {
+      <span class="btn btn--dark cta">{{ cta() }}</span>
+    }
+  </div>
+</a>

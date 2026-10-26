@@ -1,0 +1,46 @@
+@if (model.data(); as section) {
+  <section class="sec light" [id]="anchor">
+    <div class="wrap">
+      <p class="eyebrow">{{ section.eyebrow }}</p>
+      <h2 class="d big">{{ section.title }}</h2>
+      <p class="lead">{{ section.lead }}</p>
+      <div class="pillars">
+        @for (pillar of section.pillars; track pillar.title) {
+          <div class="pillar">
+            <h3 class="d">{{ pillar.title }}</h3>
+            <p>{{ pillar.text }}</p>
+          </div>
+        }
+      </div>
+
+      <div class="two">
+        <div>
+          <p class="eyebrow">{{ section.goals.eyebrow }}</p>
+          <h3 class="d sub">{{ section.goals.title }}</h3>
+          <div class="goals">
+            @for (goal of section.goals.items; track goal.number) {
+              <div class="goal">
+                <b>{{ goal.number }}</b>
+                <h3 class="d">{{ goal.title }}</h3>
+                <p>{{ goal.text }}</p>
+              </div>
+            }
+          </div>
+        </div>
+        <div>
+          <p class="eyebrow">{{ section.journey.eyebrow }}</p>
+          <h3 class="d sub">{{ section.journey.title }}</h3>
+          <ol class="jr">
+            @for (step of section.journey.items; track step.title) {
+              <li>
+                <b>{{ step.when }}</b>
+                <h3 class="d">{{ step.title }}</h3>
+                <p>{{ step.text }}</p>
+              </li>
+            }
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+}

@@ -1,0 +1,145 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.panel {
+  background: t.$color-ink;
+  color: t.$color-cream;
+  border-radius: 18px;
+  overflow: hidden;
+  padding: 20px 22px 18px;
+
+  @include bp.down(bp.$phone) {
+    padding: 14px;
+  }
+}
+
+.pform {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+
+  label {
+    display: block;
+    min-width: 0;
+  }
+
+  label > span {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: t.$color-muted;
+    margin-bottom: 4px;
+  }
+
+  i {
+    font-style: normal;
+    font-weight: 500;
+    color: #8c7e6c;
+  }
+}
+
+.prow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px;
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.inp2 {
+  width: 100%;
+  box-sizing: border-box;
+  background: t.$color-ink-deep;
+  border: 1px solid #4a3a2c;
+  border-radius: 9px;
+  color: t.$color-cream;
+  font-family: inherit;
+  font-size: 15px;
+  padding: 9px 11px;
+  min-height: 42px;
+
+  // 16px stops iOS Safari zooming into the field on focus.
+  @include bp.down(bp.$phone) {
+    font-size: 16px;
+  }
+
+  &::placeholder {
+    color: #7c6e5e;
+  }
+
+  &:focus {
+    outline: 2px solid t.$color-amber;
+    border-color: t.$color-amber;
+  }
+
+  &[aria-invalid='true'] {
+    border-color: t.$color-amber-soft;
+  }
+}
+
+.ta {
+  min-height: 52px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+// Not in the design: inline validation and the send result.
+.err {
+  display: block;
+  margin-top: 4px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: t.$color-amber-soft;
+}
+
+.note {
+  font-size: 14px;
+  font-weight: 700;
+  color: t.$color-amber;
+  margin: 0;
+
+  &--error {
+    color: t.$color-amber-soft;
+  }
+}
+
+.pbtns {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 3px;
+
+  // The submit is a <button>, which does not inherit line-height; the design used links.
+  .btn {
+    min-height: 46px;
+    line-height: inherit;
+    padding: 11px 20px;
+    font-size: 15px;
+    gap: 8px;
+  }
+
+  .btn:disabled {
+    cursor: progress;
+    opacity: 0.7;
+  }
+
+  // Design `.wab`: the WhatsApp button fills on hover rather than only lightening its border.
+  .btn--ghost:hover {
+    background: t.$color-ivory;
+    color: t.$color-ink;
+    border-color: t.$color-ivory;
+  }
+}
+
+.fineprint {
+  font-size: 12.5px;
+  color: t.$color-muted-strong;
+  margin: 2px 0 0;
+}

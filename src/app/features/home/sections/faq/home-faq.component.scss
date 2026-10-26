@@ -1,0 +1,72 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.two {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 64px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.eyebrow {
+  color: t.$color-cream;
+}
+
+.title {
+  font-weight: 800;
+}
+
+details {
+  border-bottom: 1px solid t.$color-line;
+  padding: 17px 0;
+}
+
+summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  font-family: t.$font-display;
+  font-size: 20px;
+  font-weight: 700;
+  min-height: 48px;
+  align-items: center;
+
+  @include bp.down(bp.$phone) {
+    font-size: 18px;
+  }
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &::after {
+    content: '+';
+    color: t.$color-amber;
+    font-size: 30px;
+    line-height: 1;
+  }
+}
+
+details[open] summary::after {
+  content: '\2212';
+}
+
+details p {
+  margin: 12px 0 0;
+  max-width: 62ch;
+  font-size: 16px;
+
+  @include bp.down(bp.$phone) {
+    font-size: 15px;
+  }
+}

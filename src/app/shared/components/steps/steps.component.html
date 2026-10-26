@@ -1,0 +1,9 @@
+<ol class="steps">
+  @for (step of steps(); track step.number) {
+    <li class="step">
+      <span class="num">{{ step.number }}</span>
+      <h3 class="d">{{ step.title }}</h3>
+      <p>{{ step.text }}</p>
+    </li>
+  }
+</ol>

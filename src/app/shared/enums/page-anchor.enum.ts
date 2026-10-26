@@ -7,8 +7,13 @@ export enum PageAnchor {
   Shows = 'shows',
   DrumCircleDetails = 'drum-circle-details',
   Play = 'play',
+  Watch = 'watch',
   Gallery = 'gallery',
   Philosophy = 'philosophy',
+  How = 'how',
+  Team = 'team',
+  Insta = 'insta',
+  Proof = 'proof',
   Faq = 'faq',
   Contact = 'contact',
 }

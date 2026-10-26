@@ -10,4 +10,10 @@ export interface IAppEnvironment {
   readonly requestTimeoutMs: number;
   /** Simulated network delay of the fake backend. */
   readonly fakeLatencyMs: number;
+  /** EmailJS identifiers (public by design). Empty values select the fake email adapter. */
+  readonly emailJs: {
+    readonly serviceId: string;
+    readonly templateId: string;
+    readonly publicKey: string;
+  };
 }

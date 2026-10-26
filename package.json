@@ -1,6 +1,6 @@
 {
   "name": "taal-yatra",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -17,6 +17,7 @@
     "test:coverage": "ng test --watch=false --coverage",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
+    "e2e:visual:update": "playwright test home-visual --update-snapshots",
     "e2e:install": "playwright install --with-deps chromium",
     "sonar": "npm run lint:report && npx --yes @sonar/scan@5.0.2 -Dsonar.projectVersion=$npm_package_version",
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test:coverage && npm run build",

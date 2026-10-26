@@ -1,0 +1,23 @@
+<div class="padsbox">
+  <div class="pads">
+    @for (pad of pads(); track pad.label; let index = $index) {
+      <button
+        type="button"
+        class="pad"
+        [class]="padClasses[index]"
+        [class.lit]="lit() === index"
+        [attr.aria-label]="pad.ariaLabel"
+        (click)="tapped.emit(index)"
+      >
+        {{ pad.label }}<small>{{ pad.sub }}</small>
+      </button>
+    }
+  </div>
+  <div class="core" [class.pulse]="core().pulse">
+    <small>{{ core().top }}</small
+    ><b>{{ core().big }}</b>
+  </div>
+  @for (pop of pops(); track pop.id) {
+    <span class="pop" [class]="popClasses[pop.pad]" aria-hidden="true">{{ pop.text }}</span>
+  }
+</div>

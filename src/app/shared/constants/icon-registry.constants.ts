@@ -64,4 +64,35 @@ export const ICON_REGISTRY: Readonly<Record<IconName, readonly IconNode[]>> = {
     { tag: 'circle', cx: 10, cy: 8, r: 3.2 },
     { tag: 'path', d: 'M19 19v-1.5a3.5 3.5 0 0 0-2.6-3.4M15.2 5.2a3.2 3.2 0 0 1 0 5.6' },
   ],
+  [IconName.Briefcase]: [
+    { tag: 'rect', x: 3, y: 7, width: 18, height: 13, rx: 2 },
+    { tag: 'path', d: 'M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18' },
+  ],
+  [IconName.Star]: [
+    { tag: 'path', d: 'M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z' },
+  ],
+  [IconName.Clock]: [
+    { tag: 'circle', cx: 12, cy: 12, r: 9 },
+    { tag: 'path', d: 'M12 7v5l3 2' },
+  ],
+  [IconName.Mic]: [
+    { tag: 'rect', x: 9, y: 3, width: 6, height: 11, rx: 3 },
+    { tag: 'path', d: 'M5 11a7 7 0 0 0 14 0M12 18v3' },
+  ],
+  [IconName.Guitar]: [
+    { tag: 'circle', cx: 9, cy: 15, r: 5 },
+    { tag: 'path', d: 'M12.5 11.5l6-6M16 4l4 4' },
+  ],
+  [IconName.Pulse]: [{ tag: 'path', d: 'M3 12h2l2-6 3 14 3-11 2 5 2-2h4' }],
+  [IconName.Procession]: [
+    { tag: 'path', d: 'M13 4.5a1.5 1.5 0 1 0 0-.1M11 21l1-6-3-3 1-5 3 2 3 1M9 21l1.5-4' },
+  ],
+  [IconName.Expand]: [{ tag: 'path', d: 'M4 9V4h5M20 15v5h-5M20 9V4h-5M4 15v5h5' }],
+  [IconName.Building]: [
+    { tag: 'rect', x: 4, y: 3, width: 16, height: 18, rx: 2 },
+    { tag: 'path', d: 'M9 8h2M13 8h2M9 12h2M13 12h2M10 21v-4h4v4' },
+  ],
+  [IconName.Check]: [{ tag: 'path', d: 'M4 12.5l5 5L20 6.5' }],
+  [IconName.Close]: [{ tag: 'path', d: 'M5 5l14 14M19 5L5 19' }],
+  [IconName.Send]: [{ tag: 'path', d: 'M4 12l16-8-6 16-3-7z' }],
 };

@@ -1,3 +1,28 @@
+<app-home-intro />
 <app-home-hero />
 <app-home-marquee />
 <app-home-trust />
+<!--
+  Below the fold: split into its own chunk and loaded once the browser is idle. Not "on viewport",
+  so deep links such as /#contact still find their section (ADR-0007).
+-->
+@defer (on idle) {
+  <app-home-offer />
+  <app-home-audiences />
+  <app-home-experiences />
+  <app-home-shows />
+  <app-home-drum-circle />
+  <app-home-rhythm-game />
+  <app-home-videos />
+  <app-home-gallery />
+  <app-home-philosophy />
+  <app-home-mid-cta />
+  <app-home-cities />
+  <app-home-how />
+  <app-home-team />
+  <app-home-instagram />
+  <app-home-proof />
+  <app-home-faq />
+  <app-home-contact />
+  <app-home-assistant />
+}

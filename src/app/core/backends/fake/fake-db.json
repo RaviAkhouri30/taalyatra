@@ -8,7 +8,11 @@
       "primaryCta": "Request proposal",
       "whatsAppCta": "WhatsApp us",
       "callCtaPrefix": "Call",
-      "audiences": ["Corporate teams", "Family functions", "Friends & fun"],
+      "audiences": [
+        "Corporate teams",
+        "Family functions",
+        "Friends & fun"
+      ],
       "gameCta": "Play the rhythm game"
     },
     "marquee": [
@@ -40,6 +44,1311 @@
         "title": "Indoors or outdoors",
         "text": "Offices, lawns, banquet halls and stages."
       }
-    ]
-  }
+    ],
+    "offer": {
+      "theme": "sparks",
+      "eyebrow": "This Diwali",
+      "title": "Light up your celebration with live rhythm.",
+      "lead": "Diwali parties, society gatherings and family evenings. A drum circle gets every guest playing together instead of watching a stage.",
+      "cards": [
+        {
+          "title": "Office Diwali party",
+          "text": "Open or close your celebration with a drum circle the whole office plays in.",
+          "note": "[Add duration & price]"
+        },
+        {
+          "title": "Family & society evening",
+          "text": "One rhythm for every age, from children to grandparents.",
+          "note": "[Add duration & price]"
+        },
+        {
+          "title": "Lezim festive add-on",
+          "text": "Add a folk lezim set for a high-energy festival finish.",
+          "note": "[Add duration & price]"
+        }
+      ],
+      "primaryCta": "Explore Diwali offerings",
+      "whatsAppCta": "WhatsApp for festive dates",
+      "footnote": "Festive dates book out early. [Add your Diwali package details, pricing and the last date for bookings.]"
+    },
+    "audiences": {
+      "eyebrow": "Who it’s for",
+      "title": "Made for every kind of gathering.",
+      "lead": "Whether it’s a boardroom, a birthday or a free weekend, rhythm turns a group of people into a team that plays together.",
+      "cards": [
+        {
+          "icon": "briefcase",
+          "title": "Corporate teams",
+          "text": "Team days, offsites and celebrations that build trust and listening without a single slide.",
+          "tags": [
+            "Team building",
+            "Engagement",
+            "Rewards"
+          ]
+        },
+        {
+          "icon": "home",
+          "title": "Family functions",
+          "text": "Birthdays, festivals and get-togethers where every age — kids to grandparents — plays the same beat.",
+          "tags": [
+            "Birthdays",
+            "Festivals",
+            "Family days"
+          ]
+        },
+        {
+          "icon": "star",
+          "title": "Fun seekers",
+          "text": "Friends, communities and anyone after a refreshing, creative activity that feels nothing like a screen.",
+          "tags": [
+            "Friends",
+            "Communities",
+            "Weekends"
+          ]
+        }
+      ]
+    },
+    "experiences": {
+      "eyebrow": "Music & creativity",
+      "title": "Six ways to make noise together.",
+      "lead": "Pick an experience by group size, space and energy. Every session is led by a facilitator.",
+      "filterLabel": "Filter experiences",
+      "allLabel": "All",
+      "categories": [
+        "Percussion",
+        "Melody",
+        "Movement",
+        "No instruments"
+      ],
+      "featured": {
+        "name": "Drum Circle",
+        "tag": "Signature experience",
+        "category": "Percussion",
+        "image": {
+          "src": "/images/experiences/drum-circle.jpg",
+          "alt": "Djembe drum lit on a warm stage",
+          "width": 1200,
+          "height": 800
+        },
+        "description": "Every participant gets a djembe. A facilitator takes the room from simple beats to layered rhythms, building trust, listening and collaboration along the way.",
+        "duration": "45–60 min",
+        "groupSize": "10–5,000",
+        "venue": "Indoor / Outdoor",
+        "cta": "See full details"
+      },
+      "items": [
+        {
+          "name": "Boombastic",
+          "tag": "Melody & rhythm",
+          "category": "Melody",
+          "image": {
+            "src": "/images/experiences/boombastic.jpg",
+            "alt": "Tuned percussion tubes in warm light",
+            "width": 800,
+            "height": 533
+          },
+          "description": "Each person plays a tuned Boomwhacker pipe. Guided through patterns, the group builds one energetic performance.",
+          "duration": "30–45 min",
+          "groupSize": "50–2,500",
+          "venue": "Indoor / Outdoor"
+        },
+        {
+          "name": "Body Percussion",
+          "tag": "No instruments",
+          "category": "No instruments",
+          "image": {
+            "src": "/images/experiences/body-percussion.jpg",
+            "alt": "Hands striking a drum head",
+            "width": 800,
+            "height": 533
+          },
+          "description": "Claps, taps and movement build into a synchronised group performance. Works for any age.",
+          "duration": "20–30 min",
+          "groupSize": "50–5,000",
+          "venue": "Indoor / Outdoor"
+        },
+        {
+          "name": "Harmonica",
+          "tag": "Learn & play",
+          "category": "Melody",
+          "image": {
+            "src": "/images/experiences/harmonica.jpg",
+            "alt": "Harmonica under warm light",
+            "width": 800,
+            "height": 533
+          },
+          "description": "Everyone plays a harmonica and follows the facilitator through melodic patterns. Take your mouth organ home.",
+          "duration": "20–30 min",
+          "groupSize": "30–1,000",
+          "venue": "Indoor"
+        },
+        {
+          "name": "Trash Jam",
+          "tag": "Sustainable fun",
+          "category": "Percussion",
+          "image": {
+            "src": "/images/experiences/trash-jam.jpg",
+            "alt": "Bucket drum with sticks",
+            "width": 800,
+            "height": 533
+          },
+          "description": "Buckets, cans and sticks become instruments. Move from simple beats to layered rhythms with recyclable material.",
+          "duration": "45–60 min",
+          "groupSize": "40–300",
+          "venue": "Indoor"
+        },
+        {
+          "name": "Lezim Workshop",
+          "tag": "Folk rhythm",
+          "category": "Movement",
+          "image": {
+            "src": "/images/experiences/lezim-workshop.jpg",
+            "alt": "Lezim sticks raised in dance",
+            "width": 800,
+            "height": 533
+          },
+          "description": "A lively Maharashtrian folk-dance workshop that celebrates culture and lifts the group’s spirit.",
+          "duration": "25–30 min",
+          "groupSize": "40–500",
+          "venue": "Indoor / Outdoor"
+        }
+      ],
+      "emptyMessage": "Nothing in that category yet — tap “All” to see everything."
+    },
+    "shows": {
+      "eyebrow": "Shows & performances",
+      "title": "We play, not just facilitate.",
+      "cta": "See all formats",
+      "lead": "Live bands, percussion ensembles, acoustic sets and processions — scaled to the room and the occasion.",
+      "formats": [
+        {
+          "icon": "mic",
+          "title": "Live band",
+          "text": "A full band set for stage shows, corporate evenings and celebrations."
+        },
+        {
+          "icon": "djembe",
+          "title": "Percussion ensemble",
+          "text": "Djembe, dhol and hand percussion for a high-energy opening or finale."
+        },
+        {
+          "icon": "guitar",
+          "title": "Acoustic / unplugged",
+          "text": "An intimate, low-volume set that lets a room keep talking."
+        },
+        {
+          "icon": "pulse",
+          "title": "Fusion ensemble",
+          "text": "Indian classical and folk instruments meeting contemporary arrangements."
+        },
+        {
+          "icon": "procession",
+          "title": "Dhol & procession",
+          "text": "Mobile percussion that walks with the crowd instead of standing on a stage."
+        },
+        {
+          "icon": "star",
+          "title": "Fest stage show",
+          "text": "A larger production for college fests, society events and public stages."
+        }
+      ]
+    },
+    "drumCircle": {
+      "eyebrow": "Signature experience",
+      "title": "Drum Circle",
+      "specs": [
+        {
+          "label": "Duration",
+          "value": "45 to 60 mins"
+        },
+        {
+          "label": "Location",
+          "value": "Indoors or outdoors"
+        },
+        {
+          "label": "Group size",
+          "value": "10 to 5,000"
+        },
+        {
+          "label": "Physical intensity",
+          "value": "Mid to high"
+        }
+      ],
+      "aboutTitle": "About",
+      "about": [
+        "West African djembe drums put rhythm in every pair of hands. From simple beats to intricate patterns, the session builds bonding and a positive mood — a stress buster and morale booster in one.",
+        "There is no sheet music and no wrong note. The facilitator cues sections, shifts the tempo and brings everyone together for a finale."
+      ],
+      "objectivesTitle": "Objectives",
+      "objectives": [
+        "Team synergy",
+        "Engagement",
+        "Adaptability",
+        "Bonding",
+        "Fun & recreation"
+      ],
+      "occasionsTitle": "Occasions",
+      "occasions": [
+        "All occasions",
+        "In-office",
+        "Rewards",
+        "Family day",
+        "Festivals",
+        "Birthdays"
+      ],
+      "cta": "Request proposal",
+      "gallery": [
+        {
+          "src": "/images/drum-circle/circle-from-above.jpg",
+          "alt": "Drum circle seen from above",
+          "width": 1200,
+          "height": 800
+        },
+        {
+          "src": "/images/experiences/body-percussion.jpg",
+          "alt": "Hands on a drum",
+          "width": 800,
+          "height": 533
+        },
+        {
+          "src": "/images/experiences/drum-circle.jpg",
+          "alt": "Djembe close-up",
+          "width": 1200,
+          "height": 800
+        }
+      ],
+      "relatedTitle": "Similar experiences",
+      "related": [
+        "Trash Jam",
+        "Boombastic",
+        "Body Percussion",
+        "Lezim Workshop"
+      ],
+      "flowTitle": "A 60-minute flow",
+      "flowUnit": "min",
+      "flow": [
+        {
+          "title": "Welcome",
+          "minutes": 5
+        },
+        {
+          "title": "Warm-up",
+          "minutes": 10
+        },
+        {
+          "title": "Build the groove",
+          "minutes": 20
+        },
+        {
+          "title": "Performance",
+          "minutes": 15
+        },
+        {
+          "title": "Debrief",
+          "minutes": 10
+        }
+      ]
+    },
+    "rhythmGame": {
+      "eyebrow": "Play the circle",
+      "title": "Can you keep the beat?",
+      "lead": "Copy the pattern to climb the ranks, or switch to free jam and record your own loop. Turn your sound on.",
+      "modeLabel": "Game mode",
+      "modes": {
+        "challenge": "Challenge",
+        "jam": "Free jam"
+      },
+      "speedLabel": "Speed",
+      "speeds": {
+        "chill": "Chill",
+        "groove": "Groove",
+        "pro": "Pro"
+      },
+      "stats": {
+        "level": "Level",
+        "score": "Score",
+        "best": "Best",
+        "streak": "Streak"
+      },
+      "livesLabel": "Lives",
+      "rankLabel": "Rank",
+      "padLabelPrefix": "Drum pad",
+      "pads": [
+        {
+          "label": "Boom",
+          "sub": "bass"
+        },
+        {
+          "label": "Tom",
+          "sub": "tone"
+        },
+        {
+          "label": "Slap",
+          "sub": "snap"
+        },
+        {
+          "label": "Clap",
+          "sub": "hands"
+        }
+      ],
+      "ranks": [
+        {
+          "minScore": 250,
+          "name": "Legend",
+          "next": "Top rank reached"
+        },
+        {
+          "minScore": 100,
+          "name": "Rhythm Master",
+          "next": "Next rank at 250 pts"
+        },
+        {
+          "minScore": 30,
+          "name": "Groover",
+          "next": "Next rank at 100 pts"
+        },
+        {
+          "minScore": 0,
+          "name": "Rookie",
+          "next": "Next rank at 30 pts"
+        }
+      ],
+      "core": {
+        "ready": "Ready",
+        "tap": "Tap",
+        "jam": "Jam",
+        "free": "Free",
+        "rec": "REC",
+        "listen": "Listen",
+        "yourTurn": "Your turn",
+        "gameOver": "Game over"
+      },
+      "buttons": {
+        "start": "Start the challenge",
+        "restart": "Restart",
+        "share": "Share my score",
+        "book": "Book a real circle",
+        "record": "Record",
+        "stopRecording": "Stop recording",
+        "playBack": "Play back",
+        "clear": "Clear"
+      },
+      "messages": {
+        "idle": "Tap a pad to jam, or start the challenge.",
+        "jamIdle": "Free jam: tap the pads, or record a loop.",
+        "listen": "Listen to the pattern…",
+        "yourTurn": "Your turn! Repeat the pattern.",
+        "roundWon": "Nice! Adding one more beat…",
+        "miss": "Oops! {lives} {livesWord} left. Listen again…",
+        "greatGame": "Great rhythm! You reached level {level}.",
+        "tryAgain": "The groove takes practice. Try again!",
+        "recording": "Recording… tap the pads!",
+        "saved": "Saved {count} beats. Press Play back.",
+        "nothingRecorded": "Nothing recorded yet. Press Record first.",
+        "playing": "Playing your loop…",
+        "loopFinished": "Loop finished. Play it again or record a new one.",
+        "cleared": "Cleared. Press Record to start a new loop."
+      },
+      "lifeWord": {
+        "one": "life",
+        "other": "lives"
+      },
+      "greatGameMinScore": 50,
+      "shareText": "I scored {score} ({rank}) on the Taal Yatra rhythm challenge! Can you beat me? taalyatra.in"
+    },
+    "videos": {
+      "eyebrow": "Latest videos",
+      "title": "See a circle in action.",
+      "cta": "View all videos",
+      "count": 4,
+      "watchLabel": "Watch {title} on YouTube"
+    },
+    "gallery": {
+      "eyebrow": "Gallery",
+      "title": "Moments from the circle.",
+      "cta": "Book a session",
+      "openLabel": "Open photo: {alt}",
+      "moreLabel": "More on Instagram",
+      "moreUrl": "https://www.instagram.com/",
+      "note": "[These are placeholder images. Upload your event photos from the admin panel — they go straight to the gallery.]",
+      "viewer": {
+        "label": "Photo viewer",
+        "close": "Close photo viewer",
+        "previous": "Previous photo",
+        "next": "Next photo",
+        "caption": "{alt} · {index} of {total}"
+      }
+    },
+    "philosophy": {
+      "eyebrow": "Our philosophy",
+      "title": "Taal is rhythm. Yatra is journey. Together, it’s the journey of getting in sync.",
+      "lead": "We believe rhythm is the most welcoming language there is. You don’t need to read music, speak the same language or have played before — you only need to listen, and join in.",
+      "pillars": [
+        {
+          "title": "Everyone can play",
+          "text": "No talent test. A drum, a facilitator and a circle are enough to make anyone feel part of the music."
+        },
+        {
+          "title": "Listen to belong",
+          "text": "Keeping time means tuning in to others. That habit carries back into how teams and families talk."
+        },
+        {
+          "title": "Joy is shared",
+          "text": "Laughter, movement and noise are not a break from connection — they are how connection happens."
+        }
+      ],
+      "goals": {
+        "eyebrow": "Our goals",
+        "title": "What we’re here to do.",
+        "items": [
+          {
+            "number": "01",
+            "title": "Bring people together",
+            "text": "Create shared moments across teams, generations and strangers."
+          },
+          {
+            "number": "02",
+            "title": "Make music accessible",
+            "text": "Open percussion to people who never thought they could play."
+          },
+          {
+            "number": "03",
+            "title": "Refresh and recharge",
+            "text": "Offer a joyful, screen-free break that lifts energy and mood."
+          },
+          {
+            "number": "04",
+            "title": "Honour rhythm traditions",
+            "text": "Celebrate drumming and folk forms like lezim in modern settings."
+          }
+        ]
+      },
+      "journey": {
+        "eyebrow": "Our journey",
+        "title": "How the beat travelled.",
+        "items": [
+          {
+            "when": "[YEAR]",
+            "title": "The first beat",
+            "text": "[Add your story: how and where Taal Yatra began.]"
+          },
+          {
+            "when": "[YEAR]",
+            "title": "The circle grows",
+            "text": "[Add a milestone: first corporate event, first big group.]"
+          },
+          {
+            "when": "[YEAR]",
+            "title": "Beyond the office",
+            "text": "[Add a milestone: family functions, festivals, community circles.]"
+          },
+          {
+            "when": "Today",
+            "title": "Rhythm for everyone",
+            "text": "Drum circles and music workshops for teams, families and fun-seekers."
+          }
+        ]
+      }
+    },
+    "midCta": {
+      "eyebrow": "Ready when you are",
+      "title": "Let’s hear your group play.",
+      "primaryCta": "Request proposal",
+      "whatsAppCta": "WhatsApp us"
+    },
+    "cities": {
+      "eyebrow": "Where we play",
+      "title": "Based in Kharadi, Pune — on the road for everything else.",
+      "lead": "We bring the drums to your office, venue or home. Travel outside Pune is quoted with the session.",
+      "cities": [
+        {
+          "name": "Pune",
+          "active": true
+        },
+        {
+          "name": "[Add city]",
+          "active": false
+        },
+        {
+          "name": "[Add city]",
+          "active": false
+        },
+        {
+          "name": "[Add city]",
+          "active": false
+        },
+        {
+          "name": "[Add city]",
+          "active": false
+        },
+        {
+          "name": "[Add city]",
+          "active": false
+        }
+      ]
+    },
+    "how": {
+      "eyebrow": "How it works",
+      "title": "From enquiry to encore.",
+      "steps": [
+        {
+          "number": "01",
+          "title": "Tell us your plan",
+          "text": "Group size, venue, occasion and the feeling you want from the day."
+        },
+        {
+          "number": "02",
+          "title": "We shape the session",
+          "text": "You get a proposal with the right experience, duration and setup."
+        },
+        {
+          "number": "03",
+          "title": "Play together",
+          "text": "A facilitator leads from the first beat to the final performance."
+        },
+        {
+          "number": "04",
+          "title": "Take the rhythm home",
+          "text": "People leave closer, lighter and humming a groove."
+        }
+      ]
+    },
+    "team": {
+      "eyebrow": "The people behind the beat",
+      "title": "Meet the circle.",
+      "lead": "Facilitators, percussionists and event makers who love turning a room of strangers into one groove.",
+      "cta": "Meet the whole team",
+      "count": 4
+    },
+    "instagram": {
+      "eyebrow": "From our circles",
+      "title": "Moments from recent sessions.",
+      "followLabel": "Follow @taalyatra",
+      "profileUrl": "https://www.instagram.com/",
+      "postLabel": "Open this post on Instagram",
+      "posts": [
+        {
+          "image": {
+            "src": "/images/drum-circle/circle-from-above.jpg",
+            "alt": "",
+            "width": 1200,
+            "height": 800
+          },
+          "caption": "[Caption from your post — e.g. a corporate drum circle in Kharadi.]",
+          "url": "https://www.instagram.com/"
+        },
+        {
+          "image": {
+            "src": "/images/experiences/drum-circle.jpg",
+            "alt": "",
+            "width": 1200,
+            "height": 800
+          },
+          "caption": "[Caption from your post — e.g. 200 people, one beat.]",
+          "url": "https://www.instagram.com/"
+        },
+        {
+          "image": {
+            "src": "/images/experiences/lezim-workshop.jpg",
+            "alt": "",
+            "width": 800,
+            "height": 533
+          },
+          "caption": "[Caption from your post — e.g. lezim workshop highlights.]",
+          "url": "https://www.instagram.com/"
+        },
+        {
+          "image": {
+            "src": "/images/experiences/body-percussion.jpg",
+            "alt": "",
+            "width": 800,
+            "height": 533
+          },
+          "caption": "[Caption from your post — e.g. body percussion warm-up.]",
+          "url": "https://www.instagram.com/"
+        },
+        {
+          "image": {
+            "src": "/images/experiences/boombastic.jpg",
+            "alt": "",
+            "width": 800,
+            "height": 533
+          },
+          "caption": "[Caption from your post — e.g. Boombastic session reel.]",
+          "url": "https://www.instagram.com/"
+        },
+        {
+          "image": {
+            "src": "/images/experiences/trash-jam.jpg",
+            "alt": "",
+            "width": 800,
+            "height": 533
+          },
+          "caption": "[Caption from your post — e.g. trash jam with recycled material.]",
+          "url": "https://www.instagram.com/"
+        }
+      ]
+    },
+    "proof": {
+      "eyebrow": "Proof in the room",
+      "title": "Groups keep coming back.",
+      "cta": "All achievements",
+      "stats": [
+        {
+          "value": "[150]+",
+          "label": "Sessions delivered"
+        },
+        {
+          "value": "[20,000]+",
+          "label": "People in the circle"
+        },
+        {
+          "value": "[8]",
+          "label": "Cities played in"
+        },
+        {
+          "value": "[4.9]",
+          "label": "Average rating"
+        }
+      ],
+      "testimonials": [
+        {
+          "quote": "[Add a short testimonial from a corporate client here.]",
+          "name": "[NAME]",
+          "detail": "[ROLE], [COMPANY]",
+          "initial": "A"
+        },
+        {
+          "quote": "[Add a short testimonial from a family event here.]",
+          "name": "[NAME]",
+          "detail": "[OCCASION], Pune",
+          "initial": "B"
+        },
+        {
+          "quote": "[Add a short testimonial from a workshop or community session here.]",
+          "name": "[NAME]",
+          "detail": "[ROLE], [GROUP]",
+          "initial": "C"
+        }
+      ],
+      "trustedLabel": "Trusted by",
+      "clients": [
+        {
+          "name": "Logo"
+        },
+        {
+          "name": "Logo"
+        },
+        {
+          "name": "Logo"
+        },
+        {
+          "name": "Logo"
+        },
+        {
+          "name": "Logo"
+        },
+        {
+          "name": "Logo"
+        },
+        {
+          "name": "Logo"
+        },
+        {
+          "name": "Logo"
+        },
+        {
+          "name": "Logo"
+        },
+        {
+          "name": "Logo"
+        }
+      ],
+      "clientsNote": "[Replace these tiles with the logos of the companies and communities you have served.]"
+    },
+    "faq": {
+      "eyebrow": "Questions",
+      "title": "Good to know.",
+      "items": [
+        {
+          "question": "Does anyone need musical experience?",
+          "answer": "No. The facilitator teaches every pattern step by step, so first-timers play alongside confident musicians.",
+          "open": true
+        },
+        {
+          "question": "Do you do family and private events?",
+          "answer": "Yes. We run sessions for birthdays, festivals, family days and friend groups as well as corporate events.",
+          "open": false
+        },
+        {
+          "question": "How big can the group be?",
+          "answer": "Drum Circle runs from 10 to 5,000 people. Other experiences have their own ranges, shown on each card.",
+          "open": false
+        },
+        {
+          "question": "Indoors or outdoors?",
+          "answer": "Most experiences work in both. Harmonica and Trash Jam are best indoors.",
+          "open": false
+        },
+        {
+          "question": "Can we combine experiences?",
+          "answer": "Yes. Many groups pair a Drum Circle with Body Percussion or Boombastic. Tell us your schedule and we will suggest a mix.",
+          "open": false
+        }
+      ]
+    },
+    "contact": {
+      "eyebrow": "Request a proposal",
+      "title": "Let’s plan your session.",
+      "lead": "Fill this in once — we reply with timings, setup and pricing.",
+      "assurances": [
+        "Reply within one working day",
+        "Free, no-obligation quote",
+        "Groups from 10 to 5,000 people"
+      ],
+      "form": {
+        "fields": {
+          "need": "What do you need?",
+          "eventType": "Event type",
+          "experience": "Experience or format",
+          "groupSize": "Group size or audience",
+          "date": "Preferred date",
+          "name": "Your name",
+          "phone": "Phone",
+          "email": "Email",
+          "message": "Message",
+          "optional": "(optional)"
+        },
+        "placeholders": {
+          "name": "Full name",
+          "phone": "10-digit number",
+          "email": "you@company.com",
+          "message": "Venue, timing, anything else we should know"
+        },
+        "needs": [
+          "A workshop or drum circle",
+          "A live show or performance",
+          "Both — a show and a session",
+          "Not sure yet"
+        ],
+        "eventTypes": [
+          "Corporate team",
+          "Family function",
+          "Friends / fun",
+          "School or college",
+          "Community event",
+          "Wedding or celebration",
+          "Other"
+        ],
+        "experienceGroups": [
+          {
+            "label": "Workshops & circles",
+            "options": [
+              "Drum Circle",
+              "Boombastic",
+              "Body Percussion",
+              "Harmonica",
+              "Trash Jam",
+              "Lezim Workshop"
+            ]
+          },
+          {
+            "label": "Shows & performances",
+            "options": [
+              "Live band",
+              "Percussion ensemble",
+              "Acoustic / unplugged",
+              "Fusion ensemble",
+              "Dhol & procession",
+              "Fest stage show"
+            ]
+          }
+        ],
+        "experienceFallback": "Not sure yet",
+        "groupSizes": [
+          "Under 20",
+          "20–50",
+          "50–200",
+          "200–1,000",
+          "1,000+"
+        ],
+        "defaults": {
+          "need": "A workshop or drum circle",
+          "eventType": "Corporate team",
+          "experience": "Drum Circle",
+          "groupSize": "20–50"
+        },
+        "submit": "Request proposal",
+        "sending": "Sending…",
+        "whatsApp": "Send on WhatsApp",
+        "finePrint": "Both options open with your answers already filled in. We reply within one working day.",
+        "sent": "Thanks! Your request is on its way — we’ll reply within one working day.",
+        "failed": "Sorry, that didn’t send. Please try again, or send it on WhatsApp.",
+        "errors": {
+          "name": "Please tell us your name.",
+          "phone": "Please enter a 10-digit phone number.",
+          "email": "Please check the email address."
+        }
+      },
+      "message": {
+        "greeting": "Hi Taal Yatra! I would like a proposal.",
+        "subject": "Proposal request",
+        "labels": {
+          "need": "Looking for",
+          "eventType": "Event type",
+          "groupSize": "Group size",
+          "experience": "Experience",
+          "date": "Preferred date",
+          "name": "Name",
+          "phone": "Phone",
+          "email": "Email"
+        }
+      },
+      "aside": {
+        "title": "Prefer to talk?",
+        "whatsApp": {
+          "title": "WhatsApp",
+          "detail": "Fastest reply · {phone}"
+        },
+        "call": {
+          "title": "Call us",
+          "detail": "{hours} · {phone}"
+        },
+        "email": {
+          "title": "Email",
+          "detail": "{email}"
+        },
+        "noteTitle": "Planning something soon?",
+        "noteText": "For events in the next 48 hours, call or WhatsApp us directly and we will confirm availability straight away."
+      }
+    },
+    "assistant": {
+      "title": "Taal Yatra assistant",
+      "status": "Online · replies instantly",
+      "greeting": "Hi! I can help with drum circles, group sizes, family events and bookings. What would you like to know?",
+      "tease": "Questions? Ask me about drum circles.",
+      "labels": {
+        "toggle": "Open or close the chat assistant",
+        "close": "Close chat",
+        "call": "Call us",
+        "whatsApp": "Chat with us on WhatsApp",
+        "typing": "Assistant is typing",
+        "input": "Your question",
+        "placeholder": "Type your question",
+        "send": "Send message",
+        "messages": "Conversation"
+      },
+      "whatsAppLink": "Prefer WhatsApp? Message us",
+      "quickReplies": [
+        "What is a drum circle?",
+        "Family events?",
+        "Group size?",
+        "Price?",
+        "Contact"
+      ],
+      "replies": [
+        {
+          "keywords": [
+            "price",
+            "cost",
+            "quote",
+            "rate",
+            "budget",
+            "charge"
+          ],
+          "text": "Pricing depends on group size, venue, date and duration. Use the \"Plan your session\" builder or message us on WhatsApp for a quick quote."
+        },
+        {
+          "keywords": [
+            "family",
+            "birthday",
+            "wedding",
+            "function",
+            "kid",
+            "child",
+            "party",
+            "festival"
+          ],
+          "text": "Yes, we love family functions, birthdays, festivals and get-togethers. Sessions suit every age, from kids to grandparents."
+        },
+        {
+          "keywords": [
+            "corporate",
+            "office",
+            "company",
+            "offsite"
+          ],
+          "text": "For corporate groups we run team days, offsites, rewards and celebrations. Drum Circle works for 10 to 5,000 people."
+        },
+        {
+          "keywords": [
+            "experience",
+            "beginner",
+            "never",
+            "musical",
+            "skill"
+          ],
+          "text": "No experience needed at all. The facilitator guides every beat step by step."
+        },
+        {
+          "keywords": [
+            "size",
+            "people",
+            "group",
+            "how many"
+          ],
+          "text": "Drum Circle runs from 10 to 5,000 people. Boombastic 50 to 2,500, Body Percussion 50 to 5,000, Harmonica 30 to 1,000, Trash Jam 40 to 300 and Lezim 40 to 500."
+        },
+        {
+          "keywords": [
+            "long",
+            "duration",
+            "time",
+            "minutes"
+          ],
+          "text": "Sessions run 20 to 60 minutes. Drum Circle is 45 to 60 minutes."
+        },
+        {
+          "keywords": [
+            "where",
+            "location",
+            "venue",
+            "address",
+            "map",
+            "outdoor",
+            "indoor",
+            "kharadi",
+            "pune"
+          ],
+          "text": "Sessions can run indoors or outdoors. We are listed on Google Maps as \"Taalyatra drum circle\" in Kharadi, Pune. Share your venue and we will plan the setup."
+        },
+        {
+          "keywords": [
+            "contact",
+            "phone",
+            "call",
+            "whatsapp",
+            "email",
+            "mail"
+          ],
+          "text": "You can WhatsApp or call us, or email {email}. The \"Plan your session\" section has all the options."
+        },
+        {
+          "keywords": [
+            "team",
+            "who are",
+            "facilitator"
+          ],
+          "text": "You can meet our facilitators on the Team page, linked in the menu."
+        },
+        {
+          "keywords": [
+            "video",
+            "watch",
+            "youtube"
+          ],
+          "text": "Our latest videos are in the Watch section, and the Videos page has the full collection."
+        },
+        {
+          "keywords": [
+            "show",
+            "band",
+            "perform",
+            "stage",
+            "dhol",
+            "procession",
+            "acoustic",
+            "fusion",
+            "gig"
+          ],
+          "text": "Yes — we perform as well as facilitate: live band, percussion ensemble, acoustic sets, fusion, dhol and procession, and full fest stage shows. The Shows page has every format."
+        },
+        {
+          "keywords": [
+            "game",
+            "play"
+          ],
+          "text": "Try the rhythm game in the \"Play the circle\" section. Copy the pattern, keep your lives and climb the ranks!"
+        },
+        {
+          "keywords": [
+            "what is",
+            "drum circle",
+            "djembe"
+          ],
+          "text": "A drum circle is a facilitated group session where everyone plays a djembe or percussion together and builds rhythms as one."
+        },
+        {
+          "keywords": [
+            "hi",
+            "hello",
+            "hey"
+          ],
+          "text": "Hello! Ask me about experiences, group sizes, family events or how to book."
+        }
+      ],
+      "fallback": "Good question. For the best answer, message us on WhatsApp or use the planner, and the team will reply soon."
+    }
+  },
+  "videos": [
+    {
+      "title": "[Video title 1]",
+      "category": "Corporate",
+      "caption": "Corporate drum circle",
+      "image": {
+        "src": "/images/drum-circle/circle-from-above.jpg",
+        "alt": "",
+        "width": 1200,
+        "height": 800
+      },
+      "duration": "[0:00]",
+      "url": "https://www.youtube.com/@YOUR-CHANNEL"
+    },
+    {
+      "title": "[Video title 2]",
+      "category": "Family",
+      "caption": "Family function session",
+      "image": {
+        "src": "/images/experiences/drum-circle.jpg",
+        "alt": "",
+        "width": 1200,
+        "height": 800
+      },
+      "duration": "[0:00]",
+      "url": "https://www.youtube.com/@YOUR-CHANNEL"
+    },
+    {
+      "title": "[Video title 3]",
+      "category": "Workshops",
+      "caption": "Lezim workshop",
+      "image": {
+        "src": "/images/experiences/lezim-workshop.jpg",
+        "alt": "",
+        "width": 800,
+        "height": 533
+      },
+      "duration": "[0:00]",
+      "url": "https://www.youtube.com/@YOUR-CHANNEL"
+    },
+    {
+      "title": "[Video title 4]",
+      "category": "Corporate",
+      "caption": "Body percussion",
+      "image": {
+        "src": "/images/experiences/body-percussion.jpg",
+        "alt": "",
+        "width": 800,
+        "height": 533
+      },
+      "duration": "[0:00]",
+      "url": "https://www.youtube.com/@YOUR-CHANNEL"
+    },
+    {
+      "title": "[Video title 5]",
+      "category": "Behind the scenes",
+      "caption": "",
+      "image": {
+        "src": "/images/experiences/boombastic.jpg",
+        "alt": "",
+        "width": 800,
+        "height": 533
+      },
+      "duration": "[0:00]",
+      "url": "https://www.youtube.com/@YOUR-CHANNEL"
+    },
+    {
+      "title": "[Video title 6]",
+      "category": "Family",
+      "caption": "",
+      "image": {
+        "src": "/images/experiences/harmonica.jpg",
+        "alt": "",
+        "width": 800,
+        "height": 533
+      },
+      "duration": "[0:00]",
+      "url": "https://www.youtube.com/@YOUR-CHANNEL"
+    },
+    {
+      "title": "[Video title 7]",
+      "category": "Workshops",
+      "caption": "",
+      "image": {
+        "src": "/images/experiences/trash-jam.jpg",
+        "alt": "",
+        "width": 800,
+        "height": 533
+      },
+      "duration": "[0:00]",
+      "url": "https://www.youtube.com/@YOUR-CHANNEL"
+    },
+    {
+      "title": "[Video title 8]",
+      "category": "Corporate",
+      "caption": "",
+      "image": {
+        "src": "/images/drum-circle/circle-from-above.jpg",
+        "alt": "",
+        "width": 1200,
+        "height": 800
+      },
+      "duration": "[0:00]",
+      "url": "https://www.youtube.com/@YOUR-CHANNEL"
+    },
+    {
+      "title": "[Video title 9]",
+      "category": "Behind the scenes",
+      "caption": "",
+      "image": {
+        "src": "/images/drum-circle/circle-from-above.jpg",
+        "alt": "",
+        "width": 1200,
+        "height": 800
+      },
+      "duration": "[0:00]",
+      "url": "https://www.youtube.com/@YOUR-CHANNEL"
+    }
+  ],
+  "gallery": [
+    {
+      "src": "/images/drum-circle/circle-from-above.jpg",
+      "alt": "A full drum circle seen from above",
+      "width": 1200,
+      "height": 800
+    },
+    {
+      "src": "/images/experiences/drum-circle.jpg",
+      "alt": "Djembe drum lit on a warm stage",
+      "width": 1200,
+      "height": 800
+    },
+    {
+      "src": "/images/experiences/body-percussion.jpg",
+      "alt": "Hands striking a drum head",
+      "width": 800,
+      "height": 533
+    },
+    {
+      "src": "/images/experiences/lezim-workshop.jpg",
+      "alt": "Lezim sticks raised mid-routine",
+      "width": 800,
+      "height": 533
+    },
+    {
+      "src": "/images/experiences/boombastic.jpg",
+      "alt": "Tuned percussion tubes in warm light",
+      "width": 800,
+      "height": 533
+    },
+    {
+      "src": "/images/experiences/trash-jam.jpg",
+      "alt": "Bucket drums and sticks for a trash jam",
+      "width": 800,
+      "height": 533
+    },
+    {
+      "src": "/images/experiences/harmonica.jpg",
+      "alt": "A harmonica under warm light",
+      "width": 800,
+      "height": 533
+    }
+  ],
+  "team": [
+    {
+      "name": "[NAME]",
+      "role": "Founder & lead facilitator",
+      "bio": "[One-line bio: where they trained, what they love about rhythm.]",
+      "skills": [
+        "Djembe",
+        "Group energy"
+      ],
+      "funFact": "[Add a fun fact]",
+      "photo": {
+        "src": "/images/team/member-1.jpg",
+        "alt": "Portrait placeholder for team member 1",
+        "width": 600,
+        "height": 600
+      }
+    },
+    {
+      "name": "[NAME]",
+      "role": "Facilitator",
+      "bio": "[One-line bio: where they trained, what they love about rhythm.]",
+      "skills": [
+        "Body percussion",
+        "Kids & families"
+      ],
+      "funFact": "[Add a fun fact]",
+      "photo": {
+        "src": "/images/team/member-2.jpg",
+        "alt": "Portrait placeholder for team member 2",
+        "width": 600,
+        "height": 600
+      }
+    },
+    {
+      "name": "[NAME]",
+      "role": "Percussion mentor",
+      "bio": "[One-line bio: where they trained, what they love about rhythm.]",
+      "skills": [
+        "Folk rhythms",
+        "Lezim"
+      ],
+      "funFact": "[Add a fun fact]",
+      "photo": {
+        "src": "/images/team/member-3.jpg",
+        "alt": "Portrait placeholder for team member 3",
+        "width": 600,
+        "height": 600
+      }
+    },
+    {
+      "name": "[NAME]",
+      "role": "Event producer",
+      "bio": "[One-line bio: where they trained, what they love about rhythm.]",
+      "skills": [
+        "Corporate events",
+        "Logistics"
+      ],
+      "funFact": "[Add a fun fact]",
+      "photo": {
+        "src": "/images/team/member-4.jpg",
+        "alt": "Portrait placeholder for team member 4",
+        "width": 600,
+        "height": 600
+      }
+    },
+    {
+      "name": "[NAME]",
+      "role": "Community lead",
+      "bio": "[One-line bio: where they trained, what they love about rhythm.]",
+      "skills": [
+        "Workshops",
+        "Outreach"
+      ],
+      "funFact": "[Add a fun fact]",
+      "photo": {
+        "src": "/images/team/member-5.jpg",
+        "alt": "Portrait placeholder for team member 5",
+        "width": 600,
+        "height": 600
+      }
+    },
+    {
+      "name": "[NAME]",
+      "role": "Sound & setup",
+      "bio": "[One-line bio: where they trained, what they love about rhythm.]",
+      "skills": [
+        "Audio",
+        "On-site crew"
+      ],
+      "funFact": "[Add a fun fact]",
+      "photo": {
+        "src": "/images/team/member-6.jpg",
+        "alt": "Portrait placeholder for team member 6",
+        "width": 600,
+        "height": 600
+      }
+    }
+  ]
 }

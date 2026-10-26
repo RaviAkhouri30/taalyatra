@@ -1,0 +1,14 @@
+@if (model.data(); as section) {
+  <section class="sec">
+    <div class="wrap">
+      <p class="eyebrow">{{ section.eyebrow }}</p>
+      <h2 class="d h2 title">{{ section.title }}</h2>
+      <p class="lead">{{ section.lead }}</p>
+      <ul class="cities">
+        @for (city of section.cities; track $index) {
+          <li class="city" [class.on]="city.active">{{ city.name }}</li>
+        }
+      </ul>
+    </div>
+  </section>
+}

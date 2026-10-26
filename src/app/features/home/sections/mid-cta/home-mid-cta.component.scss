@@ -1,0 +1,42 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.midcta {
+  background: t.$color-clay;
+  color: t.$color-ink;
+  padding: 30px 0;
+}
+
+.midcta-in {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+
+  @include bp.down(bp.$phone) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
+
+.eyebrow {
+  color: t.$color-ink;
+}
+
+.title {
+  font-size: 34px;
+  font-weight: 800;
+}
+
+.midbtns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}

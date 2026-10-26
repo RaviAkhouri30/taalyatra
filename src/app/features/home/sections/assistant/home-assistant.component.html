@@ -1,0 +1,20 @@
+@if (model.data(); as assistant) {
+  <app-assistant-launcher
+    #launcher
+    [assistant]="assistant"
+    [open]="model.isOpen()"
+    [hasOpened]="model.hasOpened()"
+    [panelId]="panelId"
+    (toggled)="model.toggle()"
+  />
+  <app-assistant-panel
+    [assistant]="assistant"
+    [open]="model.isOpen()"
+    [messages]="model.recent()"
+    [typing]="model.typing()"
+    [question]="model.question"
+    [panelId]="panelId"
+    (asked)="onAsked($event)"
+    (closed)="onClosed(launcher)"
+  />
+}

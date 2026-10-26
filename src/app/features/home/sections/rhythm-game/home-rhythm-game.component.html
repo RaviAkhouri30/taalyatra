@@ -1,0 +1,126 @@
+@if (model.data(); as content) {
+  @let game = model.game();
+  <section class="sec dark" [id]="anchor">
+    <div class="wrap">
+      <p class="eyebrow">{{ content.eyebrow }}</p>
+      <h2 class="d h2 title">{{ content.title }}</h2>
+      <p class="lead">{{ content.lead }}</p>
+      <div class="arena">
+        <div class="gside">
+          <div class="tabs2" role="group" [attr.aria-label]="content.modeLabel">
+            @for (mode of content.modes; track mode.value) {
+              <button
+                type="button"
+                [class.sel]="game.mode === mode.value"
+                [attr.aria-pressed]="game.mode === mode.value"
+                (click)="model.setMode(mode.value)"
+              >
+                {{ mode.label }}
+              </button>
+            }
+          </div>
+          @if (model.isChallenge()) {
+            <div class="tabs2" role="group" [attr.aria-label]="content.speedLabel">
+              @for (speed of content.speeds; track speed.value) {
+                <button
+                  type="button"
+                  [class.sel]="game.speed === speed.value"
+                  [attr.aria-pressed]="game.speed === speed.value"
+                  (click)="model.setSpeed(speed.value)"
+                >
+                  {{ speed.label }}
+                </button>
+              }
+            </div>
+            <div class="gstats">
+              <div>
+                <b>{{ content.stats.level }}</b
+                ><span>{{ game.sequence.length }}</span>
+              </div>
+              <div>
+                <b>{{ content.stats.score }}</b
+                ><span>{{ game.score }}</span>
+              </div>
+              <div>
+                <b>{{ content.stats.best }}</b
+                ><span>{{ game.best }}</span>
+              </div>
+              <div>
+                <b>{{ content.stats.streak }}</b
+                ><span>{{ game.streak }}</span>
+              </div>
+            </div>
+            <div class="glife">
+              <span>{{ content.livesLabel }}</span>
+              <div class="hearts">
+                @for (alive of model.hearts(); track $index) {
+                  <svg class="heart" [class.off]="!alive" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M12 21s-8-5.2-8-11a4.600 4.600 0 0 1 8-3 4.600 4.600 0 0 1 8 3c0 5.800-8 11-8 11z"
+                    />
+                  </svg>
+                }
+              </div>
+            </div>
+            <div class="rank">
+              <b>{{ content.rankLabel }}</b
+              ><span>{{ model.rank()?.name }}</span
+              ><small>{{ model.rank()?.next }}</small>
+            </div>
+          }
+          <p class="gmsg" aria-live="polite">{{ model.message() }}</p>
+          @if (model.isChallenge()) {
+            <div class="gbtns">
+              <button appButton type="button" (click)="model.start()">
+                {{ model.isIdle() ? content.buttons.start : content.buttons.restart }}
+              </button>
+              @if (model.canShare()) {
+                <a appButton [variant]="buttonVariant.Ghost" [href]="model.shareUrl()">{{
+                  content.buttons.share
+                }}</a>
+                <a
+                  appButton
+                  [variant]="buttonVariant.Ghost"
+                  routerLink="/"
+                  [fragment]="contactAnchor"
+                  >{{ content.buttons.book }}</a
+                >
+              }
+            </div>
+          } @else {
+            <div class="gbtns">
+              <button appButton type="button" (click)="model.toggleRecording()">
+                {{ game.recording ? content.buttons.stopRecording : content.buttons.record }}
+              </button>
+              <button
+                appButton
+                type="button"
+                [variant]="buttonVariant.Ghost"
+                (click)="model.playBack()"
+              >
+                {{ content.buttons.playBack }}
+              </button>
+              <button
+                appButton
+                type="button"
+                [variant]="buttonVariant.Ghost"
+                (click)="model.clearRecording()"
+              >
+                {{ content.buttons.clear }}
+              </button>
+            </div>
+          }
+        </div>
+        @if (model.core(); as core) {
+          <app-game-pads
+            [pads]="content.pads"
+            [lit]="game.lit"
+            [core]="core"
+            [pops]="game.pops"
+            (tapped)="model.tap($event)"
+          />
+        }
+      </div>
+    </div>
+  </section>
+}
