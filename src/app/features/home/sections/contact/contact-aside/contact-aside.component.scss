@@ -1,0 +1,122 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.caside {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.asideh {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin: 0 0 2px;
+}
+
+.crow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: t.$color-ink;
+  color: t.$color-cream;
+  border-radius: 14px;
+  padding: 11px 13px;
+  transition:
+    transform 0.2s,
+    background 0.2s;
+
+  @include bp.down(bp.$phone) {
+    padding: 10px 12px;
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+    background: #2e241d;
+
+    .cico {
+      background: t.$color-amber;
+    }
+
+    .cico ::ng-deep svg {
+      stroke: t.$color-ink;
+    }
+  }
+}
+
+.cico {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #2e241d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+// The design strokes the icon amber without changing the row's text colour.
+.cico ::ng-deep svg {
+  stroke: t.$color-amber;
+}
+
+.ctxt {
+  flex: 1;
+  min-width: 0;
+
+  b {
+    display: block;
+    font-family: t.$font-display;
+    font-size: 15px;
+    line-height: 1.2;
+
+    @include bp.down(bp.$phone) {
+      font-size: 14px;
+    }
+  }
+
+  small {
+    font-size: 12px;
+    color: t.$color-muted;
+  }
+}
+
+.carr {
+  color: t.$color-amber;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.cnote {
+  // Deviation: the design darkens the clay 9% (rgba(0,0,0,.09)), leaving ink text at ~4.2:1,
+  // below WCAG AA 4.5:1. A light tint keeps the inset look and lifts contrast above 5:1.
+  background: rgb(255 255 255 / 10%);
+  border: 1px solid rgb(0 0 0 / 30%);
+  border-radius: 14px;
+  padding: 13px 15px;
+  color: t.$color-ink;
+
+  b {
+    display: block;
+    font-family: t.$font-display;
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  p {
+    font-size: 13px;
+    line-height: 1.5;
+
+    @include bp.down(bp.$phone) {
+      font-size: 12.5px;
+    }
+  }
+}

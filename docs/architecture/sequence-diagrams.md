@@ -52,23 +52,29 @@ sequenceDiagram
   end
 ```
 
-## 3. Contact form (EmailJS)
+## 3. Proposal request (EmailJS)
 
 ```mermaid
 sequenceDiagram
   autonumber
-  participant C as ContactComponent
-  participant VM as ContactViewModel
+  participant PF as ProposalFormComponent
+  participant VM as HomeContactViewModel
+  participant PM as ProposalMessage
   participant E as IEmailService
   participant EJ as EmailJS
 
-  C->>VM: submit(form value)
-  Note right of VM: exhaustMap ignores double submits
-  VM->>E: send(ContactMessage)
-  E->>EJ: defer(() => emailjs.send(serviceId, templateId, params))
+  PF->>VM: submit() (via submitted output)
+  VM->>VM: markAllAsTouched · filter(valid)
+  Note right of VM: exhaustMap ignores clicks while a request is in flight
+  VM->>VM: status = sending
+  VM->>PM: email(form value)
+  PM-->>VM: IEmailMessage (subject, body, fromName, phone, replyTo)
+  VM->>E: send(message)
+  E->>EJ: defer(() => send(serviceId, templateId, params, { publicKey }))
   EJ-->>E: 200 OK
   E-->>VM: Observable<void>
-  VM->>VM: status signal = 'sent', form reset
+  VM->>VM: form reset to defaults · status = sent
+  Note over PF,VM: on error: catchError → status = failed (stream stays alive)
 ```
 
 ## 4. Media delivery and upload (Cloudinary)
@@ -93,4 +99,27 @@ sequenceDiagram
   M->>CDN: POST signed upload
   CDN-->>M: public_id
   M-->>VM: Observable<MediaAsset>
+```
+
+## 5. Chat assistant question
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant P as AssistantPanelComponent
+  participant VM as HomeAssistantViewModel
+  participant M as AssistantModel
+  participant O as OverlayStateService
+
+  P->>VM: toggle() (launcher)
+  VM->>O: setPanelOpen(true) (promo badge steps aside)
+  P->>VM: ask("Group size?")
+  VM->>VM: append visitor message · pending + 1 (typing indicator)
+  Note right of VM: mergeMap: each question gets its own reply
+  VM->>VM: timer(800 ms)
+  VM->>M: reply(question)
+  M-->>VM: first rule whose keyword matches, else fallback
+  VM->>VM: append bot message · pending − 1
+  P->>VM: Escape → close()
+  VM->>O: setPanelOpen(false)
 ```

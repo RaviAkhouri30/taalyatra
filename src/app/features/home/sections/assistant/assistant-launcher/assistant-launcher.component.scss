@@ -1,0 +1,226 @@
+// Values from the design prototype's computed styles (its chat rules, cascade resolved).
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+$ease-pop: cubic-bezier(0.16, 1, 0.3, 1);
+
+:host {
+  display: contents;
+}
+
+.fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: t.$z-fab;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+  // The column box overlaps the open panel's input row; only the buttons take clicks.
+  pointer-events: none;
+
+  // Above the mobile action bar.
+  @include bp.down(bp.$phone) {
+    right: 14px;
+    bottom: 74px;
+  }
+}
+
+.fabb {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 50%);
+  transition: transform 0.2s;
+  pointer-events: auto;
+
+  &:hover {
+    transform: scale(1.08);
+  }
+
+  @include bp.down(bp.$phone) {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+.call,
+.wa {
+  background: t.$color-cream;
+  color: t.$color-ink;
+  transition:
+    opacity 0.25s ease,
+    transform 0.3s $ease-pop;
+
+  .fab.open & {
+    opacity: 0;
+    transform: scale(0.5) translateY(14px);
+    pointer-events: none;
+  }
+
+  // The mobile action bar already offers call and WhatsApp.
+  @include bp.down(bp.$phone) {
+    display: none;
+  }
+}
+
+.chatb {
+  background: t.$color-amber;
+  color: t.$color-ink;
+
+  .ic-d,
+  .ic-x {
+    transition:
+      opacity 0.25s,
+      transform 0.3s;
+  }
+
+  .ic-x {
+    position: absolute;
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.5);
+  }
+
+  &.open .ic-x {
+    opacity: 1;
+    transform: none;
+  }
+
+  &.open .ic-d {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.5);
+  }
+}
+
+// Drumsticks tapping and a ripple on the drum head.
+.ic-d {
+  .sl {
+    transform-box: fill-box;
+    transform-origin: 100% 100%;
+    animation: stick-left 1.1s ease-in-out infinite;
+  }
+
+  .sr {
+    transform-box: fill-box;
+    transform-origin: 0% 100%;
+    animation: stick-right 1.1s ease-in-out 0.55s infinite;
+  }
+
+  .rpA {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: ripple 1.1s ease-out 0.42s infinite;
+    opacity: 0;
+  }
+
+  .chatb.open & .sl,
+  .chatb.open & .sr,
+  .chatb.open & .rpA {
+    animation: none;
+  }
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: t.$color-ink;
+  border: 3px solid t.$color-amber;
+  animation: badge-pulse 1.6s ease-in-out infinite;
+}
+
+.tease {
+  position: absolute;
+  right: 80px;
+  bottom: 8px;
+  background: t.$color-ivory;
+  color: t.$color-ink;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 10px 16px;
+  border-radius: 16px 16px 4px;
+  white-space: nowrap;
+  opacity: 0;
+  animation: tease-in 0.5s ease 4s forwards;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 40%);
+
+  @include bp.down(bp.$phone) {
+    display: none;
+  }
+}
+
+@keyframes badge-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.25);
+  }
+}
+
+@keyframes tease-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes stick-left {
+  0%,
+  100% {
+    transform: rotate(20deg);
+  }
+
+  42% {
+    transform: rotate(-3deg);
+  }
+
+  58% {
+    transform: rotate(7deg);
+  }
+}
+
+@keyframes stick-right {
+  0%,
+  100% {
+    transform: rotate(-20deg);
+  }
+
+  42% {
+    transform: rotate(3deg);
+  }
+
+  58% {
+    transform: rotate(-7deg);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.9;
+  }
+
+  70%,
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}

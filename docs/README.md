@@ -8,8 +8,8 @@ how the system is built.
 | [architecture/overview.md](architecture/overview.md)                   | System context, layers, dependency rules               |
 | [architecture/class-diagram.md](architecture/class-diagram.md)         | Base classes, ports, adapters, feature pattern         |
 | [architecture/component-tree.md](architecture/component-tree.md)       | Routing and component hierarchy                        |
-| [architecture/sequence-diagrams.md](architecture/sequence-diagrams.md) | Data load, auth, contact email, media                  |
-| [architecture/flow-diagrams.md](architecture/flow-diagrams.md)         | Request pipeline, AIDLC flow, release flow             |
+| [architecture/sequence-diagrams.md](architecture/sequence-diagrams.md) | Data load, auth, proposal email, media, chat           |
+| [architecture/flow-diagrams.md](architecture/flow-diagrams.md)         | Request pipeline, adapters, journeys, AIDLC flow       |
 | [architecture/data-model.md](architecture/data-model.md)               | Firestore collections and conventions                  |
 | [architecture/deployment.md](architecture/deployment.md)               | Environments, CI pipeline, hosting                     |
 | [architecture/adr/](architecture/adr/)                                 | Architecture Decision Records                          |

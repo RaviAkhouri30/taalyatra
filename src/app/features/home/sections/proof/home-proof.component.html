@@ -1,0 +1,45 @@
+@if (model.data(); as section) {
+  <section class="sec light" [id]="anchor">
+    <div class="wrap">
+      <p class="eyebrow">{{ section.eyebrow }}</p>
+      <div class="ighead">
+        <h2 class="d h2 title">{{ section.title }}</h2>
+        <!-- Design uses the dark-surface ghost button here (cream on ivory fails WCAG AA contrast);
+             the light-surface Line variant keeps the look and is readable. -->
+        <a appButton [variant]="buttonVariant.Line" [routerLink]="achievementsRoute">{{
+          section.cta
+        }}</a>
+      </div>
+      <div class="stats">
+        @for (stat of section.stats; track stat.label) {
+          <div>
+            <b>{{ stat.value }}</b
+            ><span>{{ stat.label }}</span>
+          </div>
+        }
+      </div>
+      <div class="quotes">
+        @for (testimonial of section.testimonials; track $index) {
+          <figure class="quote">
+            <span class="qm" aria-hidden="true">&#8220;</span>
+            <blockquote>{{ testimonial.quote }}</blockquote>
+            <figcaption>
+              <span class="qav" aria-hidden="true">{{ testimonial.initial }}</span>
+              <span>
+                <b>{{ testimonial.name }}</b
+                ><small>{{ testimonial.detail }}</small>
+              </span>
+            </figcaption>
+          </figure>
+        }
+      </div>
+      <p class="eyebrow trusted">{{ section.trustedLabel }}</p>
+      <ul class="clients">
+        @for (client of section.clients; track $index) {
+          <li class="client"><app-icon [name]="clientIcon" [size]="20" />{{ client.name }}</li>
+        }
+      </ul>
+      <p class="note">{{ section.clientsNote }}</p>
+    </div>
+  </section>
+}

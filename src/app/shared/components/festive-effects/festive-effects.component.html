@@ -1,0 +1,7 @@
+@if (isVisible()) {
+  <span class="fx" [class.a-sparks]="isSparks()" aria-hidden="true">
+    @for (particle of particles; track $index) {
+      <span class="fp" [appParticle]="particle"></span>
+    }
+  </span>
+}

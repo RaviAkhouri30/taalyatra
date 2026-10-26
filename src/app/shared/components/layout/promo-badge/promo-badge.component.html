@@ -1,4 +1,4 @@
-@if (!model.dismissed()) {
+@if (!model.dismissed() && !model.covered()) {
   @if (isPill()) {
     <app-promo-pill [promotion]="promotion()" (dismiss)="model.dismiss()" />
   } @else {

@@ -34,6 +34,49 @@ flowchart LR
   V -- yes -->|approve| O[Operations<br/>release:minor · CHANGELOG · deploy]
 ```
 
+## Email adapter selection (factory)
+
+```mermaid
+flowchart TD
+  S[app bootstrap] --> F[emailServiceFactory]
+  F --> Q{environment.emailJs<br/>serviceId, templateId, publicKey all set?}
+  Q -- yes --> E[EmailJsEmailService]
+  Q -- no --> K[FakeEmailService<br/>dev · tests · e2e]
+```
+
 ## User journeys
 
-Add one flowchart per journey (navigation, contact, sign-in …) as features are designed.
+### Deep link to a home section (`/#contact`)
+
+```mermaid
+flowchart LR
+  L[link /#contact] --> R[Router Scroll event]
+  R --> W{"#contact in the DOM?"}
+  W -- no --> M[MutationObserver waits<br/>max 5 s] --> W
+  W -- yes --> F[next animation frame] --> S[ViewportScroller.scrollToAnchor]
+```
+
+### Proposal request
+
+```mermaid
+flowchart TD
+  A[visitor fills the form] --> B{Request proposal}
+  A --> WA[Send on WhatsApp<br/>link already carries the answers]
+  B --> V{name and phone valid?}
+  V -- no --> E[inline errors · aria-invalid]
+  V -- yes --> S[status: sending · button disabled]
+  S --> M{IEmailService.send}
+  M -- ok --> OK[status: sent · form reset to defaults]
+  M -- error --> ER[status: failed · suggest WhatsApp]
+```
+
+### Intro loader
+
+```mermaid
+flowchart LR
+  H[home renders] --> RM{reduced motion?}
+  RM -- yes --> X[hidden]
+  RM -- no --> P{IntroPlaybackService.claim}
+  P -- first time --> SH[show ~3.5 s · removed on fade-out end]
+  P -- already played --> X
+```

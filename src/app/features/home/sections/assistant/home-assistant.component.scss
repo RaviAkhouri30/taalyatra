@@ -1,0 +1,4 @@
+// Fixed-position chrome: the host adds no box of its own.
+:host {
+  display: contents;
+}

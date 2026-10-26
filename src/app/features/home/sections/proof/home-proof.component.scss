@@ -1,0 +1,193 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.eyebrow {
+  color: #9a4f1c;
+}
+
+.ighead {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 38px;
+}
+
+.title {
+  font-weight: 800;
+  max-width: 600px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr;
+  }
+
+  div {
+    border-top: 3px solid t.$color-clay;
+    padding-top: 16px;
+  }
+
+  b {
+    display: block;
+    font-family: t.$font-display;
+    font-size: 40px;
+    font-weight: 800;
+    color: #9a4f1c;
+    line-height: 1;
+
+    @include bp.down(bp.$phone) {
+      font-size: 30px;
+    }
+  }
+
+  span {
+    font-size: 15px;
+    font-weight: 700;
+  }
+}
+
+.quotes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 64px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Keeps the browser's default figure margin (1em 40px), as the design does.
+.quote {
+  background: #fffdf8;
+  border-radius: 22px;
+  padding: 24px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  @include bp.down(bp.$phone) {
+    padding: 18px;
+  }
+
+  blockquote {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.65;
+    flex: 1;
+
+    @include bp.down(bp.$phone) {
+      font-size: 15px;
+    }
+  }
+
+  figcaption {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid #e0d5c3;
+    padding-top: 14px;
+  }
+
+  b {
+    display: block;
+    font-size: 16px;
+  }
+
+  small {
+    font-size: 14px;
+    color: #6a5c4c;
+  }
+}
+
+.qm {
+  font-family: t.$font-display;
+  font-size: 56px;
+  line-height: 0.6;
+  color: t.$color-clay;
+  height: 30px;
+}
+
+.qav {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #7e8a55;
+  color: t.$color-ivory;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-family: t.$font-display;
+  flex: none;
+}
+
+.trusted {
+  color: t.$color-surface;
+  text-align: center;
+  margin: 76px 0 20px;
+}
+
+.clients {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.client {
+  width: 120px;
+  height: 60px;
+  background: #fffdf8;
+  color: #4a3a2c;
+  border: 2px dashed #b9a890;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+
+  @include bp.down(bp.$phone) {
+    width: 92px;
+    height: 50px;
+    font-size: 11px;
+  }
+
+  @include bp.down(bp.$phone-sm) {
+    width: 80px;
+    height: 46px;
+  }
+
+  app-icon {
+    color: #8a7a66;
+  }
+}
+
+.note {
+  text-align: center;
+  font-size: 15px;
+  color: #6a5c4c;
+  margin-top: 18px;
+}

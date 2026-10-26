@@ -1,0 +1,28 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+  border-radius: 14px;
+  padding: 15px 14px;
+  background: t.$color-surface;
+  min-width: 0;
+
+  @include bp.down(bp.$phone) {
+    padding: 12px;
+  }
+}
+
+:host(.o) {
+  background: t.$color-amber;
+  color: t.$color-ink;
+}
+
+b {
+  display: block;
+  font-size: 15px;
+}
+
+span {
+  font-size: 14px;
+}

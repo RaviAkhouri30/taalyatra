@@ -1,0 +1,22 @@
+@if (model.data(); as cta) {
+  <section class="midcta">
+    <div class="wrap midcta-in">
+      <div>
+        <p class="eyebrow">{{ cta.eyebrow }}</p>
+        <h2 class="d title">{{ cta.title }}</h2>
+      </div>
+      <div class="midbtns">
+        <a
+          appButton
+          [variant]="buttonVariant.Dark"
+          [routerLink]="cta.proposal.route"
+          [fragment]="cta.proposal.fragment"
+          >{{ cta.proposal.label }}</a
+        >
+        <a appButton [variant]="buttonVariant.Line" [href]="cta.whatsApp.href">{{
+          cta.whatsApp.label
+        }}</a>
+      </div>
+    </div>
+  </section>
+}

@@ -1,0 +1,16 @@
+@if (model.data(); as intro) {
+  @if (!model.finished()) {
+    <div class="loader" aria-hidden="true" (animationend)="onAnimationEnd($event)">
+      <div class="lg">
+        <i></i><i></i>
+        <img [ngSrc]="intro.logoUrl" [width]="logoSize" [height]="logoSize" alt="" />
+      </div>
+      <div class="bars">
+        @for (bar of bars; track bar) {
+          <b></b>
+        }
+      </div>
+      <div class="ltxt">{{ intro.label }}</div>
+    </div>
+  }
+}

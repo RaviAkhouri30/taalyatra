@@ -1,0 +1,27 @@
+@if (model.data(); as section) {
+  <section class="sec" [id]="anchor">
+    <div class="wrap two">
+      <div>
+        <p class="eyebrow">{{ section.eyebrow }}</p>
+        <h2 class="d h2 title">{{ section.title }}</h2>
+        <p class="lead">{{ section.lead }}</p>
+        <a appButton [routerLink]="section.teamPage.route">{{ section.teamPage.label }}</a>
+      </div>
+      <div class="tm">
+        @for (member of section.members; track member.photo.src) {
+          <figure>
+            <img
+              [ngSrc]="member.photo.src"
+              [width]="member.photo.width"
+              [height]="member.photo.height"
+              [alt]="member.photo.alt"
+            />
+            <figcaption>
+              {{ member.name }}<span>{{ member.role }}</span>
+            </figcaption>
+          </figure>
+        }
+      </div>
+    </div>
+  </section>
+}

@@ -1,0 +1,81 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.sec {
+  padding-top: 0;
+}
+
+.lead {
+  margin: -10px 0 26px;
+}
+
+.showgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.shc {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: t.$color-surface;
+  border-radius: 16px;
+  padding: 18px;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-4px);
+    outline: 2px solid t.$color-amber;
+  }
+
+  @include bp.down(bp.$phone) {
+    padding: 14px;
+  }
+
+  b {
+    display: block;
+    font-family: t.$font-display;
+    font-size: 18px;
+    margin-bottom: 3px;
+
+    @include bp.down(bp.$phone) {
+      font-size: 16px;
+    }
+  }
+
+  p {
+    font-size: 14px;
+    color: t.$color-muted;
+    line-height: 1.5;
+
+    @include bp.down(bp.$phone) {
+      font-size: 13.5px;
+    }
+  }
+}
+
+.sico {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: t.$color-ink;
+  color: t.$color-amber;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}

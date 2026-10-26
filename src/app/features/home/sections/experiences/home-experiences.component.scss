@@ -1,0 +1,40 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.sec {
+  padding-top: 0;
+}
+
+.title {
+  font-weight: 800;
+  max-width: 780px;
+}
+
+.lead {
+  margin-top: 12px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.emptyish {
+  margin-top: 18px;
+  color: t.$color-muted;
+  font-size: 16px;
+}

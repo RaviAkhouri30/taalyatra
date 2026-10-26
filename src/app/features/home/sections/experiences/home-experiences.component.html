@@ -1,0 +1,32 @@
+@if (model.data(); as section) {
+  <section class="sec" [id]="anchor">
+    <div class="wrap">
+      <p class="eyebrow">{{ section.eyebrow }}</p>
+      <h2 class="d h2 title">{{ section.title }}</h2>
+      <p class="lead">{{ section.lead }}</p>
+      <app-filter-chips
+        [label]="section.filterLabel"
+        [options]="section.filters"
+        [selected]="model.category()"
+        (selectedChange)="model.selectCategory($event)"
+      />
+      <div class="cards">
+        @if (model.showFeatured()) {
+          <app-experience-card
+            [experience]="section.featured"
+            [featured]="true"
+            [cta]="section.featuredCta"
+          />
+        }
+        @for (item of model.visibleItems(); track item.name) {
+          <app-experience-card [experience]="item" />
+        }
+      </div>
+      <p class="emptyish" aria-live="polite">
+        @if (model.isEmpty()) {
+          <span>{{ section.emptyMessage }}</span>
+        }
+      </p>
+    </div>
+  </section>
+}

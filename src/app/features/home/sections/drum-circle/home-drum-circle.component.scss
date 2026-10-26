@@ -1,0 +1,231 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.sec {
+  background: t.$color-surface;
+}
+
+.eyebrow {
+  color: t.$color-cream;
+}
+
+// Design `.h2.hxl`: a larger section title (rules ordered as in the prototype's cascade).
+.title {
+  font-weight: 800;
+  font-size: 54px;
+
+  @include bp.desktop-short {
+    font-size: 44px;
+  }
+
+  @include bp.down(bp.$tablet) {
+    font-size: 40px;
+  }
+
+  @include bp.down(bp.$phone) {
+    font-size: 32px;
+  }
+
+  @include bp.down(bp.$phone-sm) {
+    font-size: 24px;
+  }
+
+  @include bp.up(bp.$wide) {
+    font-size: 64px;
+  }
+
+  @include bp.up(bp.$ultra) {
+    font-size: 78px;
+  }
+}
+
+.spec {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: t.$color-bronze;
+  border-radius: 14px;
+  overflow: hidden;
+  margin: 30px 0 42px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr;
+  }
+
+  div {
+    background: t.$color-ink;
+    padding: 18px 20px;
+
+    @include bp.down(bp.$phone) {
+      padding: 14px 16px;
+    }
+  }
+
+  b {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: t.$color-amber;
+    margin-bottom: 6px;
+
+    @include bp.down(bp.$phone) {
+      font-size: 10px;
+    }
+  }
+
+  span {
+    font-family: t.$font-display;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.2;
+
+    @include bp.down(bp.$phone) {
+      font-size: 18px;
+    }
+  }
+}
+
+.two {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 56px;
+  align-items: start;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.about-title {
+  font-size: 26px;
+  margin-bottom: 16px;
+}
+
+.body {
+  max-width: 64ch;
+
+  &:not(:last-child) {
+    margin-bottom: 18px;
+  }
+}
+
+.list-title {
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.chips--objectives {
+  margin-bottom: 20px;
+}
+
+.chips--occasions {
+  margin-bottom: 24px;
+}
+
+.chip {
+  display: inline-block;
+  border: 1px solid #7e8a55;
+  border-radius: t.$radius-pill;
+  padding: 5px 14px;
+  font-size: 14px;
+  margin: 0 8px 10px 0;
+  color: #d7dfbe;
+
+  @include bp.down(bp.$phone) {
+    font-size: 13px;
+    padding: 4px 12px;
+  }
+}
+
+.gal {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 16px;
+  margin-top: 56px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr;
+  }
+
+  // Photo frame: NgOptimizedImage `fill` crops the photo to it (design: img with object-fit).
+  .ph {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 240px;
+    border-radius: 16px;
+    overflow: hidden;
+
+    @include bp.down(bp.$phone) {
+      height: 170px;
+    }
+  }
+
+  img {
+    object-fit: cover;
+  }
+}
+
+.rel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 44px;
+  padding-top: 22px;
+  border-top: 1px solid t.$color-line;
+
+  b {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: t.$color-amber;
+    margin-right: 4px;
+  }
+
+  a {
+    border: 1px solid t.$color-bronze;
+    border-radius: t.$radius-pill;
+    padding: 6px 15px;
+    font-size: 14px;
+    font-weight: 600;
+
+    &:hover {
+      background: t.$color-amber;
+      color: t.$color-ink;
+      border-color: t.$color-amber;
+    }
+  }
+}
+
+.flow-block {
+  margin-top: 72px;
+}
+
+.flow-title {
+  font-size: 28px;
+}
+
+.flow {
+  display: flex;
+  gap: 6px;
+  margin-top: 28px;
+
+  @include bp.down(bp.$tablet) {
+    flex-direction: column;
+  }
+}

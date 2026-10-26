@@ -1,0 +1,30 @@
+@if (model.data(); as contact) {
+  <section class="sec" [id]="anchor">
+    <div class="wrap">
+      <div class="chead">
+        <div>
+          <p class="eyebrow">{{ contact.eyebrow }}</p>
+          <h2 class="d h2 title">{{ contact.title }}</h2>
+          <p class="lead">{{ contact.lead }}</p>
+        </div>
+        <ul class="assure">
+          @for (item of contact.assurances; track item) {
+            <li>
+              <app-icon [name]="checkIcon" [size]="16" [strokeWidth]="3" /><span>{{ item }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+      <div class="cgrid">
+        <app-proposal-form
+          [copy]="contact.form"
+          [form]="model.form"
+          [status]="model.status()"
+          [whatsAppHref]="model.whatsAppHref()"
+          (submitted)="model.submit()"
+        />
+        <app-contact-aside [aside]="contact.aside" />
+      </div>
+    </div>
+  </section>
+}

@@ -1,0 +1,8 @@
+@if (typing()) {
+  <div class="m bot typing" role="status" [attr.aria-label]="typingLabel()">
+    <i></i><i></i><i></i>
+  </div>
+}
+@for (message of messages(); track message.id) {
+  <div class="m" [class]="message.role">{{ message.text }}</div>
+}

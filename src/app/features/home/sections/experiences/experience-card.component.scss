@@ -1,0 +1,192 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+// The card link itself is the grid item of the parent's `.cards` grid.
+:host {
+  display: contents;
+}
+
+.card {
+  background: t.$color-surface;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s;
+
+  &:hover {
+    transform: translateY(-6px);
+    outline: 2px solid t.$color-amber;
+  }
+
+  // Photo frame: NgOptimizedImage `fill` crops the photo to it (design: img with object-fit).
+  .ph {
+    position: relative;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    display: block;
+    flex: none;
+
+    @include bp.down(bp.$phone) {
+      aspect-ratio: 16 / 10;
+    }
+  }
+
+  img {
+    object-fit: cover;
+  }
+
+  h3 {
+    font-size: 25px;
+
+    @include bp.down(bp.$phone) {
+      font-size: 22px;
+    }
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.65;
+
+    @include bp.down(bp.$phone) {
+      font-size: 15px;
+    }
+  }
+}
+
+.in {
+  padding: 20px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex: 1;
+
+  @include bp.down(bp.$phone) {
+    padding: 16px 16px 18px;
+  }
+}
+
+.tag {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: t.$color-amber;
+
+  @include bp.down(bp.$phone) {
+    font-size: 11px;
+  }
+}
+
+.cspec {
+  list-style: none;
+  margin: auto 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid t.$color-line;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: t.$color-muted;
+
+    @include bp.down(bp.$phone) {
+      font-size: 12px;
+    }
+  }
+
+  app-icon {
+    color: t.$color-amber;
+  }
+}
+
+.cta {
+  align-self: flex-start;
+}
+
+// ---- Featured (signature experience) ----
+.feat {
+  grid-column: span 3;
+  flex-direction: row;
+  background: t.$color-clay;
+  color: t.$color-ink;
+  border-radius: 22px;
+
+  @include bp.down(bp.$tablet) {
+    grid-column: span 2;
+    grid-template-columns: 1fr; // inert on a flex box; kept for parity with the design
+    flex-direction: column;
+  }
+
+  @include bp.down(bp.$phone) {
+    grid-column: span 1;
+  }
+
+  .ph {
+    width: 52%;
+    // The photo's own ratio, which the design's img took from its file.
+    aspect-ratio: 3 / 2;
+    height: 100%;
+    min-height: 380px;
+
+    @include bp.down(bp.$tablet) {
+      width: 100%;
+      min-height: 0;
+      aspect-ratio: 3 / 2;
+      height: auto;
+    }
+
+    @include bp.down(bp.$phone) {
+      aspect-ratio: 16 / 10;
+    }
+  }
+
+  .in {
+    padding: 34px;
+    justify-content: center;
+
+    @include bp.down(bp.$phone) {
+      padding: 20px;
+    }
+  }
+
+  .tag {
+    color: t.$color-ink;
+  }
+
+  h3 {
+    font-size: 34px;
+
+    @include bp.down(bp.$tablet) {
+      font-size: 28px;
+    }
+
+    @include bp.down(bp.$phone) {
+      font-size: 24px;
+    }
+  }
+
+  p {
+    font-size: 17px;
+
+    @include bp.down(bp.$phone) {
+      font-size: 15px;
+    }
+  }
+
+  .cspec {
+    border-top-color: rgb(23 18 16 / 30%);
+
+    li,
+    app-icon {
+      color: t.$color-ink;
+    }
+  }
+}

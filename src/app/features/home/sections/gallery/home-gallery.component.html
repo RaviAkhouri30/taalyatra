@@ -1,0 +1,47 @@
+@if (model.data(); as section) {
+  <section class="sec" [id]="anchor">
+    <div class="wrap">
+      <app-section-header [eyebrow]="section.eyebrow" [title]="section.title">
+        <a
+          appButton
+          [variant]="buttonVariant.Ghost"
+          [routerLink]="section.booking.route"
+          [fragment]="section.booking.fragment"
+          >{{ section.booking.label }}</a
+        >
+      </app-section-header>
+      <div class="ggrid">
+        @for (tile of section.tiles; track tile.photo.src; let index = $index) {
+          <button
+            #tile
+            type="button"
+            class="gtile"
+            [attr.aria-label]="tile.openLabel"
+            (click)="model.show(index)"
+          >
+            <img [ngSrc]="tile.photo.src" fill [alt]="tile.photo.alt" />
+            <span class="gzoom" aria-hidden="true">
+              <app-icon [name]="icons.Expand" [size]="16" [strokeWidth]="2.2" />
+            </span>
+          </button>
+        }
+        <a class="gmore" [href]="section.more.href">
+          <app-icon [name]="icons.Instagram" [size]="24" [strokeWidth]="1.9" />
+          <span>{{ section.more.label }}</span>
+        </a>
+      </div>
+      <p class="note">{{ section.note }}</p>
+    </div>
+  </section>
+  @let openIndex = model.openIndex();
+  @if (openIndex !== null) {
+    <app-lightbox
+      [images]="section.photos"
+      [index]="openIndex"
+      [labels]="section.viewer"
+      (closed)="closeViewer()"
+      (previous)="model.previous()"
+      (next)="model.next()"
+    />
+  }
+}

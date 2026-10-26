@@ -1,0 +1,9 @@
+@if (model.data(); as section) {
+  <section class="sec" [id]="anchor">
+    <div class="wrap">
+      <p class="eyebrow">{{ section.eyebrow }}</p>
+      <h2 class="d h2 title">{{ section.title }}</h2>
+      <app-steps [steps]="section.steps" />
+    </div>
+  </section>
+}

@@ -118,7 +118,9 @@
               "src/app/app.config.ts",
               "src/environments/**",
               "src/app/**/testing/**",
-              "src/app/**/enums/**"
+              "src/app/**/enums/**",
+              "src/app/**/*.enum.ts",
+              "src/app/**/*.enums.ts"
             ],
             "coverageReporters": ["text-summary", "html", "lcov"],
             "coverageThresholds": {

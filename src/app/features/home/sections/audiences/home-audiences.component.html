@@ -1,0 +1,23 @@
+@if (model.data(); as section) {
+  <section class="sec" [id]="anchor">
+    <div class="wrap">
+      <p class="eyebrow">{{ section.eyebrow }}</p>
+      <h2 class="d h2 title">{{ section.title }}</h2>
+      <p class="lead">{{ section.lead }}</p>
+      <div class="aud">
+        @for (card of section.cards; track card.title) {
+          <div class="acard">
+            <div class="ico"><app-icon [name]="card.icon" [size]="34" /></div>
+            <h3 class="d">{{ card.title }}</h3>
+            <p>{{ card.text }}</p>
+            <ul>
+              @for (tag of card.tags; track tag) {
+                <li>{{ tag }}</li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+}

@@ -1,0 +1,76 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.sec {
+  background: t.$color-clay;
+  color: t.$color-ink;
+  padding: 50px 0;
+
+  @include bp.down(bp.$phone) {
+    padding: 42px 0;
+  }
+}
+
+.eyebrow {
+  color: t.$color-ink;
+}
+
+// The design pins the title at 34px on every width (`!important` in the prototype).
+.title {
+  font-weight: 800;
+  font-size: 34px;
+}
+
+.lead {
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+.chead {
+  display: grid;
+  grid-template-columns: 1.45fr 0.55fr;
+  gap: 30px;
+  align-items: end;
+  margin-bottom: 24px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.assure {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+
+  li {
+    display: flex;
+    gap: 7px;
+    align-items: flex-start;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  app-icon ::ng-deep svg {
+    margin-top: 3px;
+  }
+}
+
+.cgrid {
+  display: grid;
+  grid-template-columns: 1.62fr 0.38fr;
+  gap: 16px;
+  align-items: start;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr;
+  }
+}

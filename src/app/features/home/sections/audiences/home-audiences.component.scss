@@ -1,0 +1,99 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.title {
+  font-weight: 800;
+  max-width: 800px;
+  margin-bottom: 20px;
+}
+
+.aud {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 56px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.acard {
+  background: t.$color-surface;
+  border-radius: 20px;
+  padding: 28px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: transform 0.25s;
+
+  &:hover {
+    transform: translateY(-6px);
+    outline: 2px solid t.$color-amber;
+  }
+
+  @include bp.down(bp.$phone) {
+    padding: 22px 20px;
+  }
+
+  h3 {
+    font-size: 25px;
+
+    @include bp.down(bp.$phone) {
+      font-size: 22px;
+    }
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.65;
+
+    @include bp.down(bp.$phone) {
+      font-size: 15px;
+    }
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  li {
+    font-size: 13px;
+    font-weight: 700;
+    border: 1px solid #7e8a55;
+    border-radius: t.$radius-pill;
+    padding: 4px 12px;
+    color: #c3ce9a;
+  }
+}
+
+.ico {
+  width: 56px;
+  height: 56px;
+  border-radius: 15px;
+  background: t.$color-ink;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // The design strokes these icons in the accent while the tile keeps the body colour.
+  app-icon {
+    color: t.$color-amber;
+  }
+
+  @include bp.down(bp.$phone) {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+  }
+}

@@ -1,0 +1,134 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.diwali {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #e9a552 0%, #de8c3f 45%, #c96b3c 100%);
+  color: t.$color-ink;
+  padding: 52px 0 46px;
+
+  @include bp.down(bp.$phone) {
+    padding: 32px 0 30px;
+  }
+}
+
+.dbg {
+  pointer-events: none;
+  object-fit: cover;
+}
+
+.diwali-in {
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  color: #5c2d12;
+}
+
+.title {
+  font-weight: 800;
+  max-width: 860px;
+  font-size: 40px;
+
+  @include bp.down(bp.$tablet) {
+    font-size: 32px;
+  }
+
+  @include bp.down(bp.$phone) {
+    font-size: 27px;
+  }
+}
+
+.lead {
+  margin: 14px 0 0;
+  max-width: 62ch;
+  color: #2b1a10;
+}
+
+.dgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 30px 0 26px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr;
+  }
+
+  @include bp.down(bp.$phone) {
+    gap: 10px;
+  }
+}
+
+.dcard {
+  background: rgb(23 18 16 / 90%);
+  color: t.$color-cream;
+  border-radius: 18px;
+  padding: 22px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &:hover {
+    outline: 2px solid t.$color-amber-soft;
+  }
+
+  @include bp.down(bp.$phone) {
+    padding: 16px;
+  }
+
+  h3 {
+    font-size: 21px;
+
+    @include bp.down(bp.$phone) {
+      font-size: 18px;
+    }
+  }
+
+  p {
+    font-size: 15px;
+    line-height: 1.55;
+
+    @include bp.down(bp.$phone) {
+      font-size: 14px;
+    }
+  }
+}
+
+.dico {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #2e241d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// The design also declares 13px, but its `.dcard p` size wins; the rendered size is kept.
+.dcard .dnote {
+  color: t.$color-amber-soft;
+  font-weight: 700;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.dbtns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.dsmall {
+  margin-top: 18px;
+  font-size: 14px;
+  color: t.$color-promo-ink;
+  font-weight: 600;
+}

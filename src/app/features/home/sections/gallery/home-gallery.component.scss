@@ -1,0 +1,101 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.sec {
+  padding-top: 0;
+}
+
+.ggrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include bp.down(bp.$phone) {
+    gap: 8px;
+  }
+}
+
+.gtile {
+  position: relative;
+  border: 0;
+  padding: 0;
+  background: t.$color-surface;
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  cursor: pointer;
+  display: block;
+
+  @include bp.down(bp.$phone) {
+    border-radius: 12px;
+  }
+
+  // NgOptimizedImage `fill`: the frame sets the size, the photo is cropped to it.
+  img {
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s;
+  }
+
+  &:hover img {
+    transform: scale(1.07);
+  }
+
+  &:hover .gzoom,
+  &:focus-visible .gzoom {
+    opacity: 1;
+  }
+}
+
+.gzoom {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgb(23 18 16 / 80%);
+  color: t.$color-amber;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.gmore {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 2px dashed t.$color-bronze;
+  background: transparent;
+  color: t.$color-muted;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 16px;
+  aspect-ratio: 4 / 3;
+  text-align: center;
+  padding: 10px;
+
+  &:hover {
+    border-color: t.$color-amber;
+    color: t.$color-amber;
+  }
+}
+
+.note {
+  margin-top: 16px;
+  font-size: 14px;
+  color: t.$color-muted-strong;
+}

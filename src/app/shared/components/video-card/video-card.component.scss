@@ -1,0 +1,102 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+// Layout-transparent host: the card link is the grid item of the parent's grid.
+:host {
+  display: contents;
+}
+
+.vcard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &:hover {
+    img {
+      transform: scale(1.06);
+    }
+
+    .vplay {
+      transform: scale(1.12);
+    }
+  }
+
+  h3 {
+    font-size: 19px;
+    margin-top: 8px;
+  }
+
+  p {
+    font-size: 15px;
+    color: t.$color-muted;
+
+    @include bp.down(bp.$phone) {
+      font-size: 13px;
+    }
+  }
+}
+
+.vthumb {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: t.$color-surface;
+
+  @include bp.down(bp.$phone) {
+    border-radius: 12px;
+  }
+
+  // NgOptimizedImage `fill`: the frame sets the size, the photo is cropped to it.
+  img {
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s;
+  }
+}
+
+.vplay {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 58px;
+  height: 58px;
+  margin: -29px 0 0 -29px;
+  border-radius: 50%;
+  background: t.$color-amber;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+
+  @include bp.down(bp.$phone) {
+    width: 46px;
+    height: 46px;
+    margin: -23px 0 0 -23px;
+  }
+}
+
+.vtime {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  background: t.$color-ink;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.vcat {
+  color: #afbc82;
+}
+
+// Library (Videos page): the title sits right under the category and shrinks on phones.
+:host(.library) h3 {
+  margin-top: 0;
+
+  @include bp.down(bp.$phone) {
+    font-size: 17px;
+  }
+}

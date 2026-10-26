@@ -1,18 +1,20 @@
 # Component Tree & Routing
 
-## Current (v1.0.0)
+## Current (v1.1.0)
 
 ```mermaid
 flowchart TD
-  App["App (app-root)<br/>shell"] --> Main["main#main-content"]
-  Main --> RO["router-outlet"]
+  App["App (app-root)"] --> Shell["SiteShellComponent<br/>utility bar · header · footer · promo badge · mobile action bar · WhatsApp FAB"]
+  Shell --> RO["router-outlet"]
+  RO -->|"'' (lazy, layout: Home)"| Home["HomePageComponent"]
+  RO -->|"** → ''"| Home
+  Home --> Eager["intro · hero · marquee · trust"]
+  Home --> Deferred{{"@defer (on idle)<br/>offer … contact · assistant"}}
 ```
 
-`routes` is empty. Each feature adds a lazy route:
-
-```ts
-{ path: 'about', loadComponent: () => import('@features/about/components/about/about.component').then(m => m.AboutComponent) }
-```
+The home page's full section tree is in
+[aidlc/0003-home-page/02-design.md](../aidlc/0003-home-page/02-design.md). Page chrome lives in
+`shared/components/layout/` and varies per route through `layout` route data (`LAYOUT_CHROME`).
 
 ## Conventions
 

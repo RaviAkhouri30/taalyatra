@@ -1,0 +1,84 @@
+// Values from the design prototype's computed styles.
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.sec {
+  background: t.$color-surface;
+}
+
+.two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.title {
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.lead {
+  margin-bottom: 32px;
+}
+
+.tm {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @include bp.down(bp.$tablet) {
+    max-width: 480px;
+  }
+
+  figure {
+    margin: 0;
+    position: relative;
+    border-radius: 22px;
+    overflow: hidden;
+
+    &:hover img {
+      transform: scale(1.05);
+    }
+  }
+
+  img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s;
+  }
+
+  figcaption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 36px 16px 14px;
+    background: linear-gradient(transparent, rgb(0 0 0 / 88%));
+    font-weight: 700;
+    font-size: 15px;
+
+    @include bp.down(bp.$phone) {
+      font-size: 14px;
+      padding: 26px 12px 10px;
+    }
+
+    span {
+      display: block;
+      font-weight: 400;
+      color: t.$color-muted;
+      font-size: 13px;
+    }
+  }
+}
