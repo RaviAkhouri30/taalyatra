@@ -5,6 +5,7 @@ import { type IAppEnvironment } from '@core/interfaces/i-app-environment';
 export const environment: IAppEnvironment = {
   production: true,
   backend: BackendType.Firebase,
+  siteUrl: 'https://calm-mud-0ca950310.4.azurestaticapps.net',
   apiBaseUrl: '',
   requestTimeoutMs: 60_000,
   firebase: null,

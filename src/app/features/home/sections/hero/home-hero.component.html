@@ -32,15 +32,19 @@
         </div>
       }
     </div>
+    <!-- With its text, never before: on phones the stage sits below the text, so painting it
+         first and then pushing it down was a layout shift (0007, CLS). -->
     <div>
-      <img
-        class="stage"
-        ngSrc="/images/home/hero-stage.svg"
-        [width]="stageSize"
-        [height]="stageSize"
-        [alt]="stageAlt"
-        priority
-      />
+      @if (model.data()) {
+        <img
+          class="stage"
+          ngSrc="/images/home/hero-stage.svg"
+          [width]="stageSize"
+          [height]="stageSize"
+          [alt]="stageAlt"
+          priority
+        />
+      }
     </div>
   </div>
 </section>

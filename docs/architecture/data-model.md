@@ -32,6 +32,8 @@ app routes.
 - List item documents are numbered by position (`001`, `002`, …). The adapter removes `order`
   from bodies.
 - The adapter stamps `createdAt: serverTimestamp()` on every created document.
+- Image paths point at files in `public/images`. Photos are WebP (since 1.5.0); the older JPEGs
+  stay, so data seeded before a release keeps rendering.
 - DTO interfaces (`i-*.ts`) describe stored shapes; model classes add behaviour.
 - **Optional parts of `site/config` degrade item by item.** Only brand, contact and year are
   required. Missing `labels` become empty, so "Call us" falls back to the number, the copyable

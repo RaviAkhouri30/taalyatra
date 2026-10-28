@@ -1,6 +1,11 @@
 import { type ActivatedRouteSnapshot, type Data } from '@angular/router';
 import { PageLayout } from '@shared/enums/page-layout.enum';
-import { DEFAULT_PAGE_LAYOUT, isPageLayout, resolvePageLayout } from './route-layout.util';
+import {
+  DEFAULT_PAGE_LAYOUT,
+  isPageLayout,
+  resolvePageLayout,
+  resolvePageMeta,
+} from './route-layout.util';
 
 /** Minimal stand-in for a route snapshot: just data and the next node. */
 interface SnapshotNode {
@@ -40,5 +45,45 @@ describe('route layout utils', () => {
 
   it('should ignore invalid layout data', () => {
     expect(resolvePageLayout(chain({ layout: 42 }))).toBe(DEFAULT_PAGE_LAYOUT);
+  });
+
+  describe('resolvePageMeta', () => {
+    /** A snapshot chain whose nodes may carry a title. */
+    function titled(...nodes: { data: Data; title?: string }[]): ActivatedRouteSnapshot {
+      const root = chain(...nodes.map((node) => node.data));
+      let current: (SnapshotNode & { title?: string }) | null = root as unknown as SnapshotNode;
+      for (const node of nodes) {
+        if (current) {
+          if (node.title) current.title = node.title;
+          current = current.firstChild;
+        }
+      }
+      return root;
+    }
+
+    it('should take the deepest title and description and drop query and fragment', () => {
+      const root = titled(
+        { data: { description: 'Site.' } },
+        { data: { description: 'Videos page.' }, title: 'Videos — Taal Yatra' },
+      );
+
+      expect(resolvePageMeta(root, '/videos?x=1#watch')).toEqual({
+        path: '/videos',
+        title: 'Videos — Taal Yatra',
+        description: 'Videos page.',
+      });
+    });
+
+    it('should leave title and description empty when no route declares them', () => {
+      expect(resolvePageMeta(chain({}, { layout: PageLayout.Home }), '/')).toEqual({
+        path: '/',
+        title: '',
+        description: '',
+      });
+    });
+
+    it('should ignore a description that is not text', () => {
+      expect(resolvePageMeta(chain({ description: 42 }), '/team').description).toBe('');
+    });
   });
 });

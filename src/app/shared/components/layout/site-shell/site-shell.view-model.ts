@@ -1,25 +1,18 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import {
-  type Observable,
-  combineLatest,
-  defaultIfEmpty,
-  distinctUntilChanged,
-  filter,
-  map,
-  tap,
-} from 'rxjs';
+import { type Observable, combineLatest, defaultIfEmpty, filter, map, tap } from 'rxjs';
 import { AnchorScrollService } from '@core/services/anchor-scroll.service';
 import { ViewModel } from '@shared/base/view-model';
 import { LAYOUT_CHROME } from '@shared/constants/navigation.constants';
 import { type ILayoutChrome } from '@shared/interfaces/i-layout-chrome';
 import { type IShellState } from '@shared/interfaces/i-shell-state';
 import { SiteConfigService } from '@shared/services/site-config.service';
-import { resolvePageLayout } from '@shared/utils/route-layout.util';
+import { SeoService } from '@shared/services/seo.service';
+import { resolvePageLayout, resolvePageMeta } from '@shared/utils/route-layout.util';
 
 /**
- * Decides which chrome the current route gets (from its `layout` route data) and supplies the
- * site content for it.
+ * Decides which chrome the current route gets (from its `layout` route data), supplies the site
+ * content for it, and keeps the page's search and preview metadata in step (`SeoService`).
  */
 @Injectable()
 export class SiteShellViewModel extends ViewModel<IShellState> {
@@ -39,24 +32,28 @@ export class SiteShellViewModel extends ViewModel<IShellState> {
   private readonly router = inject(Router);
   private readonly siteConfigService = inject(SiteConfigService);
   private readonly anchorScroll = inject(AnchorScrollService);
+  private readonly seo = inject(SeoService);
 
   /**
    * Waits for the first completed navigation before drawing any chrome, so the home page never
    * flashes the inner-page header while the router starts up.
    */
   protected override attachViewHandler(): Observable<unknown> {
-    const layout$ = this.router.events.pipe(
+    const navigation$ = this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
-      map(() => resolvePageLayout(this.router.routerState.snapshot.root)),
-      distinctUntilChanged(),
+      map(() => {
+        const root = this.router.routerState.snapshot.root;
+        return { layout: resolvePageLayout(root), page: resolvePageMeta(root, this.router.url) };
+      }),
     );
     // defaultIfEmpty: a failed read completes empty; null still settles the shell, so the page is
     // shown without chrome rather than staying hidden.
     const site$ = this.siteConfigService.getSiteConfig().pipe(defaultIfEmpty(null));
-    return combineLatest([site$, layout$]).pipe(
-      tap(([site, layout]) => {
+    return combineLatest([site$, navigation$]).pipe(
+      tap(([site, { layout, page }]) => {
         if (site !== null) {
           this.setData({ site, layout });
+          this.seo.describe(page, site);
         }
         this.settled.set(true);
       }),

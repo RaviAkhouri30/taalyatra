@@ -35,6 +35,16 @@ Hosting isn't used.
   instead of a 404. Static files (`/images/*`, `/icons/*`, scripts, styles, images) are excluded,
   so a missing asset still returns 404.
 
+**Build output (`postbuild`):** `npm run build` runs `scripts/postbuild.mjs` afterwards. It
+- replaces `%SITE_URL%` in `index.html` (canonical and Open Graph URLs) with `SITE_URL`, else
+  `siteUrl` from `src/environments/environment.ts`;
+- adds `<link rel="modulepreload">` for the chunk holding the Firestore client, so it downloads
+  in parallel with `main.js`;
+- writes `robots.txt` (`/admin` disallowed) and `sitemap.xml` (the public routes).
+
+When the site moves to `taalyatra.in`, change `siteUrl` in `environment.ts` (or set `SITE_URL`
+in CI).
+
 **Rules and data (manual, from a developer machine):**
 1. `npx firebase login`
 2. `npm run deploy:rules`
@@ -49,7 +59,7 @@ flowchart LR
   P[push / PR to main] --> I[npm ci]
   I --> J[setup Java 21]
   J --> R[npm run test:rules<br/>Firestore emulator]
-  R --> B[npm run build]
+  R --> B[npm run build<br/>+ postbuild: SITE_URL, modulepreload,<br/>robots.txt, sitemap.xml]
   B --> C[write-runtime-config.mjs<br/>from GitHub secrets]
   C --> D[Azure Static Web Apps upload]
 ```

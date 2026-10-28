@@ -31,7 +31,7 @@ export interface IRhythmGameDto {
   };
   readonly livesLabel: string;
   readonly rankLabel: string;
-  /** Prefix of each pad's accessible name, e.g. "Drum pad" → "Drum pad Boom". */
+  /** Prefix of each pad's accessible name, e.g. "Drum pad" → "Drum pad Boom bass". */
   readonly padLabelPrefix: string;
   /** Exactly four pads, in sound order: bass, tone, snap, hands. */
   readonly pads: readonly IPadDto[];

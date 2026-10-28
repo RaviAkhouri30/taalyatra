@@ -31,8 +31,10 @@ $color-header-glass: rgb(23 18 16 / 94%);
 $color-promo-gradient: linear-gradient(135deg, $color-amber, $color-clay);
 
 // ---- Typography ----------------------------------------------------------
-$font-display: 'Bricolage Grotesque', sans-serif;
-$font-body: 'DM Sans', sans-serif;
+// Each web font is followed by a metric-matched local fallback (see _fonts.scss), so the swap
+// when the web font arrives barely moves text (CLS).
+$font-display: 'Bricolage Grotesque', 'Bricolage Grotesque Fallback', sans-serif;
+$font-body: 'DM Sans', 'DM Sans Fallback', sans-serif;
 $letter-spacing-display: -0.02em;
 $letter-spacing-eyebrow: 0.16em;
 

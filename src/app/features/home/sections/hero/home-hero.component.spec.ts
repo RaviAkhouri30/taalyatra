@@ -44,11 +44,18 @@ describe('HomeHeroComponent', () => {
     expect(element.querySelector('a.pill--cta')?.getAttribute('href')).toBe('/#play');
   });
 
-  it('should show the illustrations before the copy has loaded', () => {
+  it('should hold the stage illustration back until the copy has loaded (no layout shift)', () => {
     const { element } = render(null);
 
     expect(element.querySelector('h1')).toBeNull();
-    expect(element.querySelector('img.stage')?.getAttribute('alt')).toContain('two hands playing');
+    expect(element.querySelector('img.stage')).toBeNull();
     expect(element.querySelector('img.sky')?.getAttribute('alt')).toBe('');
+  });
+
+  it('should show the stage illustration with the copy', () => {
+    const { element } = render(HERO_DTO);
+
+    expect(element.querySelector('h1')).not.toBeNull();
+    expect(element.querySelector('img.stage')?.getAttribute('alt')).toContain('two hands playing');
   });
 });

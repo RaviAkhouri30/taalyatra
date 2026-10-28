@@ -125,7 +125,7 @@
         "tag": "Signature experience",
         "category": "Percussion",
         "image": {
-          "src": "/images/experiences/drum-circle.jpg",
+          "src": "/images/experiences/drum-circle.webp",
           "alt": "Djembe drum lit on a warm stage",
           "width": 1200,
           "height": 800
@@ -142,7 +142,7 @@
           "tag": "Melody & rhythm",
           "category": "Melody",
           "image": {
-            "src": "/images/experiences/boombastic.jpg",
+            "src": "/images/experiences/boombastic.webp",
             "alt": "Tuned percussion tubes in warm light",
             "width": 800,
             "height": 533
@@ -157,7 +157,7 @@
           "tag": "No instruments",
           "category": "No instruments",
           "image": {
-            "src": "/images/experiences/body-percussion.jpg",
+            "src": "/images/experiences/body-percussion.webp",
             "alt": "Hands striking a drum head",
             "width": 800,
             "height": 533
@@ -172,7 +172,7 @@
           "tag": "Learn & play",
           "category": "Melody",
           "image": {
-            "src": "/images/experiences/harmonica.jpg",
+            "src": "/images/experiences/harmonica.webp",
             "alt": "Harmonica under warm light",
             "width": 800,
             "height": 533
@@ -187,7 +187,7 @@
           "tag": "Sustainable fun",
           "category": "Percussion",
           "image": {
-            "src": "/images/experiences/trash-jam.jpg",
+            "src": "/images/experiences/trash-jam.webp",
             "alt": "Bucket drum with sticks",
             "width": 800,
             "height": 533
@@ -202,7 +202,7 @@
           "tag": "Folk rhythm",
           "category": "Movement",
           "image": {
-            "src": "/images/experiences/lezim-workshop.jpg",
+            "src": "/images/experiences/lezim-workshop.webp",
             "alt": "Lezim sticks raised in dance",
             "width": 800,
             "height": 533
@@ -267,19 +267,19 @@
       "cta": "Request proposal",
       "gallery": [
         {
-          "src": "/images/drum-circle/circle-from-above.jpg",
+          "src": "/images/drum-circle/circle-from-above.webp",
           "alt": "Drum circle seen from above",
           "width": 1200,
           "height": 800
         },
         {
-          "src": "/images/experiences/body-percussion.jpg",
+          "src": "/images/experiences/body-percussion.webp",
           "alt": "Hands on a drum",
           "width": 800,
           "height": 533
         },
         {
-          "src": "/images/experiences/drum-circle.jpg",
+          "src": "/images/experiences/drum-circle.webp",
           "alt": "Djembe close-up",
           "width": 1200,
           "height": 800
@@ -596,7 +596,7 @@
       "posts": [
         {
           "image": {
-            "src": "/images/drum-circle/circle-from-above.jpg",
+            "src": "/images/drum-circle/circle-from-above.webp",
             "alt": "",
             "width": 1200,
             "height": 800
@@ -606,7 +606,7 @@
         },
         {
           "image": {
-            "src": "/images/experiences/drum-circle.jpg",
+            "src": "/images/experiences/drum-circle.webp",
             "alt": "",
             "width": 1200,
             "height": 800
@@ -616,7 +616,7 @@
         },
         {
           "image": {
-            "src": "/images/experiences/lezim-workshop.jpg",
+            "src": "/images/experiences/lezim-workshop.webp",
             "alt": "",
             "width": 800,
             "height": 533
@@ -626,7 +626,7 @@
         },
         {
           "image": {
-            "src": "/images/experiences/body-percussion.jpg",
+            "src": "/images/experiences/body-percussion.webp",
             "alt": "",
             "width": 800,
             "height": 533
@@ -636,7 +636,7 @@
         },
         {
           "image": {
-            "src": "/images/experiences/boombastic.jpg",
+            "src": "/images/experiences/boombastic.webp",
             "alt": "",
             "width": 800,
             "height": 533
@@ -646,7 +646,7 @@
         },
         {
           "image": {
-            "src": "/images/experiences/trash-jam.jpg",
+            "src": "/images/experiences/trash-jam.webp",
             "alt": "",
             "width": 800,
             "height": 533
@@ -1448,7 +1448,7 @@
       "category": "Corporate",
       "caption": "Corporate drum circle",
       "image": {
-        "src": "/images/drum-circle/circle-from-above.jpg",
+        "src": "/images/drum-circle/circle-from-above.webp",
         "alt": "",
         "width": 1200,
         "height": 800
@@ -1461,7 +1461,7 @@
       "category": "Family",
       "caption": "Family function session",
       "image": {
-        "src": "/images/experiences/drum-circle.jpg",
+        "src": "/images/experiences/drum-circle.webp",
         "alt": "",
         "width": 1200,
         "height": 800
@@ -1474,7 +1474,7 @@
       "category": "Workshops",
       "caption": "Lezim workshop",
       "image": {
-        "src": "/images/experiences/lezim-workshop.jpg",
+        "src": "/images/experiences/lezim-workshop.webp",
         "alt": "",
         "width": 800,
         "height": 533
@@ -1487,7 +1487,7 @@
       "category": "Corporate",
       "caption": "Body percussion",
       "image": {
-        "src": "/images/experiences/body-percussion.jpg",
+        "src": "/images/experiences/body-percussion.webp",
         "alt": "",
         "width": 800,
         "height": 533
@@ -1500,7 +1500,7 @@
       "category": "Behind the scenes",
       "caption": "",
       "image": {
-        "src": "/images/experiences/boombastic.jpg",
+        "src": "/images/experiences/boombastic.webp",
         "alt": "",
         "width": 800,
         "height": 533
@@ -1513,7 +1513,7 @@
       "category": "Family",
       "caption": "",
       "image": {
-        "src": "/images/experiences/harmonica.jpg",
+        "src": "/images/experiences/harmonica.webp",
         "alt": "",
         "width": 800,
         "height": 533
@@ -1526,7 +1526,7 @@
       "category": "Workshops",
       "caption": "",
       "image": {
-        "src": "/images/experiences/trash-jam.jpg",
+        "src": "/images/experiences/trash-jam.webp",
         "alt": "",
         "width": 800,
         "height": 533
@@ -1539,7 +1539,7 @@
       "category": "Corporate",
       "caption": "",
       "image": {
-        "src": "/images/drum-circle/circle-from-above.jpg",
+        "src": "/images/drum-circle/circle-from-above.webp",
         "alt": "",
         "width": 1200,
         "height": 800
@@ -1552,7 +1552,7 @@
       "category": "Behind the scenes",
       "caption": "",
       "image": {
-        "src": "/images/drum-circle/circle-from-above.jpg",
+        "src": "/images/drum-circle/circle-from-above.webp",
         "alt": "",
         "width": 1200,
         "height": 800
@@ -1563,43 +1563,43 @@
   ],
   "gallery": [
     {
-      "src": "/images/drum-circle/circle-from-above.jpg",
+      "src": "/images/drum-circle/circle-from-above.webp",
       "alt": "A full drum circle seen from above",
       "width": 1200,
       "height": 800
     },
     {
-      "src": "/images/experiences/drum-circle.jpg",
+      "src": "/images/experiences/drum-circle.webp",
       "alt": "Djembe drum lit on a warm stage",
       "width": 1200,
       "height": 800
     },
     {
-      "src": "/images/experiences/body-percussion.jpg",
+      "src": "/images/experiences/body-percussion.webp",
       "alt": "Hands striking a drum head",
       "width": 800,
       "height": 533
     },
     {
-      "src": "/images/experiences/lezim-workshop.jpg",
+      "src": "/images/experiences/lezim-workshop.webp",
       "alt": "Lezim sticks raised mid-routine",
       "width": 800,
       "height": 533
     },
     {
-      "src": "/images/experiences/boombastic.jpg",
+      "src": "/images/experiences/boombastic.webp",
       "alt": "Tuned percussion tubes in warm light",
       "width": 800,
       "height": 533
     },
     {
-      "src": "/images/experiences/trash-jam.jpg",
+      "src": "/images/experiences/trash-jam.webp",
       "alt": "Bucket drums and sticks for a trash jam",
       "width": 800,
       "height": 533
     },
     {
-      "src": "/images/experiences/harmonica.jpg",
+      "src": "/images/experiences/harmonica.webp",
       "alt": "A harmonica under warm light",
       "width": 800,
       "height": 533
@@ -1616,7 +1616,7 @@
       ],
       "funFact": "[Add a fun fact]",
       "photo": {
-        "src": "/images/team/member-1.jpg",
+        "src": "/images/team/member-1.webp",
         "alt": "Portrait placeholder for team member 1",
         "width": 600,
         "height": 600
@@ -1632,7 +1632,7 @@
       ],
       "funFact": "[Add a fun fact]",
       "photo": {
-        "src": "/images/team/member-2.jpg",
+        "src": "/images/team/member-2.webp",
         "alt": "Portrait placeholder for team member 2",
         "width": 600,
         "height": 600
@@ -1648,7 +1648,7 @@
       ],
       "funFact": "[Add a fun fact]",
       "photo": {
-        "src": "/images/team/member-3.jpg",
+        "src": "/images/team/member-3.webp",
         "alt": "Portrait placeholder for team member 3",
         "width": 600,
         "height": 600
@@ -1664,7 +1664,7 @@
       ],
       "funFact": "[Add a fun fact]",
       "photo": {
-        "src": "/images/team/member-4.jpg",
+        "src": "/images/team/member-4.webp",
         "alt": "Portrait placeholder for team member 4",
         "width": 600,
         "height": 600
@@ -1680,7 +1680,7 @@
       ],
       "funFact": "[Add a fun fact]",
       "photo": {
-        "src": "/images/team/member-5.jpg",
+        "src": "/images/team/member-5.webp",
         "alt": "Portrait placeholder for team member 5",
         "width": 600,
         "height": 600
@@ -1696,7 +1696,7 @@
       ],
       "funFact": "[Add a fun fact]",
       "photo": {
-        "src": "/images/team/member-6.jpg",
+        "src": "/images/team/member-6.webp",
         "alt": "Portrait placeholder for team member 6",
         "width": 600,
         "height": 600
