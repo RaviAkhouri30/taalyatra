@@ -28,8 +28,18 @@ const STORED_PLATFORMS: ReadonlyMap<string, readonly [SocialPlatform, IconName]>
     .map(([platform, icon]) => [platform, [platform, icon]]),
 );
 
+/** Every shared label empty: what a stored `site/config` without `labels` provides. */
+const NO_LABELS: ISiteLabels = {
+  watchVideo: '',
+  callUs: '',
+  copyAddress: '',
+  addressCopied: '',
+  copyFailed: '',
+};
+
 /**
- * Site-wide content built from `site/config`. Adds what storage leaves out: the WhatsApp link,
+ * Site-wide content built from `site/config`, tolerant of missing optional parts. Adds what storage
+ * leaves out: the WhatsApp link,
  * derived from the phone number so the number is stored once, the social icons, and the promo
  * badge's link to the offer section.
  */
@@ -41,20 +51,22 @@ export class SiteConfigModel implements ISiteConfig {
   public readonly promotion: IPromotion | null;
   public readonly copyrightYear: number;
   public readonly labels: ISiteLabels;
-  public readonly credit: ISiteCredit;
+  public readonly credit: ISiteCredit | null;
 
   /** @param dto The stored site configuration. */
   public constructor(dto: ISiteConfigDto) {
     this.brand = dto.brand;
     this.contact = dto.contact;
     this.copyrightYear = dto.copyrightYear;
-    this.labels = dto.labels;
-    this.credit = dto.credit;
+    // Optional parts may be missing in stored data; each falls back on its own (empty labels,
+    // no credit, no stored profiles, no promotion) instead of breaking the page.
+    this.labels = { ...NO_LABELS, ...dto.labels };
+    this.credit = dto.credit ?? null;
     this.socials = [
       SiteConfigModel.whatsApp(dto.contact.phone),
-      ...dto.socials.flatMap((social) => SiteConfigModel.socialLink(social)),
+      ...(dto.socials ?? []).flatMap((social) => SiteConfigModel.socialLink(social)),
     ];
-    this.promotion = dto.promotion === null ? null : SiteConfigModel.promotion(dto.promotion);
+    this.promotion = dto.promotion ? SiteConfigModel.promotion(dto.promotion) : null;
   }
 
   private static whatsApp(phone: IPhoneNumber): ISocialLink {

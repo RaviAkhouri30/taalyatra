@@ -4,7 +4,8 @@ import { formatTemplate } from './format-template.util';
 /**
  * Pairs each video with its accessible name, the same way on every page.
  * @param videos Videos to show.
- * @param watchLabel Name template with `{title}` (`site/config.labels.watchVideo`).
+ * @param watchLabel Name template with `{title}` (`site/config.labels.watchVideo`); when empty,
+ *   the video's title names the card.
  * @returns One card per video, in order.
  */
 export function toVideoCards(
@@ -13,6 +14,6 @@ export function toVideoCards(
 ): readonly IVideoCard[] {
   return videos.map((video) => ({
     video,
-    ariaLabel: formatTemplate(watchLabel, { title: video.title }),
+    ariaLabel: watchLabel ? formatTemplate(watchLabel, { title: video.title }) : video.title,
   }));
 }

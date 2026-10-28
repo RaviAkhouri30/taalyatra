@@ -47,4 +47,12 @@ describe('CopyTextViewModel', () => {
     model.hideTooltip();
     expect(model.tooltipVisible()).toBe(false);
   });
+
+  it('should show no toast when the message is missing from storage', () => {
+    const { model, toasts } = create();
+
+    model.copy({ ...request, copied: '' });
+
+    expect(toasts).toEqual([]);
+  });
 });

@@ -11,4 +11,8 @@ describe('toVideoCards', () => {
     ]);
     expect(cards[0]?.video).toBe(VIDEOS_FIXTURE[0]);
   });
+
+  it('should name each card by its title when no label is stored', () => {
+    expect(toVideoCards(VIDEOS_FIXTURE.slice(0, 1), '')[0]?.ariaLabel).toBe('[Video title 1]');
+  });
 });

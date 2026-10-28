@@ -33,6 +33,10 @@ app routes.
   from bodies.
 - The adapter stamps `createdAt: serverTimestamp()` on every created document.
 - DTO interfaces (`i-*.ts`) describe stored shapes; model classes add behaviour.
+- **Optional parts of `site/config` degrade item by item.** Only brand, contact and year are
+  required. Missing `labels` become empty, so "Call us" falls back to the number, the copyable
+  address to plain text, and video cards to their titles. A missing `credit` hides the credit, and
+  missing `socials` or `promotion` show none. One absent field never blanks a section.
 - `firestore.rules` denies by default and is tested (`npm run test:rules`). Content is read-only;
   `proposals` is create-only, with exact keys, length limits from `PROPOSAL_MAX_LENGTH`, and
   `createdAt == request.time`.
