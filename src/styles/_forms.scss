@@ -1,0 +1,44 @@
+// Form fields shared by the proposal form and the admin forms (design `.inp2`, `.err`).
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+/// A text input on a dark surface.
+@mixin text-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: t.$color-ink-deep;
+  border: 1px solid t.$color-field-border;
+  border-radius: 9px;
+  color: t.$color-cream;
+  font-family: inherit;
+  font-size: 15px;
+  padding: 9px 11px;
+  min-height: 42px;
+
+  // 16px stops iOS Safari zooming into the field on focus.
+  @include bp.down(bp.$phone) {
+    font-size: 16px;
+  }
+
+  &::placeholder {
+    color: t.$color-placeholder;
+  }
+
+  &:focus {
+    outline: 2px solid t.$color-amber;
+    border-color: t.$color-amber;
+  }
+
+  &[aria-invalid='true'] {
+    border-color: t.$color-amber-soft;
+  }
+}
+
+/// An inline validation message under a field.
+@mixin field-error {
+  display: block;
+  margin-top: 4px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: t.$color-amber-soft;
+}

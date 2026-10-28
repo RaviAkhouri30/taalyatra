@@ -66,4 +66,14 @@ test.describe('Firebase smoke (emulator)', () => {
 
     expect(results.violations).toEqual([]);
   });
+
+  test('should sign the emulator admin in with Firebase Auth', async ({ admin }) => {
+    await admin.openPath('/admin/sign-in');
+
+    // Created by `seed-firestore.mjs --emulator` (EMULATOR_USERS); not a real account.
+    await admin.signIn('admin@taalyatra.test', 'emulator-admin-password');
+
+    await expect(admin.heading).toHaveText('Welcome back');
+    await expect(admin.page.getByText('admin@taalyatra.test')).toBeVisible();
+  });
 });

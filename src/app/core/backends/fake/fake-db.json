@@ -1398,6 +1398,48 @@
         "primary": "Request a proposal",
         "secondary": "See show formats"
       }
+    },
+    "admin": {
+      "signIn": {
+        "heading": "Admin sign in",
+        "lead": "Manage festival offers, themes and page content for taalyatra.in",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you@example.com",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "Your password",
+        "submit": "Sign in",
+        "submitting": "Signing in…",
+        "forgot": "Forgot password?",
+        "note": "Single admin account",
+        "back": "← Back to the website"
+      },
+      "reset": {
+        "heading": "Reset your password",
+        "lead": "Enter your admin email and we’ll send you a link to choose a new password.",
+        "submit": "Send reset link",
+        "submitting": "Sending…",
+        "sent": "If that email has an admin account, a reset link is on its way. Check your inbox.",
+        "backToSignIn": "Back to sign in"
+      },
+      "home": {
+        "heading": "Welcome back",
+        "lead": "Content editing arrives in the next update. For now, this confirms you’re signed in to the admin area.",
+        "signedInAs": "Signed in as",
+        "viewSite": "View site",
+        "signOut": "Sign out",
+        "signingOut": "Signing out…"
+      },
+      "errors": {
+        "emailRequired": "Enter your email.",
+        "emailInvalid": "Enter a valid email address, like name@example.com.",
+        "passwordRequired": "Enter your password.",
+        "passwordLength": "Passwords are 6 to 128 characters long.",
+        "invalidCredentials": "Email or password is incorrect.",
+        "tooManyAttempts": "Too many attempts. Please wait a few minutes and try again.",
+        "network": "Couldn’t reach the server. Check your connection and try again.",
+        "notAdmin": "This account can’t use the admin area.",
+        "unknown": "Something went wrong. Please try again."
+      }
     }
   },
   "videos": [

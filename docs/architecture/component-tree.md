@@ -11,6 +11,7 @@ flowchart TD
   RO -->|"team"| T["TeamPageComponent<br/>page-hero · team-card × n · values · page-cta"]
   RO -->|"shows"| S["ShowsPageComponent<br/>page-hero (+ page-cta) · show-spotlight · show-format-card × n · setups · steps · page-cta"]
   RO -->|"achievements"| A["AchievementsPageComponent<br/>page-hero · stats · milestones · recognition · press · performances · page-cta"]
+  RO -->|"admin (lazy, layout: Bare)"| AD["AdminShellComponent (noindex)<br/>'' · adminGuard → AdminHome · sign-in · signedOutGuard → SignIn · reset-password → ResetPassword<br/>each in app-auth-card"]
   RO -->|"** → ''"| Home
   Home --> Eager["intro · hero · marquee · trust"]
   Home --> Deferred{{"@defer (on idle)<br/>offer … contact · assistant"}}

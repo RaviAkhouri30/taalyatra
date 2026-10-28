@@ -187,8 +187,8 @@ export class ApiServiceProviderFactory {
 
 - Every adapter honours the same `HttpResponse<T>` contract (Liskov). `RestHttpBackend` wraps
   `HttpClient` with `observe: 'response'`, so it matches the contract exactly.
-- The same pattern applies to `IAuthService`, `IEmailService` and `IMediaService`. Each has a
-  Fake implementation for unit tests and e2e.
+- The same pattern applies to `IAuthService` (ADR-0012), `IEmailService`, `IClipboardService`
+  and `IMediaService`. Each has a Fake implementation for unit tests and e2e.
 - `ApiBaseService` sends every call through `HttpsErrorHandler` (loader, timeout, status check,
   notification) and unwraps `body`.
 - The canonical example of this pattern is `docs/architecture/backend-adapter-example.md`

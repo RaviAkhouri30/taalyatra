@@ -1,0 +1,13 @@
+<div class="login">
+  <div class="lcard">
+    <img [ngSrc]="brand().logoUrl" width="62" height="62" [alt]="brand().logoAlt" priority />
+    <h1 class="d">{{ heading() }}</h1>
+    @if (lead()) {
+      <p class="lsub">{{ lead() }}</p>
+    }
+    <ng-content />
+    @if (back()) {
+      <a class="lback" [routerLink]="home">{{ back() }}</a>
+    }
+  </div>
+</div>

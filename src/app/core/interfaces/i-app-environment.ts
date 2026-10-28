@@ -18,6 +18,10 @@ export interface IAppEnvironment {
   readonly firebase: IFirebaseConfig | null;
   /** Local Firestore emulator to connect to, or `null` for the real service. */
   readonly firestoreEmulator: IFirestoreEmulator | null;
+  /** Local Auth emulator to connect to, or `null` for the real service. */
+  readonly authEmulator: IFirestoreEmulator | null;
+  /** UID of the single admin account (an identifier, not a secret; ADR-0012). */
+  readonly adminUid: string;
   /** EmailJS identifiers (public by design). Empty values select the fake email adapter. */
   readonly emailJs: {
     readonly serviceId: string;

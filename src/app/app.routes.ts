@@ -37,6 +37,10 @@ export const routes: Routes = [
     data: { [ROUTE_DATA_KEYS.Layout]: PageLayout.Page },
     loadChildren: () => import('@features/achievements/achievements.routes'),
   },
-  // The admin area isn't built yet (its own feature), so it falls back to home for now.
+  {
+    path: 'admin',
+    data: { [ROUTE_DATA_KEYS.Layout]: PageLayout.Bare },
+    loadChildren: () => import('@features/admin/admin.routes'),
+  },
   { path: '**', redirectTo: '' },
 ];

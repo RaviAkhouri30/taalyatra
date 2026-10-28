@@ -33,7 +33,7 @@ export default defineConfig({
     // emulators:exec starts the emulator, runs the command, and stops the emulator when
     // Playwright stops the dev server.
     command:
-      'npx firebase emulators:exec --only firestore --project demo-taal-yatra ' +
+      'npx firebase emulators:exec --only firestore,auth --project demo-taal-yatra ' +
       `"node scripts/seed-firestore.mjs --emulator && npx ng serve --configuration emulator --port ${String(PORT)}"`,
     url: BASE_URL,
     reuseExistingServer: false,

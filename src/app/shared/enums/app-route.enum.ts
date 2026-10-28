@@ -6,4 +6,6 @@ export enum AppRoute {
   Team = '/team',
   Achievements = '/achievements',
   Admin = '/admin',
+  AdminSignIn = '/admin/sign-in',
+  AdminResetPassword = '/admin/reset-password',
 }
