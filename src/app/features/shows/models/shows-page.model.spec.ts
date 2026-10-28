@@ -5,10 +5,12 @@ import { ShowsPageModel } from './shows-page.model';
 describe('ShowsPageModel', () => {
   const page = () => new ShowsPageModel(PAGES.shows, SHOW_FORMATS_FIXTURE, SITE);
 
-  it('should turn each shared format into a card with its icon and labelled specs', () => {
+  it('should spotlight the featured format and turn the others into cards with labelled specs', () => {
     const [first] = page().formats;
 
-    expect(page().formats).toHaveLength(SHOW_FORMATS_FIXTURE.length);
+    expect(page().spotlight?.eyebrow).toBe('Classical concerts');
+    expect(page().formats).toHaveLength(SHOW_FORMATS_FIXTURE.length - 1);
+    expect(first?.image.src).toBe('/images/shows/live-band.svg');
     expect(first?.icon).toBe(IconName.Mic);
     expect(first?.specs).toEqual([
       { label: 'Ensemble', value: '[6–8 players]' },

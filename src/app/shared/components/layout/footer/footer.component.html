@@ -10,7 +10,7 @@
         @for (column of chrome().footerColumns; track column.heading) {
           <app-footer-links [column]="column" />
         }
-        <app-footer-visit [contact]="site().contact" />
+        <app-footer-visit [contact]="site().contact" [labels]="site().labels" />
       </div>
       <div class="fbot">
         <span>{{ copyright() }}</span>

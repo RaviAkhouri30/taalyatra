@@ -1,5 +1,12 @@
 @let card = format();
 <article class="scard">
+  <img
+    class="art"
+    [ngSrc]="card.image.src"
+    [width]="card.image.width"
+    [height]="card.image.height"
+    alt=""
+  />
   <span class="sico"><app-icon [name]="card.icon" [size]="22" [strokeWidth]="1.9" /></span>
   <h3 class="d">{{ card.title }}</h3>
   <p>{{ card.text }}</p>

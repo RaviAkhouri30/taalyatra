@@ -4,12 +4,12 @@
 
 ```mermaid
 flowchart TD
-  App["App (app-root)"] --> Shell["SiteShellComponent<br/>utility bar · header · footer (+ credit) · promo · action bar · WhatsApp FAB<br/>main hidden until site config settles"]
+  App["App (app-root)"] --> Shell["SiteShellComponent<br/>utility bar · header · footer (+ credit, copyable address) · promo · action bar · WhatsApp FAB · toast host<br/>main hidden until site config settles"]
   Shell --> RO["router-outlet"]
   RO -->|"'' (lazy, layout: Home)"| Home["HomePageComponent"]
   RO -->|"videos (lazy, layout: Page)"| V["VideosPageComponent<br/>page-hero · filter-chips · video-card (featured / library) · page-cta"]
   RO -->|"team"| T["TeamPageComponent<br/>page-hero · team-card × n · values · page-cta"]
-  RO -->|"shows"| S["ShowsPageComponent<br/>page-hero (+ page-cta) · show-format-card × n · setups · steps · page-cta"]
+  RO -->|"shows"| S["ShowsPageComponent<br/>page-hero (+ page-cta) · show-spotlight · show-format-card × n · setups · steps · page-cta"]
   RO -->|"achievements"| A["AchievementsPageComponent<br/>page-hero · stats · milestones · recognition · press · performances · page-cta"]
   RO -->|"** → ''"| Home
   Home --> Eager["intro · hero · marquee · trust"]

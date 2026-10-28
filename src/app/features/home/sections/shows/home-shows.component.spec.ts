@@ -1,10 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ApiEndpoint } from '@shared/enums/api-endpoint.enum';
-import { IconName } from '@shared/enums/icon-name.enum';
 import { queryAll, texts } from '@shared/testing/fixtures';
 import { SHOW_FORMATS, SHOWS_DTO, stubBackend } from '../../testing/home-fixtures';
-import { ShowTeaserModel } from './home-shows.model';
 import { HomeShowsComponent } from './home-shows.component';
 
 describe('HomeShowsComponent', () => {
@@ -27,24 +25,24 @@ describe('HomeShowsComponent', () => {
     expect(button?.getAttribute('href')).toBe('/shows');
   });
 
-  it('should render the six formats, each opening the Shows page', () => {
+  it('should lead with the classical spotlight', () => {
+    const { element } = render(SHOWS_DTO);
+
+    expect(element.querySelector('app-show-spotlight h3')?.textContent).toBe(
+      'An evening of Hindustani classical rhythm.',
+    );
+  });
+
+  it('should render the other formats as image cards, each opening the Shows page', () => {
     const { element } = render(SHOWS_DTO);
     const cards = queryAll(element, '.shc');
 
-    expect(texts(element, '.shc b')).toEqual(SHOW_FORMATS.map((format) => format.title));
+    expect(texts(element, '.shc b')).toEqual(SHOW_FORMATS.slice(1).map((format) => format.title));
     expect(cards.every((card) => card.getAttribute('href') === '/shows')).toBe(true);
-    expect(queryAll(element, '.sico svg')).toHaveLength(6);
+    expect(queryAll(element, '.shc img')).toHaveLength(6);
   });
 
   it('should render nothing until the teaser has loaded', () => {
     expect(render(null).element.querySelector('section')).toBeNull();
-  });
-});
-
-describe('ShowTeaserModel', () => {
-  it('should replace an unknown icon with the default', () => {
-    expect(new ShowTeaserModel({ icon: 'nope', title: 'T', text: 'x' }).icon).toBe(
-      IconName.Sparkle,
-    );
   });
 });

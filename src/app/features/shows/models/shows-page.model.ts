@@ -1,10 +1,12 @@
 import { AppRoute } from '@shared/enums/app-route.enum';
 import { type IconName } from '@shared/enums/icon-name.enum';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
+import { type IImage } from '@shared/interfaces/i-image';
 import { type IPageHeroDto } from '@shared/interfaces/i-page-hero';
 import { type IShowFormatDto } from '@shared/interfaces/i-show-format';
 import { type ISiteConfig } from '@shared/interfaces/i-site-config';
 import { type IExternalLink, type INavLink } from '@shared/interfaces/i-site-link';
+import { ShowSpotlightModel } from '@shared/models/show-spotlight.model';
 import { toWhatsAppUrl } from '@shared/utils/contact-links.util';
 import { toIconName } from '@shared/utils/icon-name.util';
 import { externalLink, navLink } from '@shared/utils/link.util';
@@ -18,6 +20,7 @@ export interface IShowSpec {
 
 /** A show format ready for its card. */
 export interface IShowFormatCard {
+  readonly image: IImage;
   readonly icon: IconName;
   readonly title: string;
   readonly text: string;
@@ -32,6 +35,8 @@ export class ShowsPageModel {
   /** "WhatsApp us": the business number from site config. */
   public readonly whatsApp: IExternalLink;
   public readonly formatsSection: Omit<IShowsPageDto['formats'], 'labels'>;
+  /** The featured format (classical concerts), shown above the cards; `null` when none. */
+  public readonly spotlight: ShowSpotlightModel | null;
   public readonly formats: readonly IShowFormatCard[];
   public readonly setups: IShowsPageDto['setups'];
   public readonly process: IShowsPageDto['process'];
@@ -51,7 +56,9 @@ export class ShowsPageModel {
     this.enquire = navLink(dto.heroPrimaryCta, AppRoute.Home, { fragment: PageAnchor.Contact });
     this.whatsApp = externalLink(dto.heroWhatsAppCta, toWhatsAppUrl(site.contact.phone));
     this.formatsSection = formatsSection;
-    this.formats = formats.map((format) => ({
+    this.spotlight = ShowSpotlightModel.from(formats);
+    this.formats = ShowSpotlightModel.others(formats).map((format) => ({
+      image: format.image,
       icon: toIconName(format.icon),
       title: format.title,
       text: format.text,

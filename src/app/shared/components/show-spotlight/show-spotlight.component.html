@@ -1,0 +1,18 @@
+@let item = spotlight();
+<article class="spot">
+  <div class="art">
+    <img
+      [ngSrc]="item.image.src"
+      [width]="item.image.width"
+      [height]="item.image.height"
+      [alt]="item.image.alt"
+      [priority]="priority()"
+    />
+  </div>
+  <div class="body">
+    <p class="eyebrow">{{ item.eyebrow }}</p>
+    <h3 class="d title">{{ item.title }}</h3>
+    <p class="text">{{ item.text }}</p>
+    <app-page-cta class="actions" [primary]="item.book" [secondary]="item.watch" />
+  </div>
+</article>

@@ -201,3 +201,42 @@ says it opens LinkedIn.
 ---
 
 **Approval:** ☑ Approved by Ravi Akhouri on 2026-10-28 (credit: "Ravi Akhouri", linking to LinkedIn)
+
+---
+
+## Addendum A: copyable address, toasts, Shows spotlight
+
+| #   | Decision |
+| --- | -------- |
+| A1  | **Toasts:** `ToastService` (root) only accepts messages (`show(text, tone)` into a `Subject`). `app-toast-host` in the site shell owns the timers in its view model: `mergeMap` gives each toast its own `timer`, so they close independently. It renders a polite live region. No service subscribes (CLAUDE.md §7). |
+| A2  | **Clipboard port:** `IClipboardService.copy(text): Observable<void>` (core/interfaces). `BrowserClipboardService` wraps `navigator.clipboard.writeText` in `defer`; it is the only place that touches the API. `FakeClipboardService` serves the specs. A factory provides the adapter (ADR-0002). An unavailable clipboard (insecure context) errors, and the caller shows a failure toast. |
+| A3  | **`app-copy-text` (shared):** a button that shows the text on one line with an ellipsis. Its tooltip (`role="tooltip"`, `aria-describedby`) shows the full text on hover or focus and closes on Escape (WCAG 1.4.13). The accessible name is "{action}: {full text}". A component-scoped `CopyTextViewModel` copies with `exhaustMap` (repeat clicks ignored while copying) and sends the success or failure toast. |
+| A4  | **Labels in `site/config.labels`:** `callUs`, `copyAddress`, `addressCopied`, `copyFailed`. They are shared UI strings, stored once. |
+| A5  | **Phone row:** "Call us" (`labels.callUs`) links to `tel:`, with the accessible name "Call us, {number}". `contact.phone.display` stays the number, because the utility bar and the contact section show it. |
+| A6  | **Classical concert = one `showFormats` record** with `featured: true` and `spotlight: { eyebrow, primaryCta, secondaryCta }`. Every format gains `image` and `featured`, and other formats have `spotlight: null`. The home teaser and the Shows page render the featured format as a spotlight and the rest as cards. |
+| A7  | **`app-show-spotlight` (shared):** used by both pages, since features can't import each other. A large image beside the eyebrow, title, text and two buttons (proposal form; Videos page). It stacks below 1000px. Its image is the LCP candidate, so it loads with `priority` on the Shows page. |
+| A8  | **Illustrated SVG placeholders** in `public/images/shows/` for the 7 formats, drawn in the brand palette. Each is under 6 kB and served as-is. The paths are data, so real photos replace them from Firestore. |
+| A9  | **The home Shows section moves onto the surface colour**, with a larger heading. Cards get a 16:10 image on top in a 3-column grid (2 on tablet, 1 on phone). This is a deliberate visual change from the 0003 baseline; the home `#shows` screenshots are re-recorded. |
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant B as app-copy-text
+  participant VM as CopyTextViewModel
+  participant C as IClipboardService
+  participant T as ToastService
+  participant H as ToastHostViewModel
+  B->>VM: copy() (click / Enter / Space)
+  Note right of VM: exhaustMap: ignore repeat clicks while copying
+  VM->>C: copy(fullText) → defer(writeText)
+  alt success
+    VM->>T: show("Address copied")
+  else failure
+    VM->>T: show("Couldn't copy…", error)
+  end
+  T-->>H: messages$ → add toast
+  Note right of H: mergeMap: each toast's own timer(3.5 s) → remove
+```
+
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-10-28 (options chosen in chat)
+

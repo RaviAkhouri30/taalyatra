@@ -1,5 +1,5 @@
 @if (model.data(); as section) {
-  <section class="sec" [id]="anchor">
+  <section class="sec shows" [id]="anchor">
     <div class="wrap">
       <app-section-header [eyebrow]="section.eyebrow" [title]="section.title">
         <a appButton [variant]="buttonVariant.Ghost" [routerLink]="section.showsPage.route">{{
@@ -7,16 +7,22 @@
         }}</a>
       </app-section-header>
       <p class="lead">{{ section.lead }}</p>
+      @if (section.spotlight; as spotlight) {
+        <app-show-spotlight class="spotlight" [spotlight]="spotlight" />
+      }
       <div class="showgrid">
         @for (format of section.formats; track format.title) {
           <a class="shc" [routerLink]="section.showsPage.route">
-            <span class="sico"
-              ><app-icon [name]="format.icon" [size]="20" [strokeWidth]="1.9"
-            /></span>
-            <div>
+            <img
+              [ngSrc]="format.image.src"
+              [width]="format.image.width"
+              [height]="format.image.height"
+              alt=""
+            />
+            <span class="in">
               <b>{{ format.title }}</b>
-              <p>{{ format.text }}</p>
-            </div>
+              <span class="text">{{ format.text }}</span>
+            </span>
           </a>
         }
       </div>

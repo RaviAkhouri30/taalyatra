@@ -94,3 +94,44 @@ scope and becomes its own feature (sign-in, content editing, write rules, App Ch
 ---
 
 **Approval:** ☑ Approved by Ravi Akhouri on 2026-10-28 (condition: no duplicated data; shared data is fetched once into a common service and reused)
+
+---
+
+## Addendum A: copyable address, toasts, Shows spotlight (2026-10-28)
+
+Raised by the owner after reviewing Construction.
+
+**Stories**
+- As a **visitor**, I want the long address shortened, with the full text on hover or focus,
+  and copied when I click it, so that the footer stays compact and I can paste the address
+  into a maps app.
+- As a **visitor**, I want a short confirmation message (toast) when something happens, such as
+  "Address copied".
+- As the **business**, I want shows, and especially classical tabla concerts, to look as
+  important as the workshops, with images.
+- As the **business**, I want the "Visit us" phone row to say "Call us" instead of showing the
+  number.
+
+**Acceptance criteria**
+- [ ] Given the footer's "Visit us" details, when they render, then the address is cut to one
+      line with an ellipsis. Hovering or focusing it shows the full address in a tooltip, and
+      Escape closes the tooltip.
+- [ ] Given the address, when it is clicked or activated with the keyboard, then the full
+      address is copied and a toast says so. If copying fails, the toast says so and suggests
+      selecting the text.
+- [ ] Given any toast, when it appears, then screen readers announce it politely and it closes
+      by itself after a few seconds.
+- [ ] Given the home page's Shows section, when it renders, then a classical tabla concert
+      spotlight (large image, story, two buttons) leads it, followed by the other formats as
+      cards with images.
+- [ ] Given the Shows page, when it renders, then the same spotlight leads the formats, and every
+      format card has an image.
+- [ ] Given the classical concert's content, when stored, then it is one `showFormats` record
+      (the single source, ADR-0011), and the images are paths stored in Firestore so real photos
+      can replace the illustrations without a release.
+- [ ] Given the "Visit us" phone row, when it renders, then it reads "Call us" and links to
+      the number, with the number in its accessible name.
+
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-10-28 (in chat: spotlight + photo cards,
+tabla / Hindustani, illustrated placeholders, "Call us")
+

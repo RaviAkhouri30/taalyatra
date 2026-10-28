@@ -1109,7 +1109,11 @@
       },
       "copyrightYear": 2026,
       "labels": {
-        "watchVideo": "Watch {title} on YouTube"
+        "watchVideo": "Watch {title} on YouTube",
+        "callUs": "Call us",
+        "copyAddress": "Copy address",
+        "addressCopied": "Address copied to clipboard",
+        "copyFailed": "Couldn’t copy. Please select the address instead."
       },
       "credit": {
         "label": "Developed with love by",
@@ -1659,12 +1663,41 @@
   ],
   "showFormats": [
     {
+      "icon": "sparkle",
+      "title": "Classical tabla recital",
+      "text": "Hindustani classical tabla: solo recitals, and accompaniment for vocal and instrumental concerts. The tradition behind every circle we lead.",
+      "ensemble": "[Solo, or with accompanists]",
+      "setLength": "[60–90 min]",
+      "bestFor": "Concerts, cultural evenings, baithaks",
+      "image": {
+        "src": "/images/shows/classical-tabla.svg",
+        "alt": "Illustration of a tabla pair on a carpet under a warm stage light, a performer seated behind",
+        "width": 800,
+        "height": 500
+      },
+      "featured": true,
+      "spotlight": {
+        "eyebrow": "Classical concerts",
+        "title": "An evening of Hindustani classical rhythm.",
+        "primaryCta": "Book a concert",
+        "secondaryCta": "Watch a recital"
+      }
+    },
+    {
       "icon": "mic",
       "title": "Live band",
       "text": "A full band set for stage shows, corporate evenings and celebrations.",
       "ensemble": "[6–8 players]",
       "setLength": "[60–90 min]",
-      "bestFor": "Stage events, annual days"
+      "bestFor": "Stage events, annual days",
+      "image": {
+        "src": "/images/shows/live-band.svg",
+        "alt": "",
+        "width": 800,
+        "height": 500
+      },
+      "featured": false,
+      "spotlight": null
     },
     {
       "icon": "djembe",
@@ -1672,7 +1705,15 @@
       "text": "Djembe, dhol and hand percussion for a high-energy opening or finale.",
       "ensemble": "[4–6 players]",
       "setLength": "[20–30 min]",
-      "bestFor": "Entries, award nights"
+      "bestFor": "Entries, award nights",
+      "image": {
+        "src": "/images/shows/percussion-ensemble.svg",
+        "alt": "",
+        "width": 800,
+        "height": 500
+      },
+      "featured": false,
+      "spotlight": null
     },
     {
       "icon": "guitar",
@@ -1680,7 +1721,15 @@
       "text": "An intimate, low-volume set that lets a room keep talking.",
       "ensemble": "[2–4 players]",
       "setLength": "[60–120 min]",
-      "bestFor": "Dinners, small gatherings"
+      "bestFor": "Dinners, small gatherings",
+      "image": {
+        "src": "/images/shows/acoustic.svg",
+        "alt": "",
+        "width": 800,
+        "height": 500
+      },
+      "featured": false,
+      "spotlight": null
     },
     {
       "icon": "pulse",
@@ -1688,7 +1737,15 @@
       "text": "Indian classical and folk instruments meeting contemporary arrangements.",
       "ensemble": "[5–7 players]",
       "setLength": "[45–60 min]",
-      "bestFor": "Cultural evenings, festivals"
+      "bestFor": "Cultural evenings, festivals",
+      "image": {
+        "src": "/images/shows/fusion.svg",
+        "alt": "",
+        "width": 800,
+        "height": 500
+      },
+      "featured": false,
+      "spotlight": null
     },
     {
       "icon": "procession",
@@ -1696,7 +1753,15 @@
       "text": "Mobile percussion that walks with the crowd instead of standing on a stage.",
       "ensemble": "[3–6 players]",
       "setLength": "[30–45 min]",
-      "bestFor": "Baraats, festival processions"
+      "bestFor": "Baraats, festival processions",
+      "image": {
+        "src": "/images/shows/dhol-procession.svg",
+        "alt": "",
+        "width": 800,
+        "height": 500
+      },
+      "featured": false,
+      "spotlight": null
     },
     {
       "icon": "star",
@@ -1704,7 +1769,15 @@
       "text": "A larger production for college fests, society events and public stages.",
       "ensemble": "[8+ players]",
       "setLength": "[90 min+]",
-      "bestFor": "Fests, public events"
+      "bestFor": "Fests, public events",
+      "image": {
+        "src": "/images/shows/fest-stage.svg",
+        "alt": "",
+        "width": 800,
+        "height": 500
+      },
+      "featured": false,
+      "spotlight": null
     }
   ]
 }

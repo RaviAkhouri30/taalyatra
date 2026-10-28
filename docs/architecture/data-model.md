@@ -10,7 +10,7 @@ into Firestore, and development, unit tests and the main e2e suite read it direc
 | `site/config` | `ISiteConfigDto`: brand, contact, socials (no WhatsApp, it's derived from the phone), promotion, copyright year, `labels` (strings two pages share), `credit` (footer) | utility bar, header, footer, promo badge, action bar, hero, offer, mid-CTA, contact, assistant, intro |
 | `home/marquee`, `home/trust` | stored as `{ _items: [...] }`, read as the list | marquee, trust |
 | `pages/{videos, team, shows, achievements}` | page copy only (`i-*-page.ts` in `features/<page>/models/`) | that inner page |
-| `showFormats/{001…}` | `IShowFormatDto` + `order`: icon, title, text, ensemble, set length, best for | home Shows teaser, Shows page |
+| `showFormats/{001…}` | `IShowFormatDto` + `order`: icon, title, text, ensemble, set length, best for, `image`, `featured`, `spotlight` (copy for the featured one, else `null`) | home Shows teaser and Shows page; the featured format (classical tabla recital) is their spotlight |
 | `videos/{001…}` | `IVideoDto` + `order` (categories are derived, not stored) | videos teaser, Videos page |
 | `gallery/{001…}` | `IImageDto` + `order` | gallery, lightbox |
 | `team/{001…}` | `ITeamMemberDto` + `order` | team teaser, Team page |

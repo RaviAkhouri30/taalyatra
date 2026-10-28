@@ -1,0 +1,20 @@
+<button
+  type="button"
+  class="copy"
+  [attr.aria-label]="accessibleName()"
+  (click)="model.copy(request())"
+  (focus)="model.showTooltip()"
+  (blur)="model.hideTooltip()"
+>
+  <span class="text">{{ text() }}</span>
+  <app-icon class="icon" [name]="copyIcon" [size]="16" />
+</button>
+<!-- Visual only: the full text is already in the button's accessible name. -->
+<span
+  class="tip"
+  [id]="tooltipId"
+  role="tooltip"
+  aria-hidden="true"
+  [class.tip--open]="model.tooltipVisible()"
+  >{{ text() }}</span
+>

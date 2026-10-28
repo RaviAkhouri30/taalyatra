@@ -38,6 +38,18 @@
   }
 }
 
+// flex: none keeps the 16:10 ratio; a column flex item's height could otherwise shrink.
+.art {
+  display: block;
+  flex: none;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 6px;
+}
+
 .sico {
   width: 46px;
   height: 46px;

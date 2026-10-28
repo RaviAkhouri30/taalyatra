@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { BaseComponent } from '@shared/base/base-component';
 import { PageCtaComponent } from '@shared/components/page-cta/page-cta.component';
 import { PageHeroComponent } from '@shared/components/page-hero/page-hero.component';
+import { ShowSpotlightComponent } from '@shared/components/show-spotlight/show-spotlight.component';
 import { StepsComponent } from '@shared/components/steps/steps.component';
 import { PageCtaSize } from '@shared/enums/variant.enums';
 import { type ShowsPageModel } from '../../models/shows-page.model';
@@ -11,7 +12,13 @@ import { ShowFormatCardComponent } from '../show-format-card/show-format-card.co
 /** Shows page (design `Shows.dc.html`): formats with specs, setups and how a show comes together. */
 @Component({
   selector: 'app-shows-page',
-  imports: [PageCtaComponent, PageHeroComponent, ShowFormatCardComponent, StepsComponent],
+  imports: [
+    PageCtaComponent,
+    PageHeroComponent,
+    ShowFormatCardComponent,
+    ShowSpotlightComponent,
+    StepsComponent,
+  ],
   templateUrl: './shows-page.component.html',
   styleUrl: './shows-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

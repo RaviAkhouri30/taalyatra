@@ -14,6 +14,7 @@ describe('ShowsPageComponent', () => {
 
     expect(element.querySelector('h1')?.textContent).toContain('Not just workshops');
     expect(texts(element, '.hero-actions a')).toEqual(['Enquire about a show', 'WhatsApp us']);
+    expect(element.querySelector('app-show-spotlight h3')?.textContent).toContain('Hindustani');
     expect(queryAll(element, 'app-show-format-card')).toHaveLength(6);
     expect(queryAll(element, '.setup')).toHaveLength(6);
     expect(queryAll(element, 'app-steps .step')).toHaveLength(4);

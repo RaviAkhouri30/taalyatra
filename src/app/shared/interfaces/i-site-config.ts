@@ -19,6 +19,14 @@ export interface ISiteConfig {
 export interface ISiteLabels {
   /** Accessible name of a video card, with `{title}`. */
   readonly watchVideo: string;
+  /** Text of the "Visit us" phone link (the number is in its accessible name). */
+  readonly callUs: string;
+  /** Action announced on the copyable address, e.g. "Copy address". */
+  readonly copyAddress: string;
+  /** Toast after the address is copied. */
+  readonly addressCopied: string;
+  /** Toast when the clipboard is unavailable. */
+  readonly copyFailed: string;
 }
 
 /** "Developed with love by …" line in the footer. */

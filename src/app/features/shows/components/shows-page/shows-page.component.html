@@ -17,6 +17,9 @@
       <p class="eyebrow">{{ page.formatsSection.eyebrow }}</p>
       <h2 class="d">{{ page.formatsSection.title }}</h2>
       <p class="lead note">{{ page.formatsSection.note }}</p>
+      @if (page.spotlight; as spotlight) {
+        <app-show-spotlight class="spotlight" [spotlight]="spotlight" [priority]="true" />
+      }
       <div class="sgrid">
         @for (format of page.formats; track format.title) {
           <app-show-format-card [format]="format" />

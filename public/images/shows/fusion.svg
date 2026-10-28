@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500"><defs>
+<radialGradient id="bg" cx="50%" cy="35%" r="75%"><stop offset="0" stop-color="#3a2a20"/><stop offset=".55" stop-color="#1e1714"/><stop offset="1" stop-color="#120e0c"/></radialGradient>
+<linearGradient id="beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd79a" stop-opacity=".55"/><stop offset="1" stop-color="#e9a552" stop-opacity="0"/></linearGradient>
+<radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#e9a552" stop-opacity=".45"/><stop offset="1" stop-color="#e9a552" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="800" height="500" fill="url(#bg)"/>
+<path d="M300 0h200l150 440H150z" fill="url(#beam)" opacity=".55"/>
+<path d="M60 250h120l30-60 40 120 40-150 40 180 40-110 30 20h340" fill="none" stroke="#e9a552" stroke-width="5" stroke-linejoin="round" opacity=".55"/>
+<rect x="0" y="430" width="800" height="70" fill="#241c17"/>
+<g transform="rotate(-32 360 300)"><circle cx="360" cy="380" r="70" fill="#9a6a3c"/><circle cx="360" cy="380" r="70" fill="none" stroke="#ffd79a" stroke-width="3" opacity=".6"/><rect x="350" y="80" width="20" height="270" rx="6" fill="#6b3f22"/><g fill="#efe6d9"><circle cx="340" cy="120" r="5"/><circle cx="340" cy="160" r="5"/><circle cx="340" cy="200" r="5"/></g><circle cx="360" cy="90" r="22" fill="#8a4a28"/></g>
+<g transform="rotate(10 560 250)"><rect x="440" y="240" width="250" height="16" rx="8" fill="#e9a552"/><g fill="#171210"><circle cx="560" cy="248" r="4"/><circle cx="590" cy="248" r="4"/><circle cx="620" cy="248" r="4"/><circle cx="650" cy="248" r="4"/></g></g>
+<ellipse cx="600" cy="400" rx="48" ry="14" fill="#efe6d9"/><path d="M552 400c0 30 22 46 48 46s48-16 48-46" fill="#8a4a28"/>
+<circle cx="420" cy="280" r="220" fill="url(#glow)" opacity=".6"/>
+<path d="M120 113l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#ffd79a" opacity=".8"/><path d="M700 113l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#ffd79a" opacity=".8"/><path d="M250 413l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#ffd79a" opacity=".8"/></svg>

@@ -1,12 +1,19 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { FakeClipboardService } from '@core/backends/fake/fake-clipboard.service';
+import { IClipboardService } from '@core/interfaces/i-clipboard-service';
 import { type ILayoutChrome } from '@shared/interfaces/i-layout-chrome';
 import { HOME_CHROME, PAGE_CHROME, SITE, texts } from '@shared/testing/fixtures';
 import { FooterComponent } from './footer.component';
 
 describe('FooterComponent', () => {
   function render(chrome: ILayoutChrome): HTMLElement {
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        { provide: IClipboardService, useClass: FakeClipboardService },
+      ],
+    });
     const fixture = TestBed.createComponent(FooterComponent);
     fixture.componentRef.setInput('site', SITE);
     fixture.componentRef.setInput('chrome', chrome);
