@@ -10,6 +10,15 @@
 **Firestore:** Native mode, project `taal-yatra`, location `asia-south2` (Delhi). The location
 can't be changed.
 
+**Site addresses:** `https://calm-mud-0ca950310.4.azurestaticapps.net` (Azure default) and
+`taalyatra.in` (custom domain). Both are Firebase Auth authorized domains. PR preview environments
+get their own `calm-mud-0ca950310-<n>.4.azurestaticapps.net` addresses, which aren't authorized
+(Firebase has no wildcards). Email/password sign-in still works there; only the reset email's
+"continue" link needs an authorized domain.
+
+**Auth email sender:** custom domain `taalyatra.in`, verified 2026-10-28 (SPF, DKIM and
+verification records at GoDaddy).
+
 **Hosting:** Azure Static Web Apps (`.github/workflows/azure-static-web-apps-*.yml`). Firebase
 Hosting isn't used.
 
