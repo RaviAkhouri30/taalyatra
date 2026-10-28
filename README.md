@@ -61,6 +61,7 @@ architecture overview, ADRs and the per-feature AIDLC records.
 ## Getting started
 
 **Prerequisites:**
+
 - **Node.js 24** (see `.nvmrc`) with npm 11.
 - **Java 21:** needed only for the Firestore emulator (rules tests and the Firebase smoke suite).
 
@@ -75,19 +76,19 @@ so no Firebase account is needed.
 
 ## Scripts
 
-| Command                         | What it does                                                    |
-| ------------------------------- | --------------------------------------------------------------- |
-| `npm start`                     | Dev server on port 4200 (Fake backend)                          |
-| `npm run build`                 | Production build: budgets and strict CSP                        |
-| `npm run verify`                | format check, lint, typecheck, unit tests with coverage, build  |
-| `npm test`                      | Unit tests (Vitest)                                             |
-| `npm run e2e`                   | Playwright on desktop, tablet and mobile (Fake backend)         |
-| `npm run e2e:visual:update`     | Re-record visual baselines after an approved visual change      |
-| `npm run test:rules`            | Firestore security rules tests on the emulator (needs Java)     |
-| `npm run e2e:firebase`          | Firebase smoke suite on the seeded emulator (needs Java)        |
-| `npm run start:emulator`        | Dev server against a running local Firestore emulator           |
-| `npm run seed:firestore`        | Copy `fake-db.json` into Firestore (`--dry-run`, `--yes`, `--emulator`) |
-| `npm run deploy:rules`          | Deploy `firestore.rules` and indexes                            |
+| Command                     | What it does                                                            |
+| --------------------------- | ----------------------------------------------------------------------- |
+| `npm start`                 | Dev server on port 4200 (Fake backend)                                  |
+| `npm run build`             | Production build: budgets and strict CSP                                |
+| `npm run verify`            | format check, lint, typecheck, unit tests with coverage, build          |
+| `npm test`                  | Unit tests (Vitest)                                                     |
+| `npm run e2e`               | Playwright on desktop, tablet and mobile (Fake backend)                 |
+| `npm run e2e:visual:update` | Re-record visual baselines after an approved visual change              |
+| `npm run test:rules`        | Firestore security rules tests on the emulator (needs Java)             |
+| `npm run e2e:firebase`      | Firebase smoke suite on the seeded emulator (needs Java)                |
+| `npm run start:emulator`    | Dev server against a running local Firestore emulator                   |
+| `npm run seed:firestore`    | Copy `fake-db.json` into Firestore (`--dry-run`, `--yes`, `--emulator`) |
+| `npm run deploy:rules`      | Deploy `firestore.rules` and indexes                                    |
 
 ## Configuration
 
@@ -101,6 +102,7 @@ so no Firebase account is needed.
 ## Deployment
 
 Pushes and pull requests to `main` run the GitHub Actions workflow:
+
 1. install dependencies
 2. Firestore rules tests (Java 21)
 3. production build
@@ -134,4 +136,4 @@ Semantic Versioning ([docs/versioning.md](docs/versioning.md)). The history is i
 ## Licence
 
 Copyright © 2026 Ravi Akhouri. All rights reserved. Proprietary; see [LICENSE](LICENSE). For
-permission requests, contact contact@taalyatra.in.
+permission requests, contact contact@raviakhouri.in.
