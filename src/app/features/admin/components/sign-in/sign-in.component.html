@@ -1,0 +1,63 @@
+@if (model.data(); as page) {
+  <app-auth-card
+    [brand]="page.brand"
+    [heading]="page.signIn.heading"
+    [lead]="page.signIn.lead"
+    [back]="page.signIn.back"
+  >
+    @if (notAdmin()) {
+      <p class="lerr lform" role="alert">{{ page.errors.notAdmin }}</p>
+    }
+    <form class="lform" [formGroup]="model.form" (ngSubmit)="model.submit()" novalidate>
+      <label class="fld"
+        ><span>{{ page.signIn.emailLabel }}</span>
+        <input
+          class="inp2"
+          type="email"
+          inputmode="email"
+          formControlName="email"
+          autocomplete="username"
+          required
+          [attr.maxlength]="emailMax"
+          [placeholder]="page.signIn.emailPlaceholder"
+          [attr.aria-invalid]="showError('email')"
+          [attr.aria-describedby]="showError('email') ? 'sign-in-email-error' : null"
+        />
+        @if (showError('email')) {
+          <small class="err" id="sign-in-email-error">{{
+            page.emailError(model.form.controls.email.errors)
+          }}</small>
+        }
+      </label>
+      <label class="fld"
+        ><span>{{ page.signIn.passwordLabel }}</span>
+        <input
+          class="inp2"
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+          required
+          [attr.maxlength]="passwordMax"
+          [placeholder]="page.signIn.passwordPlaceholder"
+          [attr.aria-invalid]="showError('password')"
+          [attr.aria-describedby]="showError('password') ? 'sign-in-password-error' : null"
+        />
+        @if (showError('password')) {
+          <small class="err" id="sign-in-password-error">{{
+            page.passwordError(model.form.controls.password.errors)
+          }}</small>
+        }
+      </label>
+      @if (model.failure(); as kind) {
+        <p class="lerr" role="alert">{{ page.messageFor(kind) }}</p>
+      }
+      <button appButton type="submit" [disabled]="model.submitting()">
+        {{ model.submitting() ? page.signIn.submitting : page.signIn.submit }}
+      </button>
+    </form>
+    <div class="lrow">
+      <a class="llink" [routerLink]="resetRoute">{{ page.signIn.forgot }}</a>
+      <span class="lnote">{{ page.signIn.note }}</span>
+    </div>
+  </app-auth-card>
+}

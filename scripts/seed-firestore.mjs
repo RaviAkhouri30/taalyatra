@@ -13,6 +13,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { cert, initializeApp } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 
 // Keep in step with src/app/core/backends/firebase/firestore.constants.ts.
@@ -24,6 +25,14 @@ const ID_DIGITS = 3;
 const BATCH_LIMIT = 500;
 const EMULATOR_PROJECT = 'demo-taal-yatra';
 const EMULATOR_HOST = '127.0.0.1:8080';
+const AUTH_EMULATOR_HOST = '127.0.0.1:9099';
+
+// Emulator-only accounts for the Firebase smoke suite. The admin UID matches
+// environment.emulator.ts; none of these exist in the real project.
+export const EMULATOR_USERS = [
+  { uid: 'emulator-admin-uid', email: 'admin@taalyatra.test', password: 'emulator-admin-password' },
+  { uid: 'emulator-visitor-uid', email: 'visitor@taalyatra.test', password: 'emulator-visitor-password' },
+];
 
 /**
  * Maps fake-db.json onto Firestore documents: <object>/<key> for each top-level object (a list
@@ -77,6 +86,7 @@ async function commit(firestore, writes, deletes) {
 function connect({ emulator }, keyPath) {
   if (emulator) {
     process.env.FIRESTORE_EMULATOR_HOST ??= EMULATOR_HOST;
+    process.env.FIREBASE_AUTH_EMULATOR_HOST ??= AUTH_EMULATOR_HOST;
     initializeApp({ projectId: EMULATOR_PROJECT });
     return EMULATOR_PROJECT;
   }
@@ -86,6 +96,20 @@ function connect({ emulator }, keyPath) {
   const key = JSON.parse(readFileSync(resolve(keyPath), 'utf8'));
   initializeApp({ credential: cert(key), projectId: key.project_id });
   return key.project_id;
+}
+
+/** Creates the emulator's test accounts; re-running is safe (existing accounts are kept). */
+async function createEmulatorUsers() {
+  const auth = getAuth();
+  for (const user of EMULATOR_USERS) {
+    try {
+      await auth.createUser(user);
+    } catch (error) {
+      if (error.code !== 'auth/uid-already-exists') {
+        throw error;
+      }
+    }
+  }
 }
 
 async function main() {
@@ -111,6 +135,9 @@ async function main() {
     return;
   }
   await commit(firestore, writes, deletes);
+  if (values.emulator) {
+    await createEmulatorUsers();
+  }
   console.log(`Seeded ${project}.`);
 }
 

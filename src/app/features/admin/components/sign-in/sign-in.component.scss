@@ -1,0 +1,82 @@
+// Values from the design prototype (Admin.dc.html, sign-in screen).
+@use 'tokens' as t;
+@use 'forms';
+
+:host {
+  display: block;
+}
+
+.lform {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  margin-top: 22px;
+}
+
+.fld {
+  display: block;
+  min-width: 0;
+
+  > span {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: t.$color-muted;
+    margin-bottom: 4px;
+  }
+}
+
+.inp2 {
+  @include forms.text-input;
+
+  min-height: 44px;
+}
+
+.err {
+  @include forms.field-error;
+}
+
+// A failure from the server (design `.lerr`).
+.lerr {
+  background: t.$color-danger-tint;
+  border: 1px solid t.$color-danger-line;
+  color: t.$color-danger-text;
+  font-size: 13.5px;
+  padding: 9px 12px;
+  border-radius: 9px;
+}
+
+.lok {
+  background: t.$color-surface;
+  border: 1px solid t.$color-field-border;
+  color: t.$color-cream;
+  font-size: 13.5px;
+  line-height: 1.5;
+  padding: 11px 13px;
+  border-radius: 11px;
+  margin-top: 22px;
+}
+
+.lrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.llink {
+  font-size: 13.5px;
+  color: t.$color-muted;
+  text-decoration: underline;
+
+  &:hover {
+    color: t.$color-amber;
+  }
+}
+
+.lnote {
+  font-size: 13px;
+  color: t.$color-muted-faint;
+}

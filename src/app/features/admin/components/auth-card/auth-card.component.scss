@@ -1,0 +1,60 @@
+// Values from the design prototype (Admin.dc.html, sign-in screen).
+@use 'tokens' as t;
+
+:host {
+  display: block;
+}
+
+.login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  background:
+    radial-gradient(900px 520px at 72% 28%, rgb(201 107 60 / 22%), transparent 70%),
+    radial-gradient(700px 440px at 14% 88%, rgb(138 106 78 / 18%), transparent 72%),
+    linear-gradient(165deg, #1e1714, t.$color-ink 48%, t.$color-ink-deep);
+}
+
+.lcard {
+  width: 100%;
+  max-width: 410px;
+  background: t.$color-surface-raised;
+  border: 1px solid t.$color-line;
+  border-radius: 22px;
+  padding: 34px 32px 26px;
+  box-shadow: 0 26px 70px rgb(0 0 0 / 60%);
+
+  img {
+    border-radius: 50%;
+    object-fit: cover;
+    background: t.$color-logo-ground;
+    display: block;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: 27px;
+    font-weight: 800;
+  }
+}
+
+.lsub {
+  font-size: 14.5px;
+  color: t.$color-muted;
+  margin-top: 6px;
+}
+
+.lback {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: t.$color-amber;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

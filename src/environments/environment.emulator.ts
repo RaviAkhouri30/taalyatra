@@ -19,6 +19,9 @@ export const environment: IAppEnvironment = {
     appId: 'demo-app-id',
   },
   firestoreEmulator: { host: '127.0.0.1', port: 8080 },
+  authEmulator: { host: '127.0.0.1', port: 9099 },
+  // Created by `seed-firestore.mjs --emulator`; keep in step with that script.
+  adminUid: 'emulator-admin-uid',
   fakeLatencyMs: 0,
   emailJs: { serviceId: '', templateId: '', publicKey: '' },
 };

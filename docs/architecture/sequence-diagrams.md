@@ -30,26 +30,30 @@ sequenceDiagram
   Note over C,VM: data signal changes → OnPush view re-renders
 ```
 
-## 2. Sign-in (Firebase Auth)
+## 2. Admin sign-in (Firebase Auth, 1.4.0)
 
 ```mermaid
 sequenceDiagram
   autonumber
-  participant C as LoginComponent
-  participant VM as LoginViewModel
-  participant A as IAuthService
+  participant C as SignInComponent
+  participant VM as SignInViewModel
+  participant A as IAuthService (FirebaseAuthService)
+  participant G as AuthGateway (lazy chunk)
   participant FA as Firebase Auth
+  participant R as Router + adminGuard
 
-  C->>VM: submit(credentials)
-  VM->>A: signIn(credentials)
-  A->>FA: defer(() => signInWithEmailAndPassword())
-  FA-->>A: UserCredential
-  A-->>VM: Observable<AuthUser>
-  VM->>VM: setData(user) · navigate
-  alt failure
-    FA-->>A: FirebaseError
-    A-->>VM: mapped AuthError (no SDK types leak)
-    VM->>VM: error signal set → message shown
+  C->>VM: submit() (ngSubmit)
+  VM->>VM: markAllAsTouched · filter(valid)
+  Note right of VM: exhaustMap: one request at a time
+  VM->>A: signIn(email, password)
+  A->>G: first use: import('./auth-gateway')
+  G->>FA: defer(signInWithEmailAndPassword)
+  alt success
+    FA-->>VM: IAuthUser
+    VM->>R: navigateByUrl('/admin') → uid === adminUid ? home : sign out + ?reason=not-admin
+  else failure
+    FA-->>A: FirebaseError(code)
+    A-->>VM: AuthError(kind) → one generic message, password cleared
   end
 ```
 

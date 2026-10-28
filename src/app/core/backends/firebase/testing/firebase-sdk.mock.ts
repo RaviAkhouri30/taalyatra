@@ -22,3 +22,12 @@ export const firestoreLiteMock = {
   updateDoc: vi.fn(),
   deleteDoc: vi.fn(),
 };
+
+export const firebaseAuthMock = {
+  getAuth: vi.fn(() => ({ type: 'auth' })),
+  connectAuthEmulator: vi.fn(),
+  onAuthStateChanged: vi.fn(() => () => undefined),
+  signInWithEmailAndPassword: vi.fn(),
+  signOut: vi.fn(),
+  sendPasswordResetEmail: vi.fn(),
+};

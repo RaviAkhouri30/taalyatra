@@ -33,6 +33,7 @@ export enum ApiEndpoint {
   PagesTeam = 'pages/team',
   PagesShows = 'pages/shows',
   PagesAchievements = 'pages/achievements',
+  PagesAdmin = 'pages/admin',
   /** Site-wide content: brand, contact details, social links, promotion. */
   SiteConfig = 'site/config',
   /** Proposal requests from the contact form (create-only collection). */
