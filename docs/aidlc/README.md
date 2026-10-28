@@ -17,4 +17,4 @@ Each phase ends with **human approval** recorded at the bottom of its file. No p
 | 0003 | [Home page](0003-home-page/)                                 | 1.1.0   | Built · release commit and tag pending |
 | 0004 | [Firebase data](0004-firebase-data/)                         | 1.2.0   | Construction approved · PR open, verification pending |
 | 0005 | [Inner pages: Videos, Team, Shows, Achievements](0005-inner-pages/) | 1.3.0 | Construction approved · PR pending |
-| 0006 | [Admin sign-in](0006-admin-login/) | 1.4.0 | Construction · awaiting approval |
+| 0006 | [Admin sign-in](0006-admin-login/) | 1.4.0 | Construction approved · PR pending |

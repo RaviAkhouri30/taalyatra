@@ -58,4 +58,4 @@ Built from the approved [design](02-design.md) on `feat/admin-login` (stacked on
 
 ---
 
-**Approval:** ☐ Approved by ____ on ____
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-10-28
