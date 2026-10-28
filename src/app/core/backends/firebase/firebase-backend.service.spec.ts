@@ -20,6 +20,7 @@ describe('FirebaseBackendService', () => {
   // Stands in for the lazily loaded SDK chunk; the gateway has its own spec.
   const gateway = {
     getDocument: vi.fn(),
+    getCollectionDocuments: vi.fn(),
     listCollection: vi.fn(),
     addDocument: vi.fn(),
     setDocument: vi.fn(),
@@ -54,11 +55,11 @@ describe('FirebaseBackendService', () => {
     it('should load the SDK only on subscribe, once, with the config and emulator', async () => {
       gateway.getDocument.mockReturnValue(of({ title: 'Hero' }));
       const service = create();
-      const first = service.get('home/hero');
+      const first = service.get('pages/about');
 
       expect(created).not.toHaveBeenCalled();
       await firstValueFrom(first);
-      await firstValueFrom(service.get('home/offer'));
+      await firstValueFrom(service.get('pages/shows'));
       expect(created).toHaveBeenCalledTimes(1);
       expect(created).toHaveBeenCalledWith(config, emulator);
     });
@@ -66,17 +67,17 @@ describe('FirebaseBackendService', () => {
     it('should answer 200 with the body when the document exists', async () => {
       gateway.getDocument.mockReturnValue(of({ title: 'Hero' }));
 
-      await expect(firstValueFrom(create().get('home/hero'))).resolves.toMatchObject({
+      await expect(firstValueFrom(create().get('pages/about'))).resolves.toMatchObject({
         status: HttpStatusCode.Ok,
         body: { title: 'Hero' },
       });
-      expect(gateway.getDocument).toHaveBeenCalledWith('home/hero');
+      expect(gateway.getDocument).toHaveBeenCalledWith('pages/about');
     });
 
     it('should answer 404 when the document is missing', async () => {
       gateway.getDocument.mockReturnValue(of(undefined));
 
-      await expect(firstValueFrom(create().get('home/missing'))).resolves.toMatchObject({
+      await expect(firstValueFrom(create().get('pages/missing'))).resolves.toMatchObject({
         status: HttpStatusCode.NotFound,
         body: null,
       });
@@ -100,7 +101,7 @@ describe('FirebaseBackendService', () => {
     });
 
     it('should answer 503 without loading the SDK when Firebase is not configured', async () => {
-      await expect(firstValueFrom(create(null).get('home/hero'))).resolves.toMatchObject({
+      await expect(firstValueFrom(create(null).get('pages/about'))).resolves.toMatchObject({
         status: HttpStatusCode.ServiceUnavailable,
       });
       expect(created).not.toHaveBeenCalled();
@@ -109,8 +110,59 @@ describe('FirebaseBackendService', () => {
     it('should translate a Firebase error into a status instead of throwing', async () => {
       gateway.getDocument.mockReturnValue(throwError(() => ({ code: 'permission-denied' })));
 
-      await expect(firstValueFrom(create().get('home/hero'))).resolves.toMatchObject({
+      await expect(firstValueFrom(create().get('pages/about'))).resolves.toMatchObject({
         status: HttpStatusCode.Forbidden,
+      });
+    });
+  });
+
+  describe('preloaded collections', () => {
+    function preload(): void {
+      gateway.getCollectionDocuments.mockImplementation((name: string) =>
+        of(
+          new Map<string, unknown>(
+            name === 'site' ? [['config', { copyrightYear: 2026 }]] : [['hero', { title: 'Hero' }]],
+          ),
+        ),
+      );
+    }
+
+    it('should read site and home once, together, for every document in them', async () => {
+      preload();
+      const service = create();
+
+      const [config, hero] = await Promise.all([
+        firstValueFrom(service.get('site/config')),
+        firstValueFrom(service.get('home/hero')),
+      ]);
+      await firstValueFrom(service.get('home/hero'));
+
+      expect(config).toMatchObject({ status: HttpStatusCode.Ok, body: { copyrightYear: 2026 } });
+      expect(hero).toMatchObject({ status: HttpStatusCode.Ok, body: { title: 'Hero' } });
+      expect(gateway.getCollectionDocuments.mock.calls).toEqual([['site'], ['home']]);
+      expect(gateway.getDocument).not.toHaveBeenCalled();
+    });
+
+    it('should answer 404 when a preloaded collection has no such document', async () => {
+      preload();
+
+      await expect(firstValueFrom(create().get('home/missing'))).resolves.toMatchObject({
+        status: HttpStatusCode.NotFound,
+      });
+    });
+
+    it('should translate a failed preload and retry it on the next request', async () => {
+      gateway.getCollectionDocuments.mockReturnValueOnce(
+        throwError(() => ({ code: 'unavailable' })),
+      );
+      const service = create();
+
+      await expect(firstValueFrom(service.get('home/hero'))).resolves.toMatchObject({
+        status: HttpStatusCode.ServiceUnavailable,
+      });
+      preload();
+      await expect(firstValueFrom(service.get('home/hero'))).resolves.toMatchObject({
+        status: HttpStatusCode.Ok,
       });
     });
   });

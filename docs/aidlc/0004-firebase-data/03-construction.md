@@ -56,6 +56,49 @@ typechecked and unit-tested before the next one started.
   - 4 videos, 7 gallery tiles, 4 team members, 16 sections
   - 0 console errors
 
+## Addendum A: site config (2026-10-28)
+
+| #   | Increment | Files | Tests |
+| --- | --------- | ----- | ----- |
+| A1  | Site-config DTO, model, endpoint | `i-site-config.ts` (+DTOs), `shared/models/site-config.model.ts`, `social.constants.ts`, `ApiEndpoint.SiteConfig` | unit |
+| A2  | Cached service | `site-config.service.ts` extends `ApiBaseService`; `throwIfEmpty` + `shareReplay`, so a failure is retried and never cached | unit (one read for many subscribers; retry) |
+| A3  | Data moved | `fake-db.json` gains `site.config`; `site.constants.ts` and `site-config.token.ts` removed | — |
+| A4  | Seed, rules | seed maps every top-level object or list; `match /site/{document}` read-only; rules spec covers `site/config` | rules spec written (needs Java) |
+| A5  | Specs | path-aware `stubBackend`, `provideSiteConfig()`, fixture `SITE` built from `fake-db.json` | 358 unit tests |
+| A6  | CLS | preloaded `site` and `home` collections (adapter); `main { min-height: 100vh }`; `<main>` hidden (`visibility`) until the shell settles | measured, see below; shell spec covers pending, loaded and failed |
+
+**CLS measurements** (production build, live database, 1440×900 and Pixel 7, 3 fresh loads each):
+
+| Build | Desktop | Mobile |
+| ----- | ------- | ------ |
+| 1.1.0 (bundled `fake-db.json`) | 0.162 / 0.120 / 0.120 | 0.000 |
+| Firestore, one request per document (commit `4df50ee`) | 0.298 / 0.603 / 0.612 | 0.000 |
+| Preload + `main` min-height only | 0.221 / 0.220 / 0.220 (`MAIN` shifted down by the late header) | 0.000 / 0.777 / 0.777 |
+| **Addendum A final** (plus `<main>` hidden until the shell settles) | **0.0004 / 0.0004 / 0.0004** | **0.0000 / 0.0000 / 0.0001** |
+
+**LCP**, the same setup, 4 loads each, served locally against the live database (`asia-south2`):
+
+| Build | Desktop (ms) | Mobile (ms) |
+| ----- | ------------ | ----------- |
+| 1.1.0 (bundled data) | 120 / 80 / 200 / 112 | 168 / 96 / 92 / 100 |
+| Addendum A final | 996 / 440 / 628 / 1056 | 940 / 936 / 1088 / 1008 |
+
+LCP stays well under 2.5 s. The increase is the network: the SDK chunk loads, then one Firestore
+round trip. Hiding `<main>` doesn't add to it, because the hero already waited for site config.
+Lighthouse with mobile throttling, in Verification, is the real check. If it misses 95, the
+planned next step is a `modulepreload` for the gateway chunk.
+
+**Firestore requests per home visit:** 5 (two preloaded collections plus 3 lists), down from 24.
+
+The pre-existing 0.12–0.16 came from the footer starting inside the viewport and being pushed down
+as sections render. The Firestore jump came from 24 separate answers arriving at different
+times.
+
+**Live data:** the seed re-ran with 44 documents written, 0 deleted, and `site/config` added. The
+owner deployed the updated rules (`npm run deploy:rules`). Anonymous reads: `site/config` and
+`home/hero` return `200`; `proposals` returns `403`. The production build renders every section
+and the chrome from live data, with 0 console errors.
+
 ## Decisions & deviations from design
 
 - **The gateway loader is injected through a token, `FIRESTORE_GATEWAY_LOADER`.** The design had

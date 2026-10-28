@@ -363,3 +363,57 @@ dependencies), `eslint.config.mjs` (Node globals for `scripts/`), the CI workflo
 ---
 
 **Approval:** ☑ Approved by Ravi Akhouri on 2026-10-28
+
+---
+
+## Addendum A: site config
+
+```mermaid
+classDiagram
+  direction LR
+  class ApiBaseService~T~ { <<abstract>> }
+  class SiteConfigService {
+    -siteConfig$: Observable~ISiteConfig~ (shareReplay)
+    +attachViewDataHandler() Observable~ISiteConfigDto~
+    +getSiteConfig() Observable~ISiteConfig~
+  }
+  class SiteConfigModel {
+    <<implements ISiteConfig>>
+    +brand +contact +socials +promotion +copyrightYear
+  }
+  ApiBaseService <|-- SiteConfigService
+  SiteConfigService ..> SiteConfigModel : maps DTO
+  SiteShellViewModel --> SiteConfigService
+  HomeHeroViewModel --> SiteConfigService
+  HomeContactViewModel --> SiteConfigService
+```
+
+- **Storage.** The document is `site/config` (`ApiEndpoint.SiteConfig`). `fake-db.json` gains
+  `site.config`, so the Fake backend, the seed and the specs all read the same data.
+- **DTO.** It holds plain JSON with no enums or derived values:
+  - `brand`, `contact` and `copyrightYear` keep today's shape.
+  - `socials` is `[{ platform, label, href }]` for Instagram, YouTube and Facebook.
+  - `promotion` is `{ label, subtitle, dismissLabel }`, or `null` when no offer is running.
+- **Model.** `SiteConfigModel` maps the DTO to the existing `ISiteConfig`, so no consumer
+  changes:
+  - It puts **WhatsApp first**, derived from `contact.phone` (`toWhatsAppUrl`), so the number is
+    stored only once.
+  - It adds each social link's icon from its platform (`SOCIAL_ICONS`) and **drops** unknown
+    platforms.
+  - It builds the promotion link to the home page's `#diwali` section.
+- **Caching.** `getSiteConfig()` uses `shareReplay({ bufferSize: 1, refCount: false })` on a root
+  service, so every consumer gets the first answer from a single read. A failed read isn't cached,
+  so the next subscriber retries.
+- **Removed.** `DEFAULT_SITE_CONFIG`, `site.constants.ts` and the `SITE_CONFIG` token.
+- **Seed.** Every top-level **object** in `fake-db.json` (`home`, `site`) maps to
+  `<key>/<doc>` documents. Lists stay item collections. Stale documents in `site` are deleted too.
+- **Rules.** `match /site/{doc} { allow read: if true; }`. Writes fall through to deny.
+- **Specs.** `stubBackend` answers `site/config` from `fake-db.json` and every other path with the
+  given body. The test fixture `SITE` becomes `new SiteConfigModel(fakeDb.site.config)`.
+- **CLS (A6).** Measured with a `PerformanceObserver` (`layout-shift`) on the production build,
+  at the desktop and mobile viewports, before and after the change. If it reaches 0.1 or more, the
+  mitigation is to keep `<main>` visually hidden until the shell has settled (loaded or failed),
+  with no extra round trip.
+
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-10-28 (in chat)
+

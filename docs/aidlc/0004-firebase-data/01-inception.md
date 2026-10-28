@@ -129,3 +129,49 @@ for Firestore.
 ---
 
 **Approval:** ☑ Approved by Ravi Akhouri on 2026-10-28
+
+---
+
+## Addendum A: site config and real email (2026-10-28)
+
+Raised after Construction, when the owner checked the console and expected all site data in
+Firestore.
+
+**Goal.** Move the remaining business content, still hardcoded in `site.constants.ts`, into
+Firestore: brand, contact details, social links, promotion and copyright year. Then the phone,
+address or offer can change without a release. Turn on real EmailJS delivery for proposals,
+alongside the Firestore record.
+
+**Out of scope.** Navigation menus stay in code, because they point at app routes and enums.
+Design constants (diya colours, spark counts, icon registry) stay too: they're styling, not
+content.
+
+**Acceptance criteria**
+
+- [ ] Given the production build, when any page loads, then the utility bar, header, footer,
+      promo badge, mobile action bar, WhatsApp button and the sections that show contact details
+      render from `site/config` in Firestore, with today's content.
+- [ ] Given seven view models that need site config, when a page loads, then Firestore is read
+      **once** per visit (cached).
+- [ ] Given `site/config`, when the rules are tested, then anyone can read it and no client can
+      write it.
+- [ ] Given the WhatsApp link, when the phone number changes in Firestore, then the link follows
+      it (derived, not stored twice).
+- [ ] Given the change, when CLS is measured on the production build against the live database,
+      then it stays below 0.1.
+- [ ] Given the EmailJS service ID, template ID and public key, when a valid proposal is
+      submitted in production, then a real email is sent and the record is stored.
+
+**Units of work.** A1 site-config DTO, model and endpoint · A2 cached `SiteConfigService` on
+`ApiBaseService` · A3 data moved into `fake-db.json`, hardcoded copy removed · A4 seed, rules and
+rules tests · A5 specs (path-aware backend stub) · A6 CLS measurement · A7 EmailJS IDs in
+`environment.ts` (ADR-0006), once the owner provides them.
+
+**Risks.**
+- The chrome now waits on a network read. The page already depends on Firestore, so an outage
+  hides it along with the hero; no bundled fallback is kept, because a fallback copy would drift.
+- The header appearing late could shift content (CLS). This is measured in A6 and mitigated if it
+  reaches 0.1 or more.
+
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-10-28 (in chat: "i approve these suggestions")
+

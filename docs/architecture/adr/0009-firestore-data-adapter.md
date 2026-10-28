@@ -23,6 +23,11 @@ Content moves from the bundled `fake-db.json` to Cloud Firestore (project `taal-
   - List items are numbered by position (`001`, `002`, …).
 - **Envelope:** list sections stored in one document use `{ _items: [...] }`. Resume3.0 uses
   `items`, which here collides with real `items` fields in `home/experiences` and `home/faq`.
+- **Preloaded collections (added in addendum A):** documents in `site` and `home` are served from
+  a single combined read of both collections (`FIRESTORE_PRELOADED_COLLECTIONS`, `forkJoin` +
+  `shareReplay`). The chrome and every above-the-fold section then render in one layout pass.
+  Separate per-document reads arrived at scattered times and pushed desktop CLS to 0.30–0.61. The
+  read cost is the same, since a visit reads all of these documents anyway.
 - **Writes:** `post` adds to a collection and stamps `createdAt: serverTimestamp()`. `put`,
   `patch` and `delete` act on documents.
 - **Errors:** a path of the wrong shape returns `400`, and missing config returns `503`. Firebase
@@ -35,6 +40,10 @@ Content moves from the bundled `fake-db.json` to Cloud Firestore (project `taal-
   needs `--yes`.
 
 ## Consequences
+
+- **Deploy order matters.** `firestore.rules` must allow every preloaded collection before the app
+  that preloads it goes live. One denied collection fails the whole combined read, and every
+  section in it returns 403.
 
 - The initial bundle is unchanged. Firestore costs one lazy chunk plus one REST call per section.
 - With one document per list item, a home page visit costs about 43 reads (free tier: 50,000 a

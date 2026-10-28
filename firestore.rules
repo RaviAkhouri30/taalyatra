@@ -10,6 +10,9 @@ service cloud.firestore {
     match /home/{section} {
       allow read: if true;
     }
+    match /site/{document} {
+      allow read: if true;
+    }
     match /videos/{item} {
       allow read: if true;
     }

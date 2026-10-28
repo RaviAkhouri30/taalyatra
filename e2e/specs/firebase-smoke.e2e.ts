@@ -16,6 +16,10 @@ test.describe('Firebase smoke (emulator)', () => {
     await home.open();
 
     await expect(home.heroHeading).toContainText('Find your rhythm.');
+    // site/config feeds the chrome: the footer's email link comes from it.
+    await expect(
+      home.page.locator('app-footer').getByRole('link', { name: /contact@taalyatra\.in/ }),
+    ).toBeVisible();
     // home/trust is a list section stored as { _items: [...] }.
     await expect(home.page.getByText('Facilitator-led', { exact: true })).toBeVisible();
 

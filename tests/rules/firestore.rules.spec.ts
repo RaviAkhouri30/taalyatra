@@ -49,6 +49,7 @@ describe('firestore.rules', () => {
     await env.withSecurityRulesDisabled(async (context) => {
       const admin = context.firestore();
       await setDoc(doc(admin, 'home/hero'), { title: 'Taal Yatra' });
+      await setDoc(doc(admin, 'site/config'), { copyrightYear: 2026 });
       await setDoc(doc(admin, 'videos/001'), { title: 'Video', order: 0 });
       await setDoc(doc(admin, 'proposals/existing'), { name: 'Ravi' });
     });
@@ -60,7 +61,7 @@ describe('firestore.rules', () => {
   });
 
   describe('public content', () => {
-    it.each(['home/hero', 'videos/001', 'gallery/001', 'team/001'])(
+    it.each(['home/hero', 'site/config', 'videos/001', 'gallery/001', 'team/001'])(
       'should let anyone read %s',
       async (path) => {
         await expect(getDoc(doc(visitor, path))).resolves.toBeDefined();
@@ -71,7 +72,7 @@ describe('firestore.rules', () => {
       await expect(getDocs(collection(visitor, path))).resolves.toBeDefined();
     });
 
-    it.each(['home/hero', 'videos/001', 'gallery/001', 'team/001'])(
+    it.each(['home/hero', 'site/config', 'videos/001', 'gallery/001', 'team/001'])(
       'should stop a client writing %s',
       async (path) => {
         await expect(setDoc(doc(visitor, path), { title: 'Hacked' })).rejects.toMatchObject(DENIED);

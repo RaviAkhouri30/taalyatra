@@ -15,6 +15,11 @@ export class FirestorePath {
     return this.segments.join('/');
   }
 
+  /** Path of the collection holding this document (or of this collection's parent document). */
+  public get parent(): string {
+    return this.segments.slice(0, -1).join('/');
+  }
+
   /** Document for an even segment count, collection for an odd one. */
   public get kind(): FirestorePathKind {
     return this.segments.length % SEGMENTS_PER_DOCUMENT === 0

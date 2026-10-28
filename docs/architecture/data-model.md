@@ -7,14 +7,15 @@ into Firestore, and development, unit tests and the main e2e suite read it direc
 | Path | Shape (DTO) | Used by |
 | --- | --- | --- |
 | `home/{section}` (`hero`, `marquee`, `trust`, `offer`, `audiences`, `experiences`, `shows`, `drumCircle`, `rhythmGame`, `videos`, `gallery`, `philosophy`, `midCta`, `cities`, `how`, `team`, `instagram`, `proof`, `faq`, `contact`, `assistant`) | `i-*.ts` in `features/home/sections/<section>/` | one home section each |
+| `site/config` | `ISiteConfigDto`: brand, contact, socials (no WhatsApp, it's derived from the phone), promotion, copyright year | utility bar, header, footer, promo badge, action bar, hero, offer, mid-CTA, contact, assistant, intro |
 | `home/marquee`, `home/trust` | stored as `{ _items: [...] }`, read as the list | marquee, trust |
 | `videos/{001…}` | `IVideoDto` + `order` | videos teaser, Videos page (later) |
 | `gallery/{001…}` | `IImageDto` + `order` | gallery, lightbox |
 | `team/{001…}` | `ITeamMemberDto` + `order` | team teaser, Team page (later) |
 | `proposals/{autoId}` | proposal fields + `createdAt` (server time) | written by the contact form; read in the console |
 
-Site-wide chrome (brand, contact details, socials, promotion) is still static:
-`SITE_CONFIG` token → `DEFAULT_SITE_CONFIG`.
+Navigation menus and design constants stay in code (`navigation.constants.ts`): they point at
+app routes.
 
 ## Conventions
 
@@ -22,6 +23,8 @@ Site-wide chrome (brand, contact details, socials, promotion) is still static:
   collection, read with `orderBy('order')`.
 - List sections stored as one document use the reserved key `_items`, not `items`, because
   `home/experiences` and `home/faq` already have a real `items` field.
+- `site` and `home` are read whole, in one combined request, the first time any of their
+  documents is needed (ADR-0009). Keep them small.
 - List item documents are numbered by position (`001`, `002`, …). The adapter removes `order`
   from bodies.
 - The adapter stamps `createdAt: serverTimestamp()` on every created document.

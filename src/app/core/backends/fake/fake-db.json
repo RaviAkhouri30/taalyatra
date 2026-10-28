@@ -1090,6 +1090,59 @@
       "fallback": "Good question. For the best answer, message us on WhatsApp or use the planner, and the team will reply soon."
     }
   },
+  "site": {
+    "config": {
+      "brand": {
+        "name": "Taal Yatra",
+        "tagline": "Drum Circle",
+        "logoUrl": "/images/brand/logo.jpg",
+        "logoAlt": "Taal Yatra Drum Circle logo",
+        "description": "Drum circles and music workshops for teams, families and fun-seekers.",
+        "domain": "taalyatra.in"
+      },
+      "contact": {
+        "phone": {
+          "display": "+91 92842 76168",
+          "e164": "+919284276168"
+        },
+        "email": "contact@taalyatra.in",
+        "businessName": "Taalyatra drum circle",
+        "localName": {
+          "text": "ताल्यात्रा ड्रम सर्कल",
+          "lang": "mr"
+        },
+        "locality": "Kharadi, Pune",
+        "address": "Parmar Square, B106, Kharadi South Main Road, above Habib Saloon, opp. City Pride Theatre, Rakshak Nagar, Kharadi, Pune, Maharashtra 411014",
+        "hours": "Opens 9:00 am",
+        "plusCode": "HW2Q+5J Pune",
+        "mapsUrl": "https://maps.app.goo.gl/owD7w58Unr5GkEiN8",
+        "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=18.5503972,73.9390361"
+      },
+      "socials": [
+        {
+          "platform": "instagram",
+          "label": "Instagram",
+          "href": "https://www.instagram.com/"
+        },
+        {
+          "platform": "youtube",
+          "label": "YouTube",
+          "href": "https://www.youtube.com/"
+        },
+        {
+          "platform": "facebook",
+          "label": "Facebook",
+          "href": "https://www.facebook.com/"
+        }
+      ],
+      "promotion": {
+        "label": "Diwali offers",
+        "subtitle": "Light up your celebration",
+        "dismissLabel": "Dismiss Diwali offer"
+      },
+      "copyrightYear": 2026
+    }
+  },
   "videos": [
     {
       "title": "[Video title 1]",

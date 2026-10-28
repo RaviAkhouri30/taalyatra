@@ -18,6 +18,15 @@
   }
 }
 
+// At least one screen tall, so the footer starts below the fold while sections are still loading
+// their data. Otherwise it is pushed down as they render, a visible layout shift (CLS).
 main {
   display: block;
+  min-height: 100vh;
+}
+
+// Laid out but not painted until the chrome is in place (see SiteShellViewModel.settled):
+// invisible elements can't register layout shifts.
+.main--pending {
+  visibility: hidden;
 }

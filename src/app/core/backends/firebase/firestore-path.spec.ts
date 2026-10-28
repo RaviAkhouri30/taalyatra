@@ -9,6 +9,10 @@ describe('FirestorePath', () => {
     expect(path?.path).toBe('home/hero');
   });
 
+  it('should name the collection a document belongs to', () => {
+    expect(FirestorePath.parse('home/hero')?.parent).toBe('home');
+  });
+
   it('should point at a collection when the path has one segment', () => {
     expect(FirestorePath.parse('videos')?.kind).toBe(FirestorePathKind.Collection);
   });

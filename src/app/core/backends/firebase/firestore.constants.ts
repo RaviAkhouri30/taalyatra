@@ -9,3 +9,11 @@ export const FIRESTORE_ORDER_FIELD = 'order';
 
 /** Server timestamp the adapter stamps on every created document (rules require it). */
 export const FIRESTORE_CREATED_AT_FIELD = 'createdAt';
+
+/**
+ * Small content collections that are read whole, together, on the first request for any of their
+ * documents. The site chrome and every above-the-fold section then render in the same frame,
+ * instead of the page jumping as 20+ separate answers arrive (CLS, ADR-0009). Same read cost:
+ * every visit reads all of these documents anyway.
+ */
+export const FIRESTORE_PRELOADED_COLLECTIONS: readonly string[] = ['site', 'home'];

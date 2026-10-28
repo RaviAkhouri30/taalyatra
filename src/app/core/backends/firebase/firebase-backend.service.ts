@@ -1,6 +1,6 @@
 import { HttpResponse, HttpStatusCode } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { type Observable, catchError, map, of, shareReplay, switchMap } from 'rxjs';
+import { type Observable, catchError, forkJoin, map, of, shareReplay, switchMap } from 'rxjs';
 import { type IFirebaseConfig, type IFirestoreEmulator } from '@core/interfaces/i-firebase-config';
 import { type IHttpBackend } from '@core/interfaces/i-http-backend';
 import { APP_ENVIRONMENT } from '@core/tokens/app-environment.token';
@@ -8,6 +8,7 @@ import { FIREBASE_CONFIG } from '@core/tokens/firebase-config.token';
 import { type FirestoreFields, isFirestoreFields } from './firestore-envelope';
 import { toHttpStatus } from './firestore-error-status';
 import { FIRESTORE_GATEWAY_LOADER } from './firestore-gateway-loader.token';
+import { FIRESTORE_PRELOADED_COLLECTIONS } from './firestore.constants';
 import { FirestorePath } from './firestore-path';
 import { FirestorePathKind } from './firestore-path-kind.enum';
 import { type FirestoreGatewayLoader, type IFirestoreGateway } from './i-firestore-gateway';
@@ -37,6 +38,10 @@ export class FirebaseBackendService implements IHttpBackend {
     inject(APP_ENVIRONMENT).firestoreEmulator,
   );
 
+  /** Documents of the preloaded collections by path, read together once; `null` like gateway$. */
+  private readonly preloaded$ =
+    this.gateway$ === null ? null : FirebaseBackendService.preload(this.gateway$);
+
   private static loadGateway(
     load: FirestoreGatewayLoader,
     config: IFirebaseConfig | null,
@@ -49,17 +54,43 @@ export class FirebaseBackendService implements IHttpBackend {
       : load(config, emulator).pipe(shareReplay({ bufferSize: 1, refCount: false }));
   }
 
+  private static preload(
+    gateway$: Observable<IFirestoreGateway>,
+  ): Observable<ReadonlyMap<string, unknown>> {
+    return gateway$.pipe(
+      // gateway$ emits once. forkJoin waits for every collection: nothing renders until all have
+      // arrived, which is the point (one layout pass instead of many).
+      switchMap((gateway) =>
+        forkJoin(
+          FIRESTORE_PRELOADED_COLLECTIONS.map((name) =>
+            gateway
+              .getCollectionDocuments(name)
+              .pipe(
+                map((documents) =>
+                  [...documents].map(([id, data]) => [`${name}/${id}`, data] as const),
+                ),
+              ),
+          ),
+        ),
+      ),
+      map((groups) => new Map(groups.flat())),
+      // Read once per visit; a failed read is not cached, so the next request retries.
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
+  }
+
   private static respond<T>(status: HttpStatusCode, body?: unknown): HttpResponse<T> {
     return new HttpResponse<T>({ status, body: (body ?? null) as T });
   }
 
   public get<T>(path: string): Observable<HttpResponse<T>> {
     const target = FirestorePath.parse(path);
-    const call: FirestoreCall =
-      target?.kind === FirestorePathKind.Collection
-        ? (gateway, at) => gateway.listCollection(at)
-        : (gateway, at) => gateway.getDocument(at);
-    return this.request<T>(target, Object.values(FirestorePathKind), call, HttpStatusCode.Ok);
+    return this.request<T>(
+      target,
+      Object.values(FirestorePathKind),
+      this.readCall(target),
+      HttpStatusCode.Ok,
+    );
   }
 
   public post<T>(path: string, body: unknown): Observable<HttpResponse<T>> {
@@ -95,6 +126,22 @@ export class FirebaseBackendService implements IHttpBackend {
       call,
       HttpStatusCode.NoContent,
     );
+  }
+
+  /** @returns How to read `target`: a sorted list, a preloaded document, or a single document. */
+  private readCall(target: FirestorePath | null): FirestoreCall {
+    if (target?.kind === FirestorePathKind.Collection) {
+      return (gateway, at) => gateway.listCollection(at);
+    }
+    const preloaded$ = this.preloaded$;
+    if (
+      target !== null &&
+      preloaded$ !== null &&
+      FIRESTORE_PRELOADED_COLLECTIONS.includes(target.parent)
+    ) {
+      return (_gateway, at) => preloaded$.pipe(map((documents) => documents.get(at)));
+    }
+    return (gateway, at) => gateway.getDocument(at);
   }
 
   /** Validates a write's body (a plain object) before running it. */

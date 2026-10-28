@@ -50,6 +50,16 @@ export class FirestoreGateway implements IFirestoreGateway {
     );
   }
 
+  /** @returns Every document in the collection by id, list sections unwrapped (one query). */
+  public getCollectionDocuments(path: string): Observable<ReadonlyMap<string, unknown>> {
+    return defer(() => getDocs(collection(this.db, path))).pipe(
+      map(
+        (snapshot) =>
+          new Map(snapshot.docs.map((item) => [item.id, unwrapListSection(item.data())] as const)),
+      ),
+    );
+  }
+
   /** @returns The collection's documents sorted by `order`, without that field. */
   public listCollection(path: string): Observable<readonly FirestoreFields[]> {
     return defer(() =>

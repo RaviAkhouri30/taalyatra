@@ -69,6 +69,24 @@ describe('FirestoreGateway', () => {
     ).resolves.toBeUndefined();
   });
 
+  it('should read every document of a collection by id, unwrapping list sections', async () => {
+    const docs = [
+      { id: 'hero', data: () => ({ title: 'Hero' }) },
+      { id: 'marquee', data: () => ({ _items: ['Drum Circle'] }) },
+    ];
+    vi.mocked(getDocs).mockResolvedValue({ docs } as never);
+
+    const documents = await firstValueFrom(
+      new FirestoreGateway(config, null).getCollectionDocuments('home'),
+    );
+
+    expect([...documents]).toEqual([
+      ['hero', { title: 'Hero' }],
+      ['marquee', ['Drum Circle']],
+    ]);
+    expect(orderBy).not.toHaveBeenCalled();
+  });
+
   it('should list a collection in order, without the order field', async () => {
     const docs = [{ data: () => ({ order: 0, title: 'First' }) }];
     vi.mocked(getDocs).mockResolvedValue({ docs } as never);

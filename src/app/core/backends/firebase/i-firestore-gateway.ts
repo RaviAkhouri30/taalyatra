@@ -6,6 +6,8 @@ import { type FirestoreFields } from './firestore-envelope';
 export interface IFirestoreGateway {
   /** @returns The document's data, or `undefined` when it does not exist. */
   getDocument(path: string): Observable<unknown>;
+  /** @returns Every document in the collection by id, list sections unwrapped. */
+  getCollectionDocuments(path: string): Observable<ReadonlyMap<string, unknown>>;
   /** @returns The collection's documents in `order`. */
   listCollection(path: string): Observable<readonly FirestoreFields[]>;
   /** @returns The id of the document created. */
