@@ -165,7 +165,13 @@ export default defineConfig(
   },
   {
     // Tests may use async/await and Promises (rule 12) and long describe blocks.
-    files: ['**/*.spec.ts', 'src/app/**/testing/**/*.ts', 'e2e/**/*.ts', 'playwright.config.ts'],
+    files: [
+      '**/*.spec.ts',
+      'src/app/**/testing/**/*.ts',
+      'e2e/**/*.ts',
+      'playwright.config.ts',
+      'playwright.firebase.config.ts',
+    ],
     rules: {
       'no-restricted-syntax': 'off',
       'max-lines-per-function': 'off',
@@ -196,6 +202,11 @@ export default defineConfig(
   {
     files: ['**/*.mjs', '**/*.js'],
     extends: [eslint.configs.recommended],
+  },
+  {
+    // Node tooling scripts (seed, CI config). Not app code, so the RxJS-only rule does not apply.
+    files: ['scripts/**/*.mjs'],
+    languageOptions: { globals: { process: 'readonly', console: 'readonly' } },
   },
   // Formatting is owned by Prettier; disable conflicting stylistic rules last.
   prettier,

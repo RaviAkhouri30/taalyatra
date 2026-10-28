@@ -7,6 +7,8 @@ export const environment: IAppEnvironment = {
   backend: BackendType.Fake,
   apiBaseUrl: '',
   requestTimeoutMs: 60_000,
+  firebase: null,
+  firestoreEmulator: null,
   fakeLatencyMs: 250,
   // Fill in from the EmailJS dashboard to send real email; empty values use the fake adapter.
   emailJs: { serviceId: '', templateId: '', publicKey: '' },

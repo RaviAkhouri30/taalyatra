@@ -5,7 +5,7 @@
 ```mermaid
 flowchart LR
   user([Visitor / Admin]) -->|HTTPS| spa[Taal Yatra SPA<br/>Angular 22]
-  spa -->|Firestore SDK| fs[(Firebase Firestore)]
+  spa -->|Firestore Lite SDK, lazy| fs[(Firebase Firestore<br/>project taal-yatra)]
   spa -->|Auth SDK| auth[Firebase Auth]
   spa -->|Image delivery| cdn[Cloudinary CDN]
   spa -->|Contact form| mail[EmailJS]
@@ -51,4 +51,11 @@ flowchart TB
 
 - **Signals** hold state: VM `data`, `computed()` values, component `input()`.
 - **RxJS** moves data: loading, user commands, retries, timeouts.
-- Promises exist only inside adapters (wrapped with `defer`) and in tests.
+- Promises exist only inside adapters (wrapped with `defer`), in tests, and in the Node tooling
+  scripts under `scripts/`.
+
+## Runtime configuration
+
+The Firebase web config comes from `runtime-config.js` (`globalThis.__FIREBASE_CONFIG__`), loaded
+before the app bundle and read by the `FIREBASE_CONFIG` token. The emulator build overrides it with
+`environment.firebase`. See [deployment.md](deployment.md).

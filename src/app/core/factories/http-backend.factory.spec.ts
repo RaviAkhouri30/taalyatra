@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideBackend } from '@core/config/provide-backend';
 import { FakeHttpsService } from '@core/backends/fake/fake-https.service';
+import { FirebaseBackendService } from '@core/backends/firebase/firebase-backend.service';
 import { RestHttpBackend } from '@core/backends/rest/rest-http-backend.service';
 import { BackendType } from '@core/enums/backend-type.enum';
 import { IHttpBackend } from '@core/interfaces/i-http-backend';
@@ -11,6 +12,7 @@ describe('httpBackendFactory', () => {
   it.each([
     [BackendType.Fake, FakeHttpsService],
     [BackendType.Rest, RestHttpBackend],
+    [BackendType.Firebase, FirebaseBackendService],
   ])('should provide the %s adapter for IHttpBackend', (backend, adapter) => {
     TestBed.configureTestingModule({
       providers: [

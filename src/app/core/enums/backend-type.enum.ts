@@ -4,4 +4,6 @@ export enum BackendType {
   Fake = 'fake',
   /** A REST API reached through Angular's `HttpClient`. */
   Rest = 'rest',
+  /** Cloud Firestore (production, and the local emulator for the Firebase smoke suite). */
+  Firebase = 'firebase',
 }

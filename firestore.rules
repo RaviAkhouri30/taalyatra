@@ -1,0 +1,53 @@
+rules_version = '2';
+
+// Deny by default: only the matches below grant access (CLAUDE.md §10, ADR-0009).
+// Tested by tests/rules/firestore.rules.spec.ts (`npm run test:rules`).
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Public site content. Anyone may read it; no client may write it. The seed script uses the
+    // Admin SDK, which bypasses these rules.
+    match /home/{section} {
+      allow read: if true;
+    }
+    match /videos/{item} {
+      allow read: if true;
+    }
+    match /gallery/{item} {
+      allow read: if true;
+    }
+    match /team/{item} {
+      allow read: if true;
+    }
+
+    // Proposal requests. Visitors may create a well-formed one; no client may read, change or
+    // delete them (they are read in the Firebase console).
+    match /proposals/{proposal} {
+      allow create: if isValidProposal(request.resource.data);
+    }
+
+    // The limits mirror PROPOSAL_MAX_LENGTH (proposal-limits.constants.ts); the rules tests build
+    // their payloads from that constant, so the two can't drift apart unnoticed.
+    function isValidProposal(data) {
+      let fields = ['need', 'eventType', 'experience', 'groupSize', 'date', 'name', 'phone',
+                    'email', 'message', 'createdAt'];
+      return data.keys().hasAll(fields)
+        && data.keys().hasOnly(fields)
+        && isText(data.need, 0, 100)
+        && isText(data.eventType, 0, 100)
+        && isText(data.experience, 0, 100)
+        && isText(data.groupSize, 0, 100)
+        && isText(data.date, 0, 100)
+        && isText(data.name, 1, 100)
+        && isText(data.phone, 1, 20)
+        && isText(data.email, 0, 254)
+        && isText(data.message, 0, 2000)
+        // Stamped by the adapter with serverTimestamp(): a client can't backdate a record.
+        && data.createdAt == request.time;
+    }
+
+    function isText(value, min, max) {
+      return value is string && value.size() >= min && value.size() <= max;
+    }
+  }
+}

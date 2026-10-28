@@ -27,4 +27,6 @@ export enum ApiEndpoint {
   HomeFaq = 'home/faq',
   HomeContact = 'home/contact',
   HomeAssistant = 'home/assistant',
+  /** Proposal requests from the contact form (create-only collection). */
+  Proposals = 'proposals',
 }

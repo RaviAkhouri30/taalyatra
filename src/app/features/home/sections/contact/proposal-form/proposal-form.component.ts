@@ -6,6 +6,7 @@ import { ButtonVariant } from '@shared/enums/button-variant.enum';
 import { IconName } from '@shared/enums/icon-name.enum';
 import { type IProposalFormCopyDto } from '../i-contact';
 import { type ProposalControls } from '../proposal-form';
+import { PROPOSAL_MAX_LENGTH } from '../proposal-limits.constants';
 import { ProposalStatus } from '../proposal-status.enum';
 
 /** Fields that can show an inline error. */
@@ -33,6 +34,8 @@ export class ProposalFormComponent {
   protected readonly buttonVariant = ButtonVariant;
   protected readonly whatsAppIcon = IconName.WhatsApp;
   protected readonly proposalStatus = ProposalStatus;
+  /** Stops typing at the same limits the form and `firestore.rules` enforce. */
+  protected readonly maxLength = PROPOSAL_MAX_LENGTH;
   protected readonly sending = computed(() => this.status() === ProposalStatus.Sending);
 
   /** @returns Whether `field`'s error should be shown (invalid after the visitor left it). */

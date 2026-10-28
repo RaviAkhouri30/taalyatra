@@ -1,0 +1,8 @@
+{
+  "routes": [
+    {
+      "route": "/runtime-config.js",
+      "headers": { "cache-control": "no-cache" }
+    }
+  ]
+}

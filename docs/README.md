@@ -12,6 +12,7 @@ how the system is built.
 | [architecture/flow-diagrams.md](architecture/flow-diagrams.md)         | Request pipeline, adapters, journeys, AIDLC flow       |
 | [architecture/data-model.md](architecture/data-model.md)               | Firestore collections and conventions                  |
 | [architecture/deployment.md](architecture/deployment.md)               | Environments, CI pipeline, hosting                     |
+| [architecture/backend-adapter-example.md](architecture/backend-adapter-example.md) | Canonical adapter example (CLAUDE.md §3) |
 | [architecture/adr/](architecture/adr/)                                 | Architecture Decision Records                          |
 | [tooling.md](tooling.md)                                               | Lint, tests, coverage, Sonar, e2e — how they are wired |
 | [versioning.md](versioning.md)                                         | SemVer, release steps, changelog policy                |
