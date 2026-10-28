@@ -10,7 +10,7 @@ describe('RhythmGameModel', () => {
   it('should expose labelled modes, speeds and pads', () => {
     expect(model.modes.map((mode) => mode.label)).toEqual(['Challenge', 'Free jam']);
     expect(model.speeds.map((speed) => speed.label)).toEqual(['Chill', 'Groove', 'Pro']);
-    expect(model.pads[0]?.ariaLabel).toBe('Drum pad Boom');
+    expect(model.pads[0]?.ariaLabel).toBe('Drum pad Boom bass');
   });
 
   it('should fill message placeholders, choosing singular or plural lives', () => {

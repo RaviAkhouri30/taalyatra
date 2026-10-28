@@ -10,31 +10,51 @@ export const routes: Routes = [
   {
     path: '',
     title: 'Taal Yatra — Drum circles and music workshops in Pune',
-    data: { [ROUTE_DATA_KEYS.Layout]: PageLayout.Home },
+    data: {
+      [ROUTE_DATA_KEYS.Layout]: PageLayout.Home,
+      [ROUTE_DATA_KEYS.Description]:
+        'Drum circles, music workshops and live shows for teams, families and festivals in Pune. Request a proposal in minutes.',
+    },
     loadComponent: () => import('@features/home/home-page.component'),
   },
   {
     path: 'videos',
     title: 'Videos — Taal Yatra',
-    data: { [ROUTE_DATA_KEYS.Layout]: PageLayout.Page },
+    data: {
+      [ROUTE_DATA_KEYS.Layout]: PageLayout.Page,
+      [ROUTE_DATA_KEYS.Description]:
+        'Watch Taal Yatra drum circles, workshops and shows: corporate days, family functions and festivals in Pune.',
+    },
     loadChildren: () => import('@features/videos/videos.routes'),
   },
   {
     path: 'team',
     title: 'Our team — Taal Yatra',
-    data: { [ROUTE_DATA_KEYS.Layout]: PageLayout.Page },
+    data: {
+      [ROUTE_DATA_KEYS.Layout]: PageLayout.Page,
+      [ROUTE_DATA_KEYS.Description]:
+        'Meet the facilitators, percussionists and event makers behind Taal Yatra drum circles in Pune.',
+    },
     loadChildren: () => import('@features/team/team.routes'),
   },
   {
     path: 'shows',
     title: 'Shows & performances — Taal Yatra',
-    data: { [ROUTE_DATA_KEYS.Layout]: PageLayout.Page },
+    data: {
+      [ROUTE_DATA_KEYS.Layout]: PageLayout.Page,
+      [ROUTE_DATA_KEYS.Description]:
+        'Live band, percussion ensemble, acoustic, fusion, dhol procession and classical tabla shows for your event in Pune.',
+    },
     loadChildren: () => import('@features/shows/shows.routes'),
   },
   {
     path: 'achievements',
     title: 'Achievements — Taal Yatra',
-    data: { [ROUTE_DATA_KEYS.Layout]: PageLayout.Page },
+    data: {
+      [ROUTE_DATA_KEYS.Layout]: PageLayout.Page,
+      [ROUTE_DATA_KEYS.Description]:
+        'Milestones, awards, press and notable performances from Taal Yatra’s years of stages, students and sound.',
+    },
     loadChildren: () => import('@features/achievements/achievements.routes'),
   },
   {

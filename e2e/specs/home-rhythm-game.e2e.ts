@@ -1,5 +1,9 @@
 import { expect, test } from '../fixtures/test';
 
+// The pattern plays beat by beat before the player's turn; under a full parallel run the
+// playback can outlast the default 5 s assertion timeout.
+const PATTERN_PLAYBACK_TIMEOUT_MS = 15_000;
+
 test.describe('Home rhythm game', () => {
   test('should let the player repeat the pattern and score', async ({ home }) => {
     await home.open('play');
@@ -7,7 +11,9 @@ test.describe('Home rhythm game', () => {
     await home.recordLitPads();
 
     await game.getByRole('button', { name: 'Start the challenge' }).click();
-    await expect(game.locator('.gmsg')).toHaveText('Your turn! Repeat the pattern.');
+    await expect(game.locator('.gmsg')).toHaveText('Your turn! Repeat the pattern.', {
+      timeout: PATTERN_PLAYBACK_TIMEOUT_MS,
+    });
     // The first pattern is one random beat: repeat the pad that lit up.
     const [padName = ''] = await home.litPads();
     await game.getByRole('button', { name: padName }).click();

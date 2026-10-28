@@ -61,7 +61,8 @@ export class RhythmGameModel {
     this.rankLabel = dto.rankLabel;
     this.pads = dto.pads.map((pad) => ({
       ...pad,
-      ariaLabel: `${dto.padLabelPrefix} ${pad.label}`,
+      // Contains the visible text ("Boom bass"), as WCAG 2.5.3 asks.
+      ariaLabel: `${dto.padLabelPrefix} ${pad.label} ${pad.sub}`,
     }));
     this.buttons = dto.buttons;
   }

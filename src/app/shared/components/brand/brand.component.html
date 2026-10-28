@@ -7,8 +7,9 @@
     [priority]="priority()"
   />
   <div>
-    <b>{{ brand().name }}</b
-    ><span>{{ brand().tagline }}</span>
+    <!-- The space keeps the name and tagline apart in the link's text (both are blocks, so it
+         doesn't show): "Taal Yatra Drum Circle", matching its accessible name. -->
+    <b>{{ brand().name }}</b> <span>{{ brand().tagline }}</span>
   </div>
 </ng-template>
 

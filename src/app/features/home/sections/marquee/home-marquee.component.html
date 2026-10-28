@@ -1,8 +1,12 @@
-<div class="strip" aria-hidden="true">
-  <div class="strip-in">
-    @for (item of model.data()?.track; track $index) {
-      <span>{{ item }}</span
-      ><i>●</i>
-    }
+<!-- Rendered only with its data, like every section: an empty strip painted under the empty hero
+     was pushed down when the hero filled in (0007, CLS). -->
+@if (model.data(); as marquee) {
+  <div class="strip" aria-hidden="true">
+    <div class="strip-in">
+      @for (item of marquee.track; track $index) {
+        <span>{{ item }}</span
+        ><i>●</i>
+      }
+    </div>
   </div>
-</div>
+}

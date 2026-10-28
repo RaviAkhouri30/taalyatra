@@ -1,13 +1,16 @@
-<section class="trust">
-  <div class="wrap trust-in">
-    @for (card of model.data(); track card.title) {
-      <div class="tcard">
-        <span class="tico"><app-icon [name]="card.icon" [size]="22" [strokeWidth]="1.9" /></span>
-        <div>
-          <b>{{ card.title }}</b>
-          <p>{{ card.text }}</p>
+<!-- Rendered only with its data (see the marquee): no empty band under the empty hero. -->
+@if (model.data(); as cards) {
+  <section class="trust">
+    <div class="wrap trust-in">
+      @for (card of cards; track card.title) {
+        <div class="tcard">
+          <span class="tico"><app-icon [name]="card.icon" [size]="22" [strokeWidth]="1.9" /></span>
+          <div>
+            <b>{{ card.title }}</b>
+            <p>{{ card.text }}</p>
+          </div>
         </div>
-      </div>
-    }
-  </div>
-</section>
+      }
+    </div>
+  </section>
+}

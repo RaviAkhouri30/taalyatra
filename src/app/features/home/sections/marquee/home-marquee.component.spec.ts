@@ -6,6 +6,14 @@ import { HomeMarqueeComponent } from './home-marquee.component';
 import { MarqueeModel } from './marquee.model';
 
 describe('HomeMarqueeComponent', () => {
+  it('should render nothing until its data has loaded, so nothing shifts under the hero', () => {
+    TestBed.configureTestingModule({ providers: [stubBackend(null).provider] });
+    const fixture = TestBed.createComponent(HomeMarqueeComponent);
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).querySelector('.strip')).toBeNull();
+  });
+
   it('should draw the items twice for a seamless loop, hidden from assistive tech', () => {
     const backend = stubBackend(HOME.marquee);
     TestBed.configureTestingModule({ providers: [backend.provider] });

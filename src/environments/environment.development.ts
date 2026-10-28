@@ -5,6 +5,7 @@ import { type IAppEnvironment } from '@core/interfaces/i-app-environment';
 export const environment: IAppEnvironment = {
   production: false,
   backend: BackendType.Fake,
+  siteUrl: 'http://localhost:4200',
   apiBaseUrl: '',
   requestTimeoutMs: 60_000,
   firebase: null,

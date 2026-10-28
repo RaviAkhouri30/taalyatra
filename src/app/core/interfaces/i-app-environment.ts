@@ -5,6 +5,12 @@ import { type IFirebaseConfig, type IFirestoreEmulator } from './i-firebase-conf
 export interface IAppEnvironment {
   readonly production: boolean;
   readonly backend: BackendType;
+  /**
+   * Public address of the site, without a trailing slash: canonical URLs, social tags, structured
+   * data and the sitemap use it. Switch production to `https://taalyatra.in` when the domain
+   * points at the site.
+   */
+  readonly siteUrl: string;
   /** Base URL that `RestHttpBackend` prefixes to endpoint paths. */
   readonly apiBaseUrl: string;
   /** Requests slower than this fail with a timeout. */

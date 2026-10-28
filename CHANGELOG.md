@@ -6,6 +6,19 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+### Added
+
+- SEO: a description, canonical link, Open Graph and Twitter tags for every public page,
+  `LocalBusiness` structured data built from the site config, a social share image,
+  `robots.txt` and `sitemap.xml`.
+
+### Changed
+
+- Faster first paint: the hero renders in one pass, the marquee and trust strip wait for their
+  data, fallback fonts are metric-matched, photos are WebP (75–83 % smaller), and the Firestore
+  chunk is preloaded. Layout shift drops to 0 on mobile and desktop.
+- Accessible names of the brand link and the game pads now match their visible text.
+
 ## [1.4.1] - 2026-10-29
 
 ### Fixed

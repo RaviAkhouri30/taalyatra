@@ -20,7 +20,7 @@ describe('GamePadsComponent', () => {
     pads[1]?.click();
 
     expect(pads.map((pad) => pad.className)).toEqual(['pad p0', 'pad p1', 'pad p2 lit', 'pad p3']);
-    expect(pads[0]?.getAttribute('aria-label')).toBe('Drum pad Boom');
+    expect(pads[0]?.getAttribute('aria-label')).toBe('Drum pad Boom bass');
     expect(element.querySelector('.core.pulse b')?.textContent).toBe('3');
     expect(element.querySelector('.pop.q3')?.textContent).toBe('+10');
     expect(tapped).toHaveBeenCalledWith(1);
