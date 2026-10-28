@@ -98,5 +98,36 @@ classDiagram
   emailServiceFactory ..> IEmailService : creates
 ```
 
+`IHttpBackend`'s Firestore adapter (1.2.0, [ADR-0009](adr/0009-firestore-data-adapter.md)):
+
+```mermaid
+classDiagram
+  direction LR
+  class IHttpBackend { <<abstract port>> }
+  class FirebaseBackendService {
+    -gateway$: Observable~IFirestoreGateway~ | null
+    +get / post / put / patch / delete
+  }
+  class IFirestoreGateway { <<interface>> }
+  class FirestoreGateway { <<lazy chunk · only firebase/* importer>> }
+  class FIRESTORE_GATEWAY_LOADER { <<InjectionToken>> }
+  class FIREBASE_CONFIG { <<InjectionToken>> }
+  class FirestorePath { +path +kind +parse(path)$ }
+  class toHttpStatus { <<function>> }
+  class HttpsErrorHandler { +handle(req) +handleCommand(req) }
+  class ApiWriteBaseService~B~ { <<abstract>> #attachCreateApiHandler() +create(body)* }
+  class ProposalsService
+
+  IHttpBackend <|.. FirebaseBackendService
+  IFirestoreGateway <|.. FirestoreGateway
+  FirebaseBackendService --> FIRESTORE_GATEWAY_LOADER : inject
+  FirebaseBackendService --> FIREBASE_CONFIG : inject
+  FIRESTORE_GATEWAY_LOADER ..> FirestoreGateway : import() once
+  FirebaseBackendService ..> FirestorePath
+  FirebaseBackendService ..> toHttpStatus
+  ApiWriteBaseService <|-- ProposalsService
+  ApiWriteBaseService --> HttpsErrorHandler
+```
+
 The home page's section classes (contact, assistant) are in
 [aidlc/0003-home-page/02-design.md](../aidlc/0003-home-page/02-design.md).

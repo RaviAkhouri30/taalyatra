@@ -43,11 +43,17 @@ npm test               # Vitest, single run                  (test:watch for wat
 npm run test:coverage  # Vitest + coverage, fails below 90%  → coverage/taal-yatra/
 npm run e2e            # Playwright: desktop, tablet, mobile (e2e:install once for browsers)
 npm run e2e:visual:update  # re-record visual baselines after an approved visual change
+npm run test:rules     # firestore.rules tests on the emulator (needs Java)
+npm run e2e:firebase   # Firebase smoke suite: emulator, seeded, 3 viewports (needs Java)
+npm run start:emulator # dev server against a running local Firestore emulator
+npm run seed:firestore -- <key.json> [--dry-run|--yes] | --emulator   # fake-db.json → Firestore
+npm run deploy:rules   # deploy firestore.rules + indexes to project taal-yatra
 npm run sonar          # SonarQube scan (needs SONAR_HOST_URL and SONAR_TOKEN env vars)
 npm run verify         # format:check + lint + typecheck + test:coverage + build
 ```
 
-**Definition of done:** `npm run verify` ✔ · `npm run e2e` ✔ · docs and diagrams updated ·
+**Definition of done:** `npm run verify` ✔ · `npm run e2e` ✔ · `npm run test:rules` ✔ and
+`npm run e2e:firebase` ✔ when rules or the data layer change · docs and diagrams updated ·
 version bumped and CHANGELOG entry added (§12).
 
 ---
@@ -185,8 +191,9 @@ export class ApiServiceProviderFactory {
   Fake implementation for unit tests and e2e.
 - `ApiBaseService` sends every call through `HttpsErrorHandler` (loader, timeout, status check,
   notification) and unwraps `body`.
-- The user will share a canonical example of this pattern. Save it as
-  `docs/architecture/backend-adapter-example.md`, follow it, and update this section if it differs.
+- The canonical example of this pattern is `docs/architecture/backend-adapter-example.md`
+  (Resume3.0's Firestore adapter plus a porting table). The Firestore adapter follows it
+  ([ADR-0009](docs/architecture/adr/0009-firestore-data-adapter.md)).
 
 ---
 

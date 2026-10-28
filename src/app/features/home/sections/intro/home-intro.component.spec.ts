@@ -1,8 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { SITE } from '@shared/testing/fixtures';
+import { SITE, provideSiteConfig } from '@shared/testing/fixtures';
 import { HomeIntroComponent } from './home-intro.component';
 
 describe('HomeIntroComponent', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({ providers: [provideSiteConfig()] });
+  });
+
   function render(): { element: HTMLElement; detect: () => void } {
     const fixture = TestBed.createComponent(HomeIntroComponent);
     fixture.detectChanges();

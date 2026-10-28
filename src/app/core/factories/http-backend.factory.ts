@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
 import { FakeHttpsService } from '@core/backends/fake/fake-https.service';
+import { FirebaseBackendService } from '@core/backends/firebase/firebase-backend.service';
 import { RestHttpBackend } from '@core/backends/rest/rest-http-backend.service';
 import { BackendType } from '@core/enums/backend-type.enum';
 import { type IHttpBackend } from '@core/interfaces/i-http-backend';
@@ -17,5 +18,7 @@ export function httpBackendFactory(): IHttpBackend {
       return new RestHttpBackend();
     case BackendType.Fake:
       return new FakeHttpsService();
+    case BackendType.Firebase:
+      return new FirebaseBackendService();
   }
 }

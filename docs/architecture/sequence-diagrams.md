@@ -10,8 +10,8 @@ sequenceDiagram
   participant VM as ViewModel
   participant S as FeatureService
   participant EH as HttpsErrorHandler
-  participant P as IHttpBackend
-  participant FB as Firestore
+  participant P as IHttpBackend (FirebaseBackendService)
+  participant FB as Firestore (Lite, REST)
 
   C->>BC: ngOnInit()
   BC->>VM: init().pipe(takeUntilDestroyed).subscribe()
@@ -19,9 +19,10 @@ sequenceDiagram
   S->>EH: handleHttpsError(backend.get(url))
   EH->>EH: loader.show()
   EH->>P: get<T>(url)
-  P->>FB: defer(() => getDoc(ref))
-  FB-->>P: snapshot
-  P-->>EH: HttpResponse<T>
+  Note over P: first request: import('./firestore-gateway') once (lazy SDK chunk)
+  P->>FB: defer(() => getDoc(ref)) · collection: getDocs(orderBy('order'))
+  FB-->>P: snapshot (unwrap { _items }, strip order)
+  P-->>EH: HttpResponse<T> (200 · 404 · Firebase code → 403/503/…, never throws)
   EH->>EH: status check · timeout · loader.hide()
   EH-->>S: HttpResponse<T>
   S-->>VM: body as T
@@ -52,29 +53,33 @@ sequenceDiagram
   end
 ```
 
-## 3. Proposal request (EmailJS)
+## 3. Proposal request (EmailJS + Firestore)
 
 ```mermaid
 sequenceDiagram
   autonumber
   participant PF as ProposalFormComponent
   participant VM as HomeContactViewModel
-  participant PM as ProposalMessage
   participant E as IEmailService
-  participant EJ as EmailJS
+  participant PS as ProposalsService
+  participant EH as HttpsErrorHandler
+  participant P as IHttpBackend
 
   PF->>VM: submit() (via submitted output)
-  VM->>VM: markAllAsTouched · filter(valid)
+  VM->>VM: markAllAsTouched · filter(valid, incl. max lengths)
   Note right of VM: exhaustMap ignores clicks while a request is in flight
   VM->>VM: status = sending
-  VM->>PM: email(form value)
-  PM-->>VM: IEmailMessage (subject, body, fromName, phone, replyTo)
-  VM->>E: send(message)
-  E->>EJ: defer(() => send(serviceId, templateId, params, { publicKey }))
-  EJ-->>E: 200 OK
-  E-->>VM: Observable<void>
-  VM->>VM: form reset to defaults · status = sent
-  Note over PF,VM: on error: catchError → status = failed (stream stays alive)
+  par email
+    VM->>E: send(message) → true · error → logged, false
+  and stored copy
+    VM->>PS: create(value)
+    PS->>EH: handleCommand(backend.post('proposals', value))
+    EH->>P: post → addDoc {…value, createdAt: serverTimestamp()}
+    P-->>EH: 201 · non-2xx → logged, rethrown
+    EH-->>PS: ok / error
+    PS-->>VM: true / false
+  end
+  VM->>VM: forkJoin → any true ? sent (form reset) : failed
 ```
 
 ## 4. Media delivery and upload (Cloudinary)

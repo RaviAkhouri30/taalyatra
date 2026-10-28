@@ -5,7 +5,7 @@
     <app-utility-bar [contact]="site.contact" [socials]="site.socials" />
     <app-header [brand]="site.brand" [chrome]="chrome" />
   }
-  <main id="main-content">
+  <main id="main-content" [class.main--pending]="!model.settled()">
     <router-outlet />
   </main>
   @if (chrome && site) {

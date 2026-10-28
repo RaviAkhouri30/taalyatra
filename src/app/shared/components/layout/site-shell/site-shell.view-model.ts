@@ -1,6 +1,14 @@
-import { Injectable, computed, inject } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { type Observable, combineLatest, distinctUntilChanged, filter, map, tap } from 'rxjs';
+import {
+  type Observable,
+  combineLatest,
+  defaultIfEmpty,
+  distinctUntilChanged,
+  filter,
+  map,
+  tap,
+} from 'rxjs';
 import { AnchorScrollService } from '@core/services/anchor-scroll.service';
 import { ViewModel } from '@shared/base/view-model';
 import { LAYOUT_CHROME } from '@shared/constants/navigation.constants';
@@ -16,6 +24,12 @@ import { resolvePageLayout } from '@shared/utils/route-layout.util';
 @Injectable()
 export class SiteShellViewModel extends ViewModel<IShellState> {
   public readonly site = computed(() => this.data()?.site ?? null);
+  /**
+   * False until the site config has arrived (or failed). `<main>` stays hidden until then, so the
+   * header appearing above it can't shift the page (CLS). Sections still load meanwhile, and the
+   * home sections arrive in the same read as the site config (ADR-0009), so this costs no wait.
+   */
+  public readonly settled = signal(false);
   /** Chrome for the current layout; `null` while loading or for bare (admin) routes. */
   public readonly chrome = computed<ILayoutChrome | null>(() => {
     const state = this.data();
@@ -36,9 +50,15 @@ export class SiteShellViewModel extends ViewModel<IShellState> {
       map(() => resolvePageLayout(this.router.routerState.snapshot.root)),
       distinctUntilChanged(),
     );
-    return combineLatest([this.siteConfigService.getSiteConfig(), layout$]).pipe(
+    // defaultIfEmpty: a failed read completes empty; null still settles the shell, so the page is
+    // shown without chrome rather than staying hidden.
+    const site$ = this.siteConfigService.getSiteConfig().pipe(defaultIfEmpty(null));
+    return combineLatest([site$, layout$]).pipe(
       tap(([site, layout]) => {
-        this.setData({ site, layout });
+        if (site !== null) {
+          this.setData({ site, layout });
+        }
+        this.settled.set(true);
       }),
     );
   }

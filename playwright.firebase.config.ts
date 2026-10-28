@@ -1,0 +1,42 @@
+import { defineConfig, devices } from '@playwright/test';
+
+/**
+ * Firebase smoke suite (CLAUDE.md §9): the real Firestore SDK against the local emulator, seeded
+ * from fake-db.json. Separate from the main config, which stays on the deterministic Fake backend.
+ * Needs Java for the emulator.
+ */
+const PORT = 4310;
+const BASE_URL = `http://localhost:${String(PORT)}`;
+const isCi = Boolean(process.env['CI']);
+
+export default defineConfig({
+  testDir: './e2e/specs',
+  testMatch: 'firebase-*.e2e.ts',
+  // One emulator database is shared by every test.
+  fullyParallel: false,
+  workers: 1,
+  forbidOnly: isCi,
+  retries: isCi ? 2 : 0,
+  reporter: [['list'], ['html', { open: 'never', outputFolder: 'playwright-report/firebase' }]],
+  use: {
+    baseURL: BASE_URL,
+    contextOptions: { reducedMotion: 'reduce' },
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+  },
+  projects: [
+    { name: 'desktop-chrome', use: { ...devices['Desktop Chrome'] } },
+    { name: 'tablet', use: { ...devices['iPad (gen 7)'] } },
+    { name: 'mobile', use: { ...devices['Pixel 7'] } },
+  ],
+  webServer: {
+    // emulators:exec starts the emulator, runs the command, and stops the emulator when
+    // Playwright stops the dev server.
+    command:
+      'npx firebase emulators:exec --only firestore --project demo-taal-yatra ' +
+      `"node scripts/seed-firestore.mjs --emulator && npx ng serve --configuration emulator --port ${String(PORT)}"`,
+    url: BASE_URL,
+    reuseExistingServer: false,
+    timeout: 240_000,
+  },
+});

@@ -27,4 +27,8 @@ export enum ApiEndpoint {
   HomeFaq = 'home/faq',
   HomeContact = 'home/contact',
   HomeAssistant = 'home/assistant',
+  /** Site-wide content: brand, contact details, social links, promotion. */
+  SiteConfig = 'site/config',
+  /** Proposal requests from the contact form (create-only collection). */
+  Proposals = 'proposals',
 }

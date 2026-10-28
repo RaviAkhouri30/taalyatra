@@ -12,3 +12,27 @@ export interface ISiteConfig {
   readonly promotion: IPromotion | null;
   readonly copyrightYear: number;
 }
+
+/** A social profile as stored; WhatsApp is not stored, it is derived from the phone number. */
+export interface ISocialLinkDto {
+  /** A `SocialPlatform` value; unknown platforms are skipped. */
+  readonly platform: string;
+  readonly label: string;
+  readonly href: string;
+}
+
+/** The running offer as stored; the badge always links to the home page's offer section. */
+export interface IPromotionDto {
+  readonly label: string;
+  readonly subtitle: string;
+  readonly dismissLabel: string;
+}
+
+/** Site-wide content as stored in `site/config` (plain JSON: no enums, nothing derived). */
+export interface ISiteConfigDto {
+  readonly brand: IBrand;
+  readonly contact: IContactDetails;
+  readonly socials: readonly ISocialLinkDto[];
+  readonly promotion: IPromotionDto | null;
+  readonly copyrightYear: number;
+}

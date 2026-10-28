@@ -70,4 +70,33 @@ describe('HttpsErrorHandler', () => {
 
     expect(loader.isLoading()).toBe(false);
   });
+
+  describe('handleCommand', () => {
+    it('should pass a successful response through', async () => {
+      const { handler } = setUp();
+
+      await expect(
+        firstValueFrom(handler.handleCommand(of(new HttpResponse({ status: 201, body: 'id' })))),
+      ).resolves.toMatchObject({ status: 201 });
+    });
+
+    it('should report and rethrow when the backend answers non-2xx', async () => {
+      const { handler, loader } = setUp();
+
+      await expect(
+        firstValueFrom(handler.handleCommand(of(new HttpResponse<string>({ status: 403 })))),
+      ).rejects.toBeInstanceOf(BackendResponseError);
+      expect(error).toHaveBeenCalledTimes(1);
+      expect(loader.isLoading()).toBe(false);
+    });
+
+    it('should report and rethrow when the request errors', async () => {
+      const { handler } = setUp();
+
+      await expect(
+        firstValueFrom(handler.handleCommand(throwError(() => new Error('offline')))),
+      ).rejects.toThrow('offline');
+      expect(error).toHaveBeenCalledWith('Backend request failed', new Error('offline'));
+    });
+  });
 });

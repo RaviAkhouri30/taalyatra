@@ -14,6 +14,8 @@ const isCi = Boolean(process.env['CI']);
 export default defineConfig({
   testDir: './e2e/specs',
   testMatch: '**/*.e2e.ts',
+  // The Firebase smoke suite needs the emulator: playwright.firebase.config.ts runs it.
+  testIgnore: '**/firebase-*.e2e.ts',
   fullyParallel: true,
   forbidOnly: isCi,
   retries: isCi ? 2 : 0,

@@ -3,6 +3,7 @@ import { type Provider } from '@angular/core';
 import { of } from 'rxjs';
 import fakeDb from '@core/backends/fake/fake-db.json';
 import { IHttpBackend } from '@core/interfaces/i-http-backend';
+import { ApiEndpoint } from '@shared/enums/api-endpoint.enum';
 import { type IHomeHeroDto } from '../sections/hero/i-home-hero';
 import { type IAudiencesDto } from '../sections/audiences/i-audiences';
 import { type IDrumCircleDto } from '../sections/drum-circle/i-drum-circle';
@@ -26,11 +27,21 @@ export const VIDEOS = fakeDb.videos;
 export const GALLERY = fakeDb.gallery;
 export const TEAM = fakeDb.team;
 
+const SITE_CONFIG_PATH: string = ApiEndpoint.SiteConfig;
+
 /**
- * @param body Response body every GET returns (`null` simulates an empty response).
+ * @param body Response body every GET returns (`null` simulates an empty response), except
+ * `site/config`, which answers with the fake database's site config like the real backends.
  * @returns A stub `IHttpBackend` provider and its `get` spy.
  */
 export function stubBackend(body: unknown): { provider: Provider; get: ReturnType<typeof vi.fn> } {
-  const get = vi.fn(() => of(new HttpResponse({ status: 200, body })));
+  const get = vi.fn((path: string) =>
+    of(
+      new HttpResponse({
+        status: 200,
+        body: path === SITE_CONFIG_PATH ? fakeDb.site.config : body,
+      }),
+    ),
+  );
   return { provider: { provide: IHttpBackend, useValue: { get } }, get };
 }
