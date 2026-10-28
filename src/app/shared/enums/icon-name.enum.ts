@@ -25,4 +25,5 @@ export enum IconName {
   Check = 'check',
   Close = 'close',
   Send = 'send',
+  Copy = 'copy',
 }

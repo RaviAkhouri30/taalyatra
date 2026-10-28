@@ -1,0 +1,62 @@
+// Values from the design prototype (Team.dc.html).
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.members {
+  padding-top: 24px;
+}
+
+.tg {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.values {
+  background: t.$color-surface;
+
+  .eyebrow {
+    color: t.$color-cream;
+  }
+
+  h2 {
+    font-size: 52px;
+    font-weight: 800;
+    max-width: 760px;
+    margin-bottom: 40px;
+  }
+}
+
+.vals {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.val {
+  background: t.$color-ink;
+  border-radius: 22px;
+  padding: 30px;
+
+  h3 {
+    font-size: 26px;
+    color: t.$color-amber;
+    margin-bottom: 10px;
+  }
+}

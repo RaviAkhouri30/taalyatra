@@ -1,0 +1,41 @@
+// Values from the design prototype (Team, Shows, Videos, Achievements closing CTAs).
+:host {
+  display: block;
+}
+
+:host(.centered) {
+  text-align: center;
+}
+
+.title {
+  font-size: 52px;
+  font-weight: 800;
+  margin-bottom: 16px;
+
+  :host(.medium) & {
+    font-size: 38px;
+    margin-bottom: 14px;
+  }
+}
+
+.lead {
+  margin: 0 auto 32px;
+
+  :host(.medium) & {
+    margin-bottom: 28px;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+
+  :host(.centered) & {
+    justify-content: center;
+  }
+
+  :host(.medium) & {
+    gap: 12px;
+  }
+}

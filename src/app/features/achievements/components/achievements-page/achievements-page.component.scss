@@ -1,0 +1,259 @@
+// Values from the design prototype (Achievements.dc.html).
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+h2 {
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.alt {
+  background: t.$color-surface;
+
+  .eyebrow {
+    color: t.$color-cream;
+  }
+}
+
+.stats-sec {
+  padding-top: 20px;
+}
+
+// Value above label visually, label first for screen readers (a term and its value).
+.astats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+  margin: 0;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    border-top: 3px solid t.$color-clay;
+    padding-top: 14px;
+  }
+
+  dd {
+    margin: 0;
+    font-family: t.$font-display;
+    font-size: 40px;
+    font-weight: 800;
+    color: t.$color-amber;
+    line-height: 1;
+
+    @include bp.down(bp.$phone) {
+      font-size: 30px;
+    }
+  }
+
+  dt {
+    font-size: 15px;
+    font-weight: 700;
+  }
+}
+
+.milestones-sec {
+  padding-top: 52px;
+
+  h2 {
+    margin-bottom: 8px;
+  }
+}
+
+.mline {
+  margin: 26px 0 0;
+  list-style: none;
+  border-left: 3px solid t.$color-clay;
+  padding-left: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+  @include bp.down(bp.$phone) {
+    padding-left: 24px;
+    gap: 22px;
+  }
+}
+
+.ms {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -41px;
+    top: 5px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: t.$color-amber;
+    border: 4px solid t.$color-surface;
+
+    @include bp.down(bp.$phone) {
+      left: -34px;
+      width: 15px;
+      height: 15px;
+    }
+  }
+
+  b {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: t.$color-amber;
+    font-weight: 700;
+  }
+
+  h3 {
+    font-size: 21px;
+    margin: 3px 0 4px;
+
+    @include bp.down(bp.$phone) {
+      font-size: 19px;
+    }
+  }
+
+  p {
+    font-size: 15px;
+    color: t.$color-muted;
+    max-width: 60ch;
+  }
+}
+
+.recognition-title {
+  margin-bottom: 28px;
+}
+
+.awgrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.aw {
+  background: t.$color-surface;
+  border-radius: 16px;
+  padding: 20px;
+
+  @include bp.down(bp.$phone) {
+    padding: 16px;
+  }
+
+  h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+
+  p {
+    font-size: 14px;
+    color: t.$color-muted;
+    line-height: 1.5;
+  }
+}
+
+.awi {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: t.$color-ink;
+  color: t.$color-amber;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.small-title {
+  font-size: 30px;
+  margin-bottom: 18px;
+}
+
+.press {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pr {
+  display: block;
+  background: t.$color-ink;
+  border-radius: 12px;
+  padding: 13px 15px;
+  border: 1px solid t.$color-line;
+
+  b {
+    display: block;
+    font-family: t.$font-display;
+    font-size: 16px;
+  }
+
+  span {
+    font-size: 13px;
+    color: t.$color-muted;
+  }
+}
+
+a.pr:hover {
+  border-color: t.$color-amber;
+}
+
+.perf {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+
+  li {
+    padding: 11px 0;
+    border-bottom: 1px solid t.$color-line;
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  b {
+    font-family: t.$font-display;
+    font-size: 16px;
+  }
+
+  span {
+    font-size: 13px;
+    color: t.$color-muted;
+  }
+}

@@ -131,3 +131,26 @@ classDiagram
 
 The home page's section classes (contact, assistant) are in
 [aidlc/0003-home-page/02-design.md](../aidlc/0003-home-page/02-design.md).
+
+Shared entities and cached services (1.3.0, [ADR-0011](adr/0011-shared-entities-cached-services.md)):
+
+```mermaid
+classDiagram
+  direction LR
+  class cacheLatest { <<operator>> throwIfEmpty · shareReplay(1) · catchError → EMPTY }
+  class SiteConfigService { +getSiteConfig() }
+  class VideosService { +getVideos() }
+  class TeamService { +getTeam() }
+  class ShowFormatsService { +getFormats() }
+  SiteConfigService ..> cacheLatest
+  VideosService ..> cacheLatest
+  TeamService ..> cacheLatest
+  ShowFormatsService ..> cacheLatest
+  HomeVideosViewModel --> VideosService
+  VideosPageViewModel --> VideosService
+  HomeTeamViewModel --> TeamService
+  TeamPageViewModel --> TeamService
+  HomeShowsViewModel --> ShowFormatsService
+  ShowsPageViewModel --> ShowFormatsService
+```
+

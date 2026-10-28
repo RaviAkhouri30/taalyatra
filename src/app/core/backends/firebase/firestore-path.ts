@@ -20,6 +20,11 @@ export class FirestorePath {
     return this.segments.slice(0, -1).join('/');
   }
 
+  /** Last segment: the document's id (or the collection's name). */
+  public get id(): string {
+    return this.segments.at(-1) ?? '';
+  }
+
   /** Document for an even segment count, collection for an odd one. */
   public get kind(): FirestorePathKind {
     return this.segments.length % SEGMENTS_PER_DOCUMENT === 0

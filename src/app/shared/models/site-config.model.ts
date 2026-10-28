@@ -10,6 +10,8 @@ import {
   type IPromotionDto,
   type ISiteConfig,
   type ISiteConfigDto,
+  type ISiteCredit,
+  type ISiteLabels,
   type ISocialLinkDto,
 } from '@shared/interfaces/i-site-config';
 import { type ISocialLink } from '@shared/interfaces/i-social-link';
@@ -38,12 +40,16 @@ export class SiteConfigModel implements ISiteConfig {
   public readonly socials: readonly ISocialLink[];
   public readonly promotion: IPromotion | null;
   public readonly copyrightYear: number;
+  public readonly labels: ISiteLabels;
+  public readonly credit: ISiteCredit;
 
   /** @param dto The stored site configuration. */
   public constructor(dto: ISiteConfigDto) {
     this.brand = dto.brand;
     this.contact = dto.contact;
     this.copyrightYear = dto.copyrightYear;
+    this.labels = dto.labels;
+    this.credit = dto.credit;
     this.socials = [
       SiteConfigModel.whatsApp(dto.contact.phone),
       ...dto.socials.flatMap((social) => SiteConfigModel.socialLink(social)),

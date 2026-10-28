@@ -26,12 +26,18 @@ export const RHYTHM_GAME_DTO: IRhythmGameDto = HOME.rhythmGame;
 export const VIDEOS = fakeDb.videos;
 export const GALLERY = fakeDb.gallery;
 export const TEAM = fakeDb.team;
+export const SHOW_FORMATS = fakeDb.showFormats;
 
-const SITE_CONFIG_PATH: string = ApiEndpoint.SiteConfig;
+/** Shared documents every backend answers the same way, whatever body a spec passes. */
+const SHARED_BODIES = new Map<string, unknown>([
+  [ApiEndpoint.SiteConfig, fakeDb.site.config],
+  [ApiEndpoint.ShowFormats, fakeDb.showFormats],
+]);
 
 /**
  * @param body Response body every GET returns (`null` simulates an empty response), except
- * `site/config`, which answers with the fake database's site config like the real backends.
+ * the shared documents (`site/config`, `showFormats`), which answer from the fake database like
+ * the real backends.
  * @returns A stub `IHttpBackend` provider and its `get` spy.
  */
 export function stubBackend(body: unknown): { provider: Provider; get: ReturnType<typeof vi.fn> } {
@@ -39,7 +45,7 @@ export function stubBackend(body: unknown): { provider: Provider; get: ReturnTyp
     of(
       new HttpResponse({
         status: 200,
-        body: path === SITE_CONFIG_PATH ? fakeDb.site.config : body,
+        body: SHARED_BODIES.has(path) ? SHARED_BODIES.get(path) : body,
       }),
     ),
   );

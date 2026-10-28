@@ -32,10 +32,17 @@
     }}</span>
   </dd>
   <dt>Address</dt>
-  <dd>{{ contact().address }}</dd>
+  <dd>
+    <app-copy-text
+      [text]="contact().address"
+      [action]="labels().copyAddress"
+      [copied]="labels().addressCopied"
+      [failed]="labels().copyFailed"
+    />
+  </dd>
   <dt>Phone</dt>
   <dd>
-    <a class="inline" [href]="telHref()">{{ contact().phone.display }}</a>
+    <a class="inline" [href]="telHref()" [attr.aria-label]="callLabel()">{{ labels().callUs }}</a>
   </dd>
   <dt>Email</dt>
   <dd>

@@ -1,18 +1,23 @@
 import { Injectable, inject } from '@angular/core';
-import { type Observable, tap } from 'rxjs';
+import { type Observable, combineLatest, tap } from 'rxjs';
 import { ViewModel } from '@shared/base/view-model';
+import { ShowFormatsService } from '@shared/services/show-formats.service';
 import { HomeShowsModel } from './home-shows.model';
 import { HomeShowsService } from './home-shows.service';
 
-/** Loads the shows teaser. */
+/** Loads the shows teaser: its heading plus the shared show formats. */
 @Injectable()
 export class HomeShowsViewModel extends ViewModel<HomeShowsModel> {
   private readonly showsService = inject(HomeShowsService);
+  private readonly formatsService = inject(ShowFormatsService);
 
   protected override attachViewHandler(): Observable<unknown> {
-    return this.showsService.attachViewDataHandler().pipe(
-      tap((dto) => {
-        this.setData(new HomeShowsModel(dto));
+    return combineLatest([
+      this.showsService.attachViewDataHandler(),
+      this.formatsService.getFormats(),
+    ]).pipe(
+      tap(([dto, formats]) => {
+        this.setData(new HomeShowsModel(dto, formats));
       }),
     );
   }

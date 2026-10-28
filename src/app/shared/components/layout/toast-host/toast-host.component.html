@@ -1,0 +1,6 @@
+<!-- The live region is always present, so a toast added later is announced. -->
+<div class="toasts" role="status" aria-live="polite">
+  @for (toast of model.toasts(); track toast.id) {
+    <p class="toast" [class.toast--error]="toast.tone === error">{{ toast.text }}</p>
+  }
+</div>

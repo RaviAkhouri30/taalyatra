@@ -1,0 +1,21 @@
+@let person = member();
+<article class="tc">
+  <img
+    [ngSrc]="person.photo.src"
+    [width]="person.photo.width"
+    [height]="person.photo.height"
+    [alt]="person.photo.alt"
+    [priority]="priority()"
+  />
+  <div class="in">
+    <span class="role">{{ person.role }}</span>
+    <h3 class="d">{{ person.name }}</h3>
+    <p>{{ person.bio }}</p>
+    <ul class="skills">
+      @for (skill of person.skills; track skill) {
+        <li>{{ skill }}</li>
+      }
+    </ul>
+    <p class="fun">{{ funFactLabel() }} {{ person.funFact }}</p>
+  </div>
+</article>

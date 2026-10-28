@@ -27,6 +27,12 @@ export enum ApiEndpoint {
   HomeFaq = 'home/faq',
   HomeContact = 'home/contact',
   HomeAssistant = 'home/assistant',
+  /** Show formats, shared by the home teaser and the Shows page (ADR-0011). */
+  ShowFormats = 'showFormats',
+  PagesVideos = 'pages/videos',
+  PagesTeam = 'pages/team',
+  PagesShows = 'pages/shows',
+  PagesAchievements = 'pages/achievements',
   /** Site-wide content: brand, contact details, social links, promotion. */
   SiteConfig = 'site/config',
   /** Proposal requests from the contact form (create-only collection). */

@@ -1,4 +1,4 @@
-// Values from the design prototype's computed styles.
+// Design values (0003), given more weight in 0005-A: a surface band, the spotlight, image cards.
 @use 'tokens' as t;
 @use 'breakpoints' as bp;
 
@@ -6,18 +6,22 @@
   display: block;
 }
 
-.sec {
-  padding-top: 0;
+.shows {
+  background: t.$color-surface;
 }
 
 .lead {
   margin: -10px 0 26px;
 }
 
+.spotlight {
+  margin-bottom: 22px;
+}
+
 .showgrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  gap: 18px;
 
   @include bp.down(bp.$tablet) {
     grid-template-columns: 1fr 1fr;
@@ -30,11 +34,10 @@
 
 .shc {
   display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  background: t.$color-surface;
-  border-radius: 16px;
-  padding: 18px;
+  flex-direction: column;
+  background: t.$color-ink;
+  border-radius: 18px;
+  overflow: hidden;
   transition: transform 0.2s;
 
   &:hover {
@@ -42,40 +45,40 @@
     outline: 2px solid t.$color-amber;
   }
 
-  @include bp.down(bp.$phone) {
-    padding: 14px;
+  // flex: none keeps the 16:10 ratio; a column flex item's height could otherwise shrink.
+  img {
+    display: block;
+    flex: none;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
   }
 
   b {
     display: block;
     font-family: t.$font-display;
-    font-size: 18px;
-    margin-bottom: 3px;
+    font-size: 19px;
+    margin-bottom: 4px;
 
     @include bp.down(bp.$phone) {
-      font-size: 16px;
-    }
-  }
-
-  p {
-    font-size: 14px;
-    color: t.$color-muted;
-    line-height: 1.5;
-
-    @include bp.down(bp.$phone) {
-      font-size: 13.5px;
+      font-size: 17px;
     }
   }
 }
 
-.sico {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: t.$color-ink;
-  color: t.$color-amber;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
+.in {
+  display: block;
+  padding: 16px 18px 20px;
+}
+
+.text {
+  display: block;
+  font-size: 14px;
+  color: t.$color-muted;
+  line-height: 1.5;
+
+  @include bp.down(bp.$phone) {
+    font-size: 13.5px;
+  }
 }

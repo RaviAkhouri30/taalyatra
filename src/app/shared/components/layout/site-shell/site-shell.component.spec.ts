@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { Subject } from 'rxjs';
+import { FakeClipboardService } from '@core/backends/fake/fake-clipboard.service';
+import { IClipboardService } from '@core/interfaces/i-clipboard-service';
 import { ROUTE_DATA_KEYS } from '@shared/constants/route-data.constants';
 import { PageLayout } from '@shared/enums/page-layout.enum';
 import { type IPromotionDto } from '@shared/interfaces/i-site-config';
@@ -18,6 +20,7 @@ describe('SiteShellComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         provideSiteConfig(new SiteConfigModel({ ...SITE_DTO, promotion })),
+        { provide: IClipboardService, useClass: FakeClipboardService },
         provideRouter([
           {
             path: '',

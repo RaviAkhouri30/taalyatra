@@ -1,0 +1,70 @@
+@use 'tokens' as t;
+
+:host {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
+
+.copy {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: copy;
+
+  &:hover .text,
+  &:focus-visible .text {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid t.$color-amber;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+.text {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.icon {
+  flex: none;
+  color: t.$color-amber;
+}
+
+// Anchored to the right edge so it opens leftwards over the labels and never runs off-screen
+// from the footer's last column.
+.tip {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  z-index: 2;
+  width: max-content;
+  max-width: min(320px, 80vw);
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: t.$color-ivory;
+  color: t.$color-ink;
+  font-size: 14px;
+  line-height: 1.45;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 45%);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.tip--open {
+  visibility: visible;
+  opacity: 1;
+}

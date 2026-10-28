@@ -55,11 +55,11 @@ describe('FirebaseBackendService', () => {
     it('should load the SDK only on subscribe, once, with the config and emulator', async () => {
       gateway.getDocument.mockReturnValue(of({ title: 'Hero' }));
       const service = create();
-      const first = service.get('pages/about');
+      const first = service.get('notes/about');
 
       expect(created).not.toHaveBeenCalled();
       await firstValueFrom(first);
-      await firstValueFrom(service.get('pages/shows'));
+      await firstValueFrom(service.get('notes/shows'));
       expect(created).toHaveBeenCalledTimes(1);
       expect(created).toHaveBeenCalledWith(config, emulator);
     });
@@ -67,17 +67,17 @@ describe('FirebaseBackendService', () => {
     it('should answer 200 with the body when the document exists', async () => {
       gateway.getDocument.mockReturnValue(of({ title: 'Hero' }));
 
-      await expect(firstValueFrom(create().get('pages/about'))).resolves.toMatchObject({
+      await expect(firstValueFrom(create().get('notes/about'))).resolves.toMatchObject({
         status: HttpStatusCode.Ok,
         body: { title: 'Hero' },
       });
-      expect(gateway.getDocument).toHaveBeenCalledWith('pages/about');
+      expect(gateway.getDocument).toHaveBeenCalledWith('notes/about');
     });
 
     it('should answer 404 when the document is missing', async () => {
       gateway.getDocument.mockReturnValue(of(undefined));
 
-      await expect(firstValueFrom(create().get('pages/missing'))).resolves.toMatchObject({
+      await expect(firstValueFrom(create().get('notes/missing'))).resolves.toMatchObject({
         status: HttpStatusCode.NotFound,
         body: null,
       });
@@ -101,7 +101,7 @@ describe('FirebaseBackendService', () => {
     });
 
     it('should answer 503 without loading the SDK when Firebase is not configured', async () => {
-      await expect(firstValueFrom(create(null).get('pages/about'))).resolves.toMatchObject({
+      await expect(firstValueFrom(create(null).get('notes/about'))).resolves.toMatchObject({
         status: HttpStatusCode.ServiceUnavailable,
       });
       expect(created).not.toHaveBeenCalled();
@@ -110,7 +110,7 @@ describe('FirebaseBackendService', () => {
     it('should translate a Firebase error into a status instead of throwing', async () => {
       gateway.getDocument.mockReturnValue(throwError(() => ({ code: 'permission-denied' })));
 
-      await expect(firstValueFrom(create().get('pages/about'))).resolves.toMatchObject({
+      await expect(firstValueFrom(create().get('notes/about'))).resolves.toMatchObject({
         status: HttpStatusCode.Forbidden,
       });
     });
@@ -127,7 +127,7 @@ describe('FirebaseBackendService', () => {
       );
     }
 
-    it('should read site and home once, together, for every document in them', async () => {
+    it('should read each preloaded collection once, whole, for every document in it', async () => {
       preload();
       const service = create();
 
@@ -143,6 +143,14 @@ describe('FirebaseBackendService', () => {
       expect(gateway.getDocument).not.toHaveBeenCalled();
     });
 
+    it('should load only the collection asked for', async () => {
+      preload();
+
+      await firstValueFrom(create().get('site/config'));
+
+      expect(gateway.getCollectionDocuments.mock.calls).toEqual([['site']]);
+    });
+
     it('should answer 404 when a preloaded collection has no such document', async () => {
       preload();
 
@@ -152,15 +160,21 @@ describe('FirebaseBackendService', () => {
     });
 
     it('should translate a failed preload and retry it on the next request', async () => {
-      gateway.getCollectionDocuments.mockReturnValueOnce(
-        throwError(() => ({ code: 'unavailable' })),
+      // The real gateway is cold: each subscription runs the query again.
+      let attempts = 0;
+      gateway.getCollectionDocuments.mockImplementation(() =>
+        defer(() => {
+          attempts += 1;
+          return attempts === 1
+            ? throwError(() => ({ code: 'unavailable' }))
+            : of(new Map<string, unknown>([['hero', { title: 'Hero' }]]));
+        }),
       );
       const service = create();
 
       await expect(firstValueFrom(service.get('home/hero'))).resolves.toMatchObject({
         status: HttpStatusCode.ServiceUnavailable,
       });
-      preload();
       await expect(firstValueFrom(service.get('home/hero'))).resolves.toMatchObject({
         status: HttpStatusCode.Ok,
       });

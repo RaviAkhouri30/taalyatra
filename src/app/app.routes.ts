@@ -13,6 +13,30 @@ export const routes: Routes = [
     data: { [ROUTE_DATA_KEYS.Layout]: PageLayout.Home },
     loadComponent: () => import('@features/home/home-page.component'),
   },
-  // Pages not built yet (Shows, Videos, Team, Achievements, Admin) fall back to home for now.
+  {
+    path: 'videos',
+    title: 'Videos — Taal Yatra',
+    data: { [ROUTE_DATA_KEYS.Layout]: PageLayout.Page },
+    loadChildren: () => import('@features/videos/videos.routes'),
+  },
+  {
+    path: 'team',
+    title: 'Our team — Taal Yatra',
+    data: { [ROUTE_DATA_KEYS.Layout]: PageLayout.Page },
+    loadChildren: () => import('@features/team/team.routes'),
+  },
+  {
+    path: 'shows',
+    title: 'Shows & performances — Taal Yatra',
+    data: { [ROUTE_DATA_KEYS.Layout]: PageLayout.Page },
+    loadChildren: () => import('@features/shows/shows.routes'),
+  },
+  {
+    path: 'achievements',
+    title: 'Achievements — Taal Yatra',
+    data: { [ROUTE_DATA_KEYS.Layout]: PageLayout.Page },
+    loadChildren: () => import('@features/achievements/achievements.routes'),
+  },
+  // The admin area isn't built yet (its own feature), so it falls back to home for now.
   { path: '**', redirectTo: '' },
 ];

@@ -219,39 +219,7 @@
       "eyebrow": "Shows & performances",
       "title": "We play, not just facilitate.",
       "cta": "See all formats",
-      "lead": "Live bands, percussion ensembles, acoustic sets and processions — scaled to the room and the occasion.",
-      "formats": [
-        {
-          "icon": "mic",
-          "title": "Live band",
-          "text": "A full band set for stage shows, corporate evenings and celebrations."
-        },
-        {
-          "icon": "djembe",
-          "title": "Percussion ensemble",
-          "text": "Djembe, dhol and hand percussion for a high-energy opening or finale."
-        },
-        {
-          "icon": "guitar",
-          "title": "Acoustic / unplugged",
-          "text": "An intimate, low-volume set that lets a room keep talking."
-        },
-        {
-          "icon": "pulse",
-          "title": "Fusion ensemble",
-          "text": "Indian classical and folk instruments meeting contemporary arrangements."
-        },
-        {
-          "icon": "procession",
-          "title": "Dhol & procession",
-          "text": "Mobile percussion that walks with the crowd instead of standing on a stage."
-        },
-        {
-          "icon": "star",
-          "title": "Fest stage show",
-          "text": "A larger production for college fests, society events and public stages."
-        }
-      ]
+      "lead": "Live bands, percussion ensembles, acoustic sets and processions — scaled to the room and the occasion."
     },
     "drumCircle": {
       "eyebrow": "Signature experience",
@@ -460,8 +428,7 @@
       "eyebrow": "Latest videos",
       "title": "See a circle in action.",
       "cta": "View all videos",
-      "count": 4,
-      "watchLabel": "Watch {title} on YouTube"
+      "count": 4
     },
     "gallery": {
       "eyebrow": "Gallery",
@@ -1140,7 +1107,297 @@
         "subtitle": "Light up your celebration",
         "dismissLabel": "Dismiss Diwali offer"
       },
-      "copyrightYear": 2026
+      "copyrightYear": 2026,
+      "labels": {
+        "watchVideo": "Watch {title} on YouTube",
+        "callUs": "Call us",
+        "copyAddress": "Copy address",
+        "addressCopied": "Address copied to clipboard",
+        "copyFailed": "Couldn’t copy. Please select the address instead."
+      },
+      "credit": {
+        "label": "Developed with love by",
+        "name": "Ravi Akhouri",
+        "url": "https://www.linkedin.com/in/ravi-akhouri-6696071a7/",
+        "linkLabel": "Ravi Akhouri on LinkedIn (opens in a new tab)"
+      }
+    }
+  },
+  "pages": {
+    "videos": {
+      "hero": {
+        "eyebrow": "Videos",
+        "title": "Watch the beat",
+        "highlight": "in action.",
+        "lead": "Corporate days, family functions and workshops. Pick a category and tap a video to watch it on YouTube."
+      },
+      "filterLabel": "Filter videos",
+      "allLabel": "All",
+      "showingLabel": "Showing {count} videos",
+      "featuredLabel": "Featured · {category}",
+      "channelCta": "Visit our YouTube channel",
+      "planCta": "Plan your session"
+    },
+    "team": {
+      "hero": {
+        "eyebrow": "Our team",
+        "title": "The people behind",
+        "highlight": "the beat.",
+        "lead": "Facilitators, percussionists and event makers who love turning a room of strangers into one groove. [Replace the placeholders below with your real team and photos.]"
+      },
+      "funFactLabel": "Fun fact:",
+      "values": {
+        "eyebrow": "How we show up",
+        "title": "Every facilitator shares three habits.",
+        "items": [
+          {
+            "title": "We listen first",
+            "text": "We read the room before we play a beat, then shape the session to the people in it."
+          },
+          {
+            "title": "We keep it welcoming",
+            "text": "No wrong notes, no spotlight on anyone. Everyone has a part in the groove."
+          },
+          {
+            "title": "We bring the joy",
+            "text": "Energy, humour and good rhythm, from the first beat to the final bow."
+          }
+        ]
+      },
+      "cta": {
+        "title": "Want to play with us?",
+        "text": "Tell us about your event and the right facilitator will get in touch.",
+        "primary": "Plan your session",
+        "secondary": "Watch our videos"
+      }
+    },
+    "shows": {
+      "hero": {
+        "eyebrow": "Shows & performances",
+        "title": "Not just workshops —",
+        "highlight": "live music too.",
+        "lead": "Alongside facilitated drum circles, we perform. Full bands, percussion ensembles, acoustic sets and processions, scaled to the room and the occasion."
+      },
+      "heroPrimaryCta": "Enquire about a show",
+      "heroWhatsAppCta": "WhatsApp us",
+      "formats": {
+        "eyebrow": "Formats",
+        "title": "Pick the shape of the evening.",
+        "note": "[Confirm these formats and fill in the ensemble sizes and set lengths — the structure is ready, the numbers are yours.]",
+        "labels": {
+          "ensemble": "Ensemble",
+          "setLength": "Set length",
+          "bestFor": "Best for"
+        }
+      },
+      "setups": {
+        "eyebrow": "Setups",
+        "title": "We play wherever the people are.",
+        "items": [
+          {
+            "title": "Indoor stage",
+            "text": "Banquet halls, auditoriums and hotel ballrooms."
+          },
+          {
+            "title": "Outdoor ground",
+            "text": "Lawns, terraces and open grounds, weather permitting."
+          },
+          {
+            "title": "Procession",
+            "text": "Moving with the crowd, no stage and no power needed."
+          },
+          {
+            "title": "Intimate room",
+            "text": "Living rooms and small venues at conversation volume."
+          },
+          {
+            "title": "Corporate stage",
+            "text": "Conferences, annual days and product launches."
+          },
+          {
+            "title": "Fest stage",
+            "text": "College and community festivals with a full production."
+          }
+        ],
+        "note": "[Add what you bring and what the venue should provide — instruments, PA, mics, lighting, power and stage size.]"
+      },
+      "process": {
+        "eyebrow": "How a show comes together",
+        "title": "Four conversations, one evening.",
+        "steps": [
+          {
+            "number": "01",
+            "title": "Tell us the occasion",
+            "text": "Date, venue, audience and the mood you want."
+          },
+          {
+            "number": "02",
+            "title": "We propose a format",
+            "text": "Ensemble, set length and how it fits your run of show."
+          },
+          {
+            "number": "03",
+            "title": "Soundcheck",
+            "text": "We arrive early, set up and check levels with your venue."
+          },
+          {
+            "number": "04",
+            "title": "Play",
+            "text": "A set built for your room, with the energy where you want it."
+          }
+        ],
+        "primaryCta": "Request a proposal",
+        "secondaryCta": "Watch us play"
+      }
+    },
+    "achievements": {
+      "hero": {
+        "eyebrow": "Achievements",
+        "title": "Years of stages,",
+        "highlight": "students and sound.",
+        "lead": "Milestones, recognition and the performances we are proudest of. [Replace every bracketed item below with your own — the layout is ready.]"
+      },
+      "stats": [
+        {
+          "value": "[20]+",
+          "label": "Years in music"
+        },
+        {
+          "value": "[150]+",
+          "label": "Shows performed"
+        },
+        {
+          "value": "[500]+",
+          "label": "Students taught"
+        },
+        {
+          "value": "[8]",
+          "label": "Cities played"
+        }
+      ],
+      "milestones": {
+        "eyebrow": "Milestones",
+        "title": "The journey so far.",
+        "items": [
+          {
+            "year": "[YEAR]",
+            "title": "[First milestone]",
+            "text": "[What happened and why it mattered.]"
+          },
+          {
+            "year": "[YEAR]",
+            "title": "[A notable show]",
+            "text": "[Venue, audience size, what made it memorable.]"
+          },
+          {
+            "year": "[YEAR]",
+            "title": "[A recognition or award]",
+            "text": "[Who gave it and what for.]"
+          },
+          {
+            "year": "[YEAR]",
+            "title": "[A large group session]",
+            "text": "[The biggest circle you have led.]"
+          },
+          {
+            "year": "[YEAR]",
+            "title": "[A festival or collaboration]",
+            "text": "[Who you played with.]"
+          },
+          {
+            "year": "Today",
+            "title": "Taal Yatra",
+            "text": "Drum circles, workshops and live shows for teams, families and festivals."
+          }
+        ]
+      },
+      "recognition": {
+        "eyebrow": "Recognition",
+        "title": "Awards and honours.",
+        "items": [
+          {
+            "icon": "star",
+            "title": "[Award name]",
+            "text": "[Awarding body, year, and what it recognised.]"
+          },
+          {
+            "icon": "star",
+            "title": "[Award name]",
+            "text": "[Awarding body, year, and what it recognised.]"
+          },
+          {
+            "icon": "star",
+            "title": "[Recognition]",
+            "text": "[Who recognised it and why.]"
+          },
+          {
+            "icon": "star",
+            "title": "[Certification]",
+            "text": "[Training, qualification or accreditation.]"
+          }
+        ]
+      },
+      "press": {
+        "eyebrow": "Press & features",
+        "title": "Where we have been written about.",
+        "items": [
+          {
+            "publication": "[Publication]",
+            "headline": "[Headline of the piece]",
+            "year": "[Year]",
+            "url": ""
+          },
+          {
+            "publication": "[Publication]",
+            "headline": "[Headline of the piece]",
+            "year": "[Year]",
+            "url": ""
+          },
+          {
+            "publication": "[Publication]",
+            "headline": "[Headline of the piece]",
+            "year": "[Year]",
+            "url": ""
+          }
+        ]
+      },
+      "performances": {
+        "eyebrow": "Notable performances",
+        "title": "Stages worth remembering.",
+        "items": [
+          {
+            "event": "[Event name]",
+            "venue": "[Venue, city]",
+            "year": "[Year]"
+          },
+          {
+            "event": "[Event name]",
+            "venue": "[Venue, city]",
+            "year": "[Year]"
+          },
+          {
+            "event": "[Event name]",
+            "venue": "[Venue, city]",
+            "year": "[Year]"
+          },
+          {
+            "event": "[Event name]",
+            "venue": "[Venue, city]",
+            "year": "[Year]"
+          },
+          {
+            "event": "[Event name]",
+            "venue": "[Venue, city]",
+            "year": "[Year]"
+          }
+        ]
+      },
+      "cta": {
+        "title": "Want us at your event?",
+        "text": "Tell us the date and the occasion, and we will send a proposal.",
+        "primary": "Request a proposal",
+        "secondary": "See show formats"
+      }
     }
   },
   "videos": [
@@ -1402,6 +1659,125 @@
         "width": 600,
         "height": 600
       }
+    }
+  ],
+  "showFormats": [
+    {
+      "icon": "sparkle",
+      "title": "Classical tabla recital",
+      "text": "Hindustani classical tabla: solo recitals, and accompaniment for vocal and instrumental concerts. The tradition behind every circle we lead.",
+      "ensemble": "[Solo, or with accompanists]",
+      "setLength": "[60–90 min]",
+      "bestFor": "Concerts, cultural evenings, baithaks",
+      "image": {
+        "src": "/images/shows/classical-tabla.svg",
+        "alt": "Illustration of a tabla pair on a carpet under a warm stage light, a performer seated behind",
+        "width": 800,
+        "height": 500
+      },
+      "featured": true,
+      "spotlight": {
+        "eyebrow": "Classical concerts",
+        "title": "An evening of Hindustani classical rhythm.",
+        "primaryCta": "Book a concert",
+        "secondaryCta": "Watch a recital"
+      }
+    },
+    {
+      "icon": "mic",
+      "title": "Live band",
+      "text": "A full band set for stage shows, corporate evenings and celebrations.",
+      "ensemble": "[6–8 players]",
+      "setLength": "[60–90 min]",
+      "bestFor": "Stage events, annual days",
+      "image": {
+        "src": "/images/shows/live-band.svg",
+        "alt": "",
+        "width": 800,
+        "height": 500
+      },
+      "featured": false,
+      "spotlight": null
+    },
+    {
+      "icon": "djembe",
+      "title": "Percussion ensemble",
+      "text": "Djembe, dhol and hand percussion for a high-energy opening or finale.",
+      "ensemble": "[4–6 players]",
+      "setLength": "[20–30 min]",
+      "bestFor": "Entries, award nights",
+      "image": {
+        "src": "/images/shows/percussion-ensemble.svg",
+        "alt": "",
+        "width": 800,
+        "height": 500
+      },
+      "featured": false,
+      "spotlight": null
+    },
+    {
+      "icon": "guitar",
+      "title": "Acoustic / unplugged",
+      "text": "An intimate, low-volume set that lets a room keep talking.",
+      "ensemble": "[2–4 players]",
+      "setLength": "[60–120 min]",
+      "bestFor": "Dinners, small gatherings",
+      "image": {
+        "src": "/images/shows/acoustic.svg",
+        "alt": "",
+        "width": 800,
+        "height": 500
+      },
+      "featured": false,
+      "spotlight": null
+    },
+    {
+      "icon": "pulse",
+      "title": "Fusion ensemble",
+      "text": "Indian classical and folk instruments meeting contemporary arrangements.",
+      "ensemble": "[5–7 players]",
+      "setLength": "[45–60 min]",
+      "bestFor": "Cultural evenings, festivals",
+      "image": {
+        "src": "/images/shows/fusion.svg",
+        "alt": "",
+        "width": 800,
+        "height": 500
+      },
+      "featured": false,
+      "spotlight": null
+    },
+    {
+      "icon": "procession",
+      "title": "Dhol & procession",
+      "text": "Mobile percussion that walks with the crowd instead of standing on a stage.",
+      "ensemble": "[3–6 players]",
+      "setLength": "[30–45 min]",
+      "bestFor": "Baraats, festival processions",
+      "image": {
+        "src": "/images/shows/dhol-procession.svg",
+        "alt": "",
+        "width": 800,
+        "height": 500
+      },
+      "featured": false,
+      "spotlight": null
+    },
+    {
+      "icon": "star",
+      "title": "Fest stage show",
+      "text": "A larger production for college fests, society events and public stages.",
+      "ensemble": "[8+ players]",
+      "setLength": "[90 min+]",
+      "bestFor": "Fests, public events",
+      "image": {
+        "src": "/images/shows/fest-stage.svg",
+        "alt": "",
+        "width": 800,
+        "height": 500
+      },
+      "featured": false,
+      "spotlight": null
     }
   ]
 }

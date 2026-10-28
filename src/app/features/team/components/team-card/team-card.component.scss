@@ -1,0 +1,77 @@
+// Values from the design prototype (Team.dc.html).
+@use 'tokens' as t;
+
+:host {
+  display: contents;
+}
+
+.tc {
+  background: t.$color-surface;
+  border-radius: 26px;
+  overflow: hidden;
+  transition: transform 0.25s;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-8px);
+    outline: 2px solid t.$color-amber;
+  }
+
+  img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+  }
+
+  h3 {
+    font-size: 28px;
+  }
+
+  p {
+    font-size: 17px;
+  }
+}
+
+.in {
+  padding: 24px 26px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.role {
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: t.$color-amber;
+}
+
+// A list for screen readers; the design draws it as a row of pills.
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    font-size: 14px;
+    font-weight: 700;
+    border: 1px solid t.$color-sage;
+    color: t.$color-sage-pale;
+    border-radius: t.$radius-pill;
+    padding: 3px 12px;
+  }
+}
+
+.tc .fun {
+  border-top: 1px solid t.$color-bronze;
+  padding-top: 12px;
+  margin-top: 6px;
+  font-size: 15px;
+}

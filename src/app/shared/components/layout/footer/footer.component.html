@@ -10,10 +10,11 @@
         @for (column of chrome().footerColumns; track column.heading) {
           <app-footer-links [column]="column" />
         }
-        <app-footer-visit [contact]="site().contact" />
+        <app-footer-visit [contact]="site().contact" [labels]="site().labels" />
       </div>
       <div class="fbot">
         <span>{{ copyright() }}</span>
+        <app-footer-credit [credit]="site().credit" />
         <span class="fbot-links">
           <a class="admin" [routerLink]="adminRoute">Admin</a>
           <a [routerLink]="homeRoute" [fragment]="topAnchor">Back to top &uarr;</a>
@@ -31,7 +32,8 @@
         <app-footer-links [column]="contactColumn()" />
       </div>
       <p class="fine">
-        <a class="admin admin--float" [routerLink]="adminRoute">Admin</a>{{ copyright() }}
+        <a class="admin admin--float" [routerLink]="adminRoute">Admin</a>{{ copyright() }} ·
+        <app-footer-credit [credit]="site().credit" />
       </p>
     }
   </div>

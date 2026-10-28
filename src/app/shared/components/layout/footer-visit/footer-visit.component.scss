@@ -64,6 +64,8 @@ a {
 
   dd {
     margin: 0;
+    // Grid items default to their content's width; 0 lets the copyable address truncate.
+    min-width: 0;
   }
 }
 

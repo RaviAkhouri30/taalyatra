@@ -5,6 +5,7 @@ import { FooterComponent } from '@shared/components/layout/footer/footer.compone
 import { HeaderComponent } from '@shared/components/layout/header/header.component';
 import { MobileActionBarComponent } from '@shared/components/layout/mobile-action-bar/mobile-action-bar.component';
 import { PromoBadgeComponent } from '@shared/components/layout/promo-badge/promo-badge.component';
+import { ToastHostComponent } from '@shared/components/layout/toast-host/toast-host.component';
 import { UtilityBarComponent } from '@shared/components/layout/utility-bar/utility-bar.component';
 import { WhatsAppFabComponent } from '@shared/components/layout/whatsapp-fab/whatsapp-fab.component';
 import { type IShellState } from '@shared/interfaces/i-shell-state';
@@ -22,6 +23,7 @@ import { SiteShellViewModel } from './site-shell.view-model';
     MobileActionBarComponent,
     PromoBadgeComponent,
     RouterOutlet,
+    ToastHostComponent,
     UtilityBarComponent,
     WhatsAppFabComponent,
   ],

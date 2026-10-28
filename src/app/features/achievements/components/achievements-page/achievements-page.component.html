@@ -1,0 +1,100 @@
+@if (model.data(); as page) {
+  <app-page-hero
+    [eyebrow]="page.hero.eyebrow"
+    [title]="page.hero.title"
+    [highlight]="page.hero.highlight"
+    [lead]="page.hero.lead"
+  />
+  <section class="sec stats-sec">
+    <div class="wrap">
+      <dl class="astats">
+        @for (stat of page.stats; track stat.label) {
+          <div>
+            <dt>{{ stat.label }}</dt>
+            <dd>{{ stat.value }}</dd>
+          </div>
+        }
+      </dl>
+    </div>
+  </section>
+  <section class="sec alt milestones-sec">
+    <div class="wrap">
+      <p class="eyebrow">{{ page.milestones.eyebrow }}</p>
+      <h2 class="d">{{ page.milestones.title }}</h2>
+      <ol class="mline">
+        @for (milestone of page.milestones.items; track $index) {
+          <li class="ms">
+            <b>{{ milestone.year }}</b>
+            <h3 class="d">{{ milestone.title }}</h3>
+            <p>{{ milestone.text }}</p>
+          </li>
+        }
+      </ol>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="wrap">
+      <p class="eyebrow">{{ page.recognition.eyebrow }}</p>
+      <h2 class="d recognition-title">{{ page.recognition.title }}</h2>
+      <div class="awgrid">
+        @for (award of page.recognition.items; track $index) {
+          <div class="aw">
+            <span class="awi"
+              ><app-icon [name]="award.icon" [size]="22" [strokeWidth]="1.9"
+            /></span>
+            <h3 class="d">{{ award.title }}</h3>
+            <p>{{ award.text }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+  <section class="sec alt">
+    <div class="wrap two">
+      <div>
+        <p class="eyebrow">{{ page.press.eyebrow }}</p>
+        <h2 class="d small-title">{{ page.press.title }}</h2>
+        <ul class="press">
+          @for (item of page.press.items; track $index) {
+            <li>
+              @if (item.url) {
+                <a class="pr" [href]="item.url"
+                  ><b>{{ item.publication }}</b
+                  ><span>{{ item.headline }} · {{ item.year }}</span></a
+                >
+              } @else {
+                <div class="pr">
+                  <b>{{ item.publication }}</b
+                  ><span>{{ item.headline }} · {{ item.year }}</span>
+                </div>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+      <div>
+        <p class="eyebrow">{{ page.performances.eyebrow }}</p>
+        <h2 class="d small-title">{{ page.performances.title }}</h2>
+        <ul class="perf">
+          @for (performance of page.performances.items; track $index) {
+            <li>
+              <b>{{ performance.event }}</b
+              ><span>{{ performance.venue }} · {{ performance.year }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="wrap">
+      <app-page-cta
+        [heading]="page.ctaTitle"
+        [text]="page.ctaText"
+        [size]="ctaSize"
+        [primary]="page.request"
+        [secondary]="page.shows"
+      />
+    </div>
+  </section>
+}

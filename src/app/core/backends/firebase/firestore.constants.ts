@@ -11,9 +11,9 @@ export const FIRESTORE_ORDER_FIELD = 'order';
 export const FIRESTORE_CREATED_AT_FIELD = 'createdAt';
 
 /**
- * Small content collections that are read whole, together, on the first request for any of their
- * documents. The site chrome and every above-the-fold section then render in the same frame,
- * instead of the page jumping as 20+ separate answers arrive (CLS, ADR-0009). Same read cost:
- * every visit reads all of these documents anyway.
+ * Small content collections, each read whole on the first request for one of its documents and
+ * cached (ADR-0009, ADR-0011). A page's sections then arrive in one answer instead of jumping as
+ * separate answers land (CLS). Each collection loads independently, so an inner page never pays
+ * for the home collection.
  */
-export const FIRESTORE_PRELOADED_COLLECTIONS: readonly string[] = ['site', 'home'];
+export const FIRESTORE_PRELOADED_COLLECTIONS: readonly string[] = ['site', 'home', 'pages'];

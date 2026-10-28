@@ -61,27 +61,40 @@ describe('firestore.rules', () => {
   });
 
   describe('public content', () => {
-    it.each(['home/hero', 'site/config', 'videos/001', 'gallery/001', 'team/001'])(
-      'should let anyone read %s',
-      async (path) => {
-        await expect(getDoc(doc(visitor, path))).resolves.toBeDefined();
-      },
-    );
-
-    it.each(['videos', 'gallery', 'team'])('should let anyone list %s', async (path) => {
-      await expect(getDocs(collection(visitor, path))).resolves.toBeDefined();
+    it.each([
+      'home/hero',
+      'site/config',
+      'pages/videos',
+      'showFormats/001',
+      'videos/001',
+      'gallery/001',
+      'team/001',
+    ])('should let anyone read %s', async (path) => {
+      await expect(getDoc(doc(visitor, path))).resolves.toBeDefined();
     });
 
-    it.each(['home/hero', 'site/config', 'videos/001', 'gallery/001', 'team/001'])(
-      'should stop a client writing %s',
+    it.each(['videos', 'gallery', 'team', 'showFormats'])(
+      'should let anyone list %s',
       async (path) => {
-        await expect(setDoc(doc(visitor, path), { title: 'Hacked' })).rejects.toMatchObject(DENIED);
-        await expect(updateDoc(doc(visitor, path), { title: 'Hacked' })).rejects.toMatchObject(
-          DENIED,
-        );
-        await expect(deleteDoc(doc(visitor, path))).rejects.toMatchObject(DENIED);
+        await expect(getDocs(collection(visitor, path))).resolves.toBeDefined();
       },
     );
+
+    it.each([
+      'home/hero',
+      'site/config',
+      'pages/videos',
+      'showFormats/001',
+      'videos/001',
+      'gallery/001',
+      'team/001',
+    ])('should stop a client writing %s', async (path) => {
+      await expect(setDoc(doc(visitor, path), { title: 'Hacked' })).rejects.toMatchObject(DENIED);
+      await expect(updateDoc(doc(visitor, path), { title: 'Hacked' })).rejects.toMatchObject(
+        DENIED,
+      );
+      await expect(deleteDoc(doc(visitor, path))).rejects.toMatchObject(DENIED);
+    });
   });
 
   describe('proposals', () => {

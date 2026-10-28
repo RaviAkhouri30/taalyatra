@@ -14,3 +14,9 @@ export interface IVideoDto {
   /** Where the video plays (YouTube). */
   readonly url: string;
 }
+
+/** A video ready for a card: the video plus its accessible name. */
+export interface IVideoCard {
+  readonly video: IVideoDto;
+  readonly ariaLabel: string;
+}

@@ -1,0 +1,35 @@
+// Values from the design prototype (Videos.dc.html).
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.count {
+  font-size: 16px;
+  color: t.$color-muted;
+}
+
+.library {
+  padding-top: 16px;
+}
+
+.vg {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-top: 28px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.actions {
+  margin-top: 56px;
+}
