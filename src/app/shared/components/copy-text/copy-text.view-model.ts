@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { type Observable, Subject, catchError, exhaustMap, map, of, tap } from 'rxjs';
+import { type Observable, Subject, catchError, exhaustMap, filter, map, of, tap } from 'rxjs';
 import { IClipboardService } from '@core/interfaces/i-clipboard-service';
 import { ViewModel } from '@shared/base/view-model';
 import { ToastTone } from '@shared/enums/toast-tone.enum';
@@ -38,6 +38,8 @@ export class CopyTextViewModel extends ViewModel<never> {
           catchError(() => of({ text: request.failed, tone: ToastTone.Error })),
         ),
       ),
+      // A message missing from storage shows no toast rather than an empty one.
+      filter(({ text }) => text.length > 0),
       tap(({ text, tone }) => {
         this.toast.show(text, tone);
       }),

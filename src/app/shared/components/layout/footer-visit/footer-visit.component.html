@@ -33,16 +33,20 @@
   </dd>
   <dt>Address</dt>
   <dd>
-    <app-copy-text
-      [text]="contact().address"
-      [action]="labels().copyAddress"
-      [copied]="labels().addressCopied"
-      [failed]="labels().copyFailed"
-    />
+    @if (labels().copyAddress) {
+      <app-copy-text
+        [text]="contact().address"
+        [action]="labels().copyAddress"
+        [copied]="labels().addressCopied"
+        [failed]="labels().copyFailed"
+      />
+    } @else {
+      {{ contact().address }}
+    }
   </dd>
   <dt>Phone</dt>
   <dd>
-    <a class="inline" [href]="telHref()" [attr.aria-label]="callLabel()">{{ labels().callUs }}</a>
+    <a class="inline" [href]="telHref()" [attr.aria-label]="callLabel()">{{ callText() }}</a>
   </dd>
   <dt>Email</dt>
   <dd>

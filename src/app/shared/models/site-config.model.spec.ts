@@ -75,4 +75,28 @@ describe('SiteConfigModel', () => {
     expect(site.labels.watchVideo).toBe('Watch {title} on YouTube');
     expect(site.credit).toEqual(SITE_DTO.credit);
   });
+
+  it('should fall back item by item when optional parts are missing from storage', () => {
+    const { brand, contact, copyrightYear } = SITE_DTO;
+
+    const site = new SiteConfigModel({ brand, contact, copyrightYear });
+
+    expect(site.labels).toEqual({
+      watchVideo: '',
+      callUs: '',
+      copyAddress: '',
+      addressCopied: '',
+      copyFailed: '',
+    });
+    expect(site.credit).toBeNull();
+    expect(site.promotion).toBeNull();
+    expect(site.socials.map((social) => social.platform)).toEqual([SocialPlatform.WhatsApp]);
+  });
+
+  it('should keep the stored labels and fill only the missing ones', () => {
+    const site = new SiteConfigModel({ ...SITE_DTO, labels: { callUs: 'Ring us' } });
+
+    expect(site.labels.callUs).toBe('Ring us');
+    expect(site.labels.copyAddress).toBe('');
+  });
 });

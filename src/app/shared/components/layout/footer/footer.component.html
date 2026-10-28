@@ -14,7 +14,9 @@
       </div>
       <div class="fbot">
         <span>{{ copyright() }}</span>
-        <app-footer-credit [credit]="site().credit" />
+        @if (site().credit; as credit) {
+          <app-footer-credit [credit]="credit" />
+        }
         <span class="fbot-links">
           <a class="admin" [routerLink]="adminRoute">Admin</a>
           <a [routerLink]="homeRoute" [fragment]="topAnchor">Back to top &uarr;</a>
@@ -32,8 +34,10 @@
         <app-footer-links [column]="contactColumn()" />
       </div>
       <p class="fine">
-        <a class="admin admin--float" [routerLink]="adminRoute">Admin</a>{{ copyright() }} ·
-        <app-footer-credit [credit]="site().credit" />
+        <a class="admin admin--float" [routerLink]="adminRoute">Admin</a>{{ copyright() }}
+        @if (site().credit; as credit) {
+          · <app-footer-credit [credit]="credit" />
+        }
       </p>
     }
   </div>

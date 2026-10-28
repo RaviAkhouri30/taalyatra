@@ -19,9 +19,13 @@ export class FooterVisitComponent {
 
   protected readonly telHref = computed(() => toTelHref(this.contact().phone));
   protected readonly mailHref = computed(() => toMailtoHref(this.contact().email));
-  /** "Call us, +91 …": the link shows "Call us", screen readers also hear the number. */
-  protected readonly callLabel = computed(
-    () => `${this.labels().callUs}, ${this.contact().phone.display}`,
+  /** "Call us", or the number itself when no label is stored. */
+  protected readonly callText = computed(
+    () => this.labels().callUs || this.contact().phone.display,
+  );
+  /** "Call us, +91 …" so screen readers also hear the number; none when the link shows it. */
+  protected readonly callLabel = computed(() =>
+    this.labels().callUs ? `${this.labels().callUs}, ${this.contact().phone.display}` : null,
   );
   protected readonly mapLabel = computed(
     () => `Open ${this.contact().businessName} in Google Maps`,

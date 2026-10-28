@@ -16,7 +16,10 @@ import { SiteShellComponent } from './site-shell.component';
 class PageComponent {}
 
 describe('SiteShellComponent', () => {
-  async function renderAt(url: string, promotion: IPromotionDto | null = SITE_DTO.promotion) {
+  async function renderAt(
+    url: string,
+    promotion: IPromotionDto | null = SITE_DTO.promotion ?? null,
+  ) {
     TestBed.configureTestingModule({
       providers: [
         provideSiteConfig(new SiteConfigModel({ ...SITE_DTO, promotion })),

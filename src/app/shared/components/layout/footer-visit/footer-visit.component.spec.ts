@@ -39,4 +39,21 @@ describe('FooterVisitComponent', () => {
       SITE.contact.directionsUrl,
     );
   });
+
+  it('should show the number and a plain address when the labels are missing', () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: IClipboardService, useClass: FakeClipboardService }],
+    });
+    const fixture = TestBed.createComponent(FooterVisitComponent);
+    fixture.componentRef.setInput('contact', SITE.contact);
+    fixture.componentRef.setInput('labels', { ...SITE.labels, callUs: '', copyAddress: '' });
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const phone = element.querySelector('a.inline');
+
+    expect(phone?.textContent).toBe('+91 92842 76168');
+    expect(phone?.hasAttribute('aria-label')).toBe(false);
+    expect(element.querySelector('app-copy-text')).toBeNull();
+    expect(element.textContent).toContain(SITE.contact.address);
+  });
 });

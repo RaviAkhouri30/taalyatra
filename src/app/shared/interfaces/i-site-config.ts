@@ -11,8 +11,10 @@ export interface ISiteConfig {
   /** Active promotion, or `null` when no offer is running. */
   readonly promotion: IPromotion | null;
   readonly copyrightYear: number;
+  /** Labels shared by several pages; a missing one is an empty string. */
   readonly labels: ISiteLabels;
-  readonly credit: ISiteCredit;
+  /** Footer credit, or `null` when none is stored. */
+  readonly credit: ISiteCredit | null;
 }
 
 /** UI strings used by more than one page, stored once (ADR-0011). */
@@ -54,13 +56,17 @@ export interface IPromotionDto {
   readonly dismissLabel: string;
 }
 
-/** Site-wide content as stored in `site/config` (plain JSON: no enums, nothing derived). */
+/**
+ * Site-wide content as stored in `site/config` (plain JSON: no enums, nothing derived). Brand,
+ * contact and year are required; the rest may be absent (older data, a field removed in the
+ * console), and the site then hides or falls back for just that item.
+ */
 export interface ISiteConfigDto {
   readonly brand: IBrand;
   readonly contact: IContactDetails;
-  readonly socials: readonly ISocialLinkDto[];
-  readonly promotion: IPromotionDto | null;
   readonly copyrightYear: number;
-  readonly labels: ISiteLabels;
-  readonly credit: ISiteCredit;
+  readonly socials?: readonly ISocialLinkDto[];
+  readonly promotion?: IPromotionDto | null;
+  readonly labels?: Partial<ISiteLabels>;
+  readonly credit?: ISiteCredit | null;
 }
