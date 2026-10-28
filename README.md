@@ -23,7 +23,8 @@ experiences and helps visitors request a proposal by form or WhatsApp.
 - **Chat assistant:** quick answers to common questions, plus call and WhatsApp shortcuts.
 - **Live content:** all copy, videos, team and show formats come from Cloud Firestore, so they
   change without a release.
-- **Admin sign-in:** in progress; it comes before content editing.
+- **Admin sign-in:** email and password at `/admin` (Firebase Authentication, single admin
+  account), with password reset. Content editing comes next.
 - **Quality:**
   - WCAG 2.2 AA (axe-checked on every page)
   - pixel-perfect at five breakpoints
