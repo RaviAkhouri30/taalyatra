@@ -30,7 +30,10 @@ Hosting isn't used.
   secrets `FIREBASE_API_KEY`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_PROJECT_ID`,
   `FIREBASE_STORAGE_BUCKET`, `FIREBASE_MESSAGING_SENDER_ID` and `FIREBASE_APP_ID`. The job fails
   if any is missing.
-- `public/staticwebapp.config.json` serves the file with `no-cache`.
+- `public/staticwebapp.config.json` serves the file with `no-cache`, and sets the
+  **`navigationFallback`** to `/index.html`, so deep links (`/videos`, `/admin`…) load the app
+  instead of a 404. Static files (`/images/*`, `/icons/*`, scripts, styles, images) are excluded,
+  so a missing asset still returns 404.
 
 **Rules and data (manual, from a developer machine):**
 1. `npx firebase login`

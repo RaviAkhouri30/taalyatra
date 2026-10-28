@@ -1,4 +1,8 @@
 {
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/images/*", "/icons/*", "*.{js,css,svg,png,jpg,jpeg,webp,ico,json,txt,map}"]
+  },
   "routes": [
     {
       "route": "/runtime-config.js",
