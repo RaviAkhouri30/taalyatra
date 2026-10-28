@@ -128,3 +128,24 @@ sequenceDiagram
   P->>VM: Escape → close()
   VM->>O: setPanelOpen(false)
 ```
+
+## 6. From a home teaser to an inner page (shared data read once)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant HV as HomeVideosViewModel
+  participant VS as VideosService (cacheLatest)
+  participant P as IHttpBackend
+  participant VP as VideosPageViewModel
+  HV->>VS: getVideos()
+  VS->>P: get('videos'), first subscriber only
+  P-->>VS: videos
+  VS-->>HV: replay
+  Note over HV,VP: visitor follows "View all videos"
+  VP->>VS: getVideos()
+  VS-->>VP: replayed, no request
+  VP->>P: get('pages/videos') (the `pages` collection, read whole once)
+  VP->>VP: combineLatest → one render; chip click → computed filter, no I/O
+```
+

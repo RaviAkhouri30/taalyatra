@@ -1,0 +1,15 @@
+@use 'tokens' as t;
+
+:host {
+  display: inline;
+}
+
+.credit a {
+  color: t.$color-amber;
+  font-weight: 700;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+  }
+}

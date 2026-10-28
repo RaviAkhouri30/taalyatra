@@ -13,6 +13,12 @@ service cloud.firestore {
     match /site/{document} {
       allow read: if true;
     }
+    match /pages/{page} {
+      allow read: if true;
+    }
+    match /showFormats/{item} {
+      allow read: if true;
+    }
     match /videos/{item} {
       allow read: if true;
     }

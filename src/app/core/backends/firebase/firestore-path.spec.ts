@@ -9,8 +9,11 @@ describe('FirestorePath', () => {
     expect(path?.path).toBe('home/hero');
   });
 
-  it('should name the collection a document belongs to', () => {
-    expect(FirestorePath.parse('home/hero')?.parent).toBe('home');
+  it('should name the collection a document belongs to, and its id', () => {
+    const path = FirestorePath.parse('home/hero');
+
+    expect(path?.parent).toBe('home');
+    expect(path?.id).toBe('hero');
   });
 
   it('should point at a collection when the path has one segment', () => {

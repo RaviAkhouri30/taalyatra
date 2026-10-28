@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { IHttpBackend } from '@core/interfaces/i-http-backend';
 import { ApiEndpoint } from '@shared/enums/api-endpoint.enum';
-import { queryAll } from '@shared/testing/fixtures';
+import { SITE_DTO, queryAll } from '@shared/testing/fixtures';
 import { HOME, VIDEOS } from '../../testing/home-fixtures';
 import { HomeVideosComponent } from './home-videos.component';
 
@@ -13,6 +13,7 @@ describe('HomeVideosComponent', () => {
     const bodies = new Map<string, unknown>([
       [ApiEndpoint.HomeVideos, heading],
       [ApiEndpoint.Videos, VIDEOS],
+      [ApiEndpoint.SiteConfig, SITE_DTO],
     ]);
     const get = (path: string) =>
       of(new HttpResponse({ status: 200, body: bodies.get(path) ?? null }));

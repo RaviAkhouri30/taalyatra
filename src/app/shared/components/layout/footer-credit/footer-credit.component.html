@@ -1,0 +1,12 @@
+@let line = credit();
+<span class="credit"
+  >{{ line.label }}
+  <!-- An external profile: new tab, and no opener or referrer handed to it. -->
+  <a
+    [href]="line.url"
+    target="_blank"
+    rel="noopener noreferrer"
+    [attr.aria-label]="line.linkLabel"
+    >{{ line.name }}</a
+  ></span
+>

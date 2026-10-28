@@ -89,7 +89,11 @@
 }
 
 .vcat {
-  color: #afbc82;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: t.$color-sage;
 }
 
 // Library (Videos page): the title sits right under the category and shrinks on phones.
@@ -99,4 +103,30 @@
   @include bp.down(bp.$phone) {
     font-size: 17px;
   }
+}
+
+// Featured (Videos page): thumbnail beside the heading; stacks below 1000px. Design values.
+:host(.featured) .vcard {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 36px;
+  align-items: center;
+  margin-top: 40px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr;
+  }
+
+  h2 {
+    font-size: 40px;
+    margin: 10px 0 12px;
+  }
+
+  p {
+    color: inherit;
+  }
+}
+
+:host(.featured) .vthumb {
+  border-radius: 24px;
 }

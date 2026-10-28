@@ -1,0 +1,99 @@
+// Values from the design prototype (Shows.dc.html).
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.hero-actions {
+  margin-top: 24px;
+}
+
+h2 {
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.sgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.setups-sec {
+  background: t.$color-surface;
+
+  .eyebrow {
+    color: t.$color-cream;
+  }
+
+  h2 {
+    max-width: 700px;
+    margin-bottom: 28px;
+  }
+}
+
+.setups {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.setup {
+  background: t.$color-ink;
+  border-radius: 14px;
+  padding: 18px 20px;
+
+  @include bp.down(bp.$phone) {
+    padding: 14px 16px;
+  }
+
+  b {
+    display: block;
+    font-family: t.$font-display;
+    font-size: 17px;
+    margin-bottom: 4px;
+  }
+
+  span {
+    font-size: 14px;
+    color: t.$color-muted;
+    line-height: 1.5;
+  }
+}
+
+.setups-note {
+  margin-top: 24px;
+  font-size: 15px;
+  color: t.$color-muted;
+}
+
+.process-title {
+  max-width: 680px;
+}
+
+.steps {
+  display: block;
+  margin-top: 34px;
+}
+
+.process-actions {
+  margin-top: 40px;
+}

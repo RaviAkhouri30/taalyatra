@@ -11,6 +11,24 @@ export interface ISiteConfig {
   /** Active promotion, or `null` when no offer is running. */
   readonly promotion: IPromotion | null;
   readonly copyrightYear: number;
+  readonly labels: ISiteLabels;
+  readonly credit: ISiteCredit;
+}
+
+/** UI strings used by more than one page, stored once (ADR-0011). */
+export interface ISiteLabels {
+  /** Accessible name of a video card, with `{title}`. */
+  readonly watchVideo: string;
+}
+
+/** "Developed with love by …" line in the footer. */
+export interface ISiteCredit {
+  readonly label: string;
+  readonly name: string;
+  /** The developer's profile, opened in a new tab. */
+  readonly url: string;
+  /** Accessible name of the link (says where it goes and that it opens a new tab). */
+  readonly linkLabel: string;
 }
 
 /** A social profile as stored; WhatsApp is not stored, it is derived from the phone number. */
@@ -35,4 +53,6 @@ export interface ISiteConfigDto {
   readonly socials: readonly ISocialLinkDto[];
   readonly promotion: IPromotionDto | null;
   readonly copyrightYear: number;
+  readonly labels: ISiteLabels;
+  readonly credit: ISiteCredit;
 }

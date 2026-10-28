@@ -68,4 +68,11 @@ describe('SiteConfigModel', () => {
   it('should have no promotion when none is stored', () => {
     expect(new SiteConfigModel({ ...SITE_DTO, promotion: null }).promotion).toBeNull();
   });
+
+  it('should keep the shared labels and the footer credit as stored', () => {
+    const site = new SiteConfigModel(SITE_DTO);
+
+    expect(site.labels.watchVideo).toBe('Watch {title} on YouTube');
+    expect(site.credit).toEqual(SITE_DTO.credit);
+  });
 });

@@ -6,6 +6,4 @@ export interface IHomeVideosDto {
   readonly cta: string;
   /** How many of the newest videos to show. */
   readonly count: number;
-  /** Accessible name of each card, with `{title}`. */
-  readonly watchLabel: string;
 }

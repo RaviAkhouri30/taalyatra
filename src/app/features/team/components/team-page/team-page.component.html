@@ -1,0 +1,46 @@
+@if (model.data(); as page) {
+  <app-page-hero
+    [eyebrow]="page.hero.eyebrow"
+    [title]="page.hero.title"
+    [highlight]="page.hero.highlight"
+    [lead]="page.hero.lead"
+    [leadGap]="leadGap"
+  />
+  <section class="sec members">
+    <div class="wrap">
+      <div class="tg">
+        @for (member of page.members; track member.photo.src; let index = $index) {
+          <app-team-card
+            [member]="member"
+            [funFactLabel]="page.funFactLabel"
+            [priority]="index < firstRow"
+          />
+        }
+      </div>
+    </div>
+  </section>
+  <section class="sec values">
+    <div class="wrap">
+      <p class="eyebrow">{{ page.values.eyebrow }}</p>
+      <h2 class="d">{{ page.values.title }}</h2>
+      <div class="vals">
+        @for (value of page.values.items; track value.title) {
+          <div class="val">
+            <h3 class="d">{{ value.title }}</h3>
+            <p>{{ value.text }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="wrap">
+      <app-page-cta
+        [heading]="page.ctaTitle"
+        [text]="page.ctaText"
+        [primary]="page.plan"
+        [secondary]="page.videos"
+      />
+    </div>
+  </section>
+}

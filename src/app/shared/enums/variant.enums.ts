@@ -11,7 +11,15 @@ export enum PromoVariant {
 }
 
 /** Video card layouts: home teaser (caption below) and Videos page library (category above). */
+/** Heading size of a page's closing call to action (design: 52px on Team, 38px elsewhere). */
+export enum PageCtaSize {
+  Large = 'large',
+  Medium = 'medium',
+}
+
 export enum VideoCardVariant {
   Teaser = 'teaser',
   Library = 'library',
+  /** Large card leading the Videos page: thumbnail beside a heading and the caption. */
+  Featured = 'featured',
 }

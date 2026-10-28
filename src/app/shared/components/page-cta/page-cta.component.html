@@ -1,0 +1,27 @@
+@if (heading()) {
+  <h2 class="d title">{{ heading() }}</h2>
+}
+@if (text()) {
+  <p class="lead">{{ text() }}</p>
+}
+<div class="actions">
+  @for (link of links(); track link.label; let first = $first) {
+    @if (link.kind === linkKind.Internal) {
+      <a
+        appButton
+        [variant]="first ? solid : ghost"
+        [routerLink]="link.route"
+        [fragment]="link.fragment"
+        >{{ link.label }}</a
+      >
+    } @else {
+      <a
+        appButton
+        [variant]="first ? solid : ghost"
+        [href]="link.href"
+        [attr.aria-label]="link.ariaLabel"
+        >{{ link.label }}</a
+      >
+    }
+  }
+</div>

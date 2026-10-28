@@ -1,0 +1,40 @@
+@if (model.data(); as page) {
+  <app-page-hero
+    [eyebrow]="page.hero.eyebrow"
+    [title]="page.hero.title"
+    [highlight]="page.hero.highlight"
+    [lead]="page.hero.lead"
+    [leadGap]="leadGap"
+  >
+    <app-filter-chips
+      [options]="page.categories"
+      [label]="page.filterLabel"
+      [selected]="model.category()"
+      (selectedChange)="model.selectCategory($event)"
+    />
+    <p class="count" aria-live="polite">{{ model.countLabel() }}</p>
+  </app-page-hero>
+  <section class="sec library">
+    <div class="wrap">
+      @if (model.featured(); as card) {
+        <app-video-card
+          [video]="card.video"
+          [ariaLabel]="card.ariaLabel"
+          [variant]="featuredVariant"
+          [eyebrow]="page.featuredLabel(card)"
+          [priority]="true"
+        />
+      }
+      <div class="vg">
+        @for (card of model.rest(); track card.video.title) {
+          <app-video-card [video]="card.video" [ariaLabel]="card.ariaLabel" [variant]="library" />
+        }
+      </div>
+      <app-page-cta
+        class="actions"
+        [primary]="page.channel ?? page.plan"
+        [secondary]="page.channel ? page.plan : null"
+      />
+    </div>
+  </section>
+}

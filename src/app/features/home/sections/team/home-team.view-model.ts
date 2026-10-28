@@ -14,7 +14,7 @@ export class HomeTeamViewModel extends ViewModel<HomeTeamModel> {
   protected override attachViewHandler(): Observable<unknown> {
     return combineLatest([
       this.headingService.attachViewDataHandler(),
-      this.teamService.attachViewDataHandler(),
+      this.teamService.getTeam(),
     ]).pipe(
       tap(([heading, team]) => {
         this.setData(new HomeTeamModel(heading, team));

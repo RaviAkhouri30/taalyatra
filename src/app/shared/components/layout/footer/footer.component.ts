@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BrandComponent } from '@shared/components/brand/brand.component';
+import { FooterCreditComponent } from '@shared/components/layout/footer-credit/footer-credit.component';
 import { FooterLinksComponent } from '@shared/components/layout/footer-links/footer-links.component';
 import { FooterVisitComponent } from '@shared/components/layout/footer-visit/footer-visit.component';
 import { AppRoute } from '@shared/enums/app-route.enum';
@@ -18,7 +19,13 @@ import { externalLink } from '@shared/utils/link.util';
  */
 @Component({
   selector: 'app-footer',
-  imports: [BrandComponent, FooterLinksComponent, FooterVisitComponent, RouterLink],
+  imports: [
+    BrandComponent,
+    FooterCreditComponent,
+    FooterLinksComponent,
+    FooterVisitComponent,
+    RouterLink,
+  ],
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -42,7 +42,7 @@ npm run typecheck      # tsc for app, spec and e2e configs
 npm test               # Vitest, single run                  (test:watch for watch mode)
 npm run test:coverage  # Vitest + coverage, fails below 90%  → coverage/taal-yatra/
 npm run e2e            # Playwright: desktop, tablet, mobile (e2e:install once for browsers)
-npm run e2e:visual:update  # re-record visual baselines after an approved visual change
+npm run e2e:visual:update  # re-record all visual baselines after an approved visual change
 npm run test:rules     # firestore.rules tests on the emulator (needs Java)
 npm run e2e:firebase   # Firebase smoke suite: emulator, seeded, 3 viewports (needs Java)
 npm run start:emulator # dev server against a running local Firestore emulator

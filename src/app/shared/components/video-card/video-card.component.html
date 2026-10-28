@@ -1,6 +1,6 @@
 <a class="vcard" [href]="video().url" [attr.aria-label]="ariaLabel()">
   <div class="vthumb">
-    <img [ngSrc]="video().image.src" fill alt="" />
+    <img [ngSrc]="video().image.src" fill alt="" [priority]="priority()" />
     <span class="vplay">
       <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M7 4l13 8-13 8z" fill="#171210" />
@@ -8,11 +8,19 @@
     </span>
     <span class="vtime">{{ video().duration }}</span>
   </div>
-  @if (isLibrary()) {
-    <span class="vcat">{{ video().category }}</span>
-  }
-  <h3 class="d">{{ video().title }}</h3>
-  @if (!isLibrary() && video().caption) {
-    <p>{{ video().caption }}</p>
+  @if (isFeatured()) {
+    <div>
+      <span class="vcat">{{ eyebrow() }}</span>
+      <h2 class="d">{{ video().title }}</h2>
+      <p class="lead">{{ video().caption }}</p>
+    </div>
+  } @else {
+    @if (isLibrary()) {
+      <span class="vcat">{{ video().category }}</span>
+    }
+    <h3 class="d">{{ video().title }}</h3>
+    @if (!isLibrary() && video().caption) {
+      <p>{{ video().caption }}</p>
+    }
   }
 </a>

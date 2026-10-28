@@ -31,4 +31,14 @@ describe('FooterComponent', () => {
     expect(element.querySelector('.domain')?.textContent).toBe('taalyatra.in');
     expect(texts(element, '.fbot-links a')).toEqual(['Admin', 'Back to top ↑']);
   });
+
+  it.each([
+    ['compact', PAGE_CHROME],
+    ['full', HOME_CHROME],
+  ])('should credit the developer in the %s footer', (_variant, chrome) => {
+    const credit = render(chrome).querySelector('app-footer-credit');
+
+    expect(credit?.textContent).toContain('Developed with love by');
+    expect(credit?.querySelector('a')?.getAttribute('href')).toBe(SITE.credit.url);
+  });
 });

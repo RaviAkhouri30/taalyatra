@@ -1,6 +1,6 @@
 import { HttpResponse, HttpStatusCode } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { type Observable, catchError, forkJoin, map, of, shareReplay, switchMap } from 'rxjs';
+import { type Observable, catchError, map, of, shareReplay, switchMap } from 'rxjs';
 import { type IFirebaseConfig, type IFirestoreEmulator } from '@core/interfaces/i-firebase-config';
 import { type IHttpBackend } from '@core/interfaces/i-http-backend';
 import { APP_ENVIRONMENT } from '@core/tokens/app-environment.token';
@@ -38,9 +38,8 @@ export class FirebaseBackendService implements IHttpBackend {
     inject(APP_ENVIRONMENT).firestoreEmulator,
   );
 
-  /** Documents of the preloaded collections by path, read together once; `null` like gateway$. */
-  private readonly preloaded$ =
-    this.gateway$ === null ? null : FirebaseBackendService.preload(this.gateway$);
+  /** One cached read per preloaded collection, created on its first use (ADR-0011). */
+  private readonly preloads = new Map<string, Observable<ReadonlyMap<string, unknown>>>();
 
   private static loadGateway(
     load: FirestoreGatewayLoader,
@@ -52,31 +51,6 @@ export class FirebaseBackendService implements IHttpBackend {
     return config === null
       ? null
       : load(config, emulator).pipe(shareReplay({ bufferSize: 1, refCount: false }));
-  }
-
-  private static preload(
-    gateway$: Observable<IFirestoreGateway>,
-  ): Observable<ReadonlyMap<string, unknown>> {
-    return gateway$.pipe(
-      // gateway$ emits once. forkJoin waits for every collection: nothing renders until all have
-      // arrived, which is the point (one layout pass instead of many).
-      switchMap((gateway) =>
-        forkJoin(
-          FIRESTORE_PRELOADED_COLLECTIONS.map((name) =>
-            gateway
-              .getCollectionDocuments(name)
-              .pipe(
-                map((documents) =>
-                  [...documents].map(([id, data]) => [`${name}/${id}`, data] as const),
-                ),
-              ),
-          ),
-        ),
-      ),
-      map((groups) => new Map(groups.flat())),
-      // Read once per visit; a failed read is not cached, so the next request retries.
-      shareReplay({ bufferSize: 1, refCount: false }),
-    );
   }
 
   private static respond<T>(status: HttpStatusCode, body?: unknown): HttpResponse<T> {
@@ -133,15 +107,28 @@ export class FirebaseBackendService implements IHttpBackend {
     if (target?.kind === FirestorePathKind.Collection) {
       return (gateway, at) => gateway.listCollection(at);
     }
-    const preloaded$ = this.preloaded$;
-    if (
-      target !== null &&
-      preloaded$ !== null &&
-      FIRESTORE_PRELOADED_COLLECTIONS.includes(target.parent)
-    ) {
-      return (_gateway, at) => preloaded$.pipe(map((documents) => documents.get(at)));
+    if (target !== null && FIRESTORE_PRELOADED_COLLECTIONS.includes(target.parent)) {
+      const { parent, id } = target;
+      return (gateway) => this.preload(gateway, parent).pipe(map((documents) => documents.get(id)));
     }
     return (gateway, at) => gateway.getDocument(at);
+  }
+
+  /**
+   * @returns Every document of the collection by id, read whole on first use and replayed after;
+   * a failed read is not cached, so the next request retries.
+   */
+  private preload(
+    gateway: IFirestoreGateway,
+    collection: string,
+  ): Observable<ReadonlyMap<string, unknown>> {
+    const cached =
+      this.preloads.get(collection) ??
+      gateway
+        .getCollectionDocuments(collection)
+        .pipe(shareReplay({ bufferSize: 1, refCount: false }));
+    this.preloads.set(collection, cached);
+    return cached;
   }
 
   /** Validates a write's body (a plain object) before running it. */

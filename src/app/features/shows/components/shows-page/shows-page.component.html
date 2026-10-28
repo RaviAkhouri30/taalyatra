@@ -1,0 +1,55 @@
+@if (model.data(); as page) {
+  <app-page-hero
+    [eyebrow]="page.hero.eyebrow"
+    [title]="page.hero.title"
+    [highlight]="page.hero.highlight"
+    [lead]="page.hero.lead"
+  >
+    <app-page-cta
+      class="hero-actions"
+      [size]="buttonRow"
+      [primary]="page.enquire"
+      [secondary]="page.whatsApp"
+    />
+  </app-page-hero>
+  <section class="sec">
+    <div class="wrap">
+      <p class="eyebrow">{{ page.formatsSection.eyebrow }}</p>
+      <h2 class="d">{{ page.formatsSection.title }}</h2>
+      <p class="lead note">{{ page.formatsSection.note }}</p>
+      <div class="sgrid">
+        @for (format of page.formats; track format.title) {
+          <app-show-format-card [format]="format" />
+        }
+      </div>
+    </div>
+  </section>
+  <section class="sec setups-sec">
+    <div class="wrap">
+      <p class="eyebrow">{{ page.setups.eyebrow }}</p>
+      <h2 class="d">{{ page.setups.title }}</h2>
+      <div class="setups">
+        @for (setup of page.setups.items; track setup.title) {
+          <div class="setup">
+            <b>{{ setup.title }}</b>
+            <span>{{ setup.text }}</span>
+          </div>
+        }
+      </div>
+      <p class="setups-note">{{ page.setups.note }}</p>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="wrap">
+      <p class="eyebrow">{{ page.process.eyebrow }}</p>
+      <h2 class="d process-title">{{ page.process.title }}</h2>
+      <app-steps class="steps" [steps]="page.process.steps" />
+      <app-page-cta
+        class="process-actions"
+        [size]="buttonRow"
+        [primary]="page.request"
+        [secondary]="page.watch"
+      />
+    </div>
+  </section>
+}

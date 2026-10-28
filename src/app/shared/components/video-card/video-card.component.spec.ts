@@ -43,4 +43,20 @@ describe('VideoCardComponent', () => {
   it('should omit an empty caption', () => {
     expect(render(undefined, { ...VIDEO, caption: '' }).querySelector('p')).toBeNull();
   });
+
+  it('should show the eyebrow, a heading and the caption when featured', () => {
+    const fixture = TestBed.createComponent(VideoCardComponent);
+    fixture.componentRef.setInput('video', VIDEO);
+    fixture.componentRef.setInput('ariaLabel', 'Watch Drum day on YouTube');
+    fixture.componentRef.setInput('variant', VideoCardVariant.Featured);
+    fixture.componentRef.setInput('eyebrow', 'Featured · Corporate');
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.classList).toContain('featured');
+    expect(element.querySelector('.vcat')?.textContent).toBe('Featured · Corporate');
+    expect(element.querySelector('h2')?.textContent).toBe('Drum day');
+    expect(element.querySelector('.lead')?.textContent).toBe('Corporate drum circle');
+    expect(element.querySelector('h3')).toBeNull();
+  });
 });
