@@ -127,3 +127,4 @@ started.
 - **Flaky test seen once:** the EmailJS adapter spec failed in one coverage run and passed in the
   next three. It looks unrelated (the file is untouched); watch it in CI.
 
+**Addendum A approval:** ☑ Approved by Ravi Akhouri on 2026-10-28
