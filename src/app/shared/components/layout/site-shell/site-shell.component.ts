@@ -4,6 +4,7 @@ import { BaseComponent } from '@shared/base/base-component';
 import { FooterComponent } from '@shared/components/layout/footer/footer.component';
 import { HeaderComponent } from '@shared/components/layout/header/header.component';
 import { MobileActionBarComponent } from '@shared/components/layout/mobile-action-bar/mobile-action-bar.component';
+import { PreviewBannerComponent } from '@shared/components/layout/preview-banner/preview-banner.component';
 import { PromoBadgeComponent } from '@shared/components/layout/promo-badge/promo-badge.component';
 import { ToastHostComponent } from '@shared/components/layout/toast-host/toast-host.component';
 import { UtilityBarComponent } from '@shared/components/layout/utility-bar/utility-bar.component';
@@ -21,6 +22,7 @@ import { SiteShellViewModel } from './site-shell.view-model';
     FooterComponent,
     HeaderComponent,
     MobileActionBarComponent,
+    PreviewBannerComponent,
     PromoBadgeComponent,
     RouterOutlet,
     ToastHostComponent,

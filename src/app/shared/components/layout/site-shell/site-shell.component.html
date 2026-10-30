@@ -1,5 +1,8 @@
 @let chrome = model.chrome();
 @let site = model.site();
+@if (model.preview) {
+  <app-preview-banner />
+}
 <div class="shell" [class.shell--action-bar]="model.showActionBar()">
   @if (chrome && site) {
     @if (model.showUtilityBar()) {

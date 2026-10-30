@@ -1,0 +1,40 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: t.$z-header + 1;
+  background: t.$color-amber;
+  color: t.$color-ink-deep;
+  font-size: 14px;
+}
+
+.pb-in {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding-block: 8px;
+
+  p {
+    margin: 0;
+  }
+}
+
+.pb-links {
+  display: flex;
+  gap: 16px;
+
+  a {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  @include bp.down(bp.$phone) {
+    font-size: 13px;
+  }
+}

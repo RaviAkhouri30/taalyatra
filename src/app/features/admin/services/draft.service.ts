@@ -3,23 +3,13 @@ import { type Observable, forkJoin, map } from 'rxjs';
 import { DocumentWriteKind } from '@core/enums/document-write-kind.enum';
 import { type DocumentFields, IDocumentStore } from '@core/interfaces/i-document-store';
 import { CLOCK } from '@core/tokens/clock.token';
-import { DRAFTS_COLLECTION, draftId } from '../models/editor-storage.constants';
-import { type IDraft } from '../models/i-draft';
-
-function isFields(value: unknown): value is DocumentFields {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-/** A stored draft, or `null` when the stored data isn't one (it is then ignored). */
-function toDraft(fields: DocumentFields | null): IDraft | null {
-  const entries = new Map(Object.entries(fields ?? {}));
-  const path = entries.get('path');
-  const content = entries.get('content');
-  const savedAt = entries.get('savedAt');
-  return typeof path === 'string' && isFields(content) && typeof savedAt === 'string'
-    ? { path, content, savedAt }
-    : null;
-}
+import {
+  DRAFTS_COLLECTION,
+  type IDraft,
+  draftId,
+  draftsByPath,
+  toDraft,
+} from '@core/interfaces/i-draft';
 
 /**
  * The owner's unpublished changes (ADR-0013): one draft per changed document, holding the whole
@@ -32,17 +22,7 @@ export class DraftService {
 
   /** @returns Every draft, by the path of the document it changes. */
   public drafts(): Observable<ReadonlyMap<string, IDraft>> {
-    return this.store.readAll(DRAFTS_COLLECTION).pipe(
-      map(
-        (stored) =>
-          new Map(
-            [...stored.values()].flatMap((fields) => {
-              const draft = toDraft(fields);
-              return draft === null ? [] : [[draft.path, draft] as const];
-            }),
-          ),
-      ),
-    );
+    return this.store.readAll(DRAFTS_COLLECTION).pipe(map(draftsByPath));
   }
 
   /**

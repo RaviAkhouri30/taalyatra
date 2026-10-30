@@ -7,13 +7,8 @@ import {
   IDocumentStore,
 } from '@core/interfaces/i-document-store';
 import { CLOCK } from '@core/tokens/clock.token';
-import {
-  DRAFTS_COLLECTION,
-  PUBLISHES_COLLECTION,
-  PUBLISH_HISTORY_LIMIT,
-  draftId,
-} from '../models/editor-storage.constants';
-import { type IDraft } from '../models/i-draft';
+import { DRAFTS_COLLECTION, type IDraft, draftId } from '@core/interfaces/i-draft';
+import { PUBLISHES_COLLECTION, PUBLISH_HISTORY_LIMIT } from '../models/editor-storage.constants';
 import { type IPublishRecord } from '../models/i-publish-record';
 import { DraftService } from './draft.service';
 

@@ -1,7 +1,7 @@
 import fakeDb from '@core/backends/fake/fake-db.json';
 import { type DocumentFields } from '@core/interfaces/i-document-store';
 import { ALL_SECTIONS } from '../schemas/editor-tabs';
-import { type IDraft } from './i-draft';
+import { type IDraft } from '@core/interfaces/i-draft';
 import { PublishReport } from './publish-report.model';
 
 describe('PublishReport', () => {

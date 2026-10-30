@@ -2,6 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { type Observable, combineLatest, defaultIfEmpty, filter, map, tap } from 'rxjs';
 import { AnchorScrollService } from '@core/services/anchor-scroll.service';
+import { APP_PREVIEW } from '@core/tokens/app-preview.token';
 import { ViewModel } from '@shared/base/view-model';
 import { LAYOUT_CHROME } from '@shared/constants/navigation.constants';
 import { SiteWidget } from '@shared/enums/site-widget.enum';
@@ -26,6 +27,8 @@ export class SiteShellViewModel extends ViewModel<IShellState> {
    * home sections arrive in the same read as the site config (ADR-0009), so this costs no wait.
    */
   public readonly settled = signal(false);
+  /** Whether this visit previews the owner's unpublished changes. */
+  public readonly preview = inject(APP_PREVIEW);
   /** Chrome for the current layout; `null` while loading or for bare (admin) routes. */
   public readonly chrome = computed<ILayoutChrome | null>(() => {
     const state = this.data();

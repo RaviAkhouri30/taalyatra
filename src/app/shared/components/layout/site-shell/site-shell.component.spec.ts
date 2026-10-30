@@ -4,6 +4,7 @@ import { Router, provideRouter } from '@angular/router';
 import { Subject } from 'rxjs';
 import { FakeClipboardService } from '@core/backends/fake/fake-clipboard.service';
 import { IClipboardService } from '@core/interfaces/i-clipboard-service';
+import { APP_PREVIEW } from '@core/tokens/app-preview.token';
 import { ROUTE_DATA_KEYS } from '@shared/constants/route-data.constants';
 import { PageLayout } from '@shared/enums/page-layout.enum';
 import { type IPromotionDto } from '@shared/interfaces/i-site-config';
@@ -89,6 +90,20 @@ describe('SiteShellComponent', () => {
 
     expect(element.querySelector('app-header a[href="/team"]')).toBeNull();
     expect(element.querySelector('app-header a[href="/videos"]')).not.toBeNull();
+  });
+
+  it('should show the preview banner only on a preview visit', async () => {
+    TestBed.overrideProvider(APP_PREVIEW, { useValue: true });
+
+    const { element } = await renderAt('/shows');
+
+    expect(element.querySelector('app-preview-banner')).not.toBeNull();
+  });
+
+  it('should show no preview banner on a normal visit', async () => {
+    const { element } = await renderAt('/shows');
+
+    expect(element.querySelector('app-preview-banner')).toBeNull();
   });
 
   it('should render only the outlet on bare routes', async () => {

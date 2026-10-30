@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
 import { IDocumentStore } from '@core/interfaces/i-document-store';
 import { CLOCK } from '@core/tokens/clock.token';
-import { type IDraft } from '../models/i-draft';
+import { type IDraft } from '@core/interfaces/i-draft';
 import { MemoryDocumentStore } from '../testing/memory-document-store';
 import { PublishService } from './publish.service';
 

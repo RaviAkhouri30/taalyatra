@@ -1,4 +1,4 @@
-import { type IDraft } from './i-draft';
+import { type IDraft } from '@core/interfaces/i-draft';
 import { type IEditorSection } from './i-editor-section';
 import { type IPublishIssue } from './i-publish-issue';
 import { IssueSeverity } from './issue-severity.enum';
