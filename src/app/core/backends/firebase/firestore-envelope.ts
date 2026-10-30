@@ -32,3 +32,32 @@ export function withoutOrder(fields: FirestoreFields): FirestoreFields {
 export function isFirestoreFields(value: unknown): value is FirestoreFields {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
+
+/**
+ * The inverse of {@link unwrapListSection}, for code that writes documents back whole: a list
+ * section goes back into its `_items` envelope.
+ *
+ * @param data A document as read (`undefined` when it doesn't exist).
+ * @returns The fields to store, or `null` for a missing document.
+ */
+export function toStoredFields(data: unknown): FirestoreFields | null {
+  if (Array.isArray(data)) {
+    return { [FIRESTORE_LIST_FIELD]: data };
+  }
+  return isFirestoreFields(data) ? data : null;
+}
+
+/**
+ * @param documents Documents by id, as read.
+ * @returns Their stored fields by id, missing documents left out.
+ */
+export function toStoredDocuments(
+  documents: ReadonlyMap<string, unknown>,
+): ReadonlyMap<string, FirestoreFields> {
+  return new Map(
+    [...documents].flatMap(([id, data]) => {
+      const fields = toStoredFields(data);
+      return fields === null ? [] : [[id, fields] as const];
+    }),
+  );
+}

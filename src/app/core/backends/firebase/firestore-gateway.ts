@@ -14,8 +14,11 @@ import {
   serverTimestamp,
   setDoc,
   updateDoc,
+  writeBatch,
 } from 'firebase/firestore/lite';
 import { type Observable, defer, map } from 'rxjs';
+import { DocumentWriteKind } from '@core/enums/document-write-kind.enum';
+import { type DocumentWrite } from '@core/interfaces/i-document-store';
 import { type IFirebaseConfig, type IFirestoreEmulator } from '@core/interfaces/i-firebase-config';
 import { type FirestoreFields, unwrapListSection, withoutOrder } from './firestore-envelope';
 import { FIRESTORE_CREATED_AT_FIELD, FIRESTORE_ORDER_FIELD } from './firestore.constants';
@@ -93,5 +96,21 @@ export class FirestoreGateway implements IFirestoreGateway {
   /** Deletes the document (succeeds even when it does not exist). */
   public deleteDocument(path: string): Observable<void> {
     return defer(() => deleteDoc(doc(this.db, path)));
+  }
+
+  public commit(writes: readonly DocumentWrite[]): Observable<void> {
+    // defer: the batch is built and committed only on subscribe, so the call stays lazy and cold.
+    return defer(() => {
+      const batch = writeBatch(this.db);
+      for (const write of writes) {
+        const reference = doc(this.db, write.path);
+        if (write.kind === DocumentWriteKind.Delete) {
+          batch.delete(reference);
+        } else {
+          batch.set(reference, write.fields);
+        }
+      }
+      return batch.commit();
+    });
   }
 }
