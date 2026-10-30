@@ -1105,7 +1105,10 @@
       "promotion": {
         "label": "Diwali offers",
         "subtitle": "Light up your celebration",
-        "dismissLabel": "Dismiss Diwali offer"
+        "dismissLabel": "Dismiss Diwali offer",
+        "live": true,
+        "startsOn": null,
+        "endsOn": null
       },
       "copyrightYear": 2026,
       "labels": {

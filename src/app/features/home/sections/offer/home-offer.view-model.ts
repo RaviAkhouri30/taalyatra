@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { type Observable, combineLatest, tap } from 'rxjs';
+import { type Observable, combineLatest, filter, tap } from 'rxjs';
 import { ViewModel } from '@shared/base/view-model';
 import { SiteConfigService } from '@shared/services/site-config.service';
 import { HomeOfferService } from './home-offer.service';
@@ -16,6 +16,8 @@ export class HomeOfferViewModel extends ViewModel<OfferModel> {
       this.offerService.attachViewDataHandler(),
       this.siteConfigService.getSiteConfig(),
     ]).pipe(
+      // No running promotion (switched off or outside its dates): the section stays unrendered.
+      filter(([, site]) => site.promotion !== null),
       tap(([offer, site]) => {
         this.setData(new OfferModel(offer, site.contact));
       }),

@@ -15,6 +15,7 @@ import {
   type ISocialLinkDto,
 } from '@shared/interfaces/i-site-config';
 import { type ISocialLink } from '@shared/interfaces/i-social-link';
+import { PromotionSchedule } from '@shared/models/promotion-schedule.model';
 import { toWhatsAppUrl } from '@shared/utils/contact-links.util';
 import { navLink } from '@shared/utils/link.util';
 
@@ -41,7 +42,7 @@ const NO_LABELS: ISiteLabels = {
  * Site-wide content built from `site/config`, tolerant of missing optional parts. Adds what storage
  * leaves out: the WhatsApp link,
  * derived from the phone number so the number is stored once, the social icons, and the promo
- * badge's link to the offer section.
+ * badge's link to the offer section. A promotion outside its schedule counts as no promotion.
  */
 export class SiteConfigModel implements ISiteConfig {
   public readonly brand: IBrand;
@@ -53,8 +54,11 @@ export class SiteConfigModel implements ISiteConfig {
   public readonly labels: ISiteLabels;
   public readonly credit: ISiteCredit | null;
 
-  /** @param dto The stored site configuration. */
-  public constructor(dto: ISiteConfigDto) {
+  /**
+   * @param dto The stored site configuration.
+   * @param now The current time, which decides whether the promotion is running.
+   */
+  public constructor(dto: ISiteConfigDto, now: Date = new Date()) {
     this.brand = dto.brand;
     this.contact = dto.contact;
     this.copyrightYear = dto.copyrightYear;
@@ -66,7 +70,10 @@ export class SiteConfigModel implements ISiteConfig {
       SiteConfigModel.whatsApp(dto.contact.phone),
       ...(dto.socials ?? []).flatMap((social) => SiteConfigModel.socialLink(social)),
     ];
-    this.promotion = dto.promotion ? SiteConfigModel.promotion(dto.promotion) : null;
+    this.promotion =
+      dto.promotion && new PromotionSchedule(dto.promotion).isActive(now)
+        ? SiteConfigModel.promotion(dto.promotion)
+        : null;
   }
 
   private static whatsApp(phone: IPhoneNumber): ISocialLink {

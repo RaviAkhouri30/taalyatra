@@ -2,7 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ApiEndpoint } from '@shared/enums/api-endpoint.enum';
 import { FestiveTheme } from '@shared/enums/festive-theme.enum';
-import { SITE, queryAll, texts } from '@shared/testing/fixtures';
+import { SiteConfigModel } from '@shared/models/site-config.model';
+import { SITE, SITE_DTO, provideSiteConfig, queryAll, texts } from '@shared/testing/fixtures';
 import { OFFER_DTO, stubBackend } from '../../testing/home-fixtures';
 import { HomeOfferComponent } from './home-offer.component';
 import { OfferModel } from './offer.model';
@@ -50,5 +51,19 @@ describe('OfferModel', () => {
 
     expect(model.theme).toBe(FestiveTheme.None);
     expect(model.footnote).toBe(OFFER_DTO.footnote);
+  });
+
+  it('should render nothing when no promotion is running', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        stubBackend(OFFER_DTO).provider,
+        provideSiteConfig(new SiteConfigModel({ ...SITE_DTO, promotion: null })),
+      ],
+    });
+    const fixture = TestBed.createComponent(HomeOfferComponent);
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).querySelector('section')).toBeNull();
   });
 });

@@ -57,6 +57,14 @@ describe('visibility util', () => {
       expect(applyVisibility(chrome, teamPageOff).footerColumns).toEqual([]);
     });
 
+    it('should drop links to the offer section when no promotion is running', () => {
+      const chrome = applyVisibility(HOME_CHROME, SiteVisibility.allVisible, false);
+      const links = [...chrome.mainNav, ...chrome.mobileNav];
+
+      expect(links.some((link) => link.fragment === PageAnchor.Diwali)).toBe(false);
+      expect(HOME_CHROME.mainNav.some((link) => link.fragment === PageAnchor.Diwali)).toBe(true);
+    });
+
     it('should hide the floating WhatsApp button when it is switched off', () => {
       const whatsAppOff = new SiteVisibility({ widgets: { whatsApp: false } });
 

@@ -1,5 +1,6 @@
 import { ANCHOR_SECTIONS, ROUTE_PAGES } from '@shared/constants/visibility.constants';
 import { LinkKind } from '@shared/enums/link-kind.enum';
+import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { SiteWidget } from '@shared/enums/site-widget.enum';
 import { type ILayoutChrome } from '@shared/interfaces/i-layout-chrome';
 import { type SiteLink } from '@shared/interfaces/i-site-link';
@@ -33,16 +34,24 @@ export function visibleLink<T extends SiteLink>(link: T, visibility: SiteVisibil
 }
 
 /**
- * Drops menu and footer links to switched-off pages and sections, and empty footer columns, and
- * hides the floating WhatsApp button when it is switched off.
+ * Drops menu and footer links to switched-off pages and sections (and to the offer section when
+ * no promotion runs), empty footer columns, and the floating WhatsApp button when switched off.
  *
  * @param chrome The page layout's chrome.
  * @param visibility The owner's switches.
+ * @param offerRunning Whether a promotion is running, so the offer section exists.
  * @returns The chrome to render.
  */
-export function applyVisibility(chrome: ILayoutChrome, visibility: SiteVisibility): ILayoutChrome {
+export function applyVisibility(
+  chrome: ILayoutChrome,
+  visibility: SiteVisibility,
+  offerRunning = true,
+): ILayoutChrome {
   const keep = <T extends SiteLink>(links: readonly T[]): T[] =>
-    links.filter((link) => isLinkVisible(link, visibility));
+    links.filter(
+      (link) =>
+        isLinkVisible(link, visibility) && (offerRunning || !isLinkTo(link, PageAnchor.Diwali)),
+    );
   return {
     ...chrome,
     mainNav: keep(chrome.mainNav),
@@ -52,4 +61,8 @@ export function applyVisibility(chrome: ILayoutChrome, visibility: SiteVisibilit
       .filter((column) => column.links.length > 0),
     showWhatsAppFab: chrome.showWhatsAppFab && visibility.isWidgetVisible(SiteWidget.WhatsApp),
   };
+}
+
+function isLinkTo(link: SiteLink, anchor: PageAnchor): boolean {
+  return link.kind === LinkKind.Internal && link.fragment === anchor;
 }

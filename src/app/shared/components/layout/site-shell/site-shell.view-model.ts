@@ -30,7 +30,9 @@ export class SiteShellViewModel extends ViewModel<IShellState> {
   public readonly chrome = computed<ILayoutChrome | null>(() => {
     const state = this.data();
     const chrome = state ? LAYOUT_CHROME[state.layout] : null;
-    return state && chrome ? applyVisibility(chrome, state.visibility) : null;
+    return state && chrome
+      ? applyVisibility(chrome, state.visibility, state.site.promotion !== null)
+      : null;
   });
   public readonly showUtilityBar = computed(() => this.isWidgetVisible(SiteWidget.UtilityBar));
   public readonly showActionBar = computed(
