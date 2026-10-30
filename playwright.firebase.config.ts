@@ -31,12 +31,15 @@ export default defineConfig({
   ],
   webServer: {
     // emulators:exec starts the emulator, runs the command, and stops the emulator when
-    // Playwright stops the dev server.
+    // Playwright stops the dev server. The CLI runs the emulator's JVM in its own process
+    // group, so Playwright's default SIGKILL would orphan it (and hold port 8080). SIGINT lets
+    // the CLI shut its emulators down first.
     command:
       'npx firebase emulators:exec --only firestore,auth --project demo-taal-yatra ' +
       `"node scripts/seed-firestore.mjs --emulator && npx ng serve --configuration emulator --port ${String(PORT)}"`,
     url: BASE_URL,
     reuseExistingServer: false,
     timeout: 240_000,
+    gracefulShutdown: { signal: 'SIGINT', timeout: 15_000 },
   },
 });
