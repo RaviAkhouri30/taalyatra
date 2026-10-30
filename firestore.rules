@@ -19,7 +19,7 @@ service cloud.firestore {
       allow read: if true;
       allow create, update: if isAdmin()
         && ((document == 'config' && isValidSiteConfig(request.resource.data))
-            || (document == 'layout' && isValidLayout(request.resource.data)));
+            || (document == 'visibility' && isValidVisibility(request.resource.data)));
     }
     match /pages/{page} {
       allow read: if true;
@@ -116,9 +116,9 @@ service cloud.firestore {
         && (!('endsOn' in promotion) || isDateOrNull(promotion.endsOn));
     }
 
-    // Keys mirror the HomeSection, SitePage and SiteWidget enums; the rules tests build a layout
-    // from them. Values are switches; the site treats anything but `false` as visible.
-    function isValidLayout(data) {
+    // Keys mirror the HomeSection, SitePage and SiteWidget enums; the rules tests build the
+    // document from them. Values are switches; the site treats anything but `false` as visible.
+    function isValidVisibility(data) {
       return data.keys().hasOnly(['sections', 'pages', 'widgets'])
         && (!('sections' in data) || (data.sections is map
             && data.sections.keys().hasOnly(['marquee', 'trust', 'audiences', 'experiences',

@@ -1121,6 +1121,40 @@
         "url": "https://www.linkedin.com/in/ravi-akhouri-6696071a7/",
         "linkLabel": "Ravi Akhouri on LinkedIn (opens in a new tab)"
       }
+    },
+    "visibility": {
+      "sections": {
+        "marquee": true,
+        "trust": true,
+        "audiences": true,
+        "experiences": true,
+        "shows": true,
+        "drumCircle": true,
+        "rhythmGame": true,
+        "videos": true,
+        "gallery": true,
+        "philosophy": true,
+        "midCta": true,
+        "cities": true,
+        "how": true,
+        "team": true,
+        "instagram": true,
+        "proof": true,
+        "faq": true
+      },
+      "pages": {
+        "videos": true,
+        "team": true,
+        "shows": true,
+        "achievements": true
+      },
+      "widgets": {
+        "assistant": true,
+        "actionBar": true,
+        "whatsApp": true,
+        "utilityBar": true,
+        "intro": true
+      }
     }
   },
   "pages": {

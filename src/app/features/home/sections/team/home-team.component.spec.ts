@@ -4,12 +4,13 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { IHttpBackend } from '@core/interfaces/i-http-backend';
 import { ApiEndpoint } from '@shared/enums/api-endpoint.enum';
-import { queryAll, texts } from '@shared/testing/fixtures';
+import { SiteVisibility } from '@shared/models/site-visibility.model';
+import { provideVisibility, queryAll, texts } from '@shared/testing/fixtures';
 import { HOME, TEAM } from '../../testing/home-fixtures';
 import { HomeTeamComponent } from './home-team.component';
 
 describe('HomeTeamComponent', () => {
-  function render(heading: unknown): HTMLElement {
+  function render(heading: unknown, visibility?: SiteVisibility): HTMLElement {
     const bodies = new Map<string, unknown>([
       [ApiEndpoint.HomeTeam, heading],
       [ApiEndpoint.Team, TEAM],
@@ -17,7 +18,11 @@ describe('HomeTeamComponent', () => {
     const get = (path: string) =>
       of(new HttpResponse({ status: 200, body: bodies.get(path) ?? null }));
     TestBed.configureTestingModule({
-      providers: [provideRouter([]), { provide: IHttpBackend, useValue: { get } }],
+      providers: [
+        provideRouter([]),
+        { provide: IHttpBackend, useValue: { get } },
+        provideVisibility(visibility),
+      ],
     });
     const fixture = TestBed.createComponent(HomeTeamComponent);
     fixture.detectChanges();
@@ -40,5 +45,12 @@ describe('HomeTeamComponent', () => {
 
   it('should render nothing until the heading has loaded', () => {
     expect(render(null).querySelector('section')).toBeNull();
+  });
+
+  it('should leave out the Team page link when that page is switched off', () => {
+    const element = render(HOME.team, new SiteVisibility({ pages: { team: false } }));
+
+    expect(element.querySelector('a[href="/team"]')).toBeNull();
+    expect(element.querySelector('section')).not.toBeNull();
   });
 });

@@ -1,5 +1,5 @@
 /**
- * Home sections the owner can switch off (`site/layout.sections`). The hero and the contact form
+ * Home sections the owner can switch off (`site/visibility.sections`). The hero and the contact form
  * have no switch: every "Request proposal" button leads to them. The offer follows the promotion
  * schedule instead, and the intro and assistant are site widgets.
  */

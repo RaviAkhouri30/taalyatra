@@ -5,7 +5,9 @@
         <p class="eyebrow">{{ section.eyebrow }}</p>
         <h2 class="d h2 title">{{ section.title }}</h2>
         <p class="lead">{{ section.lead }}</p>
-        <a appButton [routerLink]="section.teamPage.route">{{ section.teamPage.label }}</a>
+        @if (section.teamPage; as teamPage) {
+          <a appButton [routerLink]="teamPage.route">{{ teamPage.label }}</a>
+        }
       </div>
       <div class="tm">
         @for (member of section.members; track member.photo.src) {

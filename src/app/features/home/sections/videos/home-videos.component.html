@@ -6,9 +6,11 @@
           <p class="eyebrow">{{ section.eyebrow }}</p>
           <h2 class="d h2 title">{{ section.title }}</h2>
         </div>
-        <a appButton [variant]="buttonVariant.Ghost" [routerLink]="section.videosPage.route">{{
-          section.videosPage.label
-        }}</a>
+        @if (section.videosPage; as videosPage) {
+          <a appButton [variant]="buttonVariant.Ghost" [routerLink]="videosPage.route">{{
+            videosPage.label
+          }}</a>
+        }
       </div>
       <div class="vids">
         @for (card of section.cards; track card.video.title) {

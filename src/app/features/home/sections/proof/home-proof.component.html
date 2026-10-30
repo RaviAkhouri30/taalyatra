@@ -6,9 +6,11 @@
         <h2 class="d h2 title">{{ section.title }}</h2>
         <!-- Design uses the dark-surface ghost button here (cream on ivory fails WCAG AA contrast);
              the light-surface Line variant keeps the look and is readable. -->
-        <a appButton [variant]="buttonVariant.Line" [routerLink]="achievementsRoute">{{
-          section.cta
-        }}</a>
+        @if (section.achievementsPage; as achievementsPage) {
+          <a appButton [variant]="buttonVariant.Line" [routerLink]="achievementsPage.route">{{
+            achievementsPage.label
+          }}</a>
+        }
       </div>
       <div class="stats">
         @for (stat of section.stats; track stat.label) {

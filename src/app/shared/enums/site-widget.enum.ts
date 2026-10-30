@@ -1,4 +1,4 @@
-/** Site-wide elements the owner can switch off (`site/layout.widgets`). */
+/** Site-wide elements the owner can switch off (`site/visibility.widgets`). */
 export enum SiteWidget {
   Assistant = 'assistant',
   ActionBar = 'actionBar',

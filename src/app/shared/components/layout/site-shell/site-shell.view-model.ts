@@ -4,11 +4,14 @@ import { type Observable, combineLatest, defaultIfEmpty, filter, map, tap } from
 import { AnchorScrollService } from '@core/services/anchor-scroll.service';
 import { ViewModel } from '@shared/base/view-model';
 import { LAYOUT_CHROME } from '@shared/constants/navigation.constants';
+import { SiteWidget } from '@shared/enums/site-widget.enum';
 import { type ILayoutChrome } from '@shared/interfaces/i-layout-chrome';
 import { type IShellState } from '@shared/interfaces/i-shell-state';
 import { SiteConfigService } from '@shared/services/site-config.service';
+import { SiteVisibilityService } from '@shared/services/site-visibility.service';
 import { SeoService } from '@shared/services/seo.service';
 import { resolvePageLayout, resolvePageMeta } from '@shared/utils/route-layout.util';
+import { applyVisibility } from '@shared/utils/visibility.util';
 
 /**
  * Decides which chrome the current route gets (from its `layout` route data), supplies the site
@@ -26,11 +29,17 @@ export class SiteShellViewModel extends ViewModel<IShellState> {
   /** Chrome for the current layout; `null` while loading or for bare (admin) routes. */
   public readonly chrome = computed<ILayoutChrome | null>(() => {
     const state = this.data();
-    return state ? LAYOUT_CHROME[state.layout] : null;
+    const chrome = state ? LAYOUT_CHROME[state.layout] : null;
+    return state && chrome ? applyVisibility(chrome, state.visibility) : null;
   });
+  public readonly showUtilityBar = computed(() => this.isWidgetVisible(SiteWidget.UtilityBar));
+  public readonly showActionBar = computed(
+    () => this.chrome() !== null && this.isWidgetVisible(SiteWidget.ActionBar),
+  );
 
   private readonly router = inject(Router);
   private readonly siteConfigService = inject(SiteConfigService);
+  private readonly visibilityService = inject(SiteVisibilityService);
   private readonly anchorScroll = inject(AnchorScrollService);
   private readonly seo = inject(SeoService);
 
@@ -49,10 +58,10 @@ export class SiteShellViewModel extends ViewModel<IShellState> {
     // defaultIfEmpty: a failed read completes empty; null still settles the shell, so the page is
     // shown without chrome rather than staying hidden.
     const site$ = this.siteConfigService.getSiteConfig().pipe(defaultIfEmpty(null));
-    return combineLatest([site$, navigation$]).pipe(
-      tap(([site, { layout, page }]) => {
+    return combineLatest([site$, this.visibilityService.getVisibility(), navigation$]).pipe(
+      tap(([site, visibility, { layout, page }]) => {
         if (site !== null) {
-          this.setData({ site, layout });
+          this.setData({ site, layout, visibility });
           this.seo.describe(page, site);
         }
         this.settled.set(true);
@@ -63,5 +72,9 @@ export class SiteShellViewModel extends ViewModel<IShellState> {
   /** Scrolls to linked sections once they have rendered (they load their data asynchronously). */
   protected override attachCommandHandler(): Observable<unknown> {
     return this.anchorScroll.attachAnchorScrolling();
+  }
+
+  private isWidgetVisible(widget: SiteWidget): boolean {
+    return this.data()?.visibility.isWidgetVisible(widget) ?? false;
   }
 }

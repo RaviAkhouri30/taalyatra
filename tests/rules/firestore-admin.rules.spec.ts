@@ -23,7 +23,7 @@ const siteConfig = fakeDb.site.config as unknown as Fields;
 const promotion = siteConfig['promotion'] as Fields;
 
 /** Every switch from the enums, so the rules' key lists can't fall behind them. */
-const fullLayout = (value: boolean) => ({
+const fullVisibility = (value: boolean) => ({
   sections: Object.fromEntries(Object.values(HomeSection).map((key) => [key, value])),
   pages: Object.fromEntries(Object.values(SitePage).map((key) => [key, value])),
   widgets: Object.fromEntries(Object.values(SiteWidget).map((key) => [key, value])),
@@ -165,21 +165,23 @@ describe('firestore.rules · admin editor', () => {
     });
   });
 
-  describe('site layout', () => {
+  describe('site visibility', () => {
     it('should let the admin switch every section, page and widget off', async () => {
-      await expect(setDoc(doc(admin, 'site/layout'), fullLayout(false))).resolves.toBeUndefined();
+      await expect(
+        setDoc(doc(admin, 'site/visibility'), fullVisibility(false)),
+      ).resolves.toBeUndefined();
     });
 
     it('should reject an unknown section key', async () => {
-      const layout = { ...fullLayout(true), sections: { hero: false } };
+      const visibility = { ...fullVisibility(true), sections: { hero: false } };
 
-      await expect(setDoc(doc(admin, 'site/layout'), layout)).rejects.toMatchObject(DENIED);
+      await expect(setDoc(doc(admin, 'site/visibility'), visibility)).rejects.toMatchObject(DENIED);
     });
 
     it('should stop a visitor changing it', async () => {
-      await expect(setDoc(doc(visitor, 'site/layout'), fullLayout(false))).rejects.toMatchObject(
-        DENIED,
-      );
+      await expect(
+        setDoc(doc(visitor, 'site/visibility'), fullVisibility(false)),
+      ).rejects.toMatchObject(DENIED);
     });
   });
 
