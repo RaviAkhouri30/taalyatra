@@ -27,10 +27,11 @@ const EMULATOR_PROJECT = 'demo-taal-yatra';
 const EMULATOR_HOST = '127.0.0.1:8080';
 const AUTH_EMULATOR_HOST = '127.0.0.1:9099';
 
-// Emulator-only accounts for the Firebase smoke suite. The admin UID matches
-// environment.emulator.ts; none of these exist in the real project.
+// Emulator-only accounts for the Firebase smoke suite; none of these exist in the real project.
+// The admin uses the production admin UID (environment.ts, firestore.rules), so local runs
+// exercise the real admin rule (0008 D13). A UID is an identifier, not a secret.
 export const EMULATOR_USERS = [
-  { uid: 'emulator-admin-uid', email: 'admin@taalyatra.test', password: 'emulator-admin-password' },
+  { uid: '5zsz2DlUaja2Ss7wbFTrpiMMROk2', email: 'admin@taalyatra.test', password: 'emulator-admin-password' },
   { uid: 'emulator-visitor-uid', email: 'visitor@taalyatra.test', password: 'emulator-visitor-password' },
 ];
 
