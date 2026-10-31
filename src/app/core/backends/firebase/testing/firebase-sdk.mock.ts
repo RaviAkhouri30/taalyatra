@@ -21,6 +21,7 @@ export const firestoreLiteMock = {
   setDoc: vi.fn(),
   updateDoc: vi.fn(),
   deleteDoc: vi.fn(),
+  writeBatch: vi.fn(),
 };
 
 export const firebaseAuthMock = {

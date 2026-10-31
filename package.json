@@ -24,6 +24,7 @@
     "e2e:visual:update": "playwright test visual --update-snapshots",
     "e2e:install": "playwright install --with-deps chromium",
     "seed:firestore": "node scripts/seed-firestore.mjs",
+    "export:firestore": "node scripts/export-firestore.mjs",
     "deploy:rules": "firebase deploy --only firestore:rules,firestore:indexes --project taal-yatra",
     "sonar": "npm run lint:report && npx --yes @sonar/scan@5.0.2 -Dsonar.projectVersion=$npm_package_version",
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test:coverage && npm run build",

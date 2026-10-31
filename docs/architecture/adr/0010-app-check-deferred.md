@@ -1,4 +1,4 @@
-# ADR-0010: App Check deferred to 1.3.0
+# ADR-0010: App Check deferred
 
 - **Status:** Accepted · **Date:** 2026-10-28 · **Version:** 1.2.0
 
@@ -23,3 +23,11 @@ Ship 1.2.0 without App Check. The exposure is limited by rules:
   per-project quotas cap the cost, and the records can be found by `createdAt` and removed.
 - **Follow-up (1.3.0):** register a reCAPTCHA Enterprise key, initialise App Check in the
   gateway, and enforce it in the console. This rule exception ends then.
+
+## Update — 1.6.0 (2026-10-31)
+
+Still deferred, now by design (0008 D15). The content editor adds admin writes, but they are
+protected by Firebase Auth plus `firestore.rules` checking the admin UID and each document's
+shape. Enforcing App Check on Firestore would load reCAPTCHA on every public page and cost
+Lighthouse points for little gain. App Check will protect the image-upload function in 1.7.0,
+which only the admin calls. The proposal-spam exposure above is unchanged.

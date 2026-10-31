@@ -76,4 +76,22 @@ test.describe('Firebase smoke (emulator)', () => {
     await expect(admin.heading).toHaveText('Welcome back');
     await expect(admin.page.getByText('admin@taalyatra.test')).toBeVisible();
   });
+
+  test('should let the admin edit, preview and publish through the Firestore rules', async ({
+    editor,
+    page,
+  }, info) => {
+    // Unique per viewport: the projects share one emulator database, one after another.
+    const title = `Watch us play (${info.project.name})`;
+    await editor.signIn({ email: 'admin@taalyatra.test', password: 'emulator-admin-password' });
+    await editor.openTab('Page content');
+
+    await editor.card('Videos').getByLabel('Title', { exact: true }).fill(title);
+    await editor.waitForSave();
+    await expect(editor.preview.locator('#watch h2')).toHaveText(title, { timeout: 15_000 });
+    await editor.publish();
+    await page.goto('/');
+
+    await expect(page.locator('#watch h2')).toHaveText(title);
+  });
 });

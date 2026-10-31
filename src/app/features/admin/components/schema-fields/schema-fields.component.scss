@@ -1,0 +1,73 @@
+@use 'tokens' as t;
+
+:host {
+  display: grid;
+  gap: 16px;
+}
+
+fieldset {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid t.$color-line;
+  border-radius: 14px;
+  min-width: 0;
+}
+
+legend {
+  padding: 0 6px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: t.$letter-spacing-eyebrow;
+  text-transform: uppercase;
+  color: t.$color-amber-soft;
+}
+
+.sf-item {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  background: t.$color-surface;
+}
+
+.sf-item-title {
+  margin: 0;
+  font-weight: 700;
+  color: t.$color-muted-strong;
+}
+
+.sf-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sf-item-actions button,
+.sf-add {
+  min-height: 36px;
+  min-width: 36px;
+  padding: 6px 12px;
+  border: 1px solid t.$color-field-border;
+  border-radius: 9px;
+  background: transparent;
+  color: t.$color-cream;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: t.$color-amber;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.sf-add {
+  justify-self: start;
+}

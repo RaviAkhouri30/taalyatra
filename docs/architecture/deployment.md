@@ -47,8 +47,11 @@ in CI).
 
 **Rules and data (manual, from a developer machine):**
 1. `npx firebase login`
-2. `npm run deploy:rules`
-3. `npm run seed:firestore -- <key.json> --dry-run`, then the same with `--yes`
+2. `npm run export:firestore -- <key.json>`: a dated backup in `backups/` (git-ignored)
+3. `npm run deploy:rules`
+4. `npm run seed:firestore -- <key.json> --dry-run`, then the same with `--yes`. Since 1.6.0
+   the seed only creates missing documents, so the owner's edits are kept; `--overwrite`
+   replaces everything from `fake-db.json` and should only follow a backup.
 
 The service-account key is never committed or pasted anywhere.
 

@@ -1,0 +1,57 @@
+@let page = model.data();
+<div class="ed">
+  <header class="ed-top">
+    <div class="ed-bar">
+      <a class="ed-brand" [routerLink]="dashboardUrl">
+        @if (page) {
+          <img [ngSrc]="page.brand.logoUrl" width="34" height="34" alt="" />
+          <span
+            ><b>{{ page.brand.name }}</b> Admin</span
+          >
+        }
+      </a>
+      @if (page) {
+        <div class="ed-account">
+          <p class="who">
+            {{ page.home.signedInAs }} <b>{{ model.email() }}</b>
+          </p>
+          <a appButton [variant]="ghost" [size]="compact" [href]="siteUrl">{{
+            page.home.viewSite
+          }}</a>
+          <button
+            appButton
+            type="button"
+            [size]="compact"
+            [disabled]="model.signingOut()"
+            (click)="model.signOut()"
+          >
+            {{ model.signingOut() ? page.home.signingOut : page.home.signOut }}
+          </button>
+        </div>
+      }
+    </div>
+  </header>
+  <div class="ed-sticky">
+    <nav class="ed-tabs" aria-label="Editor">
+      @for (link of nav; track link.url) {
+        <a
+          [routerLink]="link.url"
+          routerLinkActive="sel"
+          [routerLinkActiveOptions]="link.match"
+          ariaCurrentWhenActive="page"
+          >{{ link.label }}
+          @if (link.showsCount && model.changeCount() > 0) {
+            <span class="count">{{ model.changeCount() }}<span class="sr"> unpublished</span></span>
+          }
+        </a>
+      }
+    </nav>
+    <div class="ed-status" [class.ed-status--failed]="model.failed()" role="status">
+      <span>{{ model.statusText() }}</span>
+      @if (model.failed()) {
+        <button type="button" class="ed-retry" (click)="model.retry()">Retry</button>
+      }
+    </div>
+  </div>
+  <router-outlet />
+</div>

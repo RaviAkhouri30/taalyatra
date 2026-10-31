@@ -4,12 +4,14 @@ import { Router, provideRouter } from '@angular/router';
 import { Subject } from 'rxjs';
 import { FakeClipboardService } from '@core/backends/fake/fake-clipboard.service';
 import { IClipboardService } from '@core/interfaces/i-clipboard-service';
+import { APP_PREVIEW } from '@core/tokens/app-preview.token';
 import { ROUTE_DATA_KEYS } from '@shared/constants/route-data.constants';
 import { PageLayout } from '@shared/enums/page-layout.enum';
 import { type IPromotionDto } from '@shared/interfaces/i-site-config';
 import { SiteConfigModel } from '@shared/models/site-config.model';
+import { SiteVisibility } from '@shared/models/site-visibility.model';
 import { SiteConfigService } from '@shared/services/site-config.service';
-import { SITE_DTO, provideSiteConfig } from '@shared/testing/fixtures';
+import { SITE_DTO, provideSiteConfig, provideVisibility } from '@shared/testing/fixtures';
 import { SiteShellComponent } from './site-shell.component';
 
 @Component({ template: '<p class="page">page</p>' })
@@ -19,10 +21,12 @@ describe('SiteShellComponent', () => {
   async function renderAt(
     url: string,
     promotion: IPromotionDto | null = SITE_DTO.promotion ?? null,
+    visibility: SiteVisibility = SiteVisibility.allVisible,
   ) {
     TestBed.configureTestingModule({
       providers: [
         provideSiteConfig(new SiteConfigModel({ ...SITE_DTO, promotion })),
+        provideVisibility(visibility),
         { provide: IClipboardService, useClass: FakeClipboardService },
         provideRouter([
           {
@@ -66,6 +70,42 @@ describe('SiteShellComponent', () => {
     expect(element.querySelector('app-whatsapp-fab')).not.toBeNull();
   });
 
+  it('should leave out the widgets the owner switched off', async () => {
+    const widgetsOff = new SiteVisibility({
+      widgets: { utilityBar: false, actionBar: false, whatsApp: false },
+    });
+
+    const { element } = await renderAt('/shows', SITE_DTO.promotion ?? null, widgetsOff);
+
+    expect(element.querySelector('app-utility-bar')).toBeNull();
+    expect(element.querySelector('app-mobile-action-bar')).toBeNull();
+    expect(element.querySelector('app-whatsapp-fab')).toBeNull();
+    expect(element.querySelector('.shell')?.classList).not.toContain('shell--action-bar');
+  });
+
+  it('should drop menu links to a switched-off page', async () => {
+    const teamOff = new SiteVisibility({ pages: { team: false } });
+
+    const { element } = await renderAt('/', SITE_DTO.promotion ?? null, teamOff);
+
+    expect(element.querySelector('app-header a[href="/team"]')).toBeNull();
+    expect(element.querySelector('app-header a[href="/videos"]')).not.toBeNull();
+  });
+
+  it('should show the preview banner only on a preview visit', async () => {
+    TestBed.overrideProvider(APP_PREVIEW, { useValue: true });
+
+    const { element } = await renderAt('/shows');
+
+    expect(element.querySelector('app-preview-banner')).not.toBeNull();
+  });
+
+  it('should show no preview banner on a normal visit', async () => {
+    const { element } = await renderAt('/shows');
+
+    expect(element.querySelector('app-preview-banner')).toBeNull();
+  });
+
   it('should render only the outlet on bare routes', async () => {
     const { element } = await renderAt('/admin');
 
@@ -86,6 +126,7 @@ describe('SiteShellComponent', () => {
       TestBed.configureTestingModule({
         providers: [
           { provide: SiteConfigService, useValue: { getSiteConfig: () => site$.asObservable() } },
+          provideVisibility(),
           provideRouter([{ path: '**', component: PageComponent }]),
         ],
       });

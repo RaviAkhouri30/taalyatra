@@ -2,9 +2,11 @@
   <section class="sec shows" [id]="anchor">
     <div class="wrap">
       <app-section-header [eyebrow]="section.eyebrow" [title]="section.title">
-        <a appButton [variant]="buttonVariant.Ghost" [routerLink]="section.showsPage.route">{{
-          section.showsPage.label
-        }}</a>
+        @if (section.showsPage; as showsPage) {
+          <a appButton [variant]="buttonVariant.Ghost" [routerLink]="showsPage.route">{{
+            showsPage.label
+          }}</a>
+        }
       </app-section-header>
       <p class="lead">{{ section.lead }}</p>
       @if (section.spotlight; as spotlight) {
@@ -12,7 +14,8 @@
       }
       <div class="showgrid">
         @for (format of section.formats; track format.title) {
-          <a class="shc" [routerLink]="section.showsPage.route">
+          <!-- With the Shows page switched off, the cards stay but stop being links (no href). -->
+          <a class="shc" [routerLink]="section.showsPage?.route ?? null">
             <img
               [ngSrc]="format.image.src"
               [width]="format.image.width"

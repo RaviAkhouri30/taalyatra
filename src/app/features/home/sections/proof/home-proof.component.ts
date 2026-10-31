@@ -3,12 +3,11 @@ import { RouterLink } from '@angular/router';
 import { BaseComponent } from '@shared/base/base-component';
 import { IconComponent } from '@shared/components/icon/icon.component';
 import { ButtonDirective } from '@shared/directives/button.directive';
-import { AppRoute } from '@shared/enums/app-route.enum';
 import { ButtonVariant } from '@shared/enums/button-variant.enum';
 import { IconName } from '@shared/enums/icon-name.enum';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { HomeProofViewModel } from './home-proof.view-model';
-import { type IProofDto } from './i-proof';
+import { type IProofView } from './i-proof';
 
 /** Proof (design `#proof`): headline numbers, testimonials and the clients served. */
 @Component({
@@ -19,10 +18,9 @@ import { type IProofDto } from './i-proof';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [HomeProofViewModel],
 })
-export class HomeProofComponent extends BaseComponent<IProofDto> {
+export class HomeProofComponent extends BaseComponent<IProofView> {
   protected override readonly model = inject(HomeProofViewModel);
   protected readonly anchor = PageAnchor.Proof;
-  protected readonly achievementsRoute = AppRoute.Achievements;
   protected readonly buttonVariant = ButtonVariant;
   protected readonly clientIcon = IconName.Building;
 }

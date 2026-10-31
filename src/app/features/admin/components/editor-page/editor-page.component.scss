@@ -1,0 +1,103 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.ep {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  padding: 24px;
+  align-items: start;
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+}
+
+.ep-main {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
+.ep-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  h1 {
+    margin: 0;
+    font-size: 26px;
+  }
+}
+
+.ep-toggle {
+  display: none;
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid t.$color-field-border;
+  border-radius: t.$radius-pill;
+  background: transparent;
+  color: t.$color-cream;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  @include bp.down(bp.$tablet) {
+    display: inline-block;
+  }
+}
+
+.ep-card {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid t.$color-line;
+  border-radius: 18px;
+  background: t.$color-surface-raised;
+
+  h2 {
+    margin: 0;
+    font-size: 19px;
+  }
+}
+
+.ep-tip {
+  margin: 0;
+  padding: 10px 12px;
+  border-left: 3px solid t.$color-amber;
+  background: t.$color-surface;
+  font-size: 13.5px;
+  color: t.$color-muted-strong;
+}
+
+.ep-preview {
+  position: sticky;
+  top: 100px;
+  height: calc(100vh - 124px);
+  min-height: 480px;
+
+  @include bp.down(bp.$tablet) {
+    display: none;
+    position: static;
+    height: 80vh;
+  }
+}
+
+// Phones and small tablets: one column, switched between the form and the preview.
+@include bp.down(bp.$tablet) {
+  .ep--preview {
+    .ep-card {
+      display: none;
+    }
+
+    .ep-preview {
+      display: block;
+    }
+  }
+}

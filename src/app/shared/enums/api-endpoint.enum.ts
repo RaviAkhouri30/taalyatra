@@ -36,6 +36,8 @@ export enum ApiEndpoint {
   PagesAdmin = 'pages/admin',
   /** Site-wide content: brand, contact details, social links, promotion. */
   SiteConfig = 'site/config',
+  /** Which home sections, inner pages and site widgets are switched on (ADR-0015). */
+  SiteVisibility = 'site/visibility',
   /** Proposal requests from the contact form (create-only collection). */
   Proposals = 'proposals',
 }

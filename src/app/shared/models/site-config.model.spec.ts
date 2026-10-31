@@ -69,6 +69,20 @@ describe('SiteConfigModel', () => {
     expect(new SiteConfigModel({ ...SITE_DTO, promotion: null }).promotion).toBeNull();
   });
 
+  it('should have no promotion when the owner switched it off', () => {
+    const promotion = { ...SITE_DTO.promotion!, live: false };
+
+    expect(new SiteConfigModel({ ...SITE_DTO, promotion }).promotion).toBeNull();
+  });
+
+  it('should have no promotion after its last day and keep it while it runs', () => {
+    const promotion = { ...SITE_DTO.promotion!, live: true, endsOn: '2026-11-10' };
+    const dto = { ...SITE_DTO, promotion };
+
+    expect(new SiteConfigModel(dto, new Date('2026-11-05T06:00:00Z')).promotion).not.toBeNull();
+    expect(new SiteConfigModel(dto, new Date('2026-11-11T06:00:00Z')).promotion).toBeNull();
+  });
+
   it('should keep the shared labels and the footer credit as stored', () => {
     const site = new SiteConfigModel(SITE_DTO);
 

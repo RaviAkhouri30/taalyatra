@@ -8,8 +8,10 @@ import {
   orderBy,
   setDoc,
   updateDoc,
+  writeBatch,
 } from 'firebase/firestore/lite';
 import { firstValueFrom } from 'rxjs';
+import { DocumentWriteKind } from '@core/enums/document-write-kind.enum';
 import { FirestoreGateway } from './firestore-gateway';
 
 // The gateway is the one file that calls the SDK, so its spec mocks the SDK modules (precedent:
@@ -122,5 +124,21 @@ describe('FirestoreGateway', () => {
     expect(setDoc).toHaveBeenCalledWith({ path: 'home/hero' }, { title: 'A' });
     expect(updateDoc).toHaveBeenCalledWith({ path: 'home/hero' }, { title: 'B' });
     expect(deleteDoc).toHaveBeenCalledWith({ path: 'home/hero' });
+  });
+
+  it('should apply sets and deletes in one batch, only when subscribed', async () => {
+    const batch = { set: vi.fn(), delete: vi.fn(), commit: vi.fn().mockResolvedValue(undefined) };
+    vi.mocked(writeBatch).mockReturnValue(batch as never);
+    const commit = new FirestoreGateway(config, null).commit([
+      { kind: DocumentWriteKind.Set, path: 'home/hero', fields: { title: 'New' } },
+      { kind: DocumentWriteKind.Delete, path: 'drafts/home__hero' },
+    ]);
+
+    expect(writeBatch).not.toHaveBeenCalled();
+    await firstValueFrom(commit, { defaultValue: undefined });
+
+    expect(batch.set).toHaveBeenCalledWith({ path: 'home/hero' }, { title: 'New' });
+    expect(batch.delete).toHaveBeenCalledWith({ path: 'drafts/home__hero' });
+    expect(batch.commit).toHaveBeenCalledTimes(1);
   });
 });

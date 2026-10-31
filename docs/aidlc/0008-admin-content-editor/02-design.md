@@ -194,4 +194,4 @@ flowchart LR
 
 ---
 
-**Approval:** ☐ Pending
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-10-31, including deviations D8 (labelled forms), D15 (App Check deferred) and D16 (seed safety).

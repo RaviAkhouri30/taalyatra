@@ -1,4 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { BaseComponent } from '@shared/base/base-component';
+import { type SiteVisibility } from '@shared/models/site-visibility.model';
+import { HomePageViewModel } from './home-page.view-model';
 import { HomeAssistantComponent } from './sections/assistant/home-assistant.component';
 import { HomeAudiencesComponent } from './sections/audiences/home-audiences.component';
 import { HomeCitiesComponent } from './sections/cities/home-cities.component';
@@ -25,7 +28,7 @@ import { HomeTrustComponent } from './sections/trust/home-trust.component';
 /**
  * Home page (design: Main.dc.html). A composition container only: each section owns its
  * service → view model → component and loads its own data, so sections below the fold can be
- * deferred until they scroll into view.
+ * deferred until they scroll into view. Sections the owner switched off aren't rendered at all.
  */
 @Component({
   selector: 'app-home-page',
@@ -56,5 +59,8 @@ import { HomeTrustComponent } from './sections/trust/home-trust.component';
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [HomePageViewModel],
 })
-export default class HomePageComponent {}
+export default class HomePageComponent extends BaseComponent<SiteVisibility> {
+  protected override readonly model = inject(HomePageViewModel);
+}

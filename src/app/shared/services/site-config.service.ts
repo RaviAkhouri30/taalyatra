@@ -1,4 +1,5 @@
-import { Service } from '@angular/core';
+import { Service, inject } from '@angular/core';
+import { CLOCK } from '@core/tokens/clock.token';
 import { type Observable, map } from 'rxjs';
 import { ApiBaseService } from '@shared/base/api-base.service';
 import { ApiEndpoint } from '@shared/enums/api-endpoint.enum';
@@ -12,8 +13,10 @@ import { cacheLatest } from '@shared/utils/cache-latest.util';
  */
 @Service()
 export class SiteConfigService extends ApiBaseService<ISiteConfigDto> {
+  private readonly clock = inject(CLOCK);
+  // The promotion's schedule is checked against the time of the read: once per visit.
   private readonly siteConfig$: Observable<ISiteConfig> = this.attachViewDataHandler().pipe(
-    map((dto) => new SiteConfigModel(dto)),
+    map((dto) => new SiteConfigModel(dto, this.clock.now())),
     cacheLatest(),
   );
 

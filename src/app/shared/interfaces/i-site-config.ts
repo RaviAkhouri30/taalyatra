@@ -54,6 +54,12 @@ export interface IPromotionDto {
   readonly label: string;
   readonly subtitle: string;
   readonly dismissLabel: string;
+  /** The owner's on/off switch; missing in older data, which means on. */
+  readonly live?: boolean;
+  /** First day shown (YYYY-MM-DD, Pune time), or `null` for no start date. */
+  readonly startsOn?: string | null;
+  /** Last day shown (YYYY-MM-DD, Pune time), or `null` for no end date. */
+  readonly endsOn?: string | null;
 }
 
 /**

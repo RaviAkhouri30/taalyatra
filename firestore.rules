@@ -5,13 +5,21 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Public site content. Anyone may read it; no client may write it. The seed script uses the
-    // Admin SDK, which bypasses these rules.
+    // Public site content. Anyone may read it. Only the admin may change the documents the editor
+    // covers, and only with the shape the site renders (0008). The seed script uses the Admin SDK,
+    // which bypasses these rules.
     match /home/{section} {
       allow read: if true;
+      allow update: if isAdmin()
+        && section in ['hero', 'offer', 'audiences', 'experiences', 'rhythmGame', 'videos', 'team',
+                       'contact']
+        && isValidHomeSection(request.resource.data, resource.data);
     }
     match /site/{document} {
       allow read: if true;
+      allow create, update: if isAdmin()
+        && ((document == 'config' && isValidSiteConfig(request.resource.data))
+            || (document == 'visibility' && isValidVisibility(request.resource.data)));
     }
     match /pages/{page} {
       allow read: if true;
@@ -27,6 +35,14 @@ service cloud.firestore {
     }
     match /team/{item} {
       allow read: if true;
+    }
+
+    // The editor's drafts and publish history: the admin's working space, private to the admin.
+    match /drafts/{key} {
+      allow read, write: if isAdmin();
+    }
+    match /publishes/{id} {
+      allow read, write: if isAdmin();
     }
 
     // Proposal requests. Visitors may create a well-formed one; no client may read, change or
@@ -53,6 +69,75 @@ service cloud.firestore {
         && isText(data.message, 0, 2000)
         // Stamped by the adapter with serverTimestamp(): a client can't backdate a record.
         && data.createdAt == request.time;
+    }
+
+    // The single admin account (0006, ADR-0012). A UID is an identifier, not a secret. The emulator
+    // build seeds a user with the same UID, so the rules tests and smoke suite exercise this check.
+    function isAdmin() {
+      return request.auth != null && request.auth.uid == '5zsz2DlUaja2Ss7wbFTrpiMMROk2';
+    }
+
+    // The limits mirror CONTENT_MAX_LENGTH (content-limits.constants.ts); the rules tests read it.
+    // The editor changes values, never the shape: the key set stays the one the site renders.
+    function isValidHomeSection(data, current) {
+      return data.keys().hasAll(current.keys())
+        && data.keys().hasOnly(current.keys())
+        && isOptionalText(data, 'eyebrow', 0, 60)
+        && isOptionalText(data, 'title', 1, 120)
+        && isOptionalText(data, 'highlight', 0, 80)
+        && isOptionalText(data, 'lead', 0, 600);
+    }
+
+    function isValidSiteConfig(data) {
+      return data.keys().hasAll(['brand', 'contact', 'copyrightYear'])
+        && data.keys().hasOnly(['brand', 'contact', 'socials', 'promotion', 'copyrightYear',
+                                'labels', 'credit'])
+        && data.brand is map
+        && isText(data.brand.name, 1, 60)
+        && isText(data.brand.tagline, 0, 60)
+        && data.contact is map
+        && data.contact.phone is map
+        && isText(data.contact.phone.display, 1, 20)
+        && isText(data.contact.phone.e164, 8, 16)
+        && isText(data.contact.email, 3, 254)
+        && isText(data.contact.address, 1, 300)
+        && data.copyrightYear is int
+        && (!('socials' in data) || data.socials is list)
+        && (!('promotion' in data) || isValidPromotion(data.promotion));
+    }
+
+    function isValidPromotion(promotion) {
+      return promotion is map
+        && promotion.keys().hasOnly(['label', 'subtitle', 'dismissLabel', 'live', 'startsOn',
+                                     'endsOn'])
+        && isText(promotion.label, 1, 40)
+        && (!('live' in promotion) || promotion.live is bool)
+        && (!('startsOn' in promotion) || isDateOrNull(promotion.startsOn))
+        && (!('endsOn' in promotion) || isDateOrNull(promotion.endsOn));
+    }
+
+    // Keys mirror the HomeSection, SitePage and SiteWidget enums; the rules tests build the
+    // document from them. Values are switches; the site treats anything but `false` as visible.
+    function isValidVisibility(data) {
+      return data.keys().hasOnly(['sections', 'pages', 'widgets'])
+        && (!('sections' in data) || (data.sections is map
+            && data.sections.keys().hasOnly(['marquee', 'trust', 'audiences', 'experiences',
+                                             'shows', 'drumCircle', 'rhythmGame', 'videos',
+                                             'gallery', 'philosophy', 'midCta', 'cities', 'how',
+                                             'team', 'instagram', 'proof', 'faq'])))
+        && (!('pages' in data) || (data.pages is map
+            && data.pages.keys().hasOnly(['videos', 'team', 'shows', 'achievements'])))
+        && (!('widgets' in data) || (data.widgets is map
+            && data.widgets.keys().hasOnly(['assistant', 'actionBar', 'whatsApp', 'utilityBar',
+                                            'intro'])));
+    }
+
+    function isDateOrNull(value) {
+      return value == null || (value is string && value.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$'));
+    }
+
+    function isOptionalText(data, field, min, max) {
+      return !(field in data) || isText(data[field], min, max);
     }
 
     function isText(value, min, max) {

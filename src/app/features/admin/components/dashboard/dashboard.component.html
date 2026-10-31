@@ -1,0 +1,46 @@
+<div class="db">
+  @if (model.copy(); as copy) {
+    <h1 class="d">{{ copy.heading }}</h1>
+    <p class="db-lead">{{ copy.lead }}</p>
+  }
+  @if (model.data(); as dash) {
+    <div class="db-grid">
+      <section class="db-card" aria-labelledby="db-changes">
+        <h2 id="db-changes">Unpublished changes</h2>
+        <p class="db-big">{{ dash.changeCount }}</p>
+        <p>{{ dash.changes }}</p>
+        <a [routerLink]="links.publish">Review &amp; publish</a>
+      </section>
+      <section class="db-card" aria-labelledby="db-offer">
+        <h2 id="db-offer">Offer</h2>
+        <span class="db-pill" [attr.data-status]="dash.offerStatus">{{ dash.offerStatus }}</span>
+        <p>{{ dash.offer }}</p>
+        <a [routerLink]="links.offer">Edit the offer</a>
+      </section>
+      <section class="db-card" aria-labelledby="db-visibility">
+        <h2 id="db-visibility">Sections &amp; pages</h2>
+        <p>{{ dash.hidden }}</p>
+        <a [routerLink]="links.visibility">Change what’s shown</a>
+      </section>
+      <section class="db-card" aria-labelledby="db-history">
+        <h2 id="db-history">History</h2>
+        <p>{{ dash.lastPublished }}</p>
+        <a [routerLink]="links.publish">See the publish history</a>
+      </section>
+      <section class="db-card db-card--wide" aria-labelledby="db-warnings">
+        <h2 id="db-warnings">Placeholders to replace</h2>
+        @if (dash.warnings.length === 0) {
+          <p>No placeholder text left in the content the editor covers.</p>
+        } @else {
+          <ul>
+            @for (warning of dash.warnings; track $index) {
+              <li>
+                <b>{{ warning.section }} · {{ warning.field }}:</b> {{ warning.message }}
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+  }
+</div>

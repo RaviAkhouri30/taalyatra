@@ -1,0 +1,59 @@
+@let item = field();
+@if (formControl(); as control) {
+  <div class="fd" [class.fd--switch]="item.kind === kind.Toggle">
+    @switch (item.kind) {
+      @case (kind.Toggle) {
+        <input
+          type="checkbox"
+          role="switch"
+          [id]="fieldId()"
+          [formControl]="control"
+          [attr.aria-describedby]="describedBy()"
+        />
+        <label [for]="fieldId()">{{ item.label }}</label>
+      }
+      @case (kind.Choice) {
+        <label [for]="fieldId()">{{ item.label }}</label>
+        <select [id]="fieldId()" [formControl]="control" [attr.aria-describedby]="describedBy()">
+          @for (option of options(); track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      }
+      @case (kind.Multiline) {
+        <label [for]="fieldId()">{{ item.label }}</label>
+        <textarea
+          rows="3"
+          [id]="fieldId()"
+          [formControl]="control"
+          [attr.aria-invalid]="control.invalid"
+          [attr.aria-describedby]="describedBy()"
+        ></textarea>
+      }
+      @default {
+        <label [for]="fieldId()">{{ item.label }}</label>
+        <input
+          [type]="inputType()"
+          [id]="fieldId()"
+          [formControl]="control"
+          [attr.aria-invalid]="control.invalid"
+          [attr.aria-describedby]="describedBy()"
+        />
+      }
+    }
+    @if (item.hint) {
+      <p class="fd-hint" [id]="hintId()">{{ item.hint }}</p>
+    }
+    @if (limit()) {
+      <p
+        class="fd-count"
+        [id]="countId()"
+        [class.fd-count--over]="(control.value | textLength) > limit()"
+      >
+        {{ control.value | textLength }} / {{ limit() }} characters
+      </p>
+    }
+    <!-- Always present, so aria-describedby never points at a missing element. -->
+    <p class="fd-error" [id]="errorId()">{{ control.errors | fieldError }}</p>
+  </div>
+}

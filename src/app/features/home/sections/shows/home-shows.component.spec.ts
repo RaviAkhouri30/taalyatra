@@ -1,14 +1,20 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ApiEndpoint } from '@shared/enums/api-endpoint.enum';
-import { queryAll, texts } from '@shared/testing/fixtures';
+import { SiteVisibility } from '@shared/models/site-visibility.model';
+import { provideVisibility, queryAll, texts } from '@shared/testing/fixtures';
 import { SHOW_FORMATS, SHOWS_DTO, stubBackend } from '../../testing/home-fixtures';
 import { HomeShowsComponent } from './home-shows.component';
 
 describe('HomeShowsComponent', () => {
-  function render(body: unknown): { element: HTMLElement; get: ReturnType<typeof vi.fn> } {
+  function render(
+    body: unknown,
+    visibility?: SiteVisibility,
+  ): { element: HTMLElement; get: ReturnType<typeof vi.fn> } {
     const backend = stubBackend(body);
-    TestBed.configureTestingModule({ providers: [provideRouter([]), backend.provider] });
+    TestBed.configureTestingModule({
+      providers: [provideRouter([]), backend.provider, provideVisibility(visibility)],
+    });
     const fixture = TestBed.createComponent(HomeShowsComponent);
     fixture.detectChanges();
     return { element: fixture.nativeElement as HTMLElement, get: backend.get };
@@ -44,5 +50,14 @@ describe('HomeShowsComponent', () => {
 
   it('should render nothing until the teaser has loaded', () => {
     expect(render(null).element.querySelector('section')).toBeNull();
+  });
+
+  it('should keep the format cards but drop every Shows page link when it is switched off', () => {
+    const { element } = render(SHOWS_DTO, new SiteVisibility({ pages: { shows: false } }));
+    const cards = queryAll(element, '.shc');
+
+    expect(element.querySelector('.ighead a')).toBeNull();
+    expect(cards.length).toBeGreaterThan(0);
+    expect(cards.every((card) => !card.hasAttribute('href'))).toBe(true);
   });
 });

@@ -1,3 +1,5 @@
+import { type INavLink } from '@shared/interfaces/i-site-link';
+
 /** A headline number, e.g. "150+" sessions delivered. */
 export interface IStatDto {
   readonly value: string;
@@ -30,4 +32,10 @@ export interface IProofDto {
   readonly trustedLabel: string;
   readonly clients: readonly IClientDto[];
   readonly clientsNote: string;
+}
+
+/** What the proof section renders: the stored copy plus the achievements link, while it's on. */
+export interface IProofView extends IProofDto {
+  /** "See achievements", or `null` when the Achievements page is switched off. */
+  readonly achievementsPage: INavLink | null;
 }

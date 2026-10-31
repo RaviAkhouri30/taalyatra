@@ -1,6 +1,8 @@
 import { type Routes } from '@angular/router';
 import { ROUTE_DATA_KEYS } from '@shared/constants/route-data.constants';
 import { PageLayout } from '@shared/enums/page-layout.enum';
+import { SitePage } from '@shared/enums/site-page.enum';
+import { pageEnabledGuard } from '@shared/guards/page-enabled.guard';
 
 /**
  * Root route table. Every page is lazy-loaded from a default export (CLAUDE.md §6), which keeps
@@ -25,6 +27,7 @@ export const routes: Routes = [
       [ROUTE_DATA_KEYS.Description]:
         'Watch Taal Yatra drum circles, workshops and shows: corporate days, family functions and festivals in Pune.',
     },
+    canMatch: [pageEnabledGuard(SitePage.Videos)],
     loadChildren: () => import('@features/videos/videos.routes'),
   },
   {
@@ -35,6 +38,7 @@ export const routes: Routes = [
       [ROUTE_DATA_KEYS.Description]:
         'Meet the facilitators, percussionists and event makers behind Taal Yatra drum circles in Pune.',
     },
+    canMatch: [pageEnabledGuard(SitePage.Team)],
     loadChildren: () => import('@features/team/team.routes'),
   },
   {
@@ -45,6 +49,7 @@ export const routes: Routes = [
       [ROUTE_DATA_KEYS.Description]:
         'Live band, percussion ensemble, acoustic, fusion, dhol procession and classical tabla shows for your event in Pune.',
     },
+    canMatch: [pageEnabledGuard(SitePage.Shows)],
     loadChildren: () => import('@features/shows/shows.routes'),
   },
   {
@@ -55,6 +60,7 @@ export const routes: Routes = [
       [ROUTE_DATA_KEYS.Description]:
         'Milestones, awards, press and notable performances from Taal Yatra’s years of stages, students and sound.',
     },
+    canMatch: [pageEnabledGuard(SitePage.Achievements)],
     loadChildren: () => import('@features/achievements/achievements.routes'),
   },
   {

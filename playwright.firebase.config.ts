@@ -5,7 +5,8 @@ import { defineConfig, devices } from '@playwright/test';
  * from fake-db.json. Separate from the main config, which stays on the deterministic Fake backend.
  * Needs Java for the emulator.
  */
-const PORT = 4310;
+// E2E_FIREBASE_PORT moves the dev server when 4310 is taken by something else on the machine.
+const PORT = Number(process.env['E2E_FIREBASE_PORT'] ?? 4310);
 const BASE_URL = `http://localhost:${String(PORT)}`;
 const isCi = Boolean(process.env['CI']);
 

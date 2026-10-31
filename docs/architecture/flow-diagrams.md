@@ -80,3 +80,16 @@ flowchart LR
   P -- first time --> SH[show ~3.5 s · removed on fade-out end]
   P -- already played --> X
 ```
+
+### Owner switches on the public site (1.6.0)
+
+```mermaid
+flowchart LR
+  V["site/visibility<br/>(preloaded with site/config)"] --> SV[SiteVisibilityService<br/>missing = all on]
+  SV --> H["Home: optional sections render only when on<br/>(no data read when off)"]
+  SV --> L["applyVisibility · visibleLink:<br/>menus · footer · See all"]
+  SV --> G["pageEnabledGuard (canMatch):<br/>page off → /"]
+  SV --> W["Shell: utility bar · action bar · WhatsApp · Home: intro · assistant"]
+  P["site/config.promotion<br/>live · startsOn · endsOn"] --> PS["PromotionSchedule (Pune time)"]
+  PS -->|"not live today"| N["no promotion: badge, offer section and Diwali links hidden"]
+```

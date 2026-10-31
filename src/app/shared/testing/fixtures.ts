@@ -7,7 +7,9 @@ import { LAYOUT_CHROME } from '@shared/constants/navigation.constants';
 import { PageLayout } from '@shared/enums/page-layout.enum';
 import { type ISiteConfigDto } from '@shared/interfaces/i-site-config';
 import { SiteConfigModel } from '@shared/models/site-config.model';
+import { SiteVisibility } from '@shared/models/site-visibility.model';
 import { SiteConfigService } from '@shared/services/site-config.service';
+import { SiteVisibilityService } from '@shared/services/site-visibility.service';
 
 /** Test fixtures shared by specs (excluded from coverage), built from the fake database. */
 export const SITE_DTO: ISiteConfigDto = fakeDb.site.config;
@@ -23,6 +25,16 @@ export const PAGES = fakeDb.pages;
  */
 export function provideSiteConfig(site: SiteConfigModel = SITE): Provider {
   return { provide: SiteConfigService, useValue: { getSiteConfig: () => of(site) } };
+}
+
+/**
+ * @param visibility The switches to serve; everything shown by default.
+ * @returns A `SiteVisibilityService` stand-in for specs that render the chrome without a backend.
+ */
+export function provideVisibility(
+  visibility: SiteVisibility = SiteVisibility.allVisible,
+): Provider {
+  return { provide: SiteVisibilityService, useValue: { getVisibility: () => of(visibility) } };
 }
 export const HOME_CHROME = LAYOUT_CHROME[PageLayout.Home]!;
 export const PAGE_CHROME = LAYOUT_CHROME[PageLayout.Page]!;

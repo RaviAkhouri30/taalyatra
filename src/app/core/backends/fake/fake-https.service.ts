@@ -1,12 +1,12 @@
 import { HttpResponse, HttpStatusCode } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { type Observable, defer, delay, map, of, shareReplay } from 'rxjs';
+import { type Observable, delay, map, of } from 'rxjs';
+import { isFirestoreFields, unwrapListSection } from '@core/backends/firebase/firestore-envelope';
 import { type IHttpBackend } from '@core/interfaces/i-http-backend';
 import { APP_ENVIRONMENT } from '@core/tokens/app-environment.token';
+import { FakeDataStore } from './fake-data-store.service';
 
 /** Shape of the JSON document: nested objects addressed by "/"-separated paths. */
-type FakeDbNode = Readonly<Record<string, unknown>>;
-
 /**
  * Local JSON backend used until Firebase is set up (development, demos, e2e).
  *
@@ -17,24 +17,7 @@ type FakeDbNode = Readonly<Record<string, unknown>>;
 export class FakeHttpsService implements IHttpBackend {
   private readonly latencyMs = inject(APP_ENVIRONMENT).fakeLatencyMs;
 
-  // The dynamic import is a Promise; it is wrapped with defer() here, inside the adapter only
-  // (CLAUDE.md §7), and cached so the file is fetched once.
-  private readonly db$: Observable<FakeDbNode> = defer(() => import('./fake-db.json')).pipe(
-    map((module) => module.default as FakeDbNode),
-    shareReplay({ bufferSize: 1, refCount: false }),
-  );
-
-  /** Walks the document along the path's segments; `undefined` when any segment is missing. */
-  private static resolve(db: FakeDbNode, path: string): unknown {
-    const segments = path.split('/').filter((segment) => segment.length > 0);
-    return segments.reduce<unknown>(
-      (node, segment) =>
-        typeof node === 'object' && node !== null
-          ? new Map(Object.entries(node)).get(segment)
-          : undefined,
-      db,
-    );
-  }
+  private readonly store = inject(FakeDataStore);
 
   private static toResponse<T>(body: unknown): HttpResponse<T> {
     return body === undefined
@@ -43,8 +26,12 @@ export class FakeHttpsService implements IHttpBackend {
   }
 
   public get<T>(path: string): Observable<HttpResponse<T>> {
-    return this.db$.pipe(
-      map((db) => FakeHttpsService.toResponse<T>(FakeHttpsService.resolve(db, path))),
+    return this.store.read(path).pipe(
+      // A list section written back by the editor sits in its `_items` envelope, as in Firestore;
+      // unwrap it the way the Firestore adapter does.
+      map((body) =>
+        FakeHttpsService.toResponse<T>(isFirestoreFields(body) ? unwrapListSection(body) : body),
+      ),
       delay(this.latencyMs),
     );
   }

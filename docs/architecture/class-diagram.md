@@ -154,3 +154,44 @@ classDiagram
   ShowsPageViewModel --> ShowFormatsService
 ```
 
+Content editor (1.6.0, [ADR-0013](adr/0013-drafts-publish-preview.md),
+[ADR-0014](adr/0014-schema-driven-editors.md), [ADR-0015](adr/0015-site-visibility.md)):
+
+```mermaid
+classDiagram
+  direction LR
+  class IDocumentStore {
+    <<abstract port>>
+    +read(path) Observable~DocumentFields | null~
+    +readAll(collection) Observable~ReadonlyMap~
+    +commit(writes) Observable~void~
+  }
+  class FirestoreConnection { +gateway$ (one per app) }
+  class FirebaseDocumentStore
+  class FakeDocumentStore
+  class FakeDataStore { fake-db.json + writes in localStorage }
+  class DraftOverlayBackend { <<IHttpBackend decorator, ?preview>> }
+  class DraftService { +drafts() · +document(path) · +save() · +saveAll() · +discard() }
+  class PublishService { +publish(drafts) · +history() · +restore(record) }
+  class PublishReport { +errors · +warnings · +canPublish }
+  class IPublishRule { <<interface>> SchemaRule · PromotionDatesRule · PlaceholderRule }
+  class IEditorSection { +path · +anchor · +fields: FieldSchema[] }
+  class SiteVisibilityService { +getVisibility() }
+  class PromotionSchedule { +status(now) · +isActive(now) }
+  IDocumentStore <|.. FirebaseDocumentStore
+  IDocumentStore <|.. FakeDocumentStore
+  FirebaseDocumentStore --> FirestoreConnection
+  FirebaseBackendService --> FirestoreConnection
+  FakeDocumentStore --> FakeDataStore
+  FakeHttpsService --> FakeDataStore
+  DraftOverlayBackend --> IDocumentStore
+  DraftService --> IDocumentStore
+  PublishService --> IDocumentStore
+  PublishService --> DraftService
+  PublishReport --> IPublishRule
+  IPublishRule ..> IEditorSection
+  EditorPageViewModel --> DraftService
+  PublishPageViewModel --> PublishService
+  SiteShellViewModel --> SiteVisibilityService
+  SiteConfigModel ..> PromotionSchedule
+```

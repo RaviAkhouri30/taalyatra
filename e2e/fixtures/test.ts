@@ -2,6 +2,7 @@ import { test as base, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { AdminPage } from '../pages/admin.page';
 import { AppShellPage } from '../pages/app-shell.page';
+import { EditorPage } from '../pages/editor.page';
 import { HomePage } from '../pages/home.page';
 import { InnerPage } from '../pages/inner-page.page';
 
@@ -13,6 +14,7 @@ interface Fixtures {
   appShell: AppShellPage;
   home: HomePage;
   admin: AdminPage;
+  editor: EditorPage;
   /** Inner pages by name. */
   innerPages: Readonly<Record<InnerPageName, InnerPage>>;
   axe: () => AxeBuilder;
@@ -27,6 +29,9 @@ export const test = base.extend<Fixtures>({
   },
   admin: async ({ page }, use) => {
     await use(new AdminPage(page));
+  },
+  editor: async ({ page }, use) => {
+    await use(new EditorPage(page));
   },
   innerPages: async ({ page }, use) => {
     await use({

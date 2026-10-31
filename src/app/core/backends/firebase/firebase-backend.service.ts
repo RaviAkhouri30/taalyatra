@@ -1,17 +1,14 @@
 import { HttpResponse, HttpStatusCode } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { type Observable, catchError, map, of, shareReplay, switchMap } from 'rxjs';
-import { type IFirebaseConfig, type IFirestoreEmulator } from '@core/interfaces/i-firebase-config';
 import { type IHttpBackend } from '@core/interfaces/i-http-backend';
-import { APP_ENVIRONMENT } from '@core/tokens/app-environment.token';
-import { FIREBASE_CONFIG } from '@core/tokens/firebase-config.token';
 import { type FirestoreFields, isFirestoreFields } from './firestore-envelope';
 import { toHttpStatus } from './firestore-error-status';
-import { FIRESTORE_GATEWAY_LOADER } from './firestore-gateway-loader.token';
 import { FIRESTORE_PRELOADED_COLLECTIONS } from './firestore.constants';
 import { FirestorePath } from './firestore-path';
 import { FirestorePathKind } from './firestore-path-kind.enum';
-import { type FirestoreGatewayLoader, type IFirestoreGateway } from './i-firestore-gateway';
+import { FirestoreConnection } from './firestore-connection.service';
+import { type IFirestoreGateway } from './i-firestore-gateway';
 
 /** One SDK call against a validated path. */
 type FirestoreCall = (gateway: IFirestoreGateway, path: string) => Observable<unknown>;
@@ -32,26 +29,9 @@ interface IWriteSpec {
  */
 export class FirebaseBackendService implements IHttpBackend {
   /** `null` when Firebase is not configured: every request then answers 503. */
-  private readonly gateway$ = FirebaseBackendService.loadGateway(
-    inject(FIRESTORE_GATEWAY_LOADER),
-    inject(FIREBASE_CONFIG),
-    inject(APP_ENVIRONMENT).firestoreEmulator,
-  );
+  private readonly gateway$ = inject(FirestoreConnection).gateway$;
 
-  /** One cached read per preloaded collection, created on its first use (ADR-0011). */
   private readonly preloads = new Map<string, Observable<ReadonlyMap<string, unknown>>>();
-
-  private static loadGateway(
-    load: FirestoreGatewayLoader,
-    config: IFirebaseConfig | null,
-    emulator: IFirestoreEmulator | null,
-  ): Observable<IFirestoreGateway> | null {
-    // shareReplay: the chunk loads and the SDK initialises once, however many sections ask at
-    // once; a failed load is not cached, so the next request retries.
-    return config === null
-      ? null
-      : load(config, emulator).pipe(shareReplay({ bufferSize: 1, refCount: false }));
-  }
 
   private static respond<T>(status: HttpStatusCode, body?: unknown): HttpResponse<T> {
     return new HttpResponse<T>({ status, body: (body ?? null) as T });

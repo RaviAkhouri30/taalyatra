@@ -1105,7 +1105,10 @@
       "promotion": {
         "label": "Diwali offers",
         "subtitle": "Light up your celebration",
-        "dismissLabel": "Dismiss Diwali offer"
+        "dismissLabel": "Dismiss Diwali offer",
+        "live": true,
+        "startsOn": null,
+        "endsOn": null
       },
       "copyrightYear": 2026,
       "labels": {
@@ -1120,6 +1123,40 @@
         "name": "Ravi Akhouri",
         "url": "https://www.linkedin.com/in/ravi-akhouri-6696071a7/",
         "linkLabel": "Ravi Akhouri on LinkedIn (opens in a new tab)"
+      }
+    },
+    "visibility": {
+      "sections": {
+        "marquee": true,
+        "trust": true,
+        "audiences": true,
+        "experiences": true,
+        "shows": true,
+        "drumCircle": true,
+        "rhythmGame": true,
+        "videos": true,
+        "gallery": true,
+        "philosophy": true,
+        "midCta": true,
+        "cities": true,
+        "how": true,
+        "team": true,
+        "instagram": true,
+        "proof": true,
+        "faq": true
+      },
+      "pages": {
+        "videos": true,
+        "team": true,
+        "shows": true,
+        "achievements": true
+      },
+      "widgets": {
+        "assistant": true,
+        "actionBar": true,
+        "whatsApp": true,
+        "utilityBar": true,
+        "intro": true
       }
     }
   },
@@ -1423,7 +1460,7 @@
       },
       "home": {
         "heading": "Welcome back",
-        "lead": "Content editing arrives in the next update. For now, this confirms you’re signed in to the admin area.",
+        "lead": "Edit your site here. Changes save as a draft, so you can preview them before you publish.",
         "signedInAs": "Signed in as",
         "viewSite": "View site",
         "signOut": "Sign out",

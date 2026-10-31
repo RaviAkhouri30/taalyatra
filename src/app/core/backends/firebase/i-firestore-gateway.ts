@@ -1,4 +1,5 @@
 import { type Observable } from 'rxjs';
+import { type DocumentWrite } from '@core/interfaces/i-document-store';
 import { type IFirebaseConfig, type IFirestoreEmulator } from '@core/interfaces/i-firebase-config';
 import { type FirestoreFields } from './firestore-envelope';
 
@@ -15,6 +16,8 @@ export interface IFirestoreGateway {
   setDocument(path: string, fields: FirestoreFields): Observable<void>;
   updateDocument(path: string, fields: FirestoreFields): Observable<void>;
   deleteDocument(path: string): Observable<void>;
+  /** Applies every write in one batch: all are stored, or none. */
+  commit(writes: readonly DocumentWrite[]): Observable<void>;
 }
 
 /** Creates a gateway, loading the SDK chunk first. */

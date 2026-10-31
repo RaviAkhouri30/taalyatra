@@ -2,6 +2,7 @@ import { HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { defer, firstValueFrom, of, toArray } from 'rxjs';
 import { IHttpBackend } from '@core/interfaces/i-http-backend';
+import { CLOCK } from '@core/tokens/clock.token';
 import { LoggerService } from '@core/services/logger.service';
 import { ApiEndpoint } from '@shared/enums/api-endpoint.enum';
 import { SiteConfigModel } from '@shared/models/site-config.model';
@@ -59,5 +60,23 @@ describe('SiteConfigService', () => {
     expect(failed).toEqual([]);
     expect(retried.brand.name).toBe('Taal Yatra');
     expect(reads).toHaveBeenCalledTimes(2);
+  });
+
+  it('should check the promotion schedule against the clock', async () => {
+    const promotion = { ...SITE_DTO.promotion!, live: true, startsOn: '2026-12-01' };
+    const body = { ...SITE_DTO, promotion };
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: IHttpBackend,
+          useValue: { get: () => of(new HttpResponse({ status: 200, body })) },
+        },
+        { provide: CLOCK, useValue: { now: () => new Date('2026-11-20T06:00:00Z') } },
+      ],
+    });
+
+    const site = await firstValueFrom(TestBed.inject(SiteConfigService).getSiteConfig());
+
+    expect(site.promotion).toBeNull();
   });
 });

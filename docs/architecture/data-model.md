@@ -14,6 +14,9 @@ into Firestore, and development, unit tests and the main e2e suite read it direc
 | `videos/{001…}` | `IVideoDto` + `order` (categories are derived, not stored) | videos teaser, Videos page |
 | `gallery/{001…}` | `IImageDto` + `order` | gallery, lightbox |
 | `team/{001…}` | `ITeamMemberDto` + `order` | team teaser, Team page |
+| `site/visibility` | `ISiteVisibilityDto`: `sections`, `pages`, `widgets`, maps of key → boolean (1.6.0, ADR-0015) | shell, home page, link lists, `pageEnabledGuard` |
+| `drafts/{id}` | `{ path, content, savedAt }`: an unpublished document; id is the path with `__` for `/` (1.6.0, ADR-0013, admin-only) | editor, preview mode |
+| `publishes/{id}` | `{ publishedAt, changed, before }`: the latest 20 publishes, each with the previous versions (admin-only) | editor history and undo |
 | `proposals/{autoId}` | proposal fields + `createdAt` (server time) | written by the contact form; read in the console |
 
 Navigation menus and design constants stay in code (`navigation.constants.ts`): they point at
@@ -34,6 +37,12 @@ app routes.
 - The adapter stamps `createdAt: serverTimestamp()` on every created document.
 - Image paths point at files in `public/images`. Photos are WebP (since 1.5.0); the older JPEGs
   stay, so data seeded before a release keeps rendering.
+- **Since 1.6.0, Firestore is the source of truth for live content**: the owner edits it.
+  `seed:firestore` creates missing documents only (`--overwrite` replaces after listing), and
+  `export:firestore` backs the content up. `fake-db.json` stays the fixture for development
+  and e2e.
+- `site/config.promotion` has `live`, `startsOn` and `endsOn` (YYYY-MM-DD, Pune time); missing
+  means on with no dates.
 - DTO interfaces (`i-*.ts`) describe stored shapes; model classes add behaviour.
 - **Optional parts of `site/config` degrade item by item.** Only brand, contact and year are
   required. Missing `labels` become empty, so "Call us" falls back to the number, the copyable

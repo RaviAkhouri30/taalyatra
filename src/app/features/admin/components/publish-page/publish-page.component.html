@@ -1,0 +1,131 @@
+<div class="pp">
+  <h1 class="d">Review &amp; publish</h1>
+  @let page = model.data();
+  @if (!page) {
+    <p class="pp-loading">Loading your changes…</p>
+  } @else {
+    <section class="pp-card" aria-labelledby="pp-changes">
+      <h2 id="pp-changes">Unpublished changes</h2>
+      @if (page.changes.length === 0) {
+        <p>Everything is published. Changes you make in the editor appear here.</p>
+      } @else {
+        <ul class="pp-list">
+          @for (change of page.changes; track change.path) {
+            <li>
+              <span
+                ><b>{{ change.title }}</b> <small>saved {{ change.savedAt }}</small></span
+              >
+              <button
+                appButton
+                type="button"
+                [variant]="ghost"
+                [size]="compact"
+                [disabled]="model.busy()"
+                [attr.aria-label]="'Discard the draft of ' + change.title"
+                (click)="model.discard(change.path)"
+              >
+                Discard
+              </button>
+            </li>
+          }
+        </ul>
+        @if (page.report.errors.length > 0) {
+          <div class="pp-issues pp-issues--error">
+            <h3>Fix before publishing</h3>
+            <ul>
+              @for (issue of page.report.errors; track $index) {
+                <li>
+                  <b>{{ issue.section }} · {{ issue.field }}:</b> {{ issue.message }}
+                </li>
+              }
+            </ul>
+          </div>
+        }
+        @if (page.report.warnings.length > 0) {
+          <div class="pp-issues">
+            <h3>Worth a look</h3>
+            <ul>
+              @for (issue of page.report.warnings; track $index) {
+                <li>
+                  <b>{{ issue.section }} · {{ issue.field }}:</b> {{ issue.message }}
+                </li>
+              }
+            </ul>
+          </div>
+        }
+        @if (model.confirming()) {
+          <div class="pp-confirm" role="group" aria-labelledby="pp-confirm-text">
+            <p id="pp-confirm-text">{{ page.confirmText }}</p>
+            <div class="pp-actions">
+              <button appButton type="button" [disabled]="model.busy()" (click)="model.publish()">
+                Yes, publish
+              </button>
+              <button appButton type="button" [variant]="ghost" (click)="model.cancel()">
+                Cancel
+              </button>
+            </div>
+          </div>
+        } @else {
+          <button
+            appButton
+            type="button"
+            [disabled]="!page.report.canPublish || model.busy()"
+            (click)="model.askToPublish()"
+          >
+            Publish changes
+          </button>
+        }
+      }
+    </section>
+    <section class="pp-card" aria-labelledby="pp-history">
+      <h2 id="pp-history">Publish history</h2>
+      @if (page.history.length === 0) {
+        <p>Nothing published from the editor yet.</p>
+      } @else {
+        <ol class="pp-list">
+          @for (entry of page.history; track entry.record.id) {
+            <li>
+              <span
+                ><b>{{ entry.when }}</b> <small>{{ entry.title }}</small></span
+              >
+              @if (model.restoring() === entry.record.id) {
+                <span class="pp-actions" role="group" aria-label="Confirm restore">
+                  <span>Replace your draft of these with the version from before?</span>
+                  <button
+                    appButton
+                    type="button"
+                    [size]="compact"
+                    [disabled]="model.busy()"
+                    (click)="model.restore(entry.record)"
+                  >
+                    Restore
+                  </button>
+                  <button
+                    appButton
+                    type="button"
+                    [variant]="ghost"
+                    [size]="compact"
+                    (click)="model.cancel()"
+                  >
+                    Cancel
+                  </button>
+                </span>
+              } @else {
+                <button
+                  appButton
+                  type="button"
+                  [variant]="ghost"
+                  [size]="compact"
+                  [attr.aria-label]="'Undo the publish of ' + entry.when"
+                  (click)="model.askToRestore(entry.record)"
+                >
+                  Undo this publish
+                </button>
+              }
+            </li>
+          }
+        </ol>
+      }
+    </section>
+  }
+</div>
