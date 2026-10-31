@@ -19,11 +19,11 @@ export class EditorPage extends BasePage {
     this.preview = page.frameLocator('iframe[title="Preview of the site with your draft"]');
   }
 
-  /** Signs the fake admin in and waits for the dashboard. */
-  public async signIn(): Promise<void> {
+  /** Signs the admin in (the fake one by default) and waits for the dashboard. */
+  public async signIn(account = FAKE_ADMIN_ACCOUNT): Promise<void> {
     await this.page.goto('/admin/sign-in');
-    await this.page.getByRole('textbox', { name: 'Email' }).fill(FAKE_ADMIN_ACCOUNT.email);
-    await this.page.getByLabel('Password').fill(FAKE_ADMIN_ACCOUNT.password);
+    await this.page.getByRole('textbox', { name: 'Email' }).fill(account.email);
+    await this.page.getByLabel('Password').fill(account.password);
     await this.page.getByRole('button', { name: 'Sign in' }).click();
     await this.heading.filter({ hasText: 'Welcome back' }).waitFor();
   }

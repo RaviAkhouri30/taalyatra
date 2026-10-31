@@ -1,14 +1,19 @@
 // Copies src/app/core/backends/fake/fake-db.json into Firestore (ADR-0009).
 //
-//   npm run seed:firestore -- --emulator               local emulator, no credentials
-//   npm run seed:firestore -- <key.json> --dry-run     show what would change in the project
-//   npm run seed:firestore -- <key.json> --yes         write to the project
+//   npm run seed:firestore -- --emulator                      local emulator, no credentials
+//   npm run seed:firestore -- <key.json> --dry-run            show what would change
+//   npm run seed:firestore -- <key.json> --yes                create missing documents only
+//   npm run seed:firestore -- <key.json> --overwrite --yes    replace everything from the file
 //
-// fake-db.json is the source of truth: each top-level object (home, site) becomes a collection
-// of documents, each top-level list (videos, gallery, team) a collection of numbered items.
-// Documents in those collections that the file no longer contains are deleted. Collections the
-// file doesn't name, such as proposals, are never touched. The service-account
-// key is read from disk and never printed.
+// Each top-level object in fake-db.json (home, site) becomes a collection of documents, each
+// top-level list (videos, gallery, team) a collection of numbered items.
+//
+// Since the content editor (0008 D16), Firestore is the source of truth for the live site: the
+// owner's edits live there. So by default only documents that don't exist yet are created, and
+// nothing is deleted. --overwrite replaces every document from the file and deletes those the
+// file no longer contains, after listing them. The emulator is always reset in full (it holds
+// test data only). Collections the file doesn't name (proposals, drafts, publishes) are never
+// touched. The service-account key is read from disk and never printed.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -60,15 +65,25 @@ export function plan(db) {
   return writes;
 }
 
-/** @returns Paths in the collections the file names that the plan no longer contains. */
-async function stalePaths(firestore, db, writes) {
+/** @returns Every stored document path in the collections the file names. */
+async function existingPaths(firestore, db) {
   const collections = await Promise.all(
     Object.keys(db).map((name) => firestore.collection(name).listDocuments()),
   );
-  return collections
-    .flat()
-    .map((reference) => reference.path)
-    .filter((path) => !writes.has(path));
+  return new Set(collections.flat().map((reference) => reference.path));
+}
+
+/**
+ * @param writes Every document the file describes, by path.
+ * @param existing Every stored document path in the file's collections.
+ * @param overwrite Whether to replace stored documents and delete those the file dropped.
+ * @returns What to write and what to delete.
+ */
+export function changes(writes, existing, overwrite) {
+  if (overwrite) {
+    return { writes, deletes: [...existing].filter((path) => !writes.has(path)) };
+  }
+  return { writes: new Map([...writes].filter(([path]) => !existing.has(path))), deletes: [] };
 }
 
 async function commit(firestore, writes, deletes) {
@@ -84,7 +99,7 @@ async function commit(firestore, writes, deletes) {
 }
 
 /** @returns The project id the app was initialised for. */
-function connect({ emulator }, keyPath) {
+export function connect({ emulator }, keyPath) {
   if (emulator) {
     process.env.FIRESTORE_EMULATOR_HOST ??= EMULATOR_HOST;
     process.env.FIREBASE_AUTH_EMULATOR_HOST ??= AUTH_EMULATOR_HOST;
@@ -120,15 +135,27 @@ async function main() {
       emulator: { type: 'boolean', default: false },
       'dry-run': { type: 'boolean', default: false },
       yes: { type: 'boolean', default: false },
+      overwrite: { type: 'boolean', default: false },
     },
   });
   const project = connect(values, positionals[0] ?? process.env.GOOGLE_APPLICATION_CREDENTIALS);
   const firestore = getFirestore();
   const db = JSON.parse(readFileSync(DB_FILE, 'utf8'));
-  const writes = plan(db);
-  const deletes = await stalePaths(firestore, db, writes);
+  const existing = await existingPaths(firestore, db);
+  const overwrite = values.overwrite || values.emulator;
+  const { writes, deletes } = changes(plan(db), existing, overwrite);
 
   console.log(`Project ${project}: ${writes.size} documents to write, ${deletes.length} to delete.`);
+  if (overwrite) {
+    [...writes.keys()]
+      .filter((path) => existing.has(path))
+      .forEach((path) => console.log(`  replace ${path}`));
+  } else {
+    console.log('  Existing documents are kept (add --overwrite to replace them).');
+  }
+  [...writes.keys()]
+    .filter((path) => !existing.has(path))
+    .forEach((path) => console.log(`  create ${path}`));
   deletes.forEach((path) => console.log(`  delete ${path}`));
   // A real project is written only with an explicit --yes; the emulator needs no confirmation.
   if (values['dry-run'] || (!values.emulator && !values.yes)) {

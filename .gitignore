@@ -11,6 +11,9 @@
 npm-debug.log
 yarn-error.log
 
+# Firestore content backups (npm run export:firestore); they may hold unpublished drafts
+/backups
+
 # Firebase emulator logs (rewritten on every run)
 firebase-debug.log
 firestore-debug.log
