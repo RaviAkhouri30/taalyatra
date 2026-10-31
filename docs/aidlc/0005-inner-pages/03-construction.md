@@ -4,20 +4,20 @@ Built from the approved [design](02-design.md) on `feat/inner-pages` (stacked on
 `feat/firebase-data`). Each increment was linted, typechecked and unit-tested before the next one
 started.
 
-| #   | Increment                          | Files                                                                                                                                                                                                                                                                                                  | Tests                |
-| --- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- |
-| 1   | Shared data and caching (ADR-0011) | `cache-latest.util.ts`; `SiteConfigService`, `VideosService`, `TeamService` cached; new `ShowFormatsService` and `IShowFormatDto`; `site/config` gains `labels.watchVideo` and `credit`; `fake-db.json` gains `pages/*` and `showFormats`, and drops `home/shows.formats` and `home/videos.watchLabel` | unit                 |
-| 2   | Home teasers on shared sources     | home Shows reads `showFormats`; home Videos reads `labels.watchVideo`; both use the cached getters; `IVideoCard` and `toVideoCards()` move to `shared`                                                                                                                                                 | unit                 |
-| 3   | Independent preloads               | adapter caches each of `site`, `home`, `pages` separately (no more `forkJoin`); `FirestorePath.id`                                                                                                                                                                                                     | unit                 |
-| 4   | Footer credit                      | `footer-credit` component in both footer variants, from `site/config.credit`, linking to LinkedIn                                                                                                                                                                                                      | unit                 |
-| 5   | Rules                              | `pages/*` and `showFormats/*` read-only; rules spec extended                                                                                                                                                                                                                                           | written (needs Java) |
-| 6   | Shared UI                          | `app-page-cta`; `app-video-card` gains a `Featured` variant, `eyebrow`, `priority`; `.vcat` label style; sage tokens                                                                                                                                                                                   | unit                 |
-| 7   | Videos page                        | `features/videos`: model (derived categories, filter, labels), service, view model, page, routes                                                                                                                                                                                                       | unit                 |
-| 8   | Team page                          | `features/team`: model, service, view model, `team-card`, page, routes                                                                                                                                                                                                                                 | unit                 |
-| 9   | Shows page                         | `features/shows`: model (format specs), service, view model, `show-format-card`, page, routes                                                                                                                                                                                                          | unit                 |
-| 10  | Achievements page                  | `features/achievements`: model, service, view model, page, routes                                                                                                                                                                                                                                      | unit                 |
-| 11  | Routes                             | `/videos`, `/team`, `/shows`, `/achievements` (lazy, `PageLayout.Page`, titles); `**` still falls back to home until Admin exists                                                                                                                                                                      | e2e                  |
-| 12  | E2E                                | `InnerPage` page object and an `innerPages` fixture; `inner-pages.e2e.ts` (direct open, reach from the home teaser, axe), `videos-filter.e2e.ts`, `inner-visual.e2e.ts` (48 new baselines)                                                                                                             | e2e                  |
+| #   | Increment | Files | Tests |
+| --- | --------- | ----- | ----- |
+| 1   | Shared data and caching (ADR-0011) | `cache-latest.util.ts`; `SiteConfigService`, `VideosService`, `TeamService` cached; new `ShowFormatsService` and `IShowFormatDto`; `site/config` gains `labels.watchVideo` and `credit`; `fake-db.json` gains `pages/*` and `showFormats`, and drops `home/shows.formats` and `home/videos.watchLabel` | unit |
+| 2   | Home teasers on shared sources | home Shows reads `showFormats`; home Videos reads `labels.watchVideo`; both use the cached getters; `IVideoCard` and `toVideoCards()` move to `shared` | unit |
+| 3   | Independent preloads | adapter caches each of `site`, `home`, `pages` separately (no more `forkJoin`); `FirestorePath.id` | unit |
+| 4   | Footer credit | `footer-credit` component in both footer variants, from `site/config.credit`, linking to LinkedIn | unit |
+| 5   | Rules | `pages/*` and `showFormats/*` read-only; rules spec extended | written (needs Java) |
+| 6   | Shared UI | `app-page-cta`; `app-video-card` gains a `Featured` variant, `eyebrow`, `priority`; `.vcat` label style; sage tokens | unit |
+| 7   | Videos page | `features/videos`: model (derived categories, filter, labels), service, view model, page, routes | unit |
+| 8   | Team page | `features/team`: model, service, view model, `team-card`, page, routes | unit |
+| 9   | Shows page | `features/shows`: model (format specs), service, view model, `show-format-card`, page, routes | unit |
+| 10  | Achievements page | `features/achievements`: model, service, view model, page, routes | unit |
+| 11  | Routes | `/videos`, `/team`, `/shows`, `/achievements` (lazy, `PageLayout.Page`, titles); `**` still falls back to home until Admin exists | e2e |
+| 12  | E2E | `InnerPage` page object and an `innerPages` fixture; `inner-pages.e2e.ts` (direct open, reach from the home teaser, axe), `videos-filter.e2e.ts`, `inner-visual.e2e.ts` (48 new baselines) | e2e |
 
 ## Checks
 
@@ -81,19 +81,18 @@ started.
 
 ## Addendum A: copyable address, toasts, Shows spotlight (2026-10-28)
 
-| #   | Increment          | Files                                                                                                                                                                        | Tests                                 |
-| --- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| A1  | Clipboard port     | `IClipboardService`, `BrowserClipboardService` (`defer(writeText)`), `FakeClipboardService`, `clipboardServiceFactory`, `provideBackend`                                     | unit                                  |
-| A2  | Toasts             | `ToastService` (forwards messages only), `toast-host` component and view model (`mergeMap` + `timer` per toast), in the site shell; `$z-toast` token                         | unit                                  |
-| A3  | Copy text          | `app-copy-text` and its view model (`exhaustMap`); copy icon; tooltip (hover, focus, Escape)                                                                                 | unit + `copy-address.e2e.ts`          |
-| A4  | Footer "Visit us"  | the address uses `app-copy-text`; the phone row reads "Call us"; labels in `site/config.labels`                                                                              | unit + e2e                            |
-| A5  | Shows spotlight    | `showFormats` gains `image`, `featured` and `spotlight`; a classical tabla recital is added as the first, featured format; `ShowSpotlightModel`; shared `app-show-spotlight` | unit                                  |
-| A6  | Home Shows section | surface band, spotlight, image cards                                                                                                                                         | unit + re-recorded `#shows` baselines |
-| A7  | Shows page         | spotlight above the cards; each card has an image                                                                                                                            | unit + re-recorded baselines          |
-| A8  | Illustrations      | 7 SVGs in `public/images/shows/` (2.1–3.3 kB each)                                                                                                                           | rendered and reviewed                 |
+| #   | Increment | Files | Tests |
+| --- | --------- | ----- | ----- |
+| A1  | Clipboard port | `IClipboardService`, `BrowserClipboardService` (`defer(writeText)`), `FakeClipboardService`, `clipboardServiceFactory`, `provideBackend` | unit |
+| A2  | Toasts | `ToastService` (forwards messages only), `toast-host` component and view model (`mergeMap` + `timer` per toast), in the site shell; `$z-toast` token | unit |
+| A3  | Copy text | `app-copy-text` and its view model (`exhaustMap`); copy icon; tooltip (hover, focus, Escape) | unit + `copy-address.e2e.ts` |
+| A4  | Footer "Visit us" | the address uses `app-copy-text`; the phone row reads "Call us"; labels in `site/config.labels` | unit + e2e |
+| A5  | Shows spotlight | `showFormats` gains `image`, `featured` and `spotlight`; a classical tabla recital is added as the first, featured format; `ShowSpotlightModel`; shared `app-show-spotlight` | unit |
+| A6  | Home Shows section | surface band, spotlight, image cards | unit + re-recorded `#shows` baselines |
+| A7  | Shows page | spotlight above the cards; each card has an image | unit + re-recorded baselines |
+| A8  | Illustrations | 7 SVGs in `public/images/shows/` (2.1–3.3 kB each) | rendered and reviewed |
 
 **Checks:**
-
 - **`npm run verify`:** passes. 128 test files, 427 tests. Coverage: statements 99.8 %,
   branches 98.95 %, functions 99.68 %, lines 100 %. Initial bundle 471.82 kB raw, 108.99 kB
   transfer.
@@ -109,7 +108,6 @@ started.
   Plain loads of every page at 1440 and Pixel 7 widths show no `NgOptimizedImage` warnings.
 
 **Decisions & deviations:**
-
 - **The live `site/config` has `contact.phone.display = "us"`,** an edit made in the Firebase
   console. "Call us" is now a separate label (`labels.callUs`), and the display value stays the
   number, which the utility bar and the contact section show. On the owner's instruction the live

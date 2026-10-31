@@ -81,20 +81,20 @@ so no Firebase account is needed.
 
 ## Scripts
 
-| Command                     | What it does                                                                                     |
-| --------------------------- | ------------------------------------------------------------------------------------------------ |
-| `npm start`                 | Dev server on port 4200 (Fake backend)                                                           |
-| `npm run build`             | Production build: budgets and strict CSP                                                         |
-| `npm run verify`            | format check, lint, typecheck, unit tests with coverage, build                                   |
-| `npm test`                  | Unit tests (Vitest)                                                                              |
-| `npm run e2e`               | Playwright on desktop, tablet and mobile (Fake backend)                                          |
-| `npm run e2e:visual:update` | Re-record visual baselines after an approved visual change                                       |
-| `npm run test:rules`        | Firestore security rules tests on the emulator (needs Java)                                      |
-| `npm run e2e:firebase`      | Firebase smoke suite on the seeded emulator (needs Java)                                         |
-| `npm run start:emulator`    | Dev server against a running local Firestore emulator                                            |
+| Command                     | What it does                                                            |
+| --------------------------- | ----------------------------------------------------------------------- |
+| `npm start`                 | Dev server on port 4200 (Fake backend)                                  |
+| `npm run build`             | Production build: budgets and strict CSP                                |
+| `npm run verify`            | format check, lint, typecheck, unit tests with coverage, build          |
+| `npm test`                  | Unit tests (Vitest)                                                     |
+| `npm run e2e`               | Playwright on desktop, tablet and mobile (Fake backend)                 |
+| `npm run e2e:visual:update` | Re-record visual baselines after an approved visual change              |
+| `npm run test:rules`        | Firestore security rules tests on the emulator (needs Java)             |
+| `npm run e2e:firebase`      | Firebase smoke suite on the seeded emulator (needs Java)                |
+| `npm run start:emulator`    | Dev server against a running local Firestore emulator                   |
 | `npm run seed:firestore`    | Create missing documents from `fake-db.json` (`--dry-run`, `--yes`, `--overwrite`, `--emulator`) |
-| `npm run export:firestore`  | Back up the live content to `backups/` (before releases)                                         |
-| `npm run deploy:rules`      | Deploy `firestore.rules` and indexes                                                             |
+| `npm run export:firestore`  | Back up the live content to `backups/` (before releases)                |
+| `npm run deploy:rules`      | Deploy `firestore.rules` and indexes                                    |
 
 ## Configuration
 

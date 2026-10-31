@@ -4,7 +4,6 @@
 
 Verification of 1.4.1 on the live site found Lighthouse Performance at **73** on mobile (LCP
 3.5 s, CLS 0.339) and **86** on desktop (CLS 0.158), against a target of 95.
-
 - Accessibility, Best Practices and SEO score 100.
 - SEO is still basic: one description for every page, no canonical URL, no social preview, no
   structured data, no `robots.txt` or `sitemap.xml`.

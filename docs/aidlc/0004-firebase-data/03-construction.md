@@ -3,17 +3,17 @@
 Built in small increments from the approved [design](02-design.md). Each increment was linted,
 typechecked and unit-tested before the next one started.
 
-| #   | Increment                  | Files                                                                                                                                                                                                              | Tests                                                           |
-| --- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
-| 1   | Dev dependencies           | `package.json`: `firebase-admin` 14.5.0, `firebase-tools` 15.34.1, `@firebase/rules-unit-testing` 6.0.0 (exact)                                                                                                    | `npm audit`: 5 moderate, 0 high or critical                     |
-| 2   | Config plumbing            | `BackendType.Firebase`, `i-firebase-config.ts`, `IAppEnvironment` (+`firebase`, `firestoreEmulator`), `environment.emulator.ts`, `runtime-firebase-config.ts`, `FIREBASE_CONFIG`; production now uses `Firebase`   | unit                                                            |
-| 3   | Firestore adapter          | `core/backends/firebase/*`: path, envelope, error status, gateway (lazy chunk), `FIRESTORE_GATEWAY_LOADER`, `FirebaseBackendService`; factory case                                                                 | unit                                                            |
-| 4   | Command path and proposals | `HttpsErrorHandler.handleCommand`, `ApiWriteBaseService`, `ApiEndpoint.Proposals`, `ProposalsService`, `PROPOSAL_MAX_LENGTH`, form validators and `maxlength`, `HomeContactViewModel` (parallel channels)          | unit (contact component spec: both, either and neither channel) |
-| 5   | Firebase project and rules | `firebase.json`, `.firebaserc`, `firestore.rules`, `firestore.indexes.json`, `tests/rules/firestore.rules.spec.ts`, `vitest.rules.config.ts`, `tsconfig.rules.json`                                                | rules spec written; **not run yet** (needs Java)                |
-| 6   | Scripts                    | `scripts/seed-firestore.mjs`, `scripts/write-runtime-config.mjs`                                                                                                                                                   | plan and config writer checked by hand (below)                  |
-| 7   | Wiring                     | `index.html` (config script, preconnect), `public/runtime-config.example.js`, `public/staticwebapp.config.json`, `angular.json` (`emulator` configuration, lint patterns, assets ignore), npm scripts, CI workflow | production build                                                |
-| 8   | Firebase smoke suite       | `playwright.firebase.config.ts`, `e2e/specs/firebase-smoke.e2e.ts`; main config ignores it                                                                                                                         | written; **not run yet** (needs Java)                           |
-| 9   | Docs                       | ADR-0009, ADR-0010, `backend-adapter-example.md`, architecture docs, CLAUDE.md §2/§3                                                                                                                               | —                                                               |
+| #   | Increment                       | Files                                                                                                                                                                                                                         | Tests                                                             |
+| --- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| 1   | Dev dependencies                | `package.json`: `firebase-admin` 14.5.0, `firebase-tools` 15.34.1, `@firebase/rules-unit-testing` 6.0.0 (exact)                                                                                                              | `npm audit`: 5 moderate, 0 high or critical                       |
+| 2   | Config plumbing                 | `BackendType.Firebase`, `i-firebase-config.ts`, `IAppEnvironment` (+`firebase`, `firestoreEmulator`), `environment.emulator.ts`, `runtime-firebase-config.ts`, `FIREBASE_CONFIG`; production now uses `Firebase`               | unit                                                              |
+| 3   | Firestore adapter               | `core/backends/firebase/*`: path, envelope, error status, gateway (lazy chunk), `FIRESTORE_GATEWAY_LOADER`, `FirebaseBackendService`; factory case                                                                             | unit                                                              |
+| 4   | Command path and proposals      | `HttpsErrorHandler.handleCommand`, `ApiWriteBaseService`, `ApiEndpoint.Proposals`, `ProposalsService`, `PROPOSAL_MAX_LENGTH`, form validators and `maxlength`, `HomeContactViewModel` (parallel channels)                      | unit (contact component spec: both, either and neither channel)  |
+| 5   | Firebase project and rules      | `firebase.json`, `.firebaserc`, `firestore.rules`, `firestore.indexes.json`, `tests/rules/firestore.rules.spec.ts`, `vitest.rules.config.ts`, `tsconfig.rules.json`                                                            | rules spec written; **not run yet** (needs Java)                  |
+| 6   | Scripts                         | `scripts/seed-firestore.mjs`, `scripts/write-runtime-config.mjs`                                                                                                                                                              | plan and config writer checked by hand (below)                    |
+| 7   | Wiring                          | `index.html` (config script, preconnect), `public/runtime-config.example.js`, `public/staticwebapp.config.json`, `angular.json` (`emulator` configuration, lint patterns, assets ignore), npm scripts, CI workflow           | production build                                                  |
+| 8   | Firebase smoke suite            | `playwright.firebase.config.ts`, `e2e/specs/firebase-smoke.e2e.ts`; main config ignores it                                                                                                                                    | written; **not run yet** (needs Java)                             |
+| 9   | Docs                            | ADR-0009, ADR-0010, `backend-adapter-example.md`, architecture docs, CLAUDE.md §2/§3                                                                                                                                         | —                                                                 |
 
 ## Checks run during construction
 
@@ -58,30 +58,30 @@ typechecked and unit-tested before the next one started.
 
 ## Addendum A: site config (2026-10-28)
 
-| #   | Increment                        | Files                                                                                                                                   | Tests                                                             |
-| --- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| A1  | Site-config DTO, model, endpoint | `i-site-config.ts` (+DTOs), `shared/models/site-config.model.ts`, `social.constants.ts`, `ApiEndpoint.SiteConfig`                       | unit                                                              |
-| A2  | Cached service                   | `site-config.service.ts` extends `ApiBaseService`; `throwIfEmpty` + `shareReplay`, so a failure is retried and never cached             | unit (one read for many subscribers; retry)                       |
-| A3  | Data moved                       | `fake-db.json` gains `site.config`; `site.constants.ts` and `site-config.token.ts` removed                                              | —                                                                 |
-| A4  | Seed, rules                      | seed maps every top-level object or list; `match /site/{document}` read-only; rules spec covers `site/config`                           | rules spec written (needs Java)                                   |
-| A5  | Specs                            | path-aware `stubBackend`, `provideSiteConfig()`, fixture `SITE` built from `fake-db.json`                                               | 358 unit tests                                                    |
-| A6  | CLS                              | preloaded `site` and `home` collections (adapter); `main { min-height: 100vh }`; `<main>` hidden (`visibility`) until the shell settles | measured, see below; shell spec covers pending, loaded and failed |
+| #   | Increment | Files | Tests |
+| --- | --------- | ----- | ----- |
+| A1  | Site-config DTO, model, endpoint | `i-site-config.ts` (+DTOs), `shared/models/site-config.model.ts`, `social.constants.ts`, `ApiEndpoint.SiteConfig` | unit |
+| A2  | Cached service | `site-config.service.ts` extends `ApiBaseService`; `throwIfEmpty` + `shareReplay`, so a failure is retried and never cached | unit (one read for many subscribers; retry) |
+| A3  | Data moved | `fake-db.json` gains `site.config`; `site.constants.ts` and `site-config.token.ts` removed | — |
+| A4  | Seed, rules | seed maps every top-level object or list; `match /site/{document}` read-only; rules spec covers `site/config` | rules spec written (needs Java) |
+| A5  | Specs | path-aware `stubBackend`, `provideSiteConfig()`, fixture `SITE` built from `fake-db.json` | 358 unit tests |
+| A6  | CLS | preloaded `site` and `home` collections (adapter); `main { min-height: 100vh }`; `<main>` hidden (`visibility`) until the shell settles | measured, see below; shell spec covers pending, loaded and failed |
 
 **CLS measurements** (production build, live database, 1440×900 and Pixel 7, 3 fresh loads each):
 
-| Build                                                               | Desktop                                                        | Mobile                       |
-| ------------------------------------------------------------------- | -------------------------------------------------------------- | ---------------------------- |
-| 1.1.0 (bundled `fake-db.json`)                                      | 0.162 / 0.120 / 0.120                                          | 0.000                        |
-| Firestore, one request per document (commit `4df50ee`)              | 0.298 / 0.603 / 0.612                                          | 0.000                        |
-| Preload + `main` min-height only                                    | 0.221 / 0.220 / 0.220 (`MAIN` shifted down by the late header) | 0.000 / 0.777 / 0.777        |
-| **Addendum A final** (plus `<main>` hidden until the shell settles) | **0.0004 / 0.0004 / 0.0004**                                   | **0.0000 / 0.0000 / 0.0001** |
+| Build | Desktop | Mobile |
+| ----- | ------- | ------ |
+| 1.1.0 (bundled `fake-db.json`) | 0.162 / 0.120 / 0.120 | 0.000 |
+| Firestore, one request per document (commit `4df50ee`) | 0.298 / 0.603 / 0.612 | 0.000 |
+| Preload + `main` min-height only | 0.221 / 0.220 / 0.220 (`MAIN` shifted down by the late header) | 0.000 / 0.777 / 0.777 |
+| **Addendum A final** (plus `<main>` hidden until the shell settles) | **0.0004 / 0.0004 / 0.0004** | **0.0000 / 0.0000 / 0.0001** |
 
 **LCP**, the same setup, 4 loads each, served locally against the live database (`asia-south2`):
 
-| Build                | Desktop (ms)           | Mobile (ms)             |
-| -------------------- | ---------------------- | ----------------------- |
-| 1.1.0 (bundled data) | 120 / 80 / 200 / 112   | 168 / 96 / 92 / 100     |
-| Addendum A final     | 996 / 440 / 628 / 1056 | 940 / 936 / 1088 / 1008 |
+| Build | Desktop (ms) | Mobile (ms) |
+| ----- | ------------ | ----------- |
+| 1.1.0 (bundled data) | 120 / 80 / 200 / 112 | 168 / 96 / 92 / 100 |
+| Addendum A final | 996 / 440 / 628 / 1056 | 940 / 936 / 1088 / 1008 |
 
 LCP stays well under 2.5 s. The increase is the network: the SDK chunk loads, then one Firestore
 round trip. Hiding `<main>` doesn't add to it, because the hero already waited for site config.

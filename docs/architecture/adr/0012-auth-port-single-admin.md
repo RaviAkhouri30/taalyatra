@@ -6,7 +6,6 @@
 
 The admin area needs a sign-in for one owner account (email and password, created in Firebase
 Authentication). Constraints:
-
 - Public pages must not pay for the Auth SDK.
 - Promises are allowed only in adapters.
 - No provider types may leak into feature code.

@@ -168,10 +168,10 @@ rules tests · A5 specs (path-aware backend stub) · A6 CLS measurement · A7 Em
 `environment.ts` (ADR-0006), once the owner provides them.
 
 **Risks.**
-
 - The chrome now waits on a network read. The page already depends on Firestore, so an outage
   hides it along with the hero; no bundled fallback is kept, because a fallback copy would drift.
 - The header appearing late could shift content (CLS). This is measured in A6 and mitigated if it
   reaches 0.1 or more.
 
 **Approval:** ☑ Approved by Ravi Akhouri on 2026-10-28 (in chat: "i approve these suggestions")
+

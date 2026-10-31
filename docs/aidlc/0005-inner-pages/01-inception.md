@@ -46,7 +46,7 @@ scope and becomes its own feature (sign-in, content editing, write rules, App Ch
 - [ ] Given the Achievements page, when it loads, then it shows the stats, milestones timeline,
       recognition, press, notable performances and a CTA.
 - [ ] Given each page's copy, when served, then it comes from Firestore (`pages/{videos, team,
-  shows, achievements}` plus the existing `videos` and `team` collections), with the same
+      shows, achievements}` plus the existing `videos` and `team` collections), with the same
       content in `fake-db.json` for development and tests.
 - [ ] Given any viewport from 375 to 2300 px wide, when computed styles are compared with the
       prototype, then they match except for documented deviations.
@@ -102,7 +102,6 @@ scope and becomes its own feature (sign-in, content editing, write rules, App Ch
 Raised by the owner after reviewing Construction.
 
 **Stories**
-
 - As a **visitor**, I want the long address shortened, with the full text on hover or focus,
   and copied when I click it, so that the footer stays compact and I can paste the address
   into a maps app.
@@ -114,7 +113,6 @@ Raised by the owner after reviewing Construction.
   number.
 
 **Acceptance criteria**
-
 - [ ] Given the footer's "Visit us" details, when they render, then the address is cut to one
       line with an ellipsis. Hovering or focusing it shows the full address in a tooltip, and
       Escape closes the tooltip.
@@ -136,3 +134,4 @@ Raised by the owner after reviewing Construction.
 
 **Approval:** ☑ Approved by Ravi Akhouri on 2026-10-28 (in chat: spotlight + photo cards,
 tabla / Hindustani, illustrated placeholders, "Call us")
+

@@ -8,7 +8,6 @@ admin account created in Firebase Authentication. The area behind it is guarded,
 content editors in the next feature.
 
 Built from the design prototype's sign-in screen (`design/prototype/project/Admin.dc.html`):
-
 - Taal Yatra logo
 - "Admin sign in" heading and a one-line description
 - email and password fields
@@ -20,7 +19,6 @@ Built from the design prototype's sign-in screen (`design/prototype/project/Admi
 The prototype's demo hints ("any email and any password will open the editor") are dropped.
 
 **In scope:**
-
 - the sign-in page
 - password reset by email
 - sign-out
@@ -28,7 +26,6 @@ The prototype's demo hints ("any email and any password will open the editor") a
 - a placeholder admin home (signed-in email, "View site", "Sign out")
 
 **Out of scope (next feature):**
-
 - the content editors (Offers, Contact, Videos, Team…)
 - admin write rules in `firestore.rules`
 - App Check (ADR-0010)
