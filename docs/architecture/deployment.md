@@ -1,11 +1,11 @@
 # Deployment & Environments
 
-| Environment / build | Backend                                        | Purpose                                   |
-| ------------------- | ---------------------------------------------- | ----------------------------------------- |
-| `development`       | Fake (`fake-db.json`)                          | Local work                                |
-| `emulator`          | Firebase, local emulator (`demo-taal-yatra`)   | Firebase smoke suite (`npm run e2e:firebase`) |
-| e2e (main suite)    | Fake                                           | Deterministic Playwright runs             |
-| `production`        | Firebase, project `taal-yatra`                 | Live site                                 |
+| Environment / build | Backend                                      | Purpose                                       |
+| ------------------- | -------------------------------------------- | --------------------------------------------- |
+| `development`       | Fake (`fake-db.json`)                        | Local work                                    |
+| `emulator`          | Firebase, local emulator (`demo-taal-yatra`) | Firebase smoke suite (`npm run e2e:firebase`) |
+| e2e (main suite)    | Fake                                         | Deterministic Playwright runs                 |
+| `production`        | Firebase, project `taal-yatra`               | Live site                                     |
 
 **Firestore:** Native mode, project `taal-yatra`, location `asia-south2` (Delhi). The location
 can't be changed.
@@ -24,6 +24,7 @@ Hosting isn't used.
 
 **Runtime config:** the Firebase web config is public by design (it's protected by
 `firestore.rules`) but kept out of git (CLAUDE.md §10).
+
 - `public/runtime-config.js` is git-ignored. Copy it from `public/runtime-config.example.js`
   for local production builds.
 - In CI, `scripts/write-runtime-config.mjs` writes it into the build output from the GitHub
@@ -36,6 +37,7 @@ Hosting isn't used.
   so a missing asset still returns 404.
 
 **Build output (`postbuild`):** `npm run build` runs `scripts/postbuild.mjs` afterwards. It
+
 - replaces `%SITE_URL%` in `index.html` (canonical and Open Graph URLs) with `SITE_URL`, else
   `siteUrl` from `src/environments/environment.ts`;
 - adds `<link rel="modulepreload">` for the chunk holding the Firestore client, so it downloads
@@ -46,9 +48,13 @@ When the site moves to `taalyatra.in`, change `siteUrl` in `environment.ts` (or 
 in CI).
 
 **Rules and data (manual, from a developer machine):**
+
 1. `npx firebase login`
-2. `npm run deploy:rules`
-3. `npm run seed:firestore -- <key.json> --dry-run`, then the same with `--yes`
+2. `npm run export:firestore -- <key.json>`: a dated backup in `backups/` (git-ignored)
+3. `npm run deploy:rules`
+4. `npm run seed:firestore -- <key.json> --dry-run`, then the same with `--yes`. Since 1.6.0
+   the seed only creates missing documents, so the owner's edits are kept; `--overwrite`
+   replaces everything from `fake-db.json` and should only follow a backup.
 
 The service-account key is never committed or pasted anywhere.
 

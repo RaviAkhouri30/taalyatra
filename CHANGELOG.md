@@ -6,6 +6,25 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+### Added — content editor (0008, planned as 1.6.0)
+
+- Content editor at `/admin`: a dashboard, then tabs for the offer and its dates, page content
+  (site details, hero, section headings), sections and pages, and contact and links. Changes
+  autosave as drafts beside a live preview of the real site.
+- Review and publish: required fields, formats, offer dates and leftover placeholders are checked
+  first. Publishing is all or nothing, and each of the last 20 publishes can be undone.
+- Switches for 17 home sections, 4 inner pages and 5 site-wide widgets. A hidden section loads
+  nothing and loses its menu links; a switched-off page redirects home.
+- The offer can be scheduled with start and end dates (Pune time), and hides itself outside them.
+- `?preview` shows the site with unpublished changes to the signed-in owner only.
+- `npm run export:firestore` backs up the live content.
+
+### Changed
+
+- `seed:firestore` creates only missing documents unless `--overwrite` is given, so the owner's
+  edits are never replaced by accident.
+- Only the admin account may write content (`firestore.rules`, tested).
+
 ### Added
 
 - SEO: a description, canonical link, Open Graph and Twitter tags for every public page,

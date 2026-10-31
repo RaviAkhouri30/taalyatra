@@ -46,7 +46,8 @@ npm run e2e:visual:update  # re-record all visual baselines after an approved vi
 npm run test:rules     # firestore.rules tests on the emulator (needs Java)
 npm run e2e:firebase   # Firebase smoke suite: emulator, seeded, 3 viewports (needs Java)
 npm run start:emulator # dev server against a running local Firestore emulator
-npm run seed:firestore -- <key.json> [--dry-run|--yes] | --emulator   # fake-db.json → Firestore
+npm run seed:firestore -- <key.json> [--dry-run|--yes] [--overwrite] | --emulator   # missing docs only unless --overwrite
+npm run export:firestore -- <key.json>   # back up live content to backups/ (before releases)
 npm run deploy:rules   # deploy firestore.rules + indexes to project taal-yatra
 npm run sonar          # SonarQube scan (needs SONAR_HOST_URL and SONAR_TOKEN env vars)
 npm run verify         # format:check + lint + typecheck + test:coverage + build
@@ -187,8 +188,9 @@ export class ApiServiceProviderFactory {
 
 - Every adapter honours the same `HttpResponse<T>` contract (Liskov). `RestHttpBackend` wraps
   `HttpClient` with `observe: 'response'`, so it matches the contract exactly.
-- The same pattern applies to `IAuthService` (ADR-0012), `IEmailService`, `IClipboardService`
-  and `IMediaService`. Each has a Fake implementation for unit tests and e2e.
+- The same pattern applies to `IAuthService` (ADR-0012), `IDocumentStore` (the editor's fresh
+  reads and atomic commits, ADR-0013), `IEmailService`, `IClipboardService` and `IMediaService`.
+  Each has a Fake implementation for unit tests and e2e.
 - `ApiBaseService` sends every call through `HttpsErrorHandler` (loader, timeout, status check,
   notification) and unwraps `body`.
 - The canonical example of this pattern is `docs/architecture/backend-adapter-example.md`
@@ -258,7 +260,8 @@ docs/              architecture, ADRs, AIDLC records
   that grows past one responsibility gets split.
 - **Injection tokens** (`core/tokens/*.token.ts`) for every non-class dependency:
   `APP_ENVIRONMENT`, `FIREBASE_CONFIG`, `EMAILJS_CONFIG`, `CLOUDINARY_CONFIG`, `WINDOW`,
-  `COMMAND_CONTEXT`, `REQUEST_TIMEOUT_MS`. Group them in `provideXxx()` helpers.
+  `COMMAND_CONTEXT`, `REQUEST_TIMEOUT_MS`, `CLOCK` (the current time), `APP_PREVIEW`
+  (`?preview` visits). Group them in `provideXxx()` helpers.
 
 ---
 

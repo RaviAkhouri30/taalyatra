@@ -8,20 +8,20 @@ recorded in [ADR-0009](../../architecture/adr/0009-firestore-data-adapter.md) an
 
 ## Key decisions
 
-| #   | Decision                                                                                                                                                                                                                                                                                                                                                                               |
-| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| D1  | **Firestore Lite** (`firebase/firestore/lite`) instead of the full SDK. It uses REST, with no realtime listeners or offline cache, which a content site doesn't need, and is a fraction of the size.                                                                                                                                                                                  |
-| D2  | **The SDK loads lazily.** Everything that imports `firebase/*` lives in one module, `firestore-gateway.ts`, which the adapter loads with `defer(() => import(...))` on the first request and then caches (`shareReplay`). The initial bundle doesn't grow.                                                                                                                            |
-| D3  | **Paths map to Firestore by segment count.** Two segments (`home/hero`) is a document. One segment (`videos`) is a collection, read sorted by `order` and returned as an array.                                                                                                                                                                                                       |
-| D4  | **List sections stored as one document use a reserved envelope key, `{ _items: [...] }`, not `items`.** `home/experiences` and `home/faq` already hold an `items` array next to other fields, so Resume3.0's rule ("unwrap any `items` array") would cut those two sections down to their list.                                                                                     |
-| D5  | **List item documents are numbered by position** (`videos/001`, `002`, …) and carry an `order` field. The adapter removes `order` from the body. Names can't serve as IDs because the content is still placeholders (six team members are named `[NAME]`).                                                                                                                         |
-| D6  | **The adapter adds `createdAt` with `serverTimestamp()` on every `post`.** Feature code never touches an SDK type, and the rules require `createdAt == request.time`, so clients can't backdate a record.                                                                                                                                                                             |
-| D7  | **Errors become responses, never thrown errors** (Liskov). Firebase error codes map to HTTP statuses through a `ReadonlyMap`, with no `switch` (Open/Closed). A path with the wrong shape for the operation returns `400`, and missing config returns `503`.                                                                                                                         |
-| D8  | **Config comes from `runtime-config.js`.** It sets `globalThis.__FIREBASE_CONFIG__` and is loaded by a classic `<script>` in `index.html` before the app bundle. A build-time `environment.firebase` overrides it; only the emulator build uses that.                                                                                                                                 |
-| D9  | **Proposals: both channels run in parallel, and the visitor sees success if either works** (your decision). Each channel turns its own failure into `false`, so one failure can't cancel the other (`forkJoin`). Each failure is logged once.                                                                                                                                        |
+| #   | Decision                                                                                                                                                                                                                                                                                                                                                                          |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | **Firestore Lite** (`firebase/firestore/lite`) instead of the full SDK. It uses REST, with no realtime listeners or offline cache, which a content site doesn't need, and is a fraction of the size.                                                                                                                                                                              |
+| D2  | **The SDK loads lazily.** Everything that imports `firebase/*` lives in one module, `firestore-gateway.ts`, which the adapter loads with `defer(() => import(...))` on the first request and then caches (`shareReplay`). The initial bundle doesn't grow.                                                                                                                        |
+| D3  | **Paths map to Firestore by segment count.** Two segments (`home/hero`) is a document. One segment (`videos`) is a collection, read sorted by `order` and returned as an array.                                                                                                                                                                                                   |
+| D4  | **List sections stored as one document use a reserved envelope key, `{ _items: [...] }`, not `items`.** `home/experiences` and `home/faq` already hold an `items` array next to other fields, so Resume3.0's rule ("unwrap any `items` array") would cut those two sections down to their list.                                                                                   |
+| D5  | **List item documents are numbered by position** (`videos/001`, `002`, …) and carry an `order` field. The adapter removes `order` from the body. Names can't serve as IDs because the content is still placeholders (six team members are named `[NAME]`).                                                                                                                        |
+| D6  | **The adapter adds `createdAt` with `serverTimestamp()` on every `post`.** Feature code never touches an SDK type, and the rules require `createdAt == request.time`, so clients can't backdate a record.                                                                                                                                                                         |
+| D7  | **Errors become responses, never thrown errors** (Liskov). Firebase error codes map to HTTP statuses through a `ReadonlyMap`, with no `switch` (Open/Closed). A path with the wrong shape for the operation returns `400`, and missing config returns `503`.                                                                                                                      |
+| D8  | **Config comes from `runtime-config.js`.** It sets `globalThis.__FIREBASE_CONFIG__` and is loaded by a classic `<script>` in `index.html` before the app bundle. A build-time `environment.firebase` overrides it; only the emulator build uses that.                                                                                                                             |
+| D9  | **Proposals: both channels run in parallel, and the visitor sees success if either works** (your decision). Each channel turns its own failure into `false`, so one failure can't cancel the other (`forkJoin`). Each failure is logged once.                                                                                                                                     |
 | D10 | **Commands get their own error path.** `HttpsErrorHandler.handle()` swallows failures, which suits views. A new `handleCommand()` logs the failure and **rethrows**, so the view model knows the save failed. Writes go through a new base class, `ApiWriteBaseService`, so a service that only writes isn't forced to implement `attachViewDataHandler` (interface segregation). |
-| D11 | **Client and rules enforce the same limits.** Max lengths live in `PROPOSAL_MAX_LENGTH`, which drives both the form's `Validators.maxLength` and `maxlength` attributes. The rules tests build payloads from the same constant (at the limit and one over), so the two can't drift apart unnoticed.                                                                                |
-| D12 | **Development, unit tests and the main e2e suite stay on Fake.** A new `emulator` build configuration points at the local emulator (project `demo-taal-yatra`) for the Firebase smoke suite. The `demo-` prefix means it can never reach real resources.                                                                                                                            |
+| D11 | **Client and rules enforce the same limits.** Max lengths live in `PROPOSAL_MAX_LENGTH`, which drives both the form's `Validators.maxLength` and `maxlength` attributes. The rules tests build payloads from the same constant (at the limit and one over), so the two can't drift apart unnoticed.                                                                               |
+| D12 | **Development, unit tests and the main e2e suite stay on Fake.** A new `emulator` build configuration points at the local emulator (project `demo-taal-yatra`) for the Firebase smoke suite. The `demo-` prefix means it can never reach real resources.                                                                                                                          |
 
 ## Component tree
 
@@ -221,28 +221,28 @@ flowchart TD
   G -- FirebaseError --> M[toStatus code → 401/403/400/409/429/503/504/500]
 ```
 
-| Firebase code                               | Status |
-| ------------------------------------------- | ------ |
-| `unauthenticated`                           | 401    |
-| `permission-denied`                         | 403    |
-| `not-found`                                 | 404    |
-| `already-exists`                            | 409    |
-| `invalid-argument`, `failed-precondition`   | 400    |
-| `resource-exhausted`                        | 429    |
-| `unavailable`                               | 503    |
-| `deadline-exceeded`                         | 504    |
-| anything else, or not a Firebase error      | 500    |
+| Firebase code                             | Status |
+| ----------------------------------------- | ------ |
+| `unauthenticated`                         | 401    |
+| `permission-denied`                       | 403    |
+| `not-found`                               | 404    |
+| `already-exists`                          | 409    |
+| `invalid-argument`, `failed-precondition` | 400    |
+| `resource-exhausted`                      | 429    |
+| `unavailable`                             | 503    |
+| `deadline-exceeded`                       | 504    |
+| anything else, or not a Firebase error    | 500    |
 
 ## Data model
 
-| Firestore path                   | Content                                    | Source in `fake-db.json` |
-| -------------------------------- | ------------------------------------------ | ------------------------ |
-| `home/{section}` (21 docs)       | the section DTO as stored                  | `home.<section>`         |
-| `home/marquee`, `home/trust`     | `{ _items: [...] }` (lists in one doc)     | `home.marquee/trust`     |
-| `videos/{001…}` (9)              | `IVideoDto` + `order`                      | `videos[]`               |
-| `gallery/{001…}` (7)             | `IImageDto` + `order`                      | `gallery[]`              |
-| `team/{001…}` (6)                | `ITeamMemberDto` + `order`                 | `team[]`                 |
-| `proposals/{autoId}`             | proposal (below), create-only              | written by visitors      |
+| Firestore path               | Content                                | Source in `fake-db.json` |
+| ---------------------------- | -------------------------------------- | ------------------------ |
+| `home/{section}` (21 docs)   | the section DTO as stored              | `home.<section>`         |
+| `home/marquee`, `home/trust` | `{ _items: [...] }` (lists in one doc) | `home.marquee/trust`     |
+| `videos/{001…}` (9)          | `IVideoDto` + `order`                  | `videos[]`               |
+| `gallery/{001…}` (7)         | `IImageDto` + `order`                  | `gallery[]`              |
+| `team/{001…}` (6)            | `ITeamMemberDto` + `order`             | `team[]`                 |
+| `proposals/{autoId}`         | proposal (below), create-only          | written by visitors      |
 
 **Proposal document:** `need`, `eventType`, `experience`, `groupSize`, `date` (string, at most
 100 characters); `name` (1 to 100); `phone` (1 to 20); `email` (at most 254); `message` (at most
@@ -250,21 +250,21 @@ flowchart TD
 
 ### Rules matrix (`firestore.rules`, deny by default)
 
-| Path                                  | read (get/list) | create              | update / delete |
-| ------------------------------------- | --------------- | ------------------- | --------------- |
+| Path                                        | read (get/list) | create              | update / delete |
+| ------------------------------------------- | --------------- | ------------------- | --------------- |
 | `home/*`, `videos/*`, `gallery/*`, `team/*` | ✅ anyone       | ❌                  | ❌              |
-| `proposals/*`                         | ❌              | ✅ if valid (above) | ❌              |
-| anything else                         | ❌              | ❌                  | ❌              |
+| `proposals/*`                               | ❌              | ✅ if valid (above) | ❌              |
+| anything else                               | ❌              | ❌                  | ❌              |
 
 `firestore.indexes.json` is empty: `orderBy('order')` on one field uses the automatic index.
 
 ## Configuration
 
-| Setting (`IAppEnvironment`) | production | development | emulator (new)                              |
-| --------------------------- | ---------- | ----------- | ------------------------------------------- |
-| `backend`                   | `Firebase` | `Fake`      | `Firebase`                                  |
-| `firebase` (new)            | `null` → runtime-config.js | `null` | demo config, project `demo-taal-yatra` |
-| `firestoreEmulator` (new)   | `null`     | `null`      | `{ host: '127.0.0.1', port: 8080 }`         |
+| Setting (`IAppEnvironment`) | production                 | development | emulator (new)                         |
+| --------------------------- | -------------------------- | ----------- | -------------------------------------- |
+| `backend`                   | `Firebase`                 | `Fake`      | `Firebase`                             |
+| `firebase` (new)            | `null` → runtime-config.js | `null`      | demo config, project `demo-taal-yatra` |
+| `firestoreEmulator` (new)   | `null`                     | `null`      | `{ host: '127.0.0.1', port: 8080 }`    |
 
 `index.html` adds `<script src="runtime-config.js"></script>` and
 `<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>`. When the file is
@@ -274,26 +274,26 @@ missing in development, the browser logs a harmless 404. The Fake backend doesn'
 
 **New**
 
-| File | Purpose |
-| --- | --- |
-| `core/backends/firebase/firebase-backend.service.ts` | `IHttpBackend` adapter (D3, D6, D7) |
-| `core/backends/firebase/firestore-gateway.ts` | the lazy chunk: the only `firebase/*` importer (D1, D2) |
-| `core/backends/firebase/firestore-path.ts` | parses and validates paths, decides document or collection |
-| `core/backends/firebase/firestore-envelope.ts` | `_items` unwrap, `order` strip (D4, D5) |
-| `core/backends/firebase/firestore-error-status.ts` | code-to-status map (D7) |
-| `core/backends/firebase/firestore.constants.ts` | `_items`, `order`, `createdAt` |
-| `core/interfaces/i-firebase-config.ts` | our own config shape, so no SDK type leaks |
-| `core/tokens/firebase-config.token.ts` | `FIREBASE_CONFIG` (D8) |
-| `core/config/runtime-firebase-config.ts` | reads and type-guards `globalThis.__FIREBASE_CONFIG__` |
-| `shared/base/api-write-base.service.ts` | write base class (D10) |
-| `features/home/sections/contact/proposals.service.ts` | `create(value)` → `ApiEndpoint.Proposals` |
-| `features/home/sections/contact/proposal-limits.constants.ts` | `PROPOSAL_MAX_LENGTH` (D11) |
-| `environments/environment.emulator.ts` | emulator build (D12) |
-| `firebase.json`, `.firebaserc`, `firestore.rules`, `firestore.indexes.json` | Firebase project and rules |
-| `tests/rules/firestore.rules.spec.ts`, `vitest.rules.config.ts`, `tsconfig.rules.json` | rules tests |
-| `scripts/seed-firestore.mjs`, `scripts/write-runtime-config.mjs` | seeding and CI config |
-| `public/runtime-config.example.js`, `public/staticwebapp.config.json` | config template, no-cache header |
-| `playwright.firebase.config.ts`, `e2e/specs/firebase-smoke.e2e.ts` | smoke suite |
+| File                                                                                   | Purpose                                                    |
+| -------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `core/backends/firebase/firebase-backend.service.ts`                                   | `IHttpBackend` adapter (D3, D6, D7)                        |
+| `core/backends/firebase/firestore-gateway.ts`                                          | the lazy chunk: the only `firebase/*` importer (D1, D2)    |
+| `core/backends/firebase/firestore-path.ts`                                             | parses and validates paths, decides document or collection |
+| `core/backends/firebase/firestore-envelope.ts`                                         | `_items` unwrap, `order` strip (D4, D5)                    |
+| `core/backends/firebase/firestore-error-status.ts`                                     | code-to-status map (D7)                                    |
+| `core/backends/firebase/firestore.constants.ts`                                        | `_items`, `order`, `createdAt`                             |
+| `core/interfaces/i-firebase-config.ts`                                                 | our own config shape, so no SDK type leaks                 |
+| `core/tokens/firebase-config.token.ts`                                                 | `FIREBASE_CONFIG` (D8)                                     |
+| `core/config/runtime-firebase-config.ts`                                               | reads and type-guards `globalThis.__FIREBASE_CONFIG__`     |
+| `shared/base/api-write-base.service.ts`                                                | write base class (D10)                                     |
+| `features/home/sections/contact/proposals.service.ts`                                  | `create(value)` → `ApiEndpoint.Proposals`                  |
+| `features/home/sections/contact/proposal-limits.constants.ts`                          | `PROPOSAL_MAX_LENGTH` (D11)                                |
+| `environments/environment.emulator.ts`                                                 | emulator build (D12)                                       |
+| `firebase.json`, `.firebaserc`, `firestore.rules`, `firestore.indexes.json`            | Firebase project and rules                                 |
+| `tests/rules/firestore.rules.spec.ts`, `vitest.rules.config.ts`, `tsconfig.rules.json` | rules tests                                                |
+| `scripts/seed-firestore.mjs`, `scripts/write-runtime-config.mjs`                       | seeding and CI config                                      |
+| `public/runtime-config.example.js`, `public/staticwebapp.config.json`                  | config template, no-cache header                           |
+| `playwright.firebase.config.ts`, `e2e/specs/firebase-smoke.e2e.ts`                     | smoke suite                                                |
 
 All of these have a co-located `.spec.ts` where CLAUDE.md §9 requires one.
 
@@ -416,4 +416,3 @@ classDiagram
   with no extra round trip.
 
 **Approval:** ☑ Approved by Ravi Akhouri on 2026-10-28 (in chat)
-

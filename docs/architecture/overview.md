@@ -28,7 +28,7 @@ flowchart TB
     B[ApiBaseService<br/>+ HttpsErrorHandler]
   end
   subgraph Ports
-    P{{IHttpBackend · IAuthService (1.4.0)<br/>IEmailService · IMediaService<br/>IClipboardService}}
+    P{{IHttpBackend · IAuthService (1.4.0)<br/>IDocumentStore (1.6.0) · IEmailService<br/>IMediaService · IClipboardService}}
   end
   subgraph Adapters [core/backends]
     F[Firebase*]
@@ -38,6 +38,17 @@ flowchart TB
   C --> VM --> S --> B --> P
   P -. factory picks one .-> F & K & R
 ```
+
+## Content editing (1.6.0)
+
+The owner edits content at `/admin` (0008). Edits autosave as **drafts** (`drafts/*`) through
+`IDocumentStore`, which reads fresh and commits atomically. **Publish** writes every draft live in
+one commit and keeps the previous versions in `publishes/*` for undo. `?preview` shows the real
+site with the drafts through `DraftOverlayBackend`
+([ADR-0013](adr/0013-drafts-publish-preview.md)). Editors are built from field schemas
+([ADR-0014](adr/0014-schema-driven-editors.md)). `site/visibility` switches home sections, inner
+pages and widgets ([ADR-0015](adr/0015-site-visibility.md)). Only the admin UID may write, by
+`firestore.rules`.
 
 ## Dependency rules
 

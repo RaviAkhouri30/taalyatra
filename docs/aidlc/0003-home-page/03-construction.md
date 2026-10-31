@@ -3,15 +3,15 @@
 Built one task at a time from [plan.md](plan.md); each section was checked against the
 prototype's computed styles at 1440, 1000, 620, 375, 1700 and 2300 px wide (900 and 1080 px tall).
 
-| #     | Increment                                         | Files (under `src/app`)                                   | Tests                                 |
-| ----- | ------------------------------------------------- | --------------------------------------------------------- | ------------------------------------- |
-| 1–4   | Data layer, routing, home container               | `core/*`, `app.routes.ts`, `features/home/home-page.*`    | unit                                  |
-| 5–21  | Sections hero … FAQ                               | `features/home/sections/<name>/`                          | unit + e2e (hero, offer, audiences, experiences, game) |
-| 22    | Contact: proposal form, aside, email port         | `sections/contact/`, `core/interfaces/i-email-service.ts`, `core/backends/{emailjs,fake}`, `core/factories/email-service.factory.ts` | unit + `home-contact.e2e.ts` |
-| 23    | Chat assistant + floating cluster                 | `sections/assistant/`, `shared/services/overlay-state.service.ts` | unit + `home-assistant.e2e.ts` |
-| 24    | Intro loader (once per visit)                     | `sections/intro/`                                         | unit                                  |
-| 25    | Journeys, a11y states, visual baselines, image fill mode, `@defer (on idle)` | `e2e/specs/home-{journeys,a11y,visual}.e2e.ts` | 108 e2e |
-| 26    | Docs, ADRs 0006–0008, CHANGELOG, version 1.1.0    | `docs/`, `CLAUDE.md`, `CHANGELOG.md`                       | —                                     |
+| #    | Increment                                                                    | Files (under `src/app`)                                                                                                              | Tests                                                  |
+| ---- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| 1–4  | Data layer, routing, home container                                          | `core/*`, `app.routes.ts`, `features/home/home-page.*`                                                                               | unit                                                   |
+| 5–21 | Sections hero … FAQ                                                          | `features/home/sections/<name>/`                                                                                                     | unit + e2e (hero, offer, audiences, experiences, game) |
+| 22   | Contact: proposal form, aside, email port                                    | `sections/contact/`, `core/interfaces/i-email-service.ts`, `core/backends/{emailjs,fake}`, `core/factories/email-service.factory.ts` | unit + `home-contact.e2e.ts`                           |
+| 23   | Chat assistant + floating cluster                                            | `sections/assistant/`, `shared/services/overlay-state.service.ts`                                                                    | unit + `home-assistant.e2e.ts`                         |
+| 24   | Intro loader (once per visit)                                                | `sections/intro/`                                                                                                                    | unit                                                   |
+| 25   | Journeys, a11y states, visual baselines, image fill mode, `@defer (on idle)` | `e2e/specs/home-{journeys,a11y,visual}.e2e.ts`                                                                                       | 108 e2e                                                |
+| 26   | Docs, ADRs 0006–0008, CHANGELOG, version 1.1.0                               | `docs/`, `CLAUDE.md`, `CHANGELOG.md`                                                                                                 | —                                                      |
 
 ## Decisions & deviations from design
 

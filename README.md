@@ -23,8 +23,11 @@ experiences and helps visitors request a proposal by form or WhatsApp.
 - **Chat assistant:** quick answers to common questions, plus call and WhatsApp shortcuts.
 - **Live content:** all copy, videos, team and show formats come from Cloud Firestore, so they
   change without a release.
-- **Admin sign-in:** email and password at `/admin` (Firebase Authentication, single admin
-  account), with password reset. Content editing comes next.
+- **Admin and content editor** at `/admin` (Firebase Authentication, single admin account):
+  - edit the offer and its dates, the hero, section headings, site details and contact links;
+  - switch home sections, inner pages and site-wide widgets on and off;
+  - changes save as drafts, with a live preview of the real site;
+  - publish after checks (required fields, formats, leftover placeholders), and undo a publish.
 - **Quality:**
   - WCAG 2.2 AA (axe-checked on every page)
   - pixel-perfect at five breakpoints
@@ -48,7 +51,8 @@ experiences and helps visitors request a proposal by form or WhatsApp.
 
 - **MVVM:** a component renders only what its component-scoped view model exposes. The view
   model combines data streams into signals. Services read data through **ports** (abstract
-  classes): `IHttpBackend`, `IEmailService`, `IClipboardService`.
+  classes): `IHttpBackend`, `IDocumentStore`, `IAuthService`, `IEmailService`,
+  `IClipboardService`.
 - **Ports and adapters:** a factory picks an adapter per environment (Fake, Firebase, REST), so
   feature code never imports an SDK.
 - **Firestore conventions:**
@@ -77,19 +81,20 @@ so no Firebase account is needed.
 
 ## Scripts
 
-| Command                     | What it does                                                            |
-| --------------------------- | ----------------------------------------------------------------------- |
-| `npm start`                 | Dev server on port 4200 (Fake backend)                                  |
-| `npm run build`             | Production build: budgets and strict CSP                                |
-| `npm run verify`            | format check, lint, typecheck, unit tests with coverage, build          |
-| `npm test`                  | Unit tests (Vitest)                                                     |
-| `npm run e2e`               | Playwright on desktop, tablet and mobile (Fake backend)                 |
-| `npm run e2e:visual:update` | Re-record visual baselines after an approved visual change              |
-| `npm run test:rules`        | Firestore security rules tests on the emulator (needs Java)             |
-| `npm run e2e:firebase`      | Firebase smoke suite on the seeded emulator (needs Java)                |
-| `npm run start:emulator`    | Dev server against a running local Firestore emulator                   |
-| `npm run seed:firestore`    | Copy `fake-db.json` into Firestore (`--dry-run`, `--yes`, `--emulator`) |
-| `npm run deploy:rules`      | Deploy `firestore.rules` and indexes                                    |
+| Command                     | What it does                                                                                     |
+| --------------------------- | ------------------------------------------------------------------------------------------------ |
+| `npm start`                 | Dev server on port 4200 (Fake backend)                                                           |
+| `npm run build`             | Production build: budgets and strict CSP                                                         |
+| `npm run verify`            | format check, lint, typecheck, unit tests with coverage, build                                   |
+| `npm test`                  | Unit tests (Vitest)                                                                              |
+| `npm run e2e`               | Playwright on desktop, tablet and mobile (Fake backend)                                          |
+| `npm run e2e:visual:update` | Re-record visual baselines after an approved visual change                                       |
+| `npm run test:rules`        | Firestore security rules tests on the emulator (needs Java)                                      |
+| `npm run e2e:firebase`      | Firebase smoke suite on the seeded emulator (needs Java)                                         |
+| `npm run start:emulator`    | Dev server against a running local Firestore emulator                                            |
+| `npm run seed:firestore`    | Create missing documents from `fake-db.json` (`--dry-run`, `--yes`, `--overwrite`, `--emulator`) |
+| `npm run export:firestore`  | Back up the live content to `backups/` (before releases)                                         |
+| `npm run deploy:rules`      | Deploy `firestore.rules` and indexes                                                             |
 
 ## Configuration
 
