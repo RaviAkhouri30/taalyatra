@@ -1,0 +1,69 @@
+@for (entry of entries(); track entry.field.key) {
+  @if (entry.nested; as nested) {
+    <fieldset class="sf-group">
+      <legend>{{ entry.field.label }}</legend>
+      <app-schema-fields [fields]="nested" [group]="entry.control" [idPrefix]="entry.id" />
+    </fieldset>
+  } @else if (entry.list; as list) {
+    <fieldset class="sf-list">
+      <legend>{{ entry.field.label }}</legend>
+      @for (item of list.items.controls; track item; let i = $index, first = $first, last = $last) {
+        <div
+          class="sf-item"
+          role="group"
+          [attr.aria-label]="list.schema.item.label + ' ' + (i + 1)"
+        >
+          @if (list.schema.item.kind === kind.Group) {
+            <p class="sf-item-title">{{ list.schema.item.label }} {{ i + 1 }}</p>
+            <app-schema-fields
+              [fields]="list.schema.item.fields"
+              [group]="item"
+              [idPrefix]="entry.id + '-' + i"
+            />
+          } @else {
+            <app-schema-field
+              [field]="list.schema.item"
+              [control]="item"
+              [fieldId]="entry.id + '-' + i"
+            />
+          }
+          <div class="sf-item-actions">
+            <button
+              type="button"
+              [disabled]="first"
+              [attr.aria-label]="'Move ' + list.schema.item.label + ' ' + (i + 1) + ' up'"
+              (click)="move(list.items, i, -1)"
+            >
+              ↑
+            </button>
+            <button
+              type="button"
+              [disabled]="last"
+              [attr.aria-label]="'Move ' + list.schema.item.label + ' ' + (i + 1) + ' down'"
+              (click)="move(list.items, i, 1)"
+            >
+              ↓
+            </button>
+            <button
+              type="button"
+              [attr.aria-label]="'Remove ' + list.schema.item.label + ' ' + (i + 1)"
+              (click)="remove(list.items, i)"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      }
+      <button
+        type="button"
+        class="sf-add"
+        [disabled]="list.items.length >= list.schema.maxItems"
+        (click)="add(list.schema, list.items)"
+      >
+        + {{ list.schema.addLabel }}
+      </button>
+    </fieldset>
+  } @else {
+    <app-schema-field [field]="entry.field" [control]="entry.control" [fieldId]="entry.id" />
+  }
+}

@@ -1,0 +1,10 @@
+<div class="pf-bar">
+  <span>Preview with your draft</span>
+  <a [href]="fullUrl()" target="_blank" rel="noopener">Open full preview</a>
+</div>
+<iframe
+  #frame
+  src="/?preview=1"
+  title="Preview of the site with your draft"
+  (load)="onLoad()"
+></iframe>

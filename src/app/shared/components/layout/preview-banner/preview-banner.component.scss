@@ -3,9 +3,6 @@
 
 :host {
   display: block;
-  position: sticky;
-  top: 0;
-  z-index: t.$z-header + 1;
   background: t.$color-amber;
   color: t.$color-ink-deep;
   font-size: 14px;

@@ -8,7 +8,11 @@
       "primaryCta": "Request proposal",
       "whatsAppCta": "WhatsApp us",
       "callCtaPrefix": "Call",
-      "audiences": ["Corporate teams", "Family functions", "Friends & fun"],
+      "audiences": [
+        "Corporate teams",
+        "Family functions",
+        "Friends & fun"
+      ],
       "gameCta": "Play the rhythm game"
     },
     "marquee": [
@@ -76,19 +80,31 @@
           "icon": "briefcase",
           "title": "Corporate teams",
           "text": "Team days, offsites and celebrations that build trust and listening without a single slide.",
-          "tags": ["Team building", "Engagement", "Rewards"]
+          "tags": [
+            "Team building",
+            "Engagement",
+            "Rewards"
+          ]
         },
         {
           "icon": "home",
           "title": "Family functions",
           "text": "Birthdays, festivals and get-togethers where every age — kids to grandparents — plays the same beat.",
-          "tags": ["Birthdays", "Festivals", "Family days"]
+          "tags": [
+            "Birthdays",
+            "Festivals",
+            "Family days"
+          ]
         },
         {
           "icon": "star",
           "title": "Fun seekers",
           "text": "Friends, communities and anyone after a refreshing, creative activity that feels nothing like a screen.",
-          "tags": ["Friends", "Communities", "Weekends"]
+          "tags": [
+            "Friends",
+            "Communities",
+            "Weekends"
+          ]
         }
       ]
     },
@@ -98,7 +114,12 @@
       "lead": "Pick an experience by group size, space and energy. Every session is led by a facilitator.",
       "filterLabel": "Filter experiences",
       "allLabel": "All",
-      "categories": ["Percussion", "Melody", "Movement", "No instruments"],
+      "categories": [
+        "Percussion",
+        "Melody",
+        "Movement",
+        "No instruments"
+      ],
       "featured": {
         "name": "Drum Circle",
         "tag": "Signature experience",
@@ -227,7 +248,13 @@
         "There is no sheet music and no wrong note. The facilitator cues sections, shifts the tempo and brings everyone together for a finale."
       ],
       "objectivesTitle": "Objectives",
-      "objectives": ["Team synergy", "Engagement", "Adaptability", "Bonding", "Fun & recreation"],
+      "objectives": [
+        "Team synergy",
+        "Engagement",
+        "Adaptability",
+        "Bonding",
+        "Fun & recreation"
+      ],
       "occasionsTitle": "Occasions",
       "occasions": [
         "All occasions",
@@ -259,7 +286,12 @@
         }
       ],
       "relatedTitle": "Similar experiences",
-      "related": ["Trash Jam", "Boombastic", "Body Percussion", "Lezim Workshop"],
+      "related": [
+        "Trash Jam",
+        "Boombastic",
+        "Body Percussion",
+        "Lezim Workshop"
+      ],
       "flowTitle": "A 60-minute flow",
       "flowUnit": "min",
       "flow": [
@@ -800,7 +832,13 @@
           }
         ],
         "experienceFallback": "Not sure yet",
-        "groupSizes": ["Under 20", "20–50", "50–200", "200–1,000", "1,000+"],
+        "groupSizes": [
+          "Under 20",
+          "20–50",
+          "50–200",
+          "200–1,000",
+          "1,000+"
+        ],
         "defaults": {
           "need": "A workshop or drum circle",
           "eventType": "Corporate team",
@@ -877,7 +915,14 @@
       ],
       "replies": [
         {
-          "keywords": ["price", "cost", "quote", "rate", "budget", "charge"],
+          "keywords": [
+            "price",
+            "cost",
+            "quote",
+            "rate",
+            "budget",
+            "charge"
+          ],
           "text": "Pricing depends on group size, venue, date and duration. Use the \"Plan your session\" builder or message us on WhatsApp for a quick quote."
         },
         {
@@ -894,19 +939,40 @@
           "text": "Yes, we love family functions, birthdays, festivals and get-togethers. Sessions suit every age, from kids to grandparents."
         },
         {
-          "keywords": ["corporate", "office", "company", "offsite"],
+          "keywords": [
+            "corporate",
+            "office",
+            "company",
+            "offsite"
+          ],
           "text": "For corporate groups we run team days, offsites, rewards and celebrations. Drum Circle works for 10 to 5,000 people."
         },
         {
-          "keywords": ["experience", "beginner", "never", "musical", "skill"],
+          "keywords": [
+            "experience",
+            "beginner",
+            "never",
+            "musical",
+            "skill"
+          ],
           "text": "No experience needed at all. The facilitator guides every beat step by step."
         },
         {
-          "keywords": ["size", "people", "group", "how many"],
+          "keywords": [
+            "size",
+            "people",
+            "group",
+            "how many"
+          ],
           "text": "Drum Circle runs from 10 to 5,000 people. Boombastic 50 to 2,500, Body Percussion 50 to 5,000, Harmonica 30 to 1,000, Trash Jam 40 to 300 and Lezim 40 to 500."
         },
         {
-          "keywords": ["long", "duration", "time", "minutes"],
+          "keywords": [
+            "long",
+            "duration",
+            "time",
+            "minutes"
+          ],
           "text": "Sessions run 20 to 60 minutes. Drum Circle is 45 to 60 minutes."
         },
         {
@@ -924,15 +990,30 @@
           "text": "Sessions can run indoors or outdoors. We are listed on Google Maps as \"Taalyatra drum circle\" in Kharadi, Pune. Share your venue and we will plan the setup."
         },
         {
-          "keywords": ["contact", "phone", "call", "whatsapp", "email", "mail"],
+          "keywords": [
+            "contact",
+            "phone",
+            "call",
+            "whatsapp",
+            "email",
+            "mail"
+          ],
           "text": "You can WhatsApp or call us, or email {email}. The \"Plan your session\" section has all the options."
         },
         {
-          "keywords": ["team", "who are", "facilitator"],
+          "keywords": [
+            "team",
+            "who are",
+            "facilitator"
+          ],
           "text": "You can meet our facilitators on the Team page, linked in the menu."
         },
         {
-          "keywords": ["video", "watch", "youtube"],
+          "keywords": [
+            "video",
+            "watch",
+            "youtube"
+          ],
           "text": "Our latest videos are in the Watch section, and the Videos page has the full collection."
         },
         {
@@ -950,15 +1031,26 @@
           "text": "Yes — we perform as well as facilitate: live band, percussion ensemble, acoustic sets, fusion, dhol and procession, and full fest stage shows. The Shows page has every format."
         },
         {
-          "keywords": ["game", "play"],
+          "keywords": [
+            "game",
+            "play"
+          ],
           "text": "Try the rhythm game in the \"Play the circle\" section. Copy the pattern, keep your lives and climb the ranks!"
         },
         {
-          "keywords": ["what is", "drum circle", "djembe"],
+          "keywords": [
+            "what is",
+            "drum circle",
+            "djembe"
+          ],
           "text": "A drum circle is a facilitated group session where everyone plays a djembe or percussion together and builds rhythms as one."
         },
         {
-          "keywords": ["hi", "hello", "hey"],
+          "keywords": [
+            "hi",
+            "hello",
+            "hey"
+          ],
           "text": "Hello! Ask me about experiences, group sizes, family events or how to book."
         }
       ],
@@ -1368,7 +1460,7 @@
       },
       "home": {
         "heading": "Welcome back",
-        "lead": "Content editing arrives in the next update. For now, this confirms you’re signed in to the admin area.",
+        "lead": "Edit your site here. Changes save as a draft, so you can preview them before you publish.",
         "signedInAs": "Signed in as",
         "viewSite": "View site",
         "signOut": "Sign out",
@@ -1555,7 +1647,10 @@
       "name": "[NAME]",
       "role": "Founder & lead facilitator",
       "bio": "[One-line bio: where they trained, what they love about rhythm.]",
-      "skills": ["Djembe", "Group energy"],
+      "skills": [
+        "Djembe",
+        "Group energy"
+      ],
       "funFact": "[Add a fun fact]",
       "photo": {
         "src": "/images/team/member-1.webp",
@@ -1568,7 +1663,10 @@
       "name": "[NAME]",
       "role": "Facilitator",
       "bio": "[One-line bio: where they trained, what they love about rhythm.]",
-      "skills": ["Body percussion", "Kids & families"],
+      "skills": [
+        "Body percussion",
+        "Kids & families"
+      ],
       "funFact": "[Add a fun fact]",
       "photo": {
         "src": "/images/team/member-2.webp",
@@ -1581,7 +1679,10 @@
       "name": "[NAME]",
       "role": "Percussion mentor",
       "bio": "[One-line bio: where they trained, what they love about rhythm.]",
-      "skills": ["Folk rhythms", "Lezim"],
+      "skills": [
+        "Folk rhythms",
+        "Lezim"
+      ],
       "funFact": "[Add a fun fact]",
       "photo": {
         "src": "/images/team/member-3.webp",
@@ -1594,7 +1695,10 @@
       "name": "[NAME]",
       "role": "Event producer",
       "bio": "[One-line bio: where they trained, what they love about rhythm.]",
-      "skills": ["Corporate events", "Logistics"],
+      "skills": [
+        "Corporate events",
+        "Logistics"
+      ],
       "funFact": "[Add a fun fact]",
       "photo": {
         "src": "/images/team/member-4.webp",
@@ -1607,7 +1711,10 @@
       "name": "[NAME]",
       "role": "Community lead",
       "bio": "[One-line bio: where they trained, what they love about rhythm.]",
-      "skills": ["Workshops", "Outreach"],
+      "skills": [
+        "Workshops",
+        "Outreach"
+      ],
       "funFact": "[Add a fun fact]",
       "photo": {
         "src": "/images/team/member-5.webp",
@@ -1620,7 +1727,10 @@
       "name": "[NAME]",
       "role": "Sound & setup",
       "bio": "[One-line bio: where they trained, what they love about rhythm.]",
-      "skills": ["Audio", "On-site crew"],
+      "skills": [
+        "Audio",
+        "On-site crew"
+      ],
       "funFact": "[Add a fun fact]",
       "photo": {
         "src": "/images/team/member-6.webp",

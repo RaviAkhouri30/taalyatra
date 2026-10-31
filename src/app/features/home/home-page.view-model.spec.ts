@@ -1,13 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
+import { APP_PREVIEW } from '@core/tokens/app-preview.token';
 import { SiteVisibility } from '@shared/models/site-visibility.model';
 import { provideVisibility } from '@shared/testing/fixtures';
 import { HomePageViewModel } from './home-page.view-model';
 
 describe('HomePageViewModel', () => {
-  function setUp(visibility?: SiteVisibility) {
+  function setUp(visibility?: SiteVisibility, preview = false) {
     TestBed.configureTestingModule({
-      providers: [HomePageViewModel, provideVisibility(visibility)],
+      providers: [
+        HomePageViewModel,
+        provideVisibility(visibility),
+        { provide: APP_PREVIEW, useValue: preview },
+      ],
     });
     return TestBed.inject(HomePageViewModel);
   }
@@ -38,5 +43,14 @@ describe('HomePageViewModel', () => {
     expect(model.shown().assistant).toBe(false);
     expect(model.shown().faq).toBe(true);
     expect(model.shown().intro).toBe(true);
+  });
+
+  it("should skip the intro in the editor's preview", async () => {
+    const model = setUp(undefined, true);
+
+    await firstValueFrom(model.init(), { defaultValue: undefined });
+
+    expect(model.shown().intro).toBe(false);
+    expect(model.shown().gallery).toBe(true);
   });
 });

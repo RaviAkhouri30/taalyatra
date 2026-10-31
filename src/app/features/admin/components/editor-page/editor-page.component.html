@@ -1,0 +1,38 @@
+@if (model.data(); as page) {
+  <div class="ep" [class.ep--preview]="model.previewOpen()">
+    <div class="ep-main">
+      <div class="ep-head">
+        <h1 class="d">{{ page.tab.label }}</h1>
+        <button
+          type="button"
+          class="ep-toggle"
+          aria-controls="editor-preview"
+          [attr.aria-expanded]="model.previewOpen()"
+          (click)="model.togglePreview()"
+        >
+          {{ model.previewOpen() ? 'Back to editing' : 'Show preview' }}
+        </button>
+      </div>
+      @for (entry of page.sections; track entry.section.id) {
+        <section
+          class="ep-card"
+          [attr.aria-labelledby]="entry.titleId"
+          (focusin)="model.focus(entry.section)"
+        >
+          <h2 class="d" [id]="entry.titleId">{{ entry.section.title }}</h2>
+          @if (entry.section.tip) {
+            <p class="ep-tip">{{ entry.section.tip }}</p>
+          }
+          <app-schema-fields
+            [fields]="entry.section.fields"
+            [group]="entry.form"
+            [idPrefix]="entry.fieldPrefix"
+          />
+        </section>
+      }
+    </div>
+    <aside id="editor-preview" class="ep-preview" aria-label="Preview">
+      <app-preview-frame [anchor]="model.activeAnchor()" [version]="model.previewVersion()" />
+    </aside>
+  </div>
+}

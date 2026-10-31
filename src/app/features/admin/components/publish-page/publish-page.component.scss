@@ -1,0 +1,125 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.pp {
+  display: grid;
+  gap: 20px;
+  max-width: 900px;
+  padding: 24px;
+
+  @include bp.down(bp.$phone) {
+    padding: 16px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+  }
+}
+
+.pp-loading {
+  margin: 0;
+  color: t.$color-muted-strong;
+}
+
+.pp-card {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid t.$color-line;
+  border-radius: 18px;
+  background: t.$color-surface-raised;
+
+  h2 {
+    margin: 0;
+    font-size: 19px;
+  }
+
+  > p {
+    margin: 0;
+    color: t.$color-muted-strong;
+  }
+
+  > button {
+    justify-self: start;
+  }
+}
+
+.pp-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: t.$color-surface;
+  }
+
+  small {
+    display: block;
+    color: t.$color-muted-strong;
+  }
+}
+
+.pp-issues {
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid t.$color-line;
+
+  h3 {
+    margin: 0 0 8px;
+    font-size: 15px;
+  }
+
+  ul {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding-left: 18px;
+    color: t.$color-muted-strong;
+  }
+
+  b {
+    color: t.$color-cream;
+  }
+}
+
+.pp-issues--error {
+  border-color: t.$color-amber-soft;
+
+  h3 {
+    color: t.$color-amber-soft;
+  }
+}
+
+.pp-confirm {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid t.$color-amber;
+  border-radius: 12px;
+
+  p {
+    margin: 0;
+    font-weight: 700;
+  }
+}
+
+.pp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
