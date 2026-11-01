@@ -53,8 +53,7 @@ See [docs/versioning.md](docs/versioning.md).
 ### Known issues
 
 - Lighthouse mobile Performance on the live home page is 89 against the target of 95, and LCP is
-  3.6 s. The hero text has to come back from Firestore before it can appear; getting under the
-  target needs build-time prerendering, which needs an ADR.
+  3.6 s. Nothing paints until the app has started and read its data. Options are in ADR-0016.
 
 ## [1.4.1] - 2026-10-29
 

@@ -53,9 +53,9 @@ Built from the approved [design](02-design.md) on `feat/performance-seo`.
   containers collapsing as the cause of the remaining mobile shift.
 - **`distinctUntilChanged` was removed** from the shell's navigation stream: the page meta
   changes on every navigation, even when the layout doesn't.
-- **Mobile LCP stays above 2.5 s.** It's bounded by the Firestore round trip before the hero
-  copy can render. Getting under the target needs build-time prerendering of the home page
-  (SSG), which changes the architecture and needs an ADR. It's proposed as a follow-up.
+- **Mobile LCP stays above 2.5 s.** Nothing paints until the app has started and read its data.
+  (This record first blamed the Firestore round trip alone and proposed prerendering;
+  [ADR-0016](../../architecture/adr/0016-mobile-lcp.md) tested that and has the options.)
 - **Verification tooling:** the local server needed gzip to make mobile LCP comparable with
   Azure Static Web Apps.
 

@@ -32,9 +32,8 @@
 | Desktop | LCP         | 1.2 s | 1.2 s |
 
 **Mobile is still below target.** Performance is 89 against 95, and LCP is 3.6 s against 2.5 s. Layout
-shift is fixed; LCP isn't, because the hero text has to come back from Firestore before it can
-appear. Getting under the target needs build-time prerendering of the home page, which changes the
-architecture and needs an ADR.
+shift is fixed; LCP isn't, because nothing paints until the app has started and read its data. Options
+are in [ADR-0016](../../architecture/adr/0016-mobile-lcp.md).
 
 ---
 
