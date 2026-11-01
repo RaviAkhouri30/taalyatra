@@ -6,7 +6,9 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
-### Added — content editor (0008, planned as 1.6.0)
+## [1.6.0] - 2026-10-31
+
+### Added
 
 - Content editor at `/admin`: a dashboard, then tabs for the offer and its dates, page content
   (site details, hero, section headings), sections and pages, and contact and links. Changes
@@ -25,6 +27,16 @@ See [docs/versioning.md](docs/versioning.md).
   edits are never replaced by accident.
 - Only the admin account may write content (`firestore.rules`, tested).
 
+### Known issues
+
+- Links between inner pages (for example Team to Videos) stay visible when their target page is
+  switched off; following one redirects home. They'll be hidden when the inner pages become
+  editable (1.8.0).
+- Lighthouse mobile Performance on the live home page is below the target of 95, and LCP is above
+  2.5 s. See `docs/aidlc/0008-admin-content-editor/04-verification.md`.
+
+## [1.5.0] - 2026-10-30
+
 ### Added
 
 - SEO: a description, canonical link, Open Graph and Twitter tags for every public page,
@@ -37,6 +49,12 @@ See [docs/versioning.md](docs/versioning.md).
   data, fallback fonts are metric-matched, photos are WebP (75–83 % smaller), and the Firestore
   chunk is preloaded. Layout shift drops to 0 on mobile and desktop.
 - Accessible names of the brand link and the game pads now match their visible text.
+
+### Known issues
+
+- Lighthouse mobile Performance on the live home page is 89 against the target of 95, and LCP is
+  3.6 s. The hero text has to come back from Firestore before it can appear; getting under the
+  target needs build-time prerendering, which needs an ADR.
 
 ## [1.4.1] - 2026-10-29
 

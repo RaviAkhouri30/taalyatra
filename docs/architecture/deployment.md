@@ -45,7 +45,8 @@ Hosting isn't used.
 When the site moves to `taalyatra.in`, change `siteUrl` in `environment.ts` (or set `SITE_URL`
 in CI).
 
-**Rules and data (manual, from a developer machine):**
+**Rules and data (manual, from a developer machine):** merging to `main` deploys the app, so when
+a release adds rules for new writes, do steps 1–3 **before** the merge.
 1. `npx firebase login`
 2. `npm run export:firestore -- <key.json>`: a dated backup in `backups/` (git-ignored)
 3. `npm run deploy:rules`
