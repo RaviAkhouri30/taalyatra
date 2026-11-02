@@ -12,7 +12,7 @@ service cloud.firestore {
       allow read: if true;
       allow update: if isAdmin()
         && section in ['hero', 'offer', 'audiences', 'experiences', 'rhythmGame', 'videos', 'team',
-                       'contact']
+                       'contact', 'gallery', 'shows']
         && isValidHomeSection(request.resource.data, resource.data);
     }
     match /site/{document} {
@@ -24,17 +24,39 @@ service cloud.firestore {
     match /pages/{page} {
       allow read: if true;
     }
+    // Collections: the admin's publish writes them as numbered documents and deletes the numbers
+    // it no longer uses (0009). The highest number allowed is the collection's item limit, which
+    // mirrors COLLECTION_MAX_ITEMS (content-limits.constants.ts).
     match /showFormats/{item} {
       allow read: if true;
+      allow create, update: if isAdmin() && isItemId(item, 20)
+        && isValidShowFormat(request.resource.data);
+      allow delete: if isAdmin();
     }
     match /videos/{item} {
       allow read: if true;
+      allow create, update: if isAdmin() && isItemId(item, 60)
+        && isValidVideo(request.resource.data);
+      allow delete: if isAdmin();
     }
     match /gallery/{item} {
       allow read: if true;
+      allow create, update: if isAdmin() && isItemId(item, 60)
+        && isValidGalleryItem(request.resource.data);
+      allow delete: if isAdmin();
     }
     match /team/{item} {
       allow read: if true;
+      allow create, update: if isAdmin() && isItemId(item, 24)
+        && isValidTeamMember(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    // The uploaded-image library: private to the admin. Visitors only ever get an image through a
+    // published document that uses it (0009, D11).
+    match /media/{id} {
+      allow read, delete: if isAdmin();
+      allow create, update: if isAdmin() && isValidMedia(id, request.resource.data);
     }
 
     // The editor's drafts and publish history: the admin's working space, private to the admin.
@@ -130,6 +152,101 @@ service cloud.firestore {
         && (!('widgets' in data) || (data.widgets is map
             && data.widgets.keys().hasOnly(['assistant', 'actionBar', 'whatsApp', 'utilityBar',
                                             'intro'])));
+    }
+
+    // A collection's numbered document, from 001 up to its item limit.
+    function isItemId(item, max) {
+      return item.matches('^[0-9]{3}$') && int(item) >= 1 && int(item) <= max;
+    }
+
+    function isOrder(value) {
+      return value is int && value >= 0;
+    }
+
+    function isValidImageFields(image) {
+      return isText(image.src, 1, 500)
+        && isText(image.alt, 0, 300)
+        && image.width is int && image.width > 0
+        && image.height is int && image.height > 0;
+    }
+
+    function isValidImage(image) {
+      let fields = ['src', 'alt', 'width', 'height'];
+      return image is map && image.keys().hasAll(fields) && image.keys().hasOnly(fields)
+        && isValidImageFields(image);
+    }
+
+    function isValidGalleryItem(data) {
+      let fields = ['src', 'alt', 'width', 'height', 'order'];
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields)
+        && isValidImageFields(data)
+        && isOrder(data.order);
+    }
+
+    function isValidTeamMember(data) {
+      let fields = ['name', 'role', 'bio', 'skills', 'funFact', 'photo', 'order'];
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields)
+        && isText(data.name, 1, 80)
+        && isText(data.role, 0, 80)
+        && isText(data.bio, 0, 400)
+        && data.skills is list && data.skills.size() <= 12
+        && isText(data.funFact, 0, 200)
+        && isValidImage(data.photo)
+        && isOrder(data.order);
+    }
+
+    function isValidShowFormat(data) {
+      let fields = ['icon', 'title', 'text', 'ensemble', 'setLength', 'bestFor', 'image', 'featured',
+                    'spotlight', 'order'];
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields)
+        && isText(data.icon, 1, 40)
+        && isText(data.title, 1, 80)
+        && isText(data.text, 0, 400)
+        && isText(data.ensemble, 0, 80)
+        && isText(data.setLength, 0, 40)
+        && isText(data.bestFor, 0, 120)
+        && isValidImage(data.image)
+        && data.featured is bool
+        && (data.spotlight == null || isValidSpotlight(data.spotlight))
+        && isOrder(data.order);
+    }
+
+    function isValidSpotlight(spotlight) {
+      let fields = ['eyebrow', 'title', 'primaryCta', 'secondaryCta'];
+      return spotlight is map && spotlight.keys().hasAll(fields) && spotlight.keys().hasOnly(fields)
+        && isText(spotlight.eyebrow, 0, 60)
+        && isText(spotlight.title, 0, 120)
+        && isText(spotlight.primaryCta, 0, 40)
+        && isText(spotlight.secondaryCta, 0, 40);
+    }
+
+    function isValidVideo(data) {
+      let fields = ['title', 'category', 'caption', 'image', 'duration', 'url', 'order'];
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields)
+        && isText(data.title, 1, 120)
+        && isText(data.category, 0, 40)
+        && isText(data.caption, 0, 200)
+        && isValidImage(data.image)
+        && isText(data.duration, 0, 12)
+        && isText(data.url, 8, 500) && data.url.matches('^https://.*')
+        && isOrder(data.order);
+    }
+
+    // The stored id must be the document's own, in the only folder the upload function signs for.
+    function isValidMedia(id, data) {
+      let fields = ['publicId', 'version', 'width', 'height', 'bytes', 'format', 'name',
+                    'description', 'uploadedAt'];
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields)
+        && id.matches('^[0-9a-f-]{36}$')
+        && data.publicId == 'taal-yatra/media/' + id
+        && data.version is int && data.version > 0
+        && data.width is int && data.width > 0
+        && data.height is int && data.height > 0
+        && data.bytes is int && data.bytes >= 0
+        && isText(data.format, 1, 10)
+        && isText(data.name, 0, 200)
+        && isText(data.description, 0, 300)
+        && isText(data.uploadedAt, 1, 40);
     }
 
     function isDateOrNull(value) {

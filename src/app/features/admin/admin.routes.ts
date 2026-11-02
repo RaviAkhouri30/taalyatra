@@ -1,4 +1,5 @@
 import { type Routes } from '@angular/router';
+import { provideMedia } from '@core/config/provide-media';
 import { adminGuard } from './guards/admin.guard';
 import { signedOutGuard } from './guards/signed-out.guard';
 import { unsavedChangesGuard } from './guards/unsaved-changes.guard';
@@ -15,6 +16,8 @@ const ADMIN_TITLE_SUFFIX = 'Admin — Taal Yatra';
 const adminRoutes: Routes = [
   {
     path: '',
+    // Here and not with the other ports: public pages must never download the upload code (D9).
+    providers: [provideMedia()],
     loadComponent: () => import('./components/admin-shell/admin-shell.component'),
     children: [
       {

@@ -9,6 +9,9 @@ import { FAKE_ADMIN_ACCOUNT, FAKE_VISITOR_ACCOUNT } from './fake-auth.constants'
 /** Where the fake session is kept, like Firebase Auth's local persistence (survives reloads). */
 export const FAKE_SESSION_STORAGE_KEY = 'taal-yatra.fake-auth.session';
 
+/** What the fake session answers with instead of a real ID token. */
+export const FAKE_ID_TOKEN = 'fake-id-token';
+
 /**
  * In-memory auth for development and the e2e suite: knows the fake admin (UID =
  * `environment.adminUid`) and one non-admin account. The session lasts until reload.
@@ -28,6 +31,10 @@ export class FakeAuthService implements IAuthService {
   public constructor() {
     // Assigned here because it reads `current`, a private field declared after the public one.
     this.user$ = this.current.asObservable();
+  }
+
+  public idToken(): Observable<string | null> {
+    return defer(() => of(this.current.value ? FAKE_ID_TOKEN : null));
   }
 
   public signIn(email: string, password: string): Observable<IAuthUser> {

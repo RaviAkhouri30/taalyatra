@@ -25,5 +25,6 @@ export const environment: IAppEnvironment = {
   // creates an emulator user with it; keep the two in step.
   adminUid: '5zsz2DlUaja2Ss7wbFTrpiMMROk2',
   fakeLatencyMs: 0,
+  cloudinary: { cloudName: '' },
   emailJs: { serviceId: '', templateId: '', publicKey: '' },
 };

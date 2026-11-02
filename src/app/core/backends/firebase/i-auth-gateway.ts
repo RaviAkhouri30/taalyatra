@@ -5,6 +5,7 @@ import { type IFirebaseConfig, type IFirestoreEmulator } from '@core/interfaces/
 /** The Firebase Auth operations `FirebaseAuthService` needs; implemented by `AuthGateway`. */
 export interface IAuthGateway {
   readonly user$: Observable<IAuthUser | null>;
+  idToken(): Observable<string | null>;
   signIn(email: string, password: string): Observable<IAuthUser>;
   signOut(): Observable<void>;
   /** @param continueUrl Absolute URL the reset page links back to. */

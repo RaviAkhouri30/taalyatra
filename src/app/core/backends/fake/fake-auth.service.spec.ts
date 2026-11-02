@@ -5,7 +5,7 @@ import { LocalStoreService } from '@core/services/local-store.service';
 import { APP_ENVIRONMENT } from '@core/tokens/app-environment.token';
 import { environment } from '@env/environment';
 import { FAKE_ADMIN_ACCOUNT, FAKE_VISITOR_ACCOUNT } from './fake-auth.constants';
-import { FAKE_SESSION_STORAGE_KEY, FakeAuthService } from './fake-auth.service';
+import { FAKE_SESSION_STORAGE_KEY, FakeAuthService, FAKE_ID_TOKEN } from './fake-auth.service';
 
 describe('FakeAuthService', () => {
   /** Stands in for the browser's storage; it outlives each TestBed, like a real reload. */
@@ -48,6 +48,15 @@ describe('FakeAuthService', () => {
     });
     await firstValueFrom(auth.signOut());
     await expect(firstValueFrom(auth.user$)).resolves.toBeNull();
+  });
+
+  it('should have an ID token only while someone is signed in', async () => {
+    const auth = create();
+    await expect(firstValueFrom(auth.idToken())).resolves.toBeNull();
+
+    await firstValueFrom(auth.signIn(FAKE_ADMIN_ACCOUNT.email, FAKE_ADMIN_ACCOUNT.password));
+
+    await expect(firstValueFrom(auth.idToken())).resolves.toBe(FAKE_ID_TOKEN);
   });
 
   it('should sign the non-admin account in with its own UID', async () => {

@@ -20,7 +20,7 @@ Reference implementation of the architecture: `/Users/raviakhouri/MyWorks/Resume
 | Async / Data flow | RxJS 7 for **all** asynchronous work                                                          |
 | Backend / DB      | Firebase Firestore 13, behind the `IHttpBackend` adapter                                      |
 | Authentication    | Firebase Auth, behind the `IAuthService` adapter                                              |
-| Media             | Cloudinary via `NgOptimizedImage` + `provideCloudinaryLoader`                                 |
+| Media             | Cloudinary via `NgOptimizedImage` + our `IMAGE_LOADER` (`provideMediaImages`, ADR-0017)       |
 | Email             | EmailJS (`@emailjs/browser` 5), behind the `IEmailService` adapter                            |
 | Unit tests        | Vitest 4 (`@angular/build:unit-test`) + `@vitest/coverage-v8`                                 |
 | E2E tests         | Playwright 1.64 + `@axe-core/playwright`                                                      |

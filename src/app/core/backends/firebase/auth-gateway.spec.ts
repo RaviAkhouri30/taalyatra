@@ -1,5 +1,6 @@
 import {
   connectAuthEmulator,
+  getAuth,
   onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
@@ -29,6 +30,19 @@ describe('AuthGateway', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it("should get the signed-in user's ID token", async () => {
+    const getIdToken = vi.fn(() => Promise.resolve('id-token'));
+    vi.mocked(getAuth).mockReturnValueOnce({ currentUser: { getIdToken } } as never);
+
+    await expect(firstValueFrom(new AuthGateway(config, null).idToken())).resolves.toBe('id-token');
+  });
+
+  it('should have no ID token when nobody is signed in', async () => {
+    vi.mocked(getAuth).mockReturnValueOnce({ currentUser: null } as never);
+
+    await expect(firstValueFrom(new AuthGateway(config, null).idToken())).resolves.toBeNull();
   });
 
   it('should connect to the emulator when one is given', () => {

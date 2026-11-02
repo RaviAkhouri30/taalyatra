@@ -28,6 +28,11 @@ export interface IAppEnvironment {
   readonly authEmulator: IFirestoreEmulator | null;
   /** UID of the single admin account (an identifier, not a secret; ADR-0012). */
   readonly adminUid: string;
+  /**
+   * Cloudinary's cloud name (public: it's in every image URL). Empty selects the fake media adapter
+   * and a local placeholder for uploaded images.
+   */
+  readonly cloudinary: { readonly cloudName: string };
   /** EmailJS identifiers (public by design). Empty values select the fake email adapter. */
   readonly emailJs: {
     readonly serviceId: string;

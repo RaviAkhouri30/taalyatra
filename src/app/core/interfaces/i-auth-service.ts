@@ -32,6 +32,9 @@ export abstract class IAuthService {
   /** The signed-in account, or `null`; emits the current state to each new subscriber. */
   public abstract readonly user$: Observable<IAuthUser | null>;
 
+  /** The signed-in account's current ID token, refreshed when needed, or `null`; emits once. */
+  public abstract idToken(): Observable<string | null>;
+
   /** Signs in; emits the account once and completes. */
   public abstract signIn(email: string, password: string): Observable<IAuthUser>;
 
