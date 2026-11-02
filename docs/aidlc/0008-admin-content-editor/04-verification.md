@@ -49,7 +49,7 @@ taking turns for 7 mobile runs each (Lighthouse 13.6.0):
 - **No extra Firestore query:** the live trace shows the same two queries, because `site/visibility`
   comes back in the `site` read. The initial bundle grew by 2.93 kB in transfer.
 
-Getting under the target still needs build-time prerendering, which needs an ADR.
+Options for getting under the target are in [ADR-0016](../../architecture/adr/0016-mobile-lcp.md).
 
 ---
 
