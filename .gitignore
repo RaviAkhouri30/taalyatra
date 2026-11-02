@@ -68,3 +68,9 @@ public/runtime-config.js
 
 # Design prototype exported from the design canvas (local reference only)
 /design/prototype/
+
+# Upload function (api/)
+/api/node_modules
+/api/dist
+/api/coverage
+/api/local.settings.json

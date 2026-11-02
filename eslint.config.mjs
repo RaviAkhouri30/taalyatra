@@ -58,6 +58,9 @@ export default defineConfig(
       'playwright-report/**',
       'test-results/**',
       '.scannerwork/**',
+      'api/dist/**',
+      'api/coverage/**',
+      'api/vitest.config.ts',
       // Design prototype exported from the design canvas — reference material, not app source.
       'design/**',
     ],
@@ -168,6 +171,7 @@ export default defineConfig(
     files: [
       '**/*.spec.ts',
       'src/app/**/testing/**/*.ts',
+      'api/src/testing/**/*.ts',
       'e2e/**/*.ts',
       'playwright.config.ts',
       'playwright.firebase.config.ts',
@@ -206,7 +210,17 @@ export default defineConfig(
   {
     // Node tooling scripts (seed, CI config). Not app code, so the RxJS-only rule does not apply.
     files: ['scripts/**/*.mjs'],
-    languageOptions: { globals: { process: 'readonly', console: 'readonly' } },
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+        console: 'readonly',
+        fetch: 'readonly',
+        FormData: 'readonly',
+        Blob: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+      },
+    },
   },
   // Formatting is owned by Prettier; disable conflicting stylistic rules last.
   prettier,

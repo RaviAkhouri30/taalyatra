@@ -38,6 +38,14 @@ jobs:
         run: npm run test:rules
       - name: Build
         run: npm run build
+      # Built here for the same reason as the site, then pruned, so only what runs gets deployed.
+      - name: Test and build the upload function
+        working-directory: api
+        run: |
+          npm ci
+          npm run test:coverage
+          npm run build
+          npm prune --omit=dev
       # The Firebase web config is public by design but kept out of git (CLAUDE.md §10); the
       # script fails the job if any secret is missing, so a broken config never deploys.
       - name: Write runtime config
@@ -61,7 +69,8 @@ jobs:
           # The app is already built above, so the action only uploads the output folder.
           skip_app_build: true
           app_location: "dist/taal-yatra/browser" # Built app content directory
-          api_location: "" # Api source code path - optional
+          api_location: "api" # The upload function (ADR-0017), already built above
+          skip_api_build: true
           output_location: "" # Unused when skip_app_build is true
           ###### End of Repository/Build Configurations ######
 
