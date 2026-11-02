@@ -213,4 +213,4 @@ sequenceDiagram
 
 ---
 
-**Approval:** ☐ Pending
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-02, with every recommendation: the async entry-point exception, App Check stays deferred, no PDFs in 1.7.0, real-phone speed reports as a separate change after this release. G10 and the other image fields move to 1.8.0.
