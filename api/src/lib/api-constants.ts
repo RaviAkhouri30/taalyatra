@@ -17,8 +17,12 @@ export const MEDIA_FOLDER = 'taal-yatra/media';
 /** The file types Cloudinary will accept, whatever the browser sends. */
 export const ALLOWED_FORMATS = 'jpg,png,webp,heic';
 
-/** Applied by Cloudinary before storing: upright, at most 2400 px wide, no metadata (D7). */
-export const INCOMING_TRANSFORMATION = 'a_exif/c_limit,w_2400';
+/**
+ * Applied by Cloudinary before storing: upright, at most 2400 px wide, no metadata (D7).
+ * `fl_force_strip` is what guarantees the last part: without it, a photo Cloudinary has no need to
+ * resize or rotate is stored with its GPS location, as the proof on the real account showed.
+ */
+export const INCOMING_TRANSFORMATION = 'a_exif/c_limit,fl_force_strip,w_2400';
 
 /** Cloudinary's API, for server-side calls. */
 export const CLOUDINARY_API_URL = 'https://api.cloudinary.com/v1_1';

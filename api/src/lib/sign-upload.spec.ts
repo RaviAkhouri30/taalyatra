@@ -38,7 +38,7 @@ describe('signUpload', () => {
       allowed_formats: 'jpg,png,webp,heic',
       public_id: `taal-yatra/media/${TEST_ID}`,
       timestamp: String(NOW_SECONDS),
-      transformation: 'a_exif/c_limit,w_2400',
+      transformation: 'a_exif/c_limit,fl_force_strip,w_2400',
       api_key: 'key-123',
     });
   });
@@ -56,7 +56,7 @@ describe('signUpload', () => {
     const { fields } = await signedFields({ public_id: 'evil', transformation: 'x', folder: 'y' });
 
     expect(fields['public_id']).toBe(`taal-yatra/media/${TEST_ID}`);
-    expect(fields['transformation']).toBe('a_exif/c_limit,w_2400');
+    expect(fields['transformation']).toBe('a_exif/c_limit,fl_force_strip,w_2400');
     expect(fields).not.toHaveProperty('folder');
   });
 

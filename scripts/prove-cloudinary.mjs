@@ -1,6 +1,7 @@
 // Proves the 0009 design's assumptions on a real Cloudinary account, before anything relies on them:
 //   1. a SHA-256 signed upload with the function's exact settings is accepted;
-//   2. the incoming transformation removes GPS data from the stored file (a control upload without it
+//   2. the incoming transformation removes GPS data from the stored file, whether Cloudinary has to
+//      change the photo or not, and still shrinks and straightens it (a control upload without it
 //      shows that this test can actually see GPS data);
 //   3. delivered images carry no GPS data either;
 //   4. optionally, a real iPhone HEIC photo uploads and can be delivered.
@@ -25,6 +26,8 @@ const SAMPLE_JPEG = 'public/images/og/taal-yatra.jpg';
 const GPS_IFD_TAG = 0x8825;
 const API = 'https://api.cloudinary.com/v1_1';
 const EXIF_HEADER = Buffer.from('Exif\0\0', 'latin1');
+const ORIENTATION_TAG = 0x0112;
+const ORIENTATION_SIDEWAYS = 6;
 
 /** @returns A rational number: numerator, then denominator. */
 function rational(numerator, denominator = 1) {
@@ -34,8 +37,8 @@ function rational(numerator, denominator = 1) {
   return bytes;
 }
 
-/** @returns A TIFF block whose only content is a GPS position (Pune), as a phone would write. */
-function gpsTiff() {
+/** @returns A TIFF block holding a GPS position (Pune) and any orientation, as a phone would write. */
+function gpsTiff(orientation) {
   const entry = (tag, type, count, value) => {
     const bytes = Buffer.alloc(12);
     bytes.writeUInt16LE(tag, 0);
@@ -55,14 +58,18 @@ function gpsTiff() {
     return Buffer.concat([head, ...entries, long(nextIfd)]);
   };
   const IFD0_OFFSET = 8;
-  const GPS_OFFSET = IFD0_OFFSET + 18;
+  const first = [
+    ...(orientation ? [entry(ORIENTATION_TAG, 3, 1, long(orientation))] : []),
+    entry(GPS_IFD_TAG, 4, 1, long(0)),
+  ];
+  const GPS_OFFSET = IFD0_OFFSET + 2 + first.length * 12 + 4;
   const GPS_LENGTH = 2 + 4 * 12 + 4;
   const latitudeOffset = GPS_OFFSET + GPS_LENGTH;
   const longitudeOffset = latitudeOffset + 24;
   return Buffer.concat([
     Buffer.from([0x49, 0x49, 0x2a, 0x00]),
     long(IFD0_OFFSET),
-    ifd([entry(GPS_IFD_TAG, 4, 1, long(GPS_OFFSET))]),
+    ifd([...first.slice(0, -1), entry(GPS_IFD_TAG, 4, 1, long(GPS_OFFSET))]),
     ifd([
       entry(1, 2, 2, Buffer.from('N\0\0\0', 'latin1')),
       entry(2, 5, 3, long(latitudeOffset)),
@@ -79,8 +86,8 @@ function gpsTiff() {
 }
 
 /** @returns The JPEG with a GPS block inserted straight after its start marker. */
-function withGps(jpeg) {
-  const payload = Buffer.concat([EXIF_HEADER, gpsTiff()]);
+function withGps(jpeg, orientation) {
+  const payload = Buffer.concat([EXIF_HEADER, gpsTiff(orientation)]);
   const header = Buffer.alloc(4);
   header.writeUInt16BE(0xffe1, 0);
   header.writeUInt16BE(payload.length + 2, 2);
@@ -171,19 +178,24 @@ async function upload(account, file, transformation) {
   });
   const body = await response.json();
   if (!response.ok) {
-    throw new Error(`Upload refused (${response.status}): ${body.error?.message ?? 'no details'}`);
+    // Cloudinary quotes the signature in its error, and this output is meant to be safe to share.
+    const details = (body.error?.message ?? 'no details').replace(
+      /\b[0-9a-f]{40,}\b/gu,
+      '<hidden>',
+    );
+    throw new Error(`Upload refused (${response.status}): ${details}`);
   }
   return body;
 }
 
-/** Deletes a test upload. */
+/** Deletes a test upload. @returns Whether Cloudinary confirmed it. */
 async function destroy(account, publicId) {
   const params = {
     invalidate: 'true',
     public_id: publicId,
     timestamp: String(Math.floor(Date.now() / 1000)),
   };
-  await fetch(`${API}/${account.cloud}/image/destroy`, {
+  const response = await fetch(`${API}/${account.cloud}/image/destroy`, {
     method: 'POST',
     body: new URLSearchParams({
       ...params,
@@ -191,6 +203,8 @@ async function destroy(account, publicId) {
       signature: signParams(params, account.secret),
     }),
   });
+  const body = await response.json();
+  return body.result === 'ok';
 }
 
 /** @returns A delivered image's bytes, asked for as a browser that accepts WebP would. */
@@ -215,56 +229,101 @@ function report(name, passed, detail = '') {
 function selfCheck(sample) {
   report('this test sees GPS data in a tagged photo', hasGps(withGps(sample)));
   report('this test sees none in the untagged sample', !hasGps(sample));
+  report(
+    'this test sees GPS data in a sideways photo',
+    hasGps(withGps(sample, ORIENTATION_SIDEWAYS)),
+  );
+}
+
+/** Uploads a photo with the function's settings; reports its GPS and the size it should end up. */
+async function checkPhoto(account, uploaded, photo) {
+  const stored = await upload(account, photo.file, INCOMING_TRANSFORMATION);
+  uploaded.push(stored.public_id);
+  const gps = hasGps(await download(stored.secure_url, '*/*'));
+  const size = `${stored.width}x${stored.height}`;
+  report(
+    `${photo.name}: no GPS in the stored file, right size and way up`,
+    !gps && size === photo.size,
+    `${size}, wanted ${photo.size}, ${gps ? 'GPS STILL THERE' : 'no GPS'}`,
+  );
+  return stored;
+}
+
+/** A real HEIC photo. A photo with no location would pass, so the first step shows it has one. */
+async function checkHeic(account, uploaded, heicPath) {
+  const file = readFileSync(heicPath);
+  const control = await upload(account, file, null);
+  uploaded.push(control.public_id);
+  report(
+    'control: the HEIC photo has GPS as uploaded',
+    hasGps(await download(control.secure_url, '*/*')),
+  );
+  const heic = await upload(account, file, INCOMING_TRANSFORMATION);
+  uploaded.push(heic.public_id);
+  report('a HEIC photo uploads', true, `${heic.format}, ${heic.width}x${heic.height}`);
+  report('its stored file has no GPS', !hasGps(await download(heic.secure_url, '*/*')));
+  const asJpeg = await download(delivered(account, 'f_jpg,q_auto,w_800', heic.public_id));
+  report(
+    'it can be delivered as an image browsers show',
+    asJpeg[0] === 0xff,
+    `${asJpeg.length} bytes`,
+  );
 }
 
 /** The real checks; everything uploaded is tracked, so it gets deleted even after a failure. */
-async function prove(account, tagged, uploaded, heicPath) {
-  const control = await upload(account, tagged, null);
+async function prove(account, sample, uploaded, heicPath) {
+  const control = await upload(account, withGps(sample), null);
   uploaded.push(control.public_id);
-  const controlStored = await download(control.secure_url, '*/*');
   report(
     'control: without the transformation, GPS stays in the stored file',
-    hasGps(controlStored),
+    hasGps(await download(control.secure_url, '*/*')),
   );
-
-  const main = await upload(account, tagged, INCOMING_TRANSFORMATION);
-  uploaded.push(main.public_id);
+  // Bigger than the 2400 px limit. Small and sideways matter too: Cloudinary only rewrites a photo it
+  // has to change, and the small one is the case that kept its GPS before fl_force_strip.
+  const large = await download(delivered(account, 'c_scale,f_jpg,w_3000', control.public_id));
+  const main = await checkPhoto(account, uploaded, {
+    name: 'small photo',
+    file: withGps(sample),
+    size: '1200x630',
+  });
   report("a SHA-256 signed upload with the function's settings is accepted", true);
-  report(
-    'with the transformation, the stored file has no GPS',
-    !hasGps(await download(main.secure_url, '*/*')),
-  );
+  await checkPhoto(account, uploaded, {
+    name: 'large photo',
+    file: withGps(large),
+    size: '2400x1260',
+  });
+  await checkPhoto(account, uploaded, {
+    name: 'sideways photo',
+    file: withGps(sample, ORIENTATION_SIDEWAYS),
+    size: '630x1200',
+  });
   for (const format of ['f_auto,q_auto,w_800', 'f_jpg,q_auto,w_800']) {
     const image = await download(delivered(account, format, main.public_id));
     report(`delivered image (${format}) has no GPS`, !hasGps(image), `${image.length} bytes`);
   }
   if (heicPath) {
-    const heic = await upload(account, readFileSync(heicPath), INCOMING_TRANSFORMATION);
-    uploaded.push(heic.public_id);
-    report('a real HEIC photo uploads', true, `${heic.format}, ${heic.width}x${heic.height}`);
-    report('its stored file has no GPS', !hasGps(await download(heic.secure_url, '*/*')));
-    const asJpeg = await download(delivered(account, 'f_jpg,q_auto,w_800', heic.public_id));
-    report(
-      'it can be delivered as an image browsers show',
-      asJpeg[0] === 0xff,
-      `${asJpeg.length} bytes`,
-    );
+    await checkHeic(account, uploaded, heicPath);
   }
 }
 
 const args = process.argv.slice(2);
+const heicPath = args.find((arg) => !arg.startsWith('--'));
 const sample = readFileSync(SAMPLE_JPEG);
 selfCheck(sample);
 if (!args.includes('--dry-run')) {
   const account = readAccount();
   const uploaded = [];
   try {
-    await prove(account, withGps(sample), uploaded, args[0]);
+    await prove(account, sample, uploaded, heicPath);
   } catch (error) {
     report('the checks ran to the end', false, error.message);
   } finally {
-    await Promise.all(uploaded.map((id) => destroy(account, id)));
-    console.log(`Deleted ${uploaded.length} test upload(s).`);
+    const deleted = await Promise.all(uploaded.map((id) => destroy(account, id)));
+    const confirmed = deleted.filter(Boolean).length;
+    report(
+      `Cloudinary confirmed deleting ${confirmed} of ${uploaded.length} test upload(s)`,
+      confirmed === uploaded.length,
+    );
   }
 }
 const failed = results.filter((passed) => !passed).length;
