@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   Injector,
   afterNextRender,
   effect,
@@ -11,6 +12,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { BaseComponent } from '@shared/base/base-component';
 import { type IUnsavedChanges } from '../../guards/unsaved-changes.guard';
+import { EditorNavService } from '../../services/editor-nav.service';
 import { type IEditorPage, EditorPageViewModel } from '../../view-models/editor-page.view-model';
 import { PreviewFrameComponent } from '../preview-frame/preview-frame.component';
 import { PublishBarComponent } from '../publish-bar/publish-bar.component';
@@ -35,6 +37,8 @@ export default class EditorPageComponent
 {
   protected override readonly model = inject(EditorPageViewModel);
 
+  protected readonly nav = inject(EditorNavService);
+
   private readonly document = inject(DOCUMENT);
   private readonly injector = inject(Injector);
   private readonly fragment = inject(ActivatedRoute).snapshot.fragment;
@@ -42,6 +46,11 @@ export default class EditorPageComponent
 
   public constructor() {
     super();
+    // Only a page with a preview column has a use for the top bar's Preview button.
+    this.nav.previewAvailable.set(true);
+    inject(DestroyRef).onDestroy(() => {
+      this.nav.previewAvailable.set(false);
+    });
     // The fields scroll in their own column, which the router's anchor scrolling can't reach. So a
     // link from the review page is followed here, once, when the cards exist.
     effect(() => {

@@ -270,8 +270,10 @@ $rail-width: 64px;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 10px 20px;
-  padding: 12px 24px;
+  gap: 8px 16px;
+  min-height: 60px;
+  box-sizing: border-box;
+  padding: 10px 24px;
 
   @include bp.down(bp.$phone) {
     padding: 10px 16px;
@@ -282,7 +284,9 @@ $rail-width: 64px;
   display: flex;
   align-items: center;
   gap: 10px;
-  color: inherit;
+  color: t.$color-cream;
+  font-size: 16px;
+  font-weight: 600;
   text-decoration: none;
 
   img {
@@ -290,10 +294,8 @@ $rail-width: 64px;
     background: t.$color-logo-ground;
   }
 
+  // Phones: there's no room for the words, but the link still needs its name.
   span {
-    color: t.$color-muted-strong;
-
-    // Phones: there's no room for the words, but the link still needs its name.
     @include bp.down(bp.$phone) {
       position: absolute;
       width: 1px;
@@ -303,19 +305,13 @@ $rail-width: 64px;
       white-space: nowrap;
     }
   }
-
-  b {
-    color: t.$color-cream;
-    font-family: t.$font-display;
-    margin-right: 4px;
-  }
 }
 
 .ed-account {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 
   // Phones: its parts join the bar directly, so the buttons share the first line.
   @include bp.down(bp.$phone) {
@@ -323,8 +319,8 @@ $rail-width: 64px;
   }
 
   .who {
-    margin: 0;
-    font-size: 13px;
+    margin: 0 6px 0 0;
+    font-size: 14px;
     color: t.$color-muted-strong;
     overflow-wrap: anywhere;
 
@@ -332,8 +328,48 @@ $rail-width: 64px;
     @include bp.down(bp.$phone) {
       flex: 1 0 100%;
       order: 1;
+      margin: 0;
       font-size: 12.5px;
     }
+  }
+}
+
+.ed-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  min-height: 38px;
+  padding: 6px 14px;
+  border: 1px solid t.$color-line;
+  border-radius: t.$radius-pill;
+  background: transparent;
+  color: t.$color-cream;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover {
+    background: t.$color-surface;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  &[aria-pressed='false'] {
+    color: t.$color-muted-strong;
+  }
+}
+
+// Phones and tablets switch between fields and preview on the page itself.
+.ed-action--preview {
+  @include bp.down(bp.$tablet) {
+    display: none;
   }
 }
 

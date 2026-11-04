@@ -133,6 +133,11 @@ export const ICON_REGISTRY: Readonly<Record<IconName, readonly IconNode[]>> = {
     { tag: 'rect', x: 7, y: 2, width: 10, height: 20, rx: 2 },
     { tag: 'path', d: 'M11 18h2' },
   ],
+  [IconName.Columns]: [
+    { tag: 'rect', x: 3, y: 4, width: 18, height: 16, rx: 2 },
+    { tag: 'path', d: 'M12 4v16' },
+  ],
+  [IconName.ArrowUpRight]: [{ tag: 'path', d: 'M7 17L17 7M8 7h9v9' }],
   [IconName.Refresh]: [{ tag: 'path', d: 'M20 11a8 8 0 1 0-2.3 6M20 5v6h-6' }],
   [IconName.ExternalLink]: [
     {

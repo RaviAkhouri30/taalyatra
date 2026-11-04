@@ -1,5 +1,9 @@
 @if (model.data(); as page) {
-  <div class="ep" [class.ep--preview]="model.previewOpen()">
+  <div
+    class="ep"
+    [class.ep--preview]="model.previewOpen()"
+    [class.ep--no-preview]="nav.previewHidden()"
+  >
     <div class="ep-main">
       <div class="ep-form">
         <div class="ep-head">

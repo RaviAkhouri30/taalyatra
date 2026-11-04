@@ -12,6 +12,7 @@ import { LoggerService } from '@core/services/logger.service';
 import { CLOCK } from '@core/tokens/clock.token';
 import { provideFakeContent, provideSiteConfig } from '@shared/testing/fixtures';
 import { SaveStatus } from '../models/save-status.enum';
+import { EditorNavService } from '../services/editor-nav.service';
 import { EditorLayoutViewModel } from '../view-models/editor-layout.view-model';
 import { MemoryDocumentStore } from './memory-document-store';
 
@@ -87,5 +88,5 @@ export function layoutStub(): ILayoutStub {
  * @returns A provider that puts it where pages look for the layout.
  */
 export function provideLayout(stub: ILayoutStub): Provider {
-  return { provide: EditorLayoutViewModel, useValue: stub };
+  return [{ provide: EditorLayoutViewModel, useValue: stub }, EditorNavService];
 }

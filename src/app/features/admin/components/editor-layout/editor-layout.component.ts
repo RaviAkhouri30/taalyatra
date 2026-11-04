@@ -16,9 +16,7 @@ import {
 } from '@angular/router';
 import { BaseComponent } from '@shared/base/base-component';
 import { IconComponent } from '@shared/components/icon/icon.component';
-import { ButtonDirective } from '@shared/directives/button.directive';
 import { AppRoute } from '@shared/enums/app-route.enum';
-import { ButtonSize, ButtonVariant } from '@shared/enums/button-variant.enum';
 import { IconName } from '@shared/enums/icon-name.enum';
 import { type AdminPageModel } from '../../models/admin-page.model';
 import { EDITOR_NAV_GROUPS } from '../../models/editor-nav.constants';
@@ -39,14 +37,7 @@ const PREFIX: IsActiveMatchOptions = { ...EXACT, paths: 'subset' };
  */
 @Component({
   selector: 'app-editor-layout',
-  imports: [
-    ButtonDirective,
-    IconComponent,
-    NgOptimizedImage,
-    RouterLink,
-    RouterLinkActive,
-    RouterOutlet,
-  ],
+  imports: [IconComponent, NgOptimizedImage, RouterLink, RouterLinkActive, RouterOutlet],
   templateUrl: './editor-layout.component.html',
   styleUrl: './editor-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,10 +48,8 @@ export default class EditorLayoutComponent extends BaseComponent<AdminPageModel>
   protected override readonly model = inject(EditorLayoutViewModel);
   protected readonly nav = inject(EditorNavService);
   protected readonly dashboardUrl = AppRoute.Admin;
-  // A full page load, not router navigation: the site then reads the newest published content.
+  // A new tab, so the editor stays open, and a full load, so it reads the newest published content.
   protected readonly siteUrl = AppRoute.Home;
-  protected readonly ghost = ButtonVariant.Ghost;
-  protected readonly compact = ButtonSize.Compact;
   protected readonly icons = IconName;
   protected readonly groups = EDITOR_NAV_GROUPS.map((group, index) => ({
     ...group,

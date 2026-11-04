@@ -6,6 +6,13 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+### Changed
+
+- The admin area's top bar is slimmer, with outlined buttons. **Preview** shows or hides the preview column, and
+  **View site** opens in a new tab.
+
+## [1.7.0] - 2026-11-05
+
 ### Added
 
 - **Photo uploads (0009).** The owner can upload photos from a phone or computer, by drag and drop or the file

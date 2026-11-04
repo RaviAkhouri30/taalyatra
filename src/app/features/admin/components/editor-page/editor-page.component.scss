@@ -141,3 +141,14 @@
 .ep-card h2 {
   scroll-margin-top: 16px;
 }
+
+// Desktop: the owner hid the preview, so the fields take the room. It stays loaded, ready to show.
+@include bp.up(bp.$tablet + 1) {
+  .ep--no-preview {
+    grid-template-columns: minmax(0, 1fr);
+
+    .ep-preview {
+      display: none;
+    }
+  }
+}
