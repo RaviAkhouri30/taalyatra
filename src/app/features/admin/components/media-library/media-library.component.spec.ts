@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MediaUploadEventKind } from '@core/enums/media-upload-event-kind.enum';
 import { IMediaService } from '@core/interfaces/i-media-service';
-import { provideEditorTesting } from '../../testing/editor-testing';
+import { layoutStub, provideEditorTesting, provideLayout } from '../../testing/editor-testing';
 import { MemoryDocumentStore } from '../../testing/memory-document-store';
 import { IDocumentStore } from '@core/interfaces/i-document-store';
 import MediaLibraryComponent from './media-library.component';
@@ -31,7 +31,8 @@ describe('MediaLibraryComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         ...testing.providers,
-        { provide: IMediaService, useValue: { upload, remove: vi.fn() } },
+        provideLayout(layoutStub()),
+        { provide: IMediaService, useValue: { upload, remove: () => of(undefined) } },
         ...(store ? [{ provide: IDocumentStore, useValue: store }] : []),
       ],
     });
@@ -110,5 +111,37 @@ describe('MediaLibraryComponent', () => {
     const { element } = render({}, store);
 
     expect(element.querySelector('[role="alert"]')?.textContent).toContain('couldn’t be loaded');
+  });
+
+  it('should say where an image is used, and refuse to delete it', async () => {
+    const { fixture, element } = render({
+      'media/abc': dto,
+      'gallery/001': {
+        src: 'v1/taal-yatra/media/abc',
+        alt: 'A circle',
+        width: 1,
+        height: 1,
+        order: 0,
+      },
+    });
+    await fixture.whenStable();
+    expect(element.querySelector('.mc-uses li')?.textContent).toBe('Photos · Photo 1');
+
+    element.querySelector<HTMLButtonElement>('[aria-label="Delete photo.jpg"]')?.click();
+    await fixture.whenStable();
+
+    expect(element.querySelector('.mc-notice')?.textContent).toContain('can’t be deleted');
+    expect(element.querySelector('.mc-danger')).toBeNull();
+  });
+
+  it('should confirm before deleting an unused image, then remove it', async () => {
+    const { fixture, element } = render({ 'media/abc': dto });
+    element.querySelector<HTMLButtonElement>('[aria-label="Delete photo.jpg"]')?.click();
+    await fixture.whenStable();
+
+    element.querySelector<HTMLButtonElement>('.mc-danger')?.click();
+    await fixture.whenStable();
+
+    expect(element.querySelector('.ml-empty')).not.toBeNull();
   });
 });

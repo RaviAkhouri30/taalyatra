@@ -19,8 +19,8 @@ export class MediaLibraryViewModel extends ViewModel<readonly MediaAsset[]> {
   /** Whether the last description couldn't be saved. */
   public readonly saveFailed = signal(false);
 
-  private readonly library = inject(MediaLibraryService);
-  private readonly logger = inject(LoggerService);
+  protected readonly library = inject(MediaLibraryService);
+  protected readonly logger = inject(LoggerService);
   private readonly descriptions = new Subject<IDescriptionChange>();
 
   /** @param asset A file that just finished uploading. */

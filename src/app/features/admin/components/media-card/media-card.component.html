@@ -18,3 +18,49 @@
   [formControl]="description"
   (change)="described.emit(description.value)"
 ></textarea>
+@if (uses().length > 0) {
+  <div class="mc-uses">
+    <p>Used in:</p>
+    <ul>
+      @for (use of uses(); track use) {
+        <li>{{ use }}</li>
+      }
+    </ul>
+  </div>
+} @else {
+  <p class="mc-size">Not used on the site.</p>
+}
+@if (notice()) {
+  <p class="mc-notice" role="status">{{ notice() }}</p>
+}
+@if (confirming()) {
+  <div class="mc-actions" role="group" [attr.aria-label]="'Confirm deleting ' + image.dto.name">
+    <p class="mc-confirm">Delete this photo for good?</p>
+    <button type="button" class="mc-danger" [disabled]="busy()" (click)="deleteConfirmed.emit()">
+      Yes, delete
+    </button>
+    <button type="button" (click)="deleteCancelled.emit()">Cancel</button>
+  </div>
+} @else {
+  <div class="mc-actions">
+    <label class="mc-replace" [class.mc-replace--busy]="busy()">
+      <input
+        #replacement
+        type="file"
+        [accept]="accept"
+        [disabled]="busy()"
+        [attr.aria-label]="'Replace ' + image.dto.name"
+        (change)="chooseReplacement(replacement)"
+      />
+      {{ busy() ? 'Working…' : 'Replace' }}
+    </label>
+    <button
+      type="button"
+      [disabled]="busy()"
+      [attr.aria-label]="'Delete ' + image.dto.name"
+      (click)="deleteAsked.emit()"
+    >
+      Delete
+    </button>
+  </div>
+}

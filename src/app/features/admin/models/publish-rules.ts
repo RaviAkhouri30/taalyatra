@@ -7,11 +7,15 @@ import { fieldOf } from '../forms/json-node';
 import { buildControl } from '../forms/schema-control.factory';
 import { schemaLeaves } from '../forms/schema-leaves';
 import { type IEditorSection } from './i-editor-section';
+import { imageUsesIn } from './media-use';
 import { type IPublishIssue } from './i-publish-issue';
 import { IssueSeverity } from './issue-severity.enum';
 
 /** Text in square brackets, the way unfinished copy is marked, e.g. "[Add duration & price]". */
 const PLACEHOLDER = /\[[^\]\n]{1,80}\]/;
+
+/** " · ", between a use's section and field. */
+const LABEL_SEPARATOR_LENGTH = 3;
 
 /** One pre-publish check over a drafted section (open/closed: add a rule, change nothing else). */
 export interface IPublishRule {
@@ -19,9 +23,15 @@ export interface IPublishRule {
    * @param section The editor section.
    * @param content Its document, as it will be published.
    * @param now The current time.
+   * @param libraryIds The library's entries, or `null` when they aren't known.
    * @returns What the rule found.
    */
-  check(section: IEditorSection, content: DocumentFields, now: Date): IPublishIssue[];
+  check(
+    section: IEditorSection,
+    content: DocumentFields,
+    now: Date,
+    libraryIds: ReadonlySet<string> | null,
+  ): IPublishIssue[];
 }
 
 /** The same validation the form shows: required, length and format. Blocks publishing. */
@@ -52,6 +62,31 @@ export class PlaceholderRule implements IPublishRule {
             },
           ];
     });
+  }
+}
+
+/**
+ * An uploaded image that's no longer in the library. Undo can bring one back from history after its
+ * file was deleted, and publishing it would show visitors a broken image (D18).
+ */
+export class ImageInLibraryRule implements IPublishRule {
+  public check(
+    section: IEditorSection,
+    content: DocumentFields,
+    _now: Date,
+    libraryIds: ReadonlySet<string> | null,
+  ): IPublishIssue[] {
+    if (libraryIds === null) {
+      return [];
+    }
+    return imageUsesIn(section, content)
+      .filter((use) => !libraryIds.has(use.id))
+      .map((use) => ({
+        severity: IssueSeverity.Error,
+        section: section.title,
+        field: use.label.slice(section.title.length + LABEL_SEPARATOR_LENGTH),
+        message: 'This photo was deleted from the library. Choose another.',
+      }));
   }
 }
 

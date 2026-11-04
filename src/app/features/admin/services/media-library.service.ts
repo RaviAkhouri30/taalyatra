@@ -42,13 +42,14 @@ export class MediaLibraryService {
   /**
    * @param media The stored file.
    * @param name The name of the file the owner chose.
+   * @param description What it shows, when that's already known.
    * @returns The new library entry, once it's saved.
    */
-  public register(media: IUploadedMedia, name: string): Observable<MediaAsset> {
+  public register(media: IUploadedMedia, name: string, description = ''): Observable<MediaAsset> {
     const dto: IMediaAssetDto = {
       ...media,
       name: name.slice(0, CONTENT_MAX_LENGTH.mediaName),
-      description: '',
+      description,
       uploadedAt: this.clock.now().toISOString(),
     };
     return this.save(dto);
@@ -64,6 +65,16 @@ export class MediaLibraryService {
       ...asset.dto,
       description: description.trim().slice(0, CONTENT_MAX_LENGTH.imageAlt),
     });
+  }
+
+  /**
+   * @param asset The entry to remove; the file itself goes through `IMediaService`.
+   * @returns Completes once it's gone.
+   */
+  public remove(asset: MediaAsset): Observable<void> {
+    return this.store.commit([
+      { kind: DocumentWriteKind.Delete, path: `${MEDIA_COLLECTION}/${asset.id}` },
+    ]);
   }
 
   private save(dto: IMediaAssetDto): Observable<MediaAsset> {

@@ -23,25 +23,10 @@ import { LoggerService } from '@core/services/logger.service';
 import { ViewModel } from '@shared/base/view-model';
 import { type IMediaUploadItem } from '../models/i-media-upload-item';
 import { type MediaAsset } from '../models/media-asset.model';
+import { mediaFileRefusal } from '../models/media-file';
 import { MediaUploadStatus } from '../models/media-upload-status.enum';
-import {
-  MEDIA_ERROR_TEXT,
-  MEDIA_FILE_ENDINGS,
-  MEDIA_MAX_FILE_BYTES,
-  MEDIA_TOO_LARGE_TEXT,
-  MEDIA_UPLOAD_CONCURRENCY,
-  MEDIA_WRONG_TYPE_TEXT,
-} from '../models/media-upload.constants';
+import { MEDIA_ERROR_TEXT, MEDIA_UPLOAD_CONCURRENCY } from '../models/media-upload.constants';
 import { MediaLibraryService } from '../services/media-library.service';
-
-/** @returns Why this file can't be sent, or an empty string when it can. */
-function refusal(file: File): string {
-  const ending = file.name.split('.').at(-1)?.toLowerCase() ?? '';
-  if (!MEDIA_FILE_ENDINGS.includes(ending)) {
-    return MEDIA_WRONG_TYPE_TEXT;
-  }
-  return file.size > MEDIA_MAX_FILE_BYTES ? MEDIA_TOO_LARGE_TEXT : '';
-}
 
 /**
  * The upload queue (D13): checks each file, sends a few at a time, reports progress, and stores
@@ -81,7 +66,7 @@ export class MediaUploadViewModel extends ViewModel<readonly IMediaUploadItem[]>
   /** @param files The files the owner chose or dropped. */
   public add(files: readonly File[]): void {
     for (const file of files) {
-      const message = refusal(file);
+      const message = mediaFileRefusal(file);
       const id = this.nextId;
       this.nextId += 1;
       this.setData([

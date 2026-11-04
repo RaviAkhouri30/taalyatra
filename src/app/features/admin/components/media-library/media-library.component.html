@@ -22,7 +22,18 @@
       <ul class="ml-grid">
         @for (asset of assets; track asset.id) {
           <li>
-            <app-media-card [asset]="asset" (described)="model.describe(asset, $event)" />
+            <app-media-card
+              [asset]="asset"
+              [uses]="model.usesOf(asset.id)"
+              [confirming]="model.confirmingDelete() === asset.id"
+              [busy]="model.busyId() === asset.id"
+              [notice]="model.notice()?.id === asset.id ? (model.notice()?.text ?? '') : ''"
+              (described)="model.describe(asset, $event)"
+              (replaced)="model.replace(asset, $event)"
+              (deleteAsked)="model.askToDelete(asset)"
+              (deleteConfirmed)="model.confirmDelete(asset)"
+              (deleteCancelled)="model.cancelDelete()"
+            />
           </li>
         }
       </ul>

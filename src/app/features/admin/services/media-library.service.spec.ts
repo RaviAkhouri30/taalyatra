@@ -72,6 +72,23 @@ describe('MediaLibraryService', () => {
     ]);
   });
 
+  it('should keep a description given when registering', async () => {
+    const { service } = setUp();
+
+    const asset = await firstValueFrom(service.register(media, 'photo.jpg', 'A circle'));
+
+    expect(asset.dto.description).toBe('A circle');
+  });
+
+  it('should remove an entry', async () => {
+    const { service, store } = setUp();
+    const asset = await firstValueFrom(service.register(media, 'photo.jpg'));
+
+    await firstValueFrom(service.remove(asset));
+
+    expect(store.documents.has('media/abc')).toBe(false);
+  });
+
   it('should find one image by its id', async () => {
     const { service } = setUp({ 'media/abc': entry('2026-11-01T00:00:00.000Z') });
 

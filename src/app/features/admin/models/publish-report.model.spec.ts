@@ -122,4 +122,40 @@ describe('PublishReport', () => {
       );
     });
   });
+
+  describe('images no longer in the library', () => {
+    const items = (src: string) => ({
+      _items: [{ src, alt: 'A circle', width: 10, height: 10 }],
+    });
+    const check = (content: DocumentFields, libraryIds: ReadonlySet<string> | null) =>
+      PublishReport.check(
+        new Map([['gallery', { path: 'gallery', content, savedAt: 'x' }]]),
+        ALL_SECTIONS,
+        now,
+        libraryIds,
+      );
+
+    it('should block an uploaded image that has been deleted, naming where it is', () => {
+      const { errors } = check(items('v1/taal-yatra/media/gone'), new Set(['other']));
+
+      expect(errors).toEqual([
+        expect.objectContaining({
+          section: 'Photos',
+          field: 'Photo 1',
+          message: 'This photo was deleted from the library. Choose another.',
+        }),
+      ]);
+    });
+
+    it.each([
+      ['an image still in the library', 'c_crop,x_1,y_1,w_5,h_5/v1/taal-yatra/media/kept'],
+      ['a local image', '/images/a.webp'],
+    ])('should let it publish with %s', (_case, src) => {
+      expect(check(items(src), new Set(['kept'])).errors).toEqual([]);
+    });
+
+    it('should not guess when the library is not known', () => {
+      expect(check(items('v1/taal-yatra/media/gone'), null).errors).toEqual([]);
+    });
+  });
 });

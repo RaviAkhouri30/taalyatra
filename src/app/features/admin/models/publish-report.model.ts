@@ -3,6 +3,7 @@ import { type IEditorSection } from './i-editor-section';
 import { type IPublishIssue } from './i-publish-issue';
 import { IssueSeverity } from './issue-severity.enum';
 import {
+  ImageInLibraryRule,
   type IPublishRule,
   OneFeaturedShowRule,
   PlaceholderRule,
@@ -16,6 +17,7 @@ export class PublishReport {
   public static readonly rules: readonly IPublishRule[] = [
     new SchemaRule(),
     new OneFeaturedShowRule(),
+    new ImageInLibraryRule(),
     new PromotionDatesRule(),
     new PlaceholderRule(),
   ];
@@ -40,19 +42,23 @@ export class PublishReport {
    * @param drafts The drafts about to be published, by path.
    * @param sections Every editor section.
    * @param now The current time.
+   * @param libraryIds The media library's entries, or `null` when they aren't known.
    * @returns What every rule found in every section that has a draft.
    */
   public static check(
     drafts: ReadonlyMap<string, IDraft>,
     sections: readonly IEditorSection[],
     now: Date,
+    libraryIds: ReadonlySet<string> | null = null,
   ): PublishReport {
     return new PublishReport(
       sections.flatMap((section) => {
         const draft = drafts.get(section.path);
         return draft === undefined
           ? []
-          : PublishReport.rules.flatMap((rule) => rule.check(section, draft.content, now));
+          : PublishReport.rules.flatMap((rule) =>
+              rule.check(section, draft.content, now, libraryIds),
+            );
       }),
     );
   }

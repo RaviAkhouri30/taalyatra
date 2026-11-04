@@ -58,4 +58,51 @@ test.describe('Admin media library', () => {
 
     await expect(page.getByLabel('Choose photos')).toBeFocused();
   });
+
+  test('should delete an unused photo after asking', async ({ editor, page }) => {
+    await editor.uploadPhotos(photo('spare.jpg'));
+    await page.getByRole('button', { name: 'Delete spare.jpg' }).click();
+    await page.getByRole('button', { name: 'Yes, delete' }).click();
+
+    await expect(page.getByText('No photos yet.')).toBeVisible();
+  });
+
+  test('should refuse to delete a photo in use, say where, and allow it once replaced', async ({
+    editor,
+    page,
+  }) => {
+    await editor.openTab('Gallery');
+    const photos = editor.card('Photos');
+    const count = await photos.getByLabel('Description').count();
+    await photos.getByRole('button', { name: 'Add photo' }).click();
+    const added = photos.getByRole('group', { name: `Photo ${String(count + 1)}` });
+    await added.getByRole('button', { name: 'Choose or upload' }).click();
+    await added.getByLabel('Choose photos').setInputFiles([photo('old.jpg')]);
+    await added.getByRole('button', { name: 'Choose old.jpg' }).click();
+    await added.getByLabel('Description').fill('The old photo');
+    await editor.waitForSave();
+    await editor.openTab('Media library');
+    const old = page.getByRole('listitem').filter({ hasText: 'old.jpg' });
+    await expect(old.getByText(`Photos · Photo ${String(count + 1)}`)).toBeVisible();
+
+    await old.getByRole('button', { name: 'Delete old.jpg' }).click();
+    await expect(old.getByText('This photo is in use')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Yes, delete' })).toHaveCount(0);
+
+    await old.getByLabel('Replace old.jpg').setInputFiles([photo('new.jpg')]);
+    const fresh = page.getByRole('listitem').filter({ hasText: 'new.jpg' });
+    await expect(fresh.getByText('Replaced in 1 place as a draft.')).toBeVisible();
+    await expect(fresh.getByLabel('Description')).toHaveValue('');
+    await old.getByRole('button', { name: 'Delete old.jpg' }).click();
+    await page.getByRole('button', { name: 'Yes, delete' }).click();
+
+    await expect(page.getByRole('listitem').filter({ hasText: 'old.jpg' })).toHaveCount(0);
+    await editor.openTab('Gallery');
+    await expect(
+      editor
+        .card('Photos')
+        .getByRole('group', { name: `Photo ${String(count + 1)}` })
+        .getByLabel('Description'),
+    ).toHaveValue('The old photo');
+  });
 });
