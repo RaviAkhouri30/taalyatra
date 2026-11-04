@@ -79,4 +79,32 @@ describe('schema value', () => {
       title: 'First',
     });
   });
+
+  describe('a group that depends on a switch', () => {
+    const fields = [
+      { key: 'featured', label: 'Featured', kind: FieldKind.Toggle, offByDefault: true },
+      {
+        key: 'spotlight',
+        label: 'Spotlight',
+        kind: FieldKind.Group,
+        onlyWhen: 'featured',
+        fields: [{ key: 'title', label: 'Title', kind: FieldKind.Text }],
+      },
+    ] as const;
+
+    it('should store null while the switch is off', () => {
+      const raw = { featured: false, spotlight: { title: 'Hidden' } };
+
+      expect(readSchemaValue(fields, raw)).toEqual({ featured: false, spotlight: null });
+    });
+
+    it('should store the group while the switch is on', () => {
+      const raw = { featured: true, spotlight: { title: 'Shown' } };
+
+      expect(readSchemaValue(fields, raw)).toEqual({
+        featured: true,
+        spotlight: { title: 'Shown' },
+      });
+    });
+  });
 });

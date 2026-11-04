@@ -15,6 +15,7 @@ import { type IImage } from '@shared/interfaces/i-image';
 import { type CropFrame } from '../../models/crop-frame.model';
 import { type IImageFieldSchema } from '../../models/i-field-schema';
 import { parseImageSrc } from '../../models/image-src';
+import { youtubeThumbnail } from '../../models/youtube-link';
 import { type MediaAsset } from '../../models/media-asset.model';
 import { ImageFieldViewModel } from '../../view-models/image-field.view-model';
 import { ImageCropComponent } from '../image-crop/image-crop.component';
@@ -55,10 +56,23 @@ export class ImageFieldComponent extends BaseComponent<MediaAsset | null> {
   protected readonly panels = ImageFieldPanel;
   protected readonly panel = signal(ImageFieldPanel.None);
   protected readonly maxLength = CONTENT_MAX_LENGTH.imageAlt;
+  /** Whether the owner asked for a link's thumbnail with no YouTube link to take it from. */
+  protected readonly linkMissing = signal(false);
   // The control isn't a signal: this is its value for the view, kept in step by `update`.
   protected readonly image = linkedSignal(() => this.control().value);
   /** Only uploaded files can be cropped: Cloudinary doesn't have the local ones. */
   protected readonly canCrop = computed(() => parseImageSrc(this.image().src) !== null);
+
+  /** Uses the thumbnail of the YouTube link in the sibling field, if it holds one (D20). */
+  protected useLinkThumbnail(): void {
+    const key = this.field().thumbnailFromLink ?? '';
+    const link: unknown = this.control().parent?.get(key)?.value;
+    const thumbnail = youtubeThumbnail(typeof link === 'string' ? link : '');
+    this.linkMissing.set(thumbnail === null);
+    if (thumbnail !== null) {
+      this.update({ ...this.image(), ...thumbnail });
+    }
+  }
 
   /** @param panel The tool to open; choosing the open one closes it. */
   protected toggle(panel: ImageFieldPanel): void {

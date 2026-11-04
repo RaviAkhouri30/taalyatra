@@ -1,3 +1,5 @@
+import { PageAnchor } from '@shared/enums/page-anchor.enum';
+import { ContentPath } from './content-path.enum';
 import fakeDb from '@core/backends/fake/fake-db.json';
 import { type DocumentFields } from '@core/interfaces/i-document-store';
 import { ALL_SECTIONS } from '../schemas/editor-tabs';
@@ -82,5 +84,42 @@ describe('PublishReport', () => {
 
     expect(result.errors).toEqual([]);
     expect(result.warnings).toEqual([]);
+  });
+
+  describe('featured shows', () => {
+    const section = {
+      id: 'shows',
+      title: 'Show formats',
+      path: ContentPath.ShowFormats,
+      anchor: PageAnchor.Shows,
+      fields: [],
+    };
+    const report = (items: unknown, path = ContentPath.ShowFormats) =>
+      PublishReport.check(
+        new Map([[path, { path, content: { _items: items }, savedAt: 'x' }]]),
+        [{ ...section, path }],
+        new Date('2026-11-04T00:00:00Z'),
+      );
+
+    it('should block publishing when two shows are featured', () => {
+      const { errors } = report([{ featured: true }, { featured: true }, { featured: false }]);
+
+      expect(errors).toHaveLength(1);
+      expect(errors[0]?.message).toContain('Only one show');
+    });
+
+    it.each([
+      ['one show is featured', [{ featured: true }, { featured: false }]],
+      ['no show is featured', [{ featured: false }]],
+      ['the list is damaged', 'nope'],
+    ])('should let it publish when %s', (_case, items) => {
+      expect(report(items).errors).toEqual([]);
+    });
+
+    it('should not look at other documents', () => {
+      expect(report([{ featured: true }, { featured: true }], ContentPath.Videos).errors).toEqual(
+        [],
+      );
+    });
   });
 });

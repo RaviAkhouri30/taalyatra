@@ -2,13 +2,14 @@
 
 Built from the approved [design](02-design.md) on `feat/media`, one commit per increment.
 
-| #   | Increment                                            | Files                                                                                                                                                                                                                                 | Tests                       |
-| --- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| 1   | Upload function (D1–D6)                              | `api/`: `media/sign`, `media/delete`, token verification, signing; `apiRuntime`; lint, `verify`, CI and Sonar cover `api/`; `scripts/prove-cloudinary.mjs` for the real-account proof                                                 | function (52), proof passed |
-| 2   | Rules, `media`, port, adapters, loader (D7–D11, D22) | `firestore.rules`; `IMediaService`, `CloudinaryMediaService`, `ImagePreparer`, `FakeMediaService`, factory; `IAuthService.idToken()`; `mediaImageUrl`, `provideMediaImages`; `CLOUDINARY_CONFIG`; `MediaAsset`, `MediaLibraryService` | see Checks                  |
-| 3   | Upload and library UI (D13, G5)                      | `MediaUploadComponent` and view model (queue of three, progress, retry); `MediaLibraryComponent` and view model; `MediaCardComponent`; **Media library** tab                                                                          | see Checks                  |
-| 4   | Image field and crop (D12, D14)                      | `FieldKind.Image`; `ImageFieldComponent` and view model; `MediaPickerComponent`; `ImageCropComponent`, `CropFrame`, `parseImageSrc`                                                                                                   | see Checks                  |
-| 5   | Collections (D15, D16)                               | `collapseCollection`, `expandCollection`, `isCollection`; `DraftService.live`; `PublishService` expands on publish; `FakeDataStore` answers collections like Firestore                                                                | see Checks                  |
+| #   | Increment                                                  | Files                                                                                                                                                                                                                                 | Tests                       |
+| --- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| 1   | Upload function (D1–D6)                                    | `api/`: `media/sign`, `media/delete`, token verification, signing; `apiRuntime`; lint, `verify`, CI and Sonar cover `api/`; `scripts/prove-cloudinary.mjs` for the real-account proof                                                 | function (52), proof passed |
+| 2   | Rules, `media`, port, adapters, loader (D7–D11, D22)       | `firestore.rules`; `IMediaService`, `CloudinaryMediaService`, `ImagePreparer`, `FakeMediaService`, factory; `IAuthService.idToken()`; `mediaImageUrl`, `provideMediaImages`; `CLOUDINARY_CONFIG`; `MediaAsset`, `MediaLibraryService` | see Checks                  |
+| 3   | Upload and library UI (D13, G5)                            | `MediaUploadComponent` and view model (queue of three, progress, retry); `MediaLibraryComponent` and view model; `MediaCardComponent`; **Media library** tab                                                                          | see Checks                  |
+| 4   | Image field and crop (D12, D14)                            | `FieldKind.Image`; `ImageFieldComponent` and view model; `MediaPickerComponent`; `ImageCropComponent`, `CropFrame`, `parseImageSrc`                                                                                                   | see Checks                  |
+| 5   | Collections (D15, D16)                                     | `collapseCollection`, `expandCollection`, `isCollection`; `DraftService.live`; `PublishService` expands on publish; `FakeDataStore` answers collections like Firestore                                                                | see Checks                  |
+| 6   | Gallery, Team, Shows and Videos tabs (E1–E3, E5, D20, D21) | `media.sections.ts`; four tabs; `OneFeaturedShowRule`; a group shown by a switch (`onlyWhen`); a switch off by default; `youtubeThumbnail`                                                                                            | see Checks                  |
 
 ## Decisions & deviations from design
 
@@ -46,6 +47,13 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
   with only static members.
 - **`DraftOverlayBackend` needed no code for collections (D16).** A collection's draft is read like any list
   section, so only a test was added.
+- **Fixed an autosave bug that could lose a change (present since 1.6.0).** A change made while an earlier save
+  was running was marked "Saved" when that save finished, so the owner could leave and lose it. "Saved" now
+  appears only when no newer change is waiting, and "Saving…" shows as soon as something changes.
+- **Videos get their thumbnail with a button, not automatically (D20).** The owner pastes the link and presses
+  **Use the YouTube thumbnail**, so a typed or half-pasted link can't replace a thumbnail they uploaded.
+- **The dashboard's placeholder list grew,** because the editor now covers team, shows and videos, so its
+  screenshot baselines were re-recorded.
 - **A file the browser can't encode goes as it is,** the same as one it can't decode, because Cloudinary's
   transformation removes its metadata either way.
 
@@ -66,6 +74,9 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
 - **Increment 5:** `npm run verify` passes (950 site tests, coverage 99.8/98.04/99.58/99.96; 52 function
   tests at 100 %); `npm run e2e` 282 passed; `npm run e2e:firebase` 15 passed. Publishing a collection through
   the real rules gets its browser test with the tabs, in increment 6.
+- **Increment 6:** `npm run verify` passes (991 site tests, coverage 99.8/97.99/99.59/99.96; 52 function tests at
+  100 %); 118 rules tests; `npm run e2e` 309 passed; `npm run e2e:firebase` 21 passed, including publishing a
+  collection and storing a library entry through the real rules.
 - **Real-account proof (2026-11-03, account `zqu2cpih`, run by the owner):** a signed SHA-256 upload is
   accepted, and delivered images have no GPS. The approved setting failed on the stored file, so three
   placements of Cloudinary's `fl_force_strip` were compared. Each cell is the stored file:

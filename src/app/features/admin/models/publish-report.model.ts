@@ -4,6 +4,7 @@ import { type IPublishIssue } from './i-publish-issue';
 import { IssueSeverity } from './issue-severity.enum';
 import {
   type IPublishRule,
+  OneFeaturedShowRule,
   PlaceholderRule,
   PromotionDatesRule,
   SchemaRule,
@@ -14,6 +15,7 @@ export class PublishReport {
   /** The checks, in the order their findings are listed. */
   public static readonly rules: readonly IPublishRule[] = [
     new SchemaRule(),
+    new OneFeaturedShowRule(),
     new PromotionDatesRule(),
     new PlaceholderRule(),
   ];

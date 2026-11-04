@@ -28,6 +28,9 @@
       >
         Choose or upload
       </button>
+      @if (field().thumbnailFromLink) {
+        <button type="button" (click)="useLinkThumbnail()">Use the YouTube thumbnail</button>
+      }
       @if (canCrop()) {
         <button type="button" [attr.aria-expanded]="panel() === panels.Crop" (click)="toggleCrop()">
           Crop
@@ -36,6 +39,9 @@
     </div>
   </div>
 </div>
+@if (linkMissing()) {
+  <p class="if-panel" role="alert">Paste a YouTube video link first, then try again.</p>
+}
 @switch (panel()) {
   @case (panels.Picker) {
     <app-media-picker class="if-panel" (picked)="choose($event)" (cancelled)="close()" />

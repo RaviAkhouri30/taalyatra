@@ -70,8 +70,10 @@ export function buildControl(field: FieldSchema, value: unknown): AbstractContro
     case FieldKind.Number:
       return numberControl(field, value);
     case FieldKind.Toggle:
-      // Only an explicit false is off, as on the site (ADR-0015).
-      return new FormControl(value !== false, { nonNullable: true });
+      // Only an explicit false is off, as on the site (ADR-0015), unless the field says otherwise.
+      return new FormControl(field.offByDefault ? value === true : value !== false, {
+        nonNullable: true,
+      });
     case FieldKind.Choice:
       return choiceControl(field, value);
     case FieldKind.Image:

@@ -55,6 +55,16 @@ export class SchemaFieldsComponent {
     });
   });
 
+  /**
+   * @param field A field.
+   * @returns Whether it shows: a group that depends on a switch shows only while it's on.
+   */
+  protected isShown(field: FieldSchema): boolean {
+    return field.kind !== FieldKind.Group || !field.onlyWhen
+      ? true
+      : this.group()?.get(field.onlyWhen)?.value === true;
+  }
+
   protected add(list: IListFieldSchema, items: FormArray): void {
     items.push(buildListItem(list));
   }

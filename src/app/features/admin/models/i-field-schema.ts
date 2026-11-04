@@ -34,9 +34,11 @@ export interface INumberFieldSchema extends IFieldBase {
   readonly max: number;
 }
 
-/** An on/off switch. Missing values are on. */
+/** An on/off switch. Missing values are on, unless it's off by default. */
 export interface IToggleFieldSchema extends IFieldBase {
   readonly kind: FieldKind.Toggle;
+  /** Missing values are off, e.g. a new show isn't featured until the owner says so. */
+  readonly offByDefault?: boolean;
 }
 
 /** One stored value from a fixed list. */
@@ -52,12 +54,16 @@ export interface IImageFieldSchema extends IFieldBase {
   readonly aspect: number;
   /** Decoration next to text that says the same thing, so no description is required. */
   readonly decorative?: boolean;
+  /** The sibling field holding a YouTube link, whose thumbnail the owner can use (D20). */
+  readonly thumbnailFromLink?: string;
 }
 
 /** A nested object, edited as a set of fields. */
 export interface IGroupFieldSchema extends IFieldBase {
   readonly kind: FieldKind.Group;
   readonly fields: readonly FieldSchema[];
+  /** A sibling switch: the group shows only while it's on, and is stored as `null` otherwise. */
+  readonly onlyWhen?: string;
 }
 
 /** A list the owner can add to, remove from and reorder. */

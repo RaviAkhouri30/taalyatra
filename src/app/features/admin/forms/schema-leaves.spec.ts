@@ -1,3 +1,4 @@
+import { FieldKind } from '../models/field-kind.enum';
 import { CONTENT_SECTIONS } from '../schemas/content.sections';
 import { OFFER_SECTIONS } from '../schemas/offer.sections';
 import { schemaLeaves } from './schema-leaves';
@@ -28,5 +29,20 @@ describe('schemaLeaves', () => {
     expect(
       schemaLeaves(hero.fields, { audiences: 'nope' }).some((leaf) => leaf.label === 'Audience 1'),
     ).toBe(false);
+  });
+
+  it('should skip a group whose switch is off, and enter it while on', () => {
+    const fields = [
+      {
+        key: 'spotlight',
+        label: 'Spotlight',
+        kind: FieldKind.Group,
+        onlyWhen: 'featured',
+        fields: [{ key: 'title', label: 'Title', kind: FieldKind.Text }],
+      },
+    ] as const;
+
+    expect(schemaLeaves(fields, { featured: false, spotlight: null })).toEqual([]);
+    expect(schemaLeaves(fields, { featured: true, spotlight: { title: 'A' } })).toHaveLength(1);
   });
 });

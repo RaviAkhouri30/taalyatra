@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer';
 import { expect, test } from '../fixtures/test';
 
 /** Emulator REST endpoint for the proposals collection; "owner" bypasses the rules. */
@@ -93,5 +94,39 @@ test.describe('Firebase smoke (emulator)', () => {
     await page.goto('/');
 
     await expect(page.locator('#watch h2')).toHaveText(title);
+  });
+
+  test('should publish a collection through the Firestore rules', async ({ editor, page }) => {
+    await editor.signIn({ email: 'admin@taalyatra.test', password: 'emulator-admin-password' });
+    await editor.openTab('Gallery');
+    const photos = editor.card('Photos');
+    const second = await photos.getByLabel('Description').nth(1).inputValue();
+
+    await photos.getByRole('button', { name: 'Move Photo 2 up' }).click();
+    await editor.waitForSave();
+    await editor.publish();
+    await page.reload();
+    await editor.openTab('Gallery');
+
+    await expect(editor.card('Photos').getByLabel('Description').first()).toHaveValue(second);
+  });
+
+  test('should store an upload in the media library through the Firestore rules', async ({
+    editor,
+    page,
+  }, info) => {
+    const name = `smoke-${info.project.name}.jpg`;
+    await editor.signIn({ email: 'admin@taalyatra.test', password: 'emulator-admin-password' });
+    await editor.openTab('Media library');
+
+    await editor.uploadPhotos({
+      name,
+      mimeType: 'image/jpeg',
+      buffer: Buffer.from([0xff, 0xd8, 0xff, 0xd9]),
+    });
+    await expect(page.getByRole('status').filter({ hasText: '1 of 1 uploaded.' })).toBeVisible();
+    await page.reload();
+
+    await expect(page.getByText(name, { exact: true })).toBeVisible();
   });
 });

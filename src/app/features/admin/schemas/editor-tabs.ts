@@ -2,6 +2,7 @@ import { type IEditorSection } from '../models/i-editor-section';
 import { EditorTab } from '../models/editor-tab.enum';
 import { CONTACT_SECTIONS } from './contact.sections';
 import { CONTENT_SECTIONS } from './content.sections';
+import { GALLERY_SECTIONS, SHOWS_SECTIONS, TEAM_SECTIONS, VIDEOS_SECTIONS } from './media.sections';
 import { OFFER_SECTIONS } from './offer.sections';
 import { VISIBILITY_SECTIONS } from './visibility.sections';
 
@@ -19,6 +20,10 @@ export interface IEditorTabSchema {
 export const EDITOR_TABS: readonly IEditorTabSchema[] = [
   { tab: EditorTab.Offer, label: 'Offer & theme', sections: OFFER_SECTIONS },
   { tab: EditorTab.Content, label: 'Page content', sections: CONTENT_SECTIONS },
+  { tab: EditorTab.Gallery, label: 'Gallery', sections: GALLERY_SECTIONS },
+  { tab: EditorTab.Team, label: 'Team', sections: TEAM_SECTIONS },
+  { tab: EditorTab.Shows, label: 'Shows', sections: SHOWS_SECTIONS },
+  { tab: EditorTab.Videos, label: 'Videos', sections: VIDEOS_SECTIONS },
   { tab: EditorTab.Visibility, label: 'Sections & pages', sections: VISIBILITY_SECTIONS },
   { tab: EditorTab.Contact, label: 'Contact & links', sections: CONTACT_SECTIONS },
 ];

@@ -1,5 +1,7 @@
 import { type DocumentFields } from '@core/interfaces/i-document-store';
 import { PromotionSchedule } from '@shared/models/promotion-schedule.model';
+import { COLLECTION_ITEMS_FIELD } from './collection-expander';
+import { ContentPath } from './content-path.enum';
 import { fieldErrorMessage } from '../forms/field-errors';
 import { fieldOf } from '../forms/json-node';
 import { buildControl } from '../forms/schema-control.factory';
@@ -50,6 +52,29 @@ export class PlaceholderRule implements IPublishRule {
             },
           ];
     });
+  }
+}
+
+/** More than one featured show: the site has one spotlight, so it can't show them all (D21). */
+export class OneFeaturedShowRule implements IPublishRule {
+  public check(section: IEditorSection, content: DocumentFields): IPublishIssue[] {
+    if (section.path !== ContentPath.ShowFormats) {
+      return [];
+    }
+    const shows = fieldOf(content, COLLECTION_ITEMS_FIELD);
+    const featured = (Array.isArray(shows) ? shows : []).filter(
+      (show: unknown) => fieldOf(show, 'featured') === true,
+    );
+    return featured.length > 1
+      ? [
+          {
+            severity: IssueSeverity.Error,
+            section: section.title,
+            field: 'Featured',
+            message: 'Only one show can be featured. Switch the others off.',
+          },
+        ]
+      : [];
   }
 }
 

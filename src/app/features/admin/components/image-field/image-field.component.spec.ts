@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { type FormControl } from '@angular/forms';
+import { type AbstractControl, FormControl, FormRecord } from '@angular/forms';
 import { IMediaService } from '@core/interfaces/i-media-service';
 import { type IImage } from '@shared/interfaces/i-image';
 import { buildControl } from '../../forms/schema-control.factory';
@@ -170,5 +170,57 @@ describe('ImageFieldComponent', () => {
     await fixture.whenStable();
 
     expect(element.querySelector('[role="alert"]')?.textContent).toContain('isn’t in the library');
+  });
+
+  describe('a thumbnail from a YouTube link', () => {
+    const video = imageField('image', 'Thumbnail', IMAGE_ASPECT.videos, {
+      decorative: true,
+      thumbnailFromLink: 'url',
+    });
+
+    async function renderVideo(url: string) {
+      TestBed.configureTestingModule({ providers: [provideEditorTesting().providers] });
+      const control = buildControl(video, undefined) as FormControl<IImage>;
+      // The field finds its sibling through this parent.
+      const parent = new FormRecord<AbstractControl>({ url: new FormControl(url), image: control });
+      expect(parent.contains('url')).toBe(true);
+      const fixture = TestBed.createComponent(ImageFieldComponent);
+      fixture.componentRef.setInput('field', video);
+      fixture.componentRef.setInput('control', control);
+      fixture.componentRef.setInput('fieldId', 'f');
+      fixture.componentRef.setInput('describedBy', 'f-error');
+      fixture.detectChanges();
+      const element = fixture.nativeElement as HTMLElement;
+      Array.from(element.querySelectorAll('button'))
+        .find((candidate) => candidate.textContent.trim() === 'Use the YouTube thumbnail')
+        ?.click();
+      await fixture.whenStable();
+      return { control, element };
+    }
+
+    it('should use the thumbnail of the video in the link field', async () => {
+      const { control } = await renderVideo('https://youtu.be/dQw4w9WgXcQ');
+
+      expect(control.value).toEqual({
+        src: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+        alt: '',
+        width: 480,
+        height: 360,
+      });
+      expect(control.valid).toBe(true);
+    });
+
+    it('should ask for a link when the field holds no YouTube video', async () => {
+      const { control, element } = await renderVideo('https://example.com/a');
+
+      expect(control.value.src).toBe('');
+      expect(element.querySelector('[role="alert"]')?.textContent).toContain('Paste a YouTube');
+    });
+
+    it('should not offer it on a field with no link', async () => {
+      const { button } = await render(local);
+
+      expect(button('Use the YouTube thumbnail')).toBeUndefined();
+    });
   });
 });

@@ -53,7 +53,7 @@ export function image(
   key: string,
   label: string,
   aspect: number,
-  options: Pick<IImageFieldSchema, 'decorative' | 'hint'> = {},
+  options: Pick<IImageFieldSchema, 'decorative' | 'hint' | 'thumbnailFromLink'> = {},
 ): IImageFieldSchema {
   return { key, label, kind: FieldKind.Image, aspect, ...options };
 }

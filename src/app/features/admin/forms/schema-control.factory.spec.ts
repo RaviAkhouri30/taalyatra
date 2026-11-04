@@ -112,4 +112,17 @@ describe('schema control factory', () => {
 
     expect(control.valid).toBe(true);
   });
+
+  it.each([
+    [undefined, false],
+    [true, true],
+    [false, false],
+  ])('should start a switch that is off by default as %s → %s', (value, expected) => {
+    const control = buildControl(
+      { key: 'featured', label: 'Featured', kind: FieldKind.Toggle, offByDefault: true },
+      value,
+    );
+
+    expect(control.value).toBe(expected);
+  });
 });
