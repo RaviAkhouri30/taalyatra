@@ -6,6 +6,8 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-11-05
+
 ### Added
 
 - **Photo uploads (0009).** The owner can upload photos from a phone or computer, by drag and drop or the file
