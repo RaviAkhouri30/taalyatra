@@ -9,8 +9,9 @@ flowchart LR
   spa -->|Auth SDK| auth[Firebase Auth]
   spa -->|Image delivery| cdn[Cloudinary CDN]
   spa -->|Contact form| mail[EmailJS]
-  fn[Backend function<br/>signed uploads] -->|API secret| cdn
-  spa -->|Upload signature| fn
+  spa -->|Admin: file upload, signed| cdn
+  spa -->|Admin: sign, delete<br/>Firebase ID token| fn[Azure Function<br/>api/ · 1.7.0]
+  fn -->|API secret| cdn
 ```
 
 ## Layers (MVVM + ports & adapters)
@@ -50,11 +51,19 @@ site with the drafts through `DraftOverlayBackend`
 pages and widgets ([ADR-0015](adr/0015-site-visibility.md)). Only the admin UID may write, by
 `firestore.rules`.
 
+## Media (1.7.0)
+
+The owner uploads photos at `/admin/media`, or from any image field. The browser sends each file straight to
+Cloudinary, and an Azure Function in `api/` signs the request for the admin only. Editors for the gallery, team,
+shows and videos use `FieldKind.Image`, with a crop per use. A collection is drafted as one list and expanded into
+numbered documents when published ([ADR-0017](adr/0017-upload-function-and-media.md)).
+
 ## Dependency rules
 
 1. `features → shared → core/interfaces`. Arrows never point back up.
 2. Features never import other features. Shared code moves to `shared/`.
-3. Only `core/backends` imports SDKs (`firebase/*`, `@emailjs/browser`, `HttpClient`).
+3. Only `core/backends` imports SDKs (`firebase/*`, `@emailjs/browser`, `HttpClient`). `api/` is a separate
+   package, and never imports from `src/`.
 4. Only factories in `core/factories` reference concrete adapters.
 5. Components never inject services that do data access. They talk to their own view model.
 

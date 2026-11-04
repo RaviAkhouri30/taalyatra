@@ -22,6 +22,7 @@ describe('FirebaseAuthService', () => {
   // Stands in for the lazily loaded SDK chunk; the gateway is covered by the e2e smoke suite.
   const gateway = {
     user$: of(user),
+    idToken: vi.fn(),
     signIn: vi.fn(),
     signOut: vi.fn(),
     sendPasswordReset: vi.fn(),
@@ -59,6 +60,12 @@ describe('FirebaseAuthService', () => {
     gateway.signOut.mockReturnValue(of(undefined));
     await firstValueFrom(service.signOut());
     expect(loaded).toHaveBeenCalledTimes(1);
+  });
+
+  it('should get the ID token through the gateway', async () => {
+    gateway.idToken.mockReturnValue(of('id-token'));
+
+    await expect(firstValueFrom(create().idToken())).resolves.toBe('id-token');
   });
 
   it('should sign in through the gateway', async () => {

@@ -2,7 +2,7 @@ import { type IDraft } from '@core/interfaces/i-draft';
 import { formatMoment } from './editor-dates';
 import { type IEditorSection } from './i-editor-section';
 import { type IPublishRecord } from './i-publish-record';
-import { PublishReport } from './publish-report.model';
+import { type PublishReport } from './publish-report.model';
 
 /** One document with unpublished changes. */
 export interface IChangeEntry {
@@ -22,7 +22,6 @@ export interface IHistoryEntry {
 /** The review & publish page: what will change, what the checks found, and the history. */
 export class PublishPageModel {
   public readonly changes: readonly IChangeEntry[];
-  public readonly report: PublishReport;
   public readonly history: readonly IHistoryEntry[];
   /** How the confirmation sums the publish up, e.g. "Publish 2 changed documents?". */
   public readonly confirmText: string;
@@ -31,20 +30,19 @@ export class PublishPageModel {
    * @param drafts The drafts, by path.
    * @param history The publish history, newest first.
    * @param sections Every editor section.
-   * @param now The current time.
+   * @param report What the pre-publish checks found.
    */
   public constructor(
     public readonly drafts: ReadonlyMap<string, IDraft>,
     history: readonly IPublishRecord[],
     private readonly sections: readonly IEditorSection[],
-    now: Date,
+    public readonly report: PublishReport,
   ) {
     this.changes = [...drafts.values()].map((draft) => ({
       path: draft.path,
       title: this.titleOf(draft.path),
       savedAt: formatMoment(draft.savedAt),
     }));
-    this.report = PublishReport.check(drafts, sections, now);
     this.history = history.map((record) => ({
       record,
       when: formatMoment(record.publishedAt),

@@ -5,8 +5,13 @@ const VIEWS = [
   'Dashboard',
   'Offer & theme',
   'Page content',
+  'Gallery',
+  'Team',
+  'Shows',
+  'Videos',
   'Sections & pages',
   'Contact & links',
+  'Media library',
   'Review & publish',
 ];
 

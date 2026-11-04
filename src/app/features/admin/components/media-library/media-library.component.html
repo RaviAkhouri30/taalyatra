@@ -1,0 +1,42 @@
+<div class="ml">
+  <h1 class="d">Media library</h1>
+  <p class="ml-lead">
+    Photos here stay private until a published page uses them. Location data is removed when you
+    upload.
+  </p>
+  <app-media-upload (uploaded)="model.added($event)" />
+  @if (model.saveFailed()) {
+    <p class="ml-note" role="alert">
+      Your last description couldn’t be saved. Try changing it again.
+    </p>
+  }
+  @if (model.loadFailed()) {
+    <p class="ml-note" role="alert">
+      The library couldn’t be loaded. Reload the page to try again.
+    </p>
+  } @else if (model.data(); as assets) {
+    @if (assets.length === 0) {
+      <p class="ml-empty">No photos yet. Upload your first one above.</p>
+    } @else {
+      <h2 class="ml-count">{{ assets.length }} {{ assets.length === 1 ? 'photo' : 'photos' }}</h2>
+      <ul class="ml-grid">
+        @for (asset of assets; track asset.id) {
+          <li>
+            <app-media-card
+              [asset]="asset"
+              [uses]="model.usesOf(asset.id)"
+              [confirming]="model.confirmingDelete() === asset.id"
+              [busy]="model.busyId() === asset.id"
+              [notice]="model.notice()?.id === asset.id ? (model.notice()?.text ?? '') : ''"
+              (described)="model.describe(asset, $event)"
+              (replaced)="model.replace(asset, $event)"
+              (deleteAsked)="model.askToDelete(asset)"
+              (deleteConfirmed)="model.confirmDelete(asset)"
+              (deleteCancelled)="model.cancelDelete()"
+            />
+          </li>
+        }
+      </ul>
+    }
+  }
+</div>

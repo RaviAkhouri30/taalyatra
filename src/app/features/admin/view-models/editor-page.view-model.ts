@@ -63,6 +63,8 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
   private readonly documents = new Map<string, DocumentFields>();
   /** A change is waiting for its debounce or its save. */
   private readonly pending = signal(false);
+  /** Counts changes, so a save can tell whether a newer change arrived while it ran. */
+  private changeCount = 0;
 
   public focus(section: IEditorSection): void {
     this.activeAnchor.set(section.anchor);
@@ -122,7 +124,10 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
     const changes = page.sections.map(({ section, form }) =>
       form.valueChanges.pipe(
         tap(() => {
+          this.changeCount += 1;
           this.pending.set(true);
+          // At once, not after the debounce: "Saved" would be untrue while a change waits.
+          this.layout.reportSaving();
         }),
         debounceTime(AUTOSAVE_DEBOUNCE_MS),
         map(() => section.path),
@@ -147,11 +152,16 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
         this.documents.get(path) ?? {},
       );
     this.layout.reportSaving();
+    const savedThrough = this.changeCount;
     return this.drafts.save(path, content).pipe(
       tap(() => {
         this.documents.set(path, content);
-        this.pending.set(false);
-        this.layout.reportSaved();
+        // A change made during this save isn't in it: saying "Saved" would let the owner leave
+        // and lose it. Its own save reports when it's done.
+        if (savedThrough === this.changeCount) {
+          this.pending.set(false);
+          this.layout.reportSaved();
+        }
         this.previewVersion.update((version) => version + 1);
       }),
       // The change stays in the form; the owner can retry, and the next change saves it too.

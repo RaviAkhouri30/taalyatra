@@ -34,9 +34,11 @@ export interface INumberFieldSchema extends IFieldBase {
   readonly max: number;
 }
 
-/** An on/off switch. Missing values are on. */
+/** An on/off switch. Missing values are on, unless it's off by default. */
 export interface IToggleFieldSchema extends IFieldBase {
   readonly kind: FieldKind.Toggle;
+  /** Missing values are off, e.g. a new show isn't featured until the owner says so. */
+  readonly offByDefault?: boolean;
 }
 
 /** One stored value from a fixed list. */
@@ -45,17 +47,30 @@ export interface IChoiceFieldSchema extends IFieldBase {
   readonly options: readonly { readonly value: string; readonly label: string }[];
 }
 
+/** An image on the site, stored as `IImage`: chosen from the library, described and cropped. */
+export interface IImageFieldSchema extends IFieldBase {
+  readonly kind: FieldKind.Image;
+  /** The slot's width divided by its height, which the crop frame keeps to (D14). */
+  readonly aspect: number;
+  /** Decoration next to text that says the same thing, so no description is required. */
+  readonly decorative?: boolean;
+  /** The sibling field holding a YouTube link, whose thumbnail the owner can use (D20). */
+  readonly thumbnailFromLink?: string;
+}
+
 /** A nested object, edited as a set of fields. */
 export interface IGroupFieldSchema extends IFieldBase {
   readonly kind: FieldKind.Group;
   readonly fields: readonly FieldSchema[];
+  /** A sibling switch: the group shows only while it's on, and is stored as `null` otherwise. */
+  readonly onlyWhen?: string;
 }
 
 /** A list the owner can add to, remove from and reorder. */
 export interface IListFieldSchema extends IFieldBase {
   readonly kind: FieldKind.List;
-  /** Each item: a text field (a list of strings) or a group (a list of objects). */
-  readonly item: ITextFieldSchema | IGroupFieldSchema;
+  /** Each item: a text field (strings), an image field (images) or a group (objects). */
+  readonly item: ITextFieldSchema | IImageFieldSchema | IGroupFieldSchema;
   /** The add button's label, e.g. "Add offer card". */
   readonly addLabel: string;
   readonly maxItems: number;
@@ -67,5 +82,6 @@ export type FieldSchema =
   | INumberFieldSchema
   | IToggleFieldSchema
   | IChoiceFieldSchema
+  | IImageFieldSchema
   | IGroupFieldSchema
   | IListFieldSchema;

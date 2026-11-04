@@ -45,13 +45,31 @@ describe('editor schemas', () => {
   it.each(ALL_SECTIONS.map((section) => [section.id, section] as const))(
     'should only edit fields that exist in the stored document: %s',
     (_id, section) => {
-      const document = section.path
+      const stored = section.path
         .split('/')
         .reduce<unknown>((node, key) => (node as Record<string, unknown>)[key], fakeDb);
+      // A collection is a list in this file, and one document holding it in a draft (D15).
+      const document = Array.isArray(stored) ? { _items: stored } : stored;
 
       expect(keyPaths(section.fields).filter((path) => !has(document, path))).toEqual([]);
     },
   );
+
+  // A collection's list replaces each item whole, and firestore.rules requires exact keys, so a
+  // key missing from a schema would make every publish of that collection fail.
+  it.each([
+    [EditorTab.Team, fakeDb.team],
+    [EditorTab.Shows, fakeDb.showFormats],
+    [EditorTab.Videos, fakeDb.videos],
+  ])('should edit every key of each item on the %s tab', (tab, items) => {
+    const list = tabSchema(tab)?.sections.at(-1)?.fields[0];
+    const fields =
+      list?.kind === FieldKind.List && list.item.kind === FieldKind.Group ? list.item.fields : [];
+
+    for (const item of items) {
+      expect(new Set(fields.map((field) => field.key))).toEqual(new Set(Object.keys(item)));
+    }
+  });
 
   it('should offer a switch for every section, page and widget key', () => {
     const [visibility] = tabSchema(EditorTab.Visibility)?.sections ?? [];

@@ -1,6 +1,7 @@
 import { type IDraft } from '@core/interfaces/i-draft';
 import { ALL_SECTIONS } from '../schemas/editor-tabs';
 import { PublishPageModel } from './publish-page.model';
+import { PublishReport } from './publish-report.model';
 
 describe('PublishPageModel', () => {
   const now = new Date('2026-10-31T10:00:00Z');
@@ -18,7 +19,7 @@ describe('PublishPageModel', () => {
       ]),
       [],
       ALL_SECTIONS,
-      now,
+      PublishReport.check(new Map(), ALL_SECTIONS, now),
     );
 
     expect(page.changes.map((change) => change.title)).toEqual([
@@ -32,8 +33,9 @@ describe('PublishPageModel', () => {
   });
 
   it('should run the checks and describe the history', () => {
+    const drafts = new Map([['home/hero', draft('home/hero')]]);
     const page = new PublishPageModel(
-      new Map([['home/hero', draft('home/hero')]]),
+      drafts,
       [
         {
           id: 'r',
@@ -43,7 +45,7 @@ describe('PublishPageModel', () => {
         },
       ],
       ALL_SECTIONS,
-      now,
+      PublishReport.check(drafts, ALL_SECTIONS, now),
     );
 
     expect(page.report.canPublish).toBe(false);

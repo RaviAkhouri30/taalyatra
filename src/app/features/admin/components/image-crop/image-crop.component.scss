@@ -1,0 +1,80 @@
+@use 'tokens' as t;
+
+:host {
+  display: grid;
+  gap: 12px;
+}
+
+.ic-stage {
+  position: relative;
+  max-width: 560px;
+  overflow: hidden;
+  border-radius: 10px;
+  // A drag must move the frame, not scroll the page.
+  user-select: none;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    opacity: 0.55;
+  }
+}
+
+.ic-frame {
+  position: absolute;
+  border: 2px solid t.$color-amber;
+  background: rgb(255 255 255 / 12%);
+  cursor: move;
+  touch-action: none;
+
+  &:focus-visible {
+    outline: 2px solid t.$color-cream;
+    outline-offset: 2px;
+  }
+}
+
+.ic-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+
+  button {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 6px 12px;
+    border: 1px solid t.$color-line;
+    border-radius: 10px;
+    background: transparent;
+    color: t.$color-cream;
+    font-weight: 700;
+    cursor: pointer;
+  }
+}
+
+.ic-moves,
+.ic-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ic-zoom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: t.$color-cream;
+
+  input {
+    accent-color: t.$color-amber;
+  }
+}
+
+.ic-controls .ic-apply {
+  border-color: t.$color-amber;
+  background: t.$color-amber;
+  color: t.$color-ink-deep;
+}

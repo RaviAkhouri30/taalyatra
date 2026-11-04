@@ -9,6 +9,7 @@ export enum FieldKind {
   Number = 'number',
   Toggle = 'toggle',
   Choice = 'choice',
+  Image = 'image',
   Group = 'group',
   List = 'list',
 }

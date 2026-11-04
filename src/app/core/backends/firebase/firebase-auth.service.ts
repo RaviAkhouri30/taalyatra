@@ -39,6 +39,10 @@ export class FirebaseAuthService implements IAuthService {
           );
   }
 
+  public idToken(): Observable<string | null> {
+    return this.call((gateway) => gateway.idToken());
+  }
+
   public signIn(email: string, password: string): Observable<IAuthUser> {
     return this.call((gateway) => gateway.signIn(email, password));
   }

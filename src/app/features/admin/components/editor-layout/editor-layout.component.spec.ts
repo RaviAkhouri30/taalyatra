@@ -24,8 +24,13 @@ describe('EditorLayoutComponent', () => {
       '/admin',
       '/admin/offer',
       '/admin/content',
+      '/admin/gallery',
+      '/admin/team',
+      '/admin/shows',
+      '/admin/videos',
       '/admin/visibility',
       '/admin/contact',
+      '/admin/media',
       '/admin/publish',
     ]);
     expect(element.querySelector('.count')?.textContent).toBe('1 unpublished');

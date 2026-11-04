@@ -20,6 +20,16 @@
           }
         </select>
       }
+      @case (kind.Image) {
+        @if (imageField(); as imageSchema) {
+          <app-image-field
+            [field]="imageSchema"
+            [control]="imageControl()"
+            [fieldId]="fieldId()"
+            [describedBy]="describedBy()"
+          />
+        }
+      }
       @case (kind.Multiline) {
         <label [for]="fieldId()">{{ item.label }}</label>
         <textarea

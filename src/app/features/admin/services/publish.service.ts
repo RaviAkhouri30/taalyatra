@@ -8,6 +8,7 @@ import {
 } from '@core/interfaces/i-document-store';
 import { CLOCK } from '@core/tokens/clock.token';
 import { DRAFTS_COLLECTION, type IDraft, draftId } from '@core/interfaces/i-draft';
+import { expandCollection, isCollection } from '../models/collection-expander';
 import { PUBLISHES_COLLECTION, PUBLISH_HISTORY_LIMIT } from '../models/editor-storage.constants';
 import { type IPublishRecord } from '../models/i-publish-record';
 import { DraftService } from './draft.service';
@@ -50,12 +51,20 @@ export class PublishService {
     if (paths.length === 0) {
       return of(null);
     }
-    // forkJoin: the current live versions (kept for undo) and the history are independent reads.
-    return forkJoin([forkJoin(paths.map((path) => this.store.read(path))), this.history()]).pipe(
+    // forkJoin: the live versions (kept for undo), the numbered ids of any collection being
+    // published (so its unused numbers can be deleted) and the history are independent reads.
+    return forkJoin([
+      forkJoin(paths.map((path) => this.drafts.live(path))),
+      forkJoin(paths.map((path) => this.storedIds(path))),
+      this.history(),
+    ]).pipe(
       // switchMap: one commit per publish, built from what was just read.
-      switchMap(([live, history]) => {
+      switchMap(([live, ids, history]) => {
         const record = this.record(paths, live);
-        return this.store.commit(this.writes(drafts, record, history)).pipe(map(() => record));
+        const existing = new Map(paths.map((path, index) => [path, ids.at(index) ?? []]));
+        return this.store
+          .commit(this.writes(drafts, existing, record, history))
+          .pipe(map(() => record));
       }),
     );
   }
@@ -90,6 +99,13 @@ export class PublishService {
     return this.drafts.saveAll(contents);
   }
 
+  /** @returns A collection's stored ids; any other document has none to clean up. */
+  private storedIds(path: string): Observable<readonly string[]> {
+    return isCollection(path)
+      ? this.store.readAll(path).pipe(map((documents) => [...documents.keys()]))
+      : of([]);
+  }
+
   private record(
     paths: readonly string[],
     live: readonly (DocumentFields | null)[],
@@ -106,16 +122,17 @@ export class PublishService {
 
   private writes(
     drafts: ReadonlyMap<string, IDraft>,
+    existing: ReadonlyMap<string, readonly string[]>,
     record: IPublishRecord,
     history: readonly IPublishRecord[],
   ): DocumentWrite[] {
     const { id, ...stored } = record;
     return [
-      ...[...drafts.values()].map((draft): DocumentWrite => ({
-        kind: DocumentWriteKind.Set,
-        path: draft.path,
-        fields: draft.content,
-      })),
+      ...[...drafts.values()].flatMap((draft): DocumentWrite[] =>
+        isCollection(draft.path)
+          ? expandCollection(draft.path, draft.content, existing.get(draft.path) ?? [])
+          : [{ kind: DocumentWriteKind.Set, path: draft.path, fields: draft.content }],
+      ),
       { kind: DocumentWriteKind.Set, path: `${PUBLISHES_COLLECTION}/${id}`, fields: { ...stored } },
       ...[...drafts.keys()].map((path): DocumentWrite => ({
         kind: DocumentWriteKind.Delete,

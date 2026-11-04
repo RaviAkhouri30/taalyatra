@@ -117,4 +117,63 @@ describe('PublishService', () => {
     });
     expect(store.documents.has('drafts/site__visibility')).toBe(false);
   });
+
+  describe('collections', () => {
+    const seed = {
+      'videos/001': { title: 'A', order: 0 },
+      'videos/002': { title: 'B', order: 1 },
+      'videos/003': { title: 'C', order: 2 },
+    };
+    const draft = (items: readonly object[]): IDraft => ({
+      path: 'videos',
+      content: { _items: items },
+      savedAt: 'x',
+    });
+
+    it('should expand a draft into numbered documents and delete unused numbers, together', async () => {
+      const { service, store } = setUp({ ...seed, 'drafts/videos': { ...draft([]) } });
+
+      await firstValueFrom(
+        service.publish(new Map([['videos', draft([{ title: 'B' }, { title: 'A' }])]])),
+      );
+
+      expect(store.commits).toHaveLength(1);
+      expect(store.documents.get('videos/001')).toEqual({ title: 'B', order: 0 });
+      expect(store.documents.get('videos/002')).toEqual({ title: 'A', order: 1 });
+      expect(store.documents.has('videos/003')).toBe(false);
+      expect(store.documents.has('videos')).toBe(false);
+      expect(store.documents.has('drafts/videos')).toBe(false);
+    });
+
+    it('should grow the collection when the list has new items', async () => {
+      const { service, store } = setUp(seed);
+      const items = ['A', 'B', 'C', 'D'].map((title) => ({ title }));
+
+      await firstValueFrom(service.publish(new Map([['videos', draft(items)]])));
+
+      expect(store.documents.get('videos/004')).toEqual({ title: 'D', order: 3 });
+    });
+
+    it('should keep the list as it was, for undo', async () => {
+      const { service } = setUp(seed);
+
+      const record = await firstValueFrom(service.publish(new Map([['videos', draft([])]])));
+
+      expect(record?.before['videos']).toEqual({
+        _items: [{ title: 'A' }, { title: 'B' }, { title: 'C' }],
+      });
+    });
+
+    it('should put the whole list back into a draft when a publish is undone', async () => {
+      const { service, store } = setUp(seed);
+      const record = await firstValueFrom(service.publish(new Map([['videos', draft([])]])));
+
+      await firstValueFrom(service.restore(record!));
+
+      expect(store.documents.get('drafts/videos')).toMatchObject({
+        path: 'videos',
+        content: { _items: [{ title: 'A' }, { title: 'B' }, { title: 'C' }] },
+      });
+    });
+  });
 });

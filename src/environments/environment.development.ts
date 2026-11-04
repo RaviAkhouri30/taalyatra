@@ -14,6 +14,7 @@ export const environment: IAppEnvironment = {
   // The fake admin account's UID (fake-auth.constants.ts); not a real account.
   adminUid: 'fake-admin-uid',
   fakeLatencyMs: 250,
+  cloudinary: { cloudName: '' },
   // Fill in from the EmailJS dashboard to send real email; empty values use the fake adapter.
   emailJs: { serviceId: '', templateId: '', publicKey: '' },
 };

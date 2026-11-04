@@ -1,6 +1,6 @@
 import { CONTENT_MAX_LENGTH } from '@shared/constants/content-limits.constants';
 import { FieldKind } from '../models/field-kind.enum';
-import { type ITextFieldSchema } from '../models/i-field-schema';
+import { type IImageFieldSchema, type ITextFieldSchema } from '../models/i-field-schema';
 
 /** Button labels stay short so buttons keep to one line on phones. */
 export const BUTTON_LABEL_MAX = 40;
@@ -40,6 +40,22 @@ export function multiline(
  */
 export function buttonLabel(key: string, label: string): ITextFieldSchema {
   return text(key, label, { required: true, maxLength: BUTTON_LABEL_MAX });
+}
+
+/**
+ * @param key The stored key.
+ * @param label The visible label.
+ * @param aspect The slot's width divided by its height.
+ * @param options Anything else (decorative, hint).
+ * @returns An image field.
+ */
+export function image(
+  key: string,
+  label: string,
+  aspect: number,
+  options: Pick<IImageFieldSchema, 'decorative' | 'hint' | 'thumbnailFromLink'> = {},
+): IImageFieldSchema {
+  return { key, label, kind: FieldKind.Image, aspect, ...options };
 }
 
 /** The heading fields most home sections share: eyebrow, title and lead. */

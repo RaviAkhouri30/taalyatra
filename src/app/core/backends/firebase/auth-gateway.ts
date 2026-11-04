@@ -9,7 +9,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
-import { Observable, defer, map } from 'rxjs';
+import { Observable, defer, map, of } from 'rxjs';
 import { type IAuthUser } from '@core/interfaces/i-auth-service';
 import { type IFirebaseConfig, type IFirestoreEmulator } from '@core/interfaces/i-firebase-config';
 import { type IAuthGateway } from './i-auth-gateway';
@@ -55,6 +55,10 @@ export class AuthGateway implements IAuthGateway {
         },
       ),
     );
+  }
+
+  public idToken(): Observable<string | null> {
+    return defer(() => this.auth.currentUser?.getIdToken() ?? of(null));
   }
 
   public signIn(email: string, password: string): Observable<IAuthUser> {

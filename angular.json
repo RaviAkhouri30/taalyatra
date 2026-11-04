@@ -154,6 +154,7 @@
               "src/**/*.html",
               "e2e/**/*.ts",
               "tests/**/*.ts",
+              "api/src/**/*.ts",
               "scripts/**/*.mjs"
             ]
           }

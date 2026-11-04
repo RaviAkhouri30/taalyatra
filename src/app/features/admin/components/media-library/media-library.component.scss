@@ -1,0 +1,49 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.ml {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+  max-width: 1200px;
+
+  @include bp.down(bp.$phone) {
+    padding: 16px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+  }
+}
+
+.ml-lead,
+.ml-empty,
+.ml-note {
+  margin: 0;
+  color: t.$color-muted-strong;
+}
+
+.ml-note {
+  color: t.$color-cream;
+  font-weight: 600;
+}
+
+.ml-count {
+  margin: 8px 0 0;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.ml-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

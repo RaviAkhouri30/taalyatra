@@ -4,6 +4,7 @@ import { type AbstractControl } from '@angular/forms';
 import { buildControl } from '../../forms/schema-control.factory';
 import { FieldKind } from '../../models/field-kind.enum';
 import { type FieldSchema } from '../../models/i-field-schema';
+import { provideEditorTesting } from '../../testing/editor-testing';
 import { SchemaFieldComponent } from './schema-field.component';
 
 @Component({
@@ -42,6 +43,18 @@ describe('SchemaFieldComponent', () => {
     expect(element.querySelector('label')?.getAttribute('for')).toBe('f');
     expect(input.getAttribute('aria-describedby')).toBe('f-hint f-count f-error');
     expect(element.querySelector('#f-count')?.textContent.trim()).toBe('5 / 20 characters');
+  });
+
+  it('should show an image field with its error tied to it', () => {
+    TestBed.configureTestingModule({ providers: [provideEditorTesting().providers] });
+    const { element } = render(
+      { key: 'photo', label: 'Photo', kind: FieldKind.Image, aspect: 1 },
+      undefined,
+    );
+
+    expect(element.querySelector('app-image-field')).not.toBeNull();
+    expect(element.querySelector('textarea')?.getAttribute('aria-describedby')).toBe('f-error');
+    expect(element.querySelector('#f-error')?.textContent).toBe('Choose a photo.');
   });
 
   it('should flag text longer than the writing tip, and explain an error', () => {

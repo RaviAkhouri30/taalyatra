@@ -1,9 +1,11 @@
 @for (entry of entries(); track entry.field.key) {
   @if (entry.nested; as nested) {
-    <fieldset class="sf-group">
-      <legend>{{ entry.field.label }}</legend>
-      <app-schema-fields [fields]="nested" [group]="entry.control" [idPrefix]="entry.id" />
-    </fieldset>
+    @if (isShown(entry.field)) {
+      <fieldset class="sf-group">
+        <legend>{{ entry.field.label }}</legend>
+        <app-schema-fields [fields]="nested" [group]="entry.control" [idPrefix]="entry.id" />
+      </fieldset>
+    }
   } @else if (entry.list; as list) {
     <fieldset class="sf-list">
       <legend>{{ entry.field.label }}</legend>

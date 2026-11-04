@@ -1,0 +1,51 @@
+<label
+  class="mu-zone"
+  [class.mu-zone--over]="dragging()"
+  (dragover)="dragOver($event)"
+  (dragleave)="dragging.set(false)"
+  (drop)="drop($event)"
+>
+  <input #files class="mu-input" type="file" multiple [accept]="accept" (change)="choose(files)" />
+  <span class="mu-title">Choose photos</span>
+  <span class="mu-hint">Or drop them here. JPG, PNG, WebP or HEIC, up to 15 MB each.</span>
+</label>
+<p class="mu-summary" role="status">{{ model.summary() }}</p>
+@if (model.items().length > 0) {
+  <ul class="mu-list">
+    @for (item of model.items(); track item.id) {
+      <li class="mu-item" [attr.data-status]="item.status">
+        <span class="mu-name">{{ item.name }}</span>
+        @switch (item.status) {
+          @case (status.Waiting) {
+            <span class="mu-state">Waiting</span>
+          }
+          @case (status.Uploading) {
+            <progress
+              class="mu-progress"
+              max="100"
+              [value]="item.percent"
+              [attr.aria-label]="'Uploading ' + item.name"
+            ></progress>
+          }
+          @case (status.Done) {
+            <span class="mu-state">Uploaded</span>
+          }
+          @case (status.Failed) {
+            <span class="mu-error">{{ item.message }}</span>
+            <button
+              type="button"
+              class="mu-retry"
+              [attr.aria-label]="'Try ' + item.name + ' again'"
+              (click)="model.retry(item.id)"
+            >
+              Try again
+            </button>
+          }
+          @case (status.Invalid) {
+            <span class="mu-error">{{ item.message }}</span>
+          }
+        }
+      </li>
+    }
+  </ul>
+}

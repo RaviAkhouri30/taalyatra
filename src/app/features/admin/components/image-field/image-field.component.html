@@ -1,0 +1,63 @@
+@let current = image();
+<p class="if-label">{{ field().label }}</p>
+<div class="if-row">
+  <div class="if-frame">
+    @if (current.src) {
+      <img [ngSrc]="current.src" fill sizes="(max-width: 620px) 100vw, 20vw" [alt]="current.alt" />
+    } @else {
+      <span class="if-empty">No photo yet</span>
+    }
+  </div>
+  <div class="if-body">
+    <label [for]="fieldId()">Description</label>
+    <textarea
+      #description
+      rows="2"
+      [id]="fieldId()"
+      [maxLength]="maxLength"
+      [value]="current.alt"
+      [attr.aria-describedby]="describedBy()"
+      (input)="describe(description.value)"
+    ></textarea>
+    <p class="if-tip">Say what the photo shows, for people who can’t see it.</p>
+    <div class="if-actions">
+      <button
+        type="button"
+        [attr.aria-expanded]="panel() === panels.Picker"
+        (click)="toggle(panels.Picker)"
+      >
+        Choose or upload
+      </button>
+      @if (field().thumbnailFromLink) {
+        <button type="button" (click)="useLinkThumbnail()">Use the YouTube thumbnail</button>
+      }
+      @if (canCrop()) {
+        <button type="button" [attr.aria-expanded]="panel() === panels.Crop" (click)="toggleCrop()">
+          Crop
+        </button>
+      }
+    </div>
+  </div>
+</div>
+@if (linkMissing()) {
+  <p class="if-panel" role="alert">Paste a YouTube video link first, then try again.</p>
+}
+@switch (panel()) {
+  @case (panels.Picker) {
+    <app-media-picker class="if-panel" (picked)="choose($event)" (cancelled)="close()" />
+  }
+  @case (panels.Crop) {
+    @if (model.unavailable()) {
+      <p class="if-panel" role="alert">This photo isn’t in the library, so it can’t be cropped.</p>
+    } @else if (model.data(); as asset) {
+      <app-image-crop
+        class="if-panel"
+        [asset]="asset"
+        [aspect]="field().aspect"
+        [src]="current.src"
+        (applied)="crop(asset, $event)"
+        (cancelled)="close()"
+      />
+    }
+  }
+}

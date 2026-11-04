@@ -20,7 +20,7 @@ Reference implementation of the architecture: `/Users/raviakhouri/MyWorks/Resume
 | Async / Data flow | RxJS 7 for **all** asynchronous work                                                          |
 | Backend / DB      | Firebase Firestore 13, behind the `IHttpBackend` adapter                                      |
 | Authentication    | Firebase Auth, behind the `IAuthService` adapter                                              |
-| Media             | Cloudinary via `NgOptimizedImage` + `provideCloudinaryLoader`                                 |
+| Media             | Cloudinary via `NgOptimizedImage` + our `IMAGE_LOADER` (`provideMediaImages`, ADR-0017)       |
 | Email             | EmailJS (`@emailjs/browser` 5), behind the `IEmailService` adapter                            |
 | Unit tests        | Vitest 4 (`@angular/build:unit-test`) + `@vitest/coverage-v8`                                 |
 | E2E tests         | Playwright 1.64 + `@axe-core/playwright`                                                      |
@@ -41,6 +41,7 @@ npm run format:check   # Prettier check                      (format to write)
 npm run typecheck      # tsc for app, spec and e2e configs
 npm test               # Vitest, single run                  (test:watch for watch mode)
 npm run test:coverage  # Vitest + coverage, fails below 90%  → coverage/taal-yatra/
+npm run test:api       # the upload function's tests, fails below 90%  (needs `npm --prefix api ci` once)
 npm run e2e            # Playwright: desktop, tablet, mobile (e2e:install once for browsers)
 npm run e2e:visual:update  # re-record all visual baselines after an approved visual change
 npm run test:rules     # firestore.rules tests on the emulator (needs Java)
@@ -49,8 +50,9 @@ npm run start:emulator # dev server against a running local Firestore emulator
 npm run seed:firestore -- <key.json> [--dry-run|--yes] [--overwrite] | --emulator   # missing docs only unless --overwrite
 npm run export:firestore -- <key.json>   # back up live content to backups/ (before releases)
 npm run deploy:rules   # deploy firestore.rules + indexes to project taal-yatra
+npm run prove:cloudinary -- [--dry-run | photo.heic]  # checks GPS removal on the real account (keys from your shell)
 npm run sonar          # SonarQube scan (needs SONAR_HOST_URL and SONAR_TOKEN env vars)
-npm run verify         # format:check + lint + typecheck + test:coverage + build
+npm run verify         # format:check + lint + typecheck + test:coverage + test:api + build
 ```
 
 **Definition of done:** `npm run verify` ✔ · `npm run e2e` ✔ · `npm run test:rules` ✔ and
@@ -189,7 +191,8 @@ export class ApiServiceProviderFactory {
 - Every adapter honours the same `HttpResponse<T>` contract (Liskov). `RestHttpBackend` wraps
   `HttpClient` with `observe: 'response'`, so it matches the contract exactly.
 - The same pattern applies to `IAuthService` (ADR-0012), `IDocumentStore` (the editor's fresh
-  reads and atomic commits, ADR-0013), `IEmailService`, `IClipboardService` and `IMediaService`.
+  reads and atomic commits, ADR-0013), `IEmailService`, `IClipboardService` and `IMediaService`
+  (provided on the admin routes only, so public pages never load it, ADR-0017).
   Each has a Fake implementation for unit tests and e2e.
 - `ApiBaseService` sends every call through `HttpsErrorHandler` (loader, timeout, status check,
   notification) and unwraps `body`.
@@ -219,6 +222,7 @@ src/app/
      with presentational children in sub-folders, plus testing/ for spec fixtures.)
 src/styles/        _tokens.scss (design tokens), _bootstrap.scss (selective imports)
 e2e/               specs/*.e2e.ts, pages/ (Page Objects), fixtures/
+api/               the upload function (Azure Functions, its own package and tests, ADR-0017)
 docs/              architecture, ADRs, AIDLC records
 ```
 
@@ -274,7 +278,8 @@ docs/              architecture, ADRs, AIDLC records
   enforces this.
 - Promise-based SDKs (Firebase, EmailJS) are wrapped **only in `core/backends`** with
   `defer(() => sdkCall())`, which stays lazy and cold. `from(sdkCall())` would run eagerly.
-- The framework entry point `main.ts` is the one other permitted exception.
+- The framework entry point `main.ts` is one other permitted exception. `toAzureResponse` in `api/` is the
+  last: Azure requires a Promise, so it converts the result, and all function logic stays in RxJS (ADR-0017).
 - Never nest `subscribe()`. Pick `switchMap` / `concatMap` / `mergeMap` / `exhaustMap` on
   purpose and comment why.
 - Subscribe only in `BaseComponent`. Long-lived streams `catchError` so one failure can't kill them.

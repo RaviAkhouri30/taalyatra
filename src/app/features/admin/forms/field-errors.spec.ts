@@ -22,4 +22,11 @@ describe('fieldErrorMessage', () => {
   it('should still explain a length error without its details', () => {
     expect(fieldErrorMessage({ maxlength: true })).toBe('Use at most 0 characters.');
   });
+
+  it.each([
+    ['imageMissing', 'Choose a photo.'],
+    ['imageDescription', 'Describe this photo for people who can’t see it.'],
+  ])('should explain %s', (key, message) => {
+    expect(fieldErrorMessage({ [key]: true })).toBe(message);
+  });
 });

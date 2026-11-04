@@ -90,4 +90,40 @@ describe('DraftService', () => {
     expect(store.documents.size).toBe(0);
     expect(store.commits).toHaveLength(1);
   });
+
+  describe('collections', () => {
+    const seed = {
+      'videos/002': { title: 'Second', order: 1 },
+      'videos/001': { title: 'First', order: 0 },
+    };
+
+    it('should read a live collection as one document holding its list, in order', async () => {
+      const { service } = setUp(seed);
+
+      await expect(firstValueFrom(service.document('videos'))).resolves.toEqual({
+        _items: [{ title: 'First' }, { title: 'Second' }],
+      });
+    });
+
+    it('should prefer a collection draft when there is one', async () => {
+      const content = { _items: [{ title: 'Drafted' }] };
+      const { service } = setUp({
+        ...seed,
+        'drafts/videos': { path: 'videos', content, savedAt: 'x' },
+      });
+
+      await expect(firstValueFrom(service.document('videos'))).resolves.toEqual(content);
+    });
+
+    it('should draft a collection as one document', async () => {
+      const { service, store } = setUp(seed);
+
+      await firstValueFrom(service.save('videos', { _items: [] }));
+
+      expect(store.documents.get('drafts/videos')).toMatchObject({
+        path: 'videos',
+        content: { _items: [] },
+      });
+    });
+  });
 });

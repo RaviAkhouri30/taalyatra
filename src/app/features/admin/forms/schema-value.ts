@@ -17,7 +17,12 @@ import { entriesOf } from './json-node';
 export function readSchemaValue(fields: readonly FieldSchema[], raw: unknown): DocumentFields {
   const values = entriesOf(raw);
   return Object.fromEntries(
-    fields.map((field) => [field.key, readField(field, values.get(field.key))]),
+    fields.map((field) => [
+      field.key,
+      field.kind === FieldKind.Group && field.onlyWhen && values.get(field.onlyWhen) !== true
+        ? null
+        : readField(field, values.get(field.key)),
+    ]),
   );
 }
 

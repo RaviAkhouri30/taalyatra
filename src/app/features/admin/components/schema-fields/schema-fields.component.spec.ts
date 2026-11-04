@@ -107,3 +107,30 @@ describe('SchemaFieldsComponent', () => {
     expect(button('Move Card 2 down').disabled).toBe(true);
   });
 });
+
+describe('SchemaFieldsComponent · a group that depends on a switch', () => {
+  it('should show the group only while its switch is on', async () => {
+    const fields: FieldSchema[] = [
+      { key: 'featured', label: 'Featured', kind: FieldKind.Toggle, offByDefault: true },
+      {
+        key: 'spotlight',
+        label: 'Spotlight',
+        kind: FieldKind.Group,
+        onlyWhen: 'featured',
+        fields: [{ key: 'title', label: 'Title', kind: FieldKind.Text }],
+      },
+    ];
+    const fixture = TestBed.createComponent(SchemaFieldsComponent);
+    fixture.componentRef.setInput('fields', fields);
+    fixture.componentRef.setInput('group', buildFormGroup(fields, {}));
+    fixture.componentRef.setInput('idPrefix', 'x');
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector('fieldset')).toBeNull();
+
+    element.querySelector<HTMLInputElement>('input[role="switch"]')?.click();
+    await fixture.whenStable();
+
+    expect(element.querySelector('legend')?.textContent).toBe('Spotlight');
+  });
+});

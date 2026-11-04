@@ -8,6 +8,9 @@ export const EDITOR_TAB_ROUTE_KEY = 'editorTab';
 /** The publish page's path under `/admin`. */
 export const PUBLISH_PATH = 'publish';
 
+/** The media library's path under `/admin`. */
+export const MEDIA_PATH = 'media';
+
 /** One link in the editor's tab bar. */
 export interface IEditorNavLink {
   readonly label: string;
@@ -16,7 +19,7 @@ export interface IEditorNavLink {
   readonly exact: boolean;
 }
 
-/** The editor's tab bar: dashboard, the edit tabs, then review & publish. */
+/** The editor's tab bar: dashboard, the edit tabs, the library, then review & publish. */
 export const EDITOR_NAV: readonly IEditorNavLink[] = [
   { label: 'Dashboard', url: AppRoute.Admin, exact: true },
   ...EDITOR_TABS.map((entry) => ({
@@ -24,6 +27,7 @@ export const EDITOR_NAV: readonly IEditorNavLink[] = [
     url: `${AppRoute.Admin}/${entry.tab}`,
     exact: false,
   })),
+  { label: 'Media library', url: `${AppRoute.Admin}/${MEDIA_PATH}`, exact: false },
   { label: 'Review & publish', url: `${AppRoute.Admin}/${PUBLISH_PATH}`, exact: false },
 ];
 

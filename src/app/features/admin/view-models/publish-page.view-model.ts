@@ -20,8 +20,10 @@ import { ToastTone } from '@shared/enums/toast-tone.enum';
 import { ToastService } from '@shared/services/toast.service';
 import { type IPublishRecord } from '../models/i-publish-record';
 import { PublishPageModel } from '../models/publish-page.model';
+import { PublishReport } from '../models/publish-report.model';
 import { ALL_SECTIONS } from '../schemas/editor-tabs';
 import { DraftService } from '../services/draft.service';
+import { MediaLibraryService } from '../services/media-library.service';
 import { PublishService } from '../services/publish.service';
 import { EditorLayoutViewModel } from './editor-layout.view-model';
 
@@ -46,6 +48,7 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
 
   private readonly drafts = inject(DraftService);
   private readonly publishes = inject(PublishService);
+  private readonly library = inject(MediaLibraryService);
   private readonly layout = inject(EditorLayoutViewModel);
   private readonly toasts = inject(ToastService);
   private readonly clock = inject(CLOCK);
@@ -83,11 +86,14 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
     return this.reloads.pipe(
       startWith(undefined),
       // switchMap: a newer reload replaces one still in flight.
-      switchMap(() => forkJoin([this.drafts.drafts(), this.publishes.history()])),
-      map(
-        ([drafts, history]) =>
-          new PublishPageModel(drafts, history, ALL_SECTIONS, this.clock.now()),
+      switchMap(() =>
+        forkJoin([this.drafts.drafts(), this.publishes.history(), this.library.assets()]),
       ),
+      map(([drafts, history, assets]) => {
+        const libraryIds = new Set(assets.map((asset) => asset.id));
+        const report = PublishReport.check(drafts, ALL_SECTIONS, this.clock.now(), libraryIds);
+        return new PublishPageModel(drafts, history, ALL_SECTIONS, report);
+      }),
       tap((page) => {
         this.setData(page);
       }),

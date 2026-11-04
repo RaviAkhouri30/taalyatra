@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { type Subscription, throwError } from 'rxjs';
+import { Subject, type Subscription, throwError } from 'rxjs';
 import fakeDb from '@core/backends/fake/fake-db.json';
+import { type IDraft } from '@core/interfaces/i-draft';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { AUTOSAVE_DEBOUNCE_MS, EDITOR_TAB_ROUTE_KEY } from '../models/editor-nav.constants';
 import { EditorTab } from '../models/editor-tab.enum';
@@ -73,6 +74,43 @@ describe('EditorPageViewModel', () => {
     expect(layout.reportSaving).toHaveBeenCalled();
     expect(layout.reportSaved).toHaveBeenCalled();
     expect(model.previewVersion()).toBe(1);
+    expect(model.hasUnsavedChanges()).toBe(false);
+  });
+
+  it('should say it is saving as soon as something changes, before the pause is over', () => {
+    const { layout, section } = setUp();
+
+    section('hero')?.form.get('title')?.setValue('Drum');
+
+    expect(layout.reportSaving).toHaveBeenCalled();
+    expect(layout.reportSaved).not.toHaveBeenCalled();
+  });
+
+  it('should not say saved while a change made during a save is still waiting', () => {
+    const { model, layout, section, store } = setUp();
+    const firstSave = new Subject<IDraft>();
+    const drafts = TestBed.inject(DraftService);
+    const realSave = drafts.save.bind(drafts);
+    vi.spyOn(drafts, 'save')
+      .mockReturnValueOnce(firstSave)
+      .mockImplementation((path, content) => realSave(path, content));
+    const title = section('hero')?.form.get('title');
+
+    title?.setValue('First');
+    vi.advanceTimersByTime(AUTOSAVE_DEBOUNCE_MS);
+    title?.setValue('Second');
+    firstSave.next({ path: 'home/hero', content: {}, savedAt: 'x' });
+    firstSave.complete();
+
+    expect(layout.reportSaved).not.toHaveBeenCalled();
+    expect(model.hasUnsavedChanges()).toBe(true);
+
+    vi.advanceTimersByTime(AUTOSAVE_DEBOUNCE_MS);
+
+    expect(store.documents.get('drafts/home__hero')).toMatchObject({
+      content: { title: 'Second' },
+    });
+    expect(layout.reportSaved).toHaveBeenCalledTimes(1);
     expect(model.hasUnsavedChanges()).toBe(false);
   });
 

@@ -33,6 +33,10 @@ export function schemaLeaves(
   return fields.flatMap((field): ISchemaLeaf[] => {
     const value = fieldOf(source, field.key);
     if (field.kind === FieldKind.Group) {
+      // Switched off, so it isn't stored and has nothing to check.
+      if (field.onlyWhen && fieldOf(source, field.onlyWhen) !== true) {
+        return [];
+      }
       // Groups mirror nested storage; the owner sees their fields directly, so no label part.
       return schemaLeaves(field.fields, value, prefix);
     }
