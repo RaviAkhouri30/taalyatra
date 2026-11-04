@@ -10,6 +10,8 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
 | 4   | Image field and crop (D12, D14)                            | `FieldKind.Image`; `ImageFieldComponent` and view model; `MediaPickerComponent`; `ImageCropComponent`, `CropFrame`, `parseImageSrc`                                                                                                   | see Checks                  |
 | 5   | Collections (D15, D16)                                     | `collapseCollection`, `expandCollection`, `isCollection`; `DraftService.live`; `PublishService` expands on publish; `FakeDataStore` answers collections like Firestore                                                                | see Checks                  |
 | 6   | Gallery, Team, Shows and Videos tabs (E1–E3, E5, D20, D21) | `media.sections.ts`; four tabs; `OneFeaturedShowRule`; a group shown by a switch (`onlyWhen`); a switch off by default; `youtubeThumbnail`                                                                                            | see Checks                  |
+| 7   | Replace and delete with usage (D17–D19, G5–G7)             | `MediaUsageService`; `imageUsesIn`, `replaceImage`; `MediaManageViewModel`; `ImageInLibraryRule`                                                                                                                                      | see Checks                  |
+| 8   | Docs (D1–D23)                                              | ADR-0017; ADR-0010 update; CLAUDE.md; overview, class, component, sequence, data and deployment docs; CHANGELOG                                                                                                                       | n/a                         |
 
 ## Decisions & deviations from design
 
@@ -54,6 +56,8 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
   **Use the YouTube thumbnail**, so a typed or half-pasted link can't replace a thumbnail they uploaded.
 - **The dashboard's placeholder list grew,** because the editor now covers team, shows and videos, so its
   screenshot baselines were re-recorded.
+- **Replacing a photo removes its crops** (D19 kept them only as a warning). Their numbers refer to the old
+  file, and could cut off the wrong part or fall outside the new one. The owner re-crops if they want to.
 - **A file the browser can't encode goes as it is,** the same as one it can't decode, because Cloudinary's
   transformation removes its metadata either way.
 
@@ -77,6 +81,11 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
 - **Increment 6:** `npm run verify` passes (991 site tests, coverage 99.8/97.99/99.59/99.96; 52 function tests at
   100 %); 118 rules tests; `npm run e2e` 309 passed; `npm run e2e:firebase` 21 passed, including publishing a
   collection and storing a library entry through the real rules.
+- **Increment 7:** `npm run verify` passes (1042 site tests, coverage 99.78/98/99.53/99.96; 52 function tests at
+  100 %); 118 rules tests; `npm run e2e:firebase` 21 passed; no admin code in the files public pages load.
+  **`npm run e2e` has no single clean run for this increment.** Under heavy load from other software (load average
+  20–26), two full runs ended with 14 and 10 timeouts, in different tests each time; every test passed on a rerun
+  (305 + 9 + 1 of 315). A clean full run is still needed for the release.
 - **Real-account proof (2026-11-03, account `zqu2cpih`, run by the owner):** a signed SHA-256 upload is
   accepted, and delivered images have no GPS. The approved setting failed on the stored file, so three
   placements of Cloudinary's `fl_force_strip` were compared. Each cell is the stored file:

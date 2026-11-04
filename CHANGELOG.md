@@ -6,6 +6,30 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+### Added
+
+- **Photo uploads (0009).** The owner can upload photos from a phone or computer, by drag and drop or the file
+  picker, three at a time with progress and retry. Location data is removed, and large photos are shrunk.
+- **Media library tab.** Every uploaded photo with its description and where it's used. Photos can be replaced,
+  which puts the new one everywhere as a draft, and deleted, which is refused while a photo is in use.
+- **Image field with crop.** Choose or upload a photo in any image field, describe it, and crop it for that place
+  only. The frame moves by drag, buttons or arrow keys.
+- **Gallery, Team, Shows and Videos tabs.** Every field, with add, remove and reorder. Publish checks require a
+  description on each photo, allow one featured show, and catch a photo deleted from the library. Videos can take
+  their thumbnail from a YouTube link.
+- **Upload function (`api/`).** An Azure Function that signs uploads and deletes for the admin only, so the
+  Cloudinary secret never reaches the browser (ADR-0017).
+
+### Changed
+
+- Images load through our own loader: local images are unchanged, and uploaded ones come from Cloudinary.
+- The dashboard's placeholder list now covers team, shows and videos.
+
+### Fixed
+
+- A change made while an earlier save was running could be marked "Saved" and lost on leaving the page. "Saving…"
+  now shows as soon as something changes, and "Saved" only when nothing newer is waiting.
+
 ## [1.6.0] - 2026-10-31
 
 ### Added

@@ -31,3 +31,9 @@ protected by Firebase Auth plus `firestore.rules` checking the admin UID and eac
 shape. Enforcing App Check on Firestore would load reCAPTCHA on every public page and cost
 Lighthouse points for little gain. App Check will protect the image-upload function in 1.7.0,
 which only the admin calls. The proposal-spam exposure above is unchanged.
+
+## Update — 1.7.0 (2026-11-04)
+
+Still deferred, and the plan above is dropped (0009 D5). The upload function accepts only the admin's
+verified Firebase ID token, so App Check would add a reCAPTCHA key and more admin code for little extra
+protection ([ADR-0017](0017-upload-function-and-media.md)).

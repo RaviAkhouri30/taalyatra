@@ -15,7 +15,8 @@ flowchart TD
   RO -->|"admin (lazy, layout: Bare)"| AD["AdminShellComponent (noindex)<br/>sign-in · signedOutGuard → SignIn · reset-password → ResetPassword (app-auth-card)"]
   AD -->|"'' · adminGuard"| EL["EditorLayoutComponent<br/>account bar · tabs · save status (EditorLayoutViewModel)"]
   EL --> DB["'' → DashboardComponent"]
-  EL --> EP["offer · content · visibility · contact → EditorPageComponent<br/>(unsavedChangesGuard) · schema-fields · schema-field · preview-frame"]
+  EL --> EP["offer · content · gallery · team · shows · videos · visibility · contact → EditorPageComponent<br/>(unsavedChangesGuard) · schema-fields · schema-field · preview-frame"]
+  EL --> ML["media → MediaLibraryComponent (MediaManageViewModel)<br/>MediaUploadComponent · MediaCardComponent"]
   EL --> PP["publish → PublishPageComponent"]
   RO -->|"** → ''"| Home
   Home --> Eager["intro · hero · marquee · trust<br/>(each optional section only when switched on)"]
@@ -35,3 +36,15 @@ so it renders in one pass. Page chrome lives in
   children, which take signal `input()`s and emit `output()`s and have no injected services.
 - Layout components (`layout/`) such as header, footer and nav sit in the App shell around the outlet.
 - Update this tree whenever a route or component is added.
+
+## Image field (1.7.0)
+
+`SchemaFieldComponent` renders `FieldKind.Image` as an image field, in lists and groups alike.
+
+```mermaid
+flowchart TD
+  SF["SchemaFieldComponent"] --> IF["ImageFieldComponent (ImageFieldViewModel)<br/>thumbnail · description · YouTube thumbnail"]
+  IF -->|Choose or upload| MP["MediaPickerComponent (MediaLibraryViewModel)"]
+  MP --> UP["MediaUploadComponent (MediaUploadViewModel)<br/>queue · progress · retry"]
+  IF -->|Crop| CR["ImageCropComponent<br/>drag · move buttons · arrow keys · zoom<br/>(CropBoxDirective, CropFrame)"]
+```

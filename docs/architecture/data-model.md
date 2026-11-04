@@ -13,6 +13,7 @@ into Firestore, and development, unit tests and the main e2e suite read it direc
 | `showFormats/{001…}` | `IShowFormatDto` + `order`: icon, title, text, ensemble, set length, best for, `image`, `featured`, `spotlight` (copy for the featured one, else `null`) | home Shows teaser and Shows page; the featured format (classical tabla recital) is their spotlight |
 | `videos/{001…}` | `IVideoDto` + `order` (categories are derived, not stored) | videos teaser, Videos page |
 | `gallery/{001…}` | `IImageDto` + `order` | gallery, lightbox |
+| `media/{id}` | `IMediaAssetDto`: `publicId`, `version`, `width`, `height`, `bytes`, `format`, `name`, `description`, `uploadedAt` (1.7.0, ADR-0017, admin-only) | media library, image fields |
 | `team/{001…}` | `ITeamMemberDto` + `order` | team teaser, Team page |
 | `site/visibility` | `ISiteVisibilityDto`: `sections`, `pages`, `widgets`, maps of key → boolean (1.6.0, ADR-0015) | shell, home page, link lists, `pageEnabledGuard` |
 | `drafts/{id}` | `{ path, content, savedAt }`: an unpublished document; id is the path with `__` for `/` (1.6.0, ADR-0013, admin-only) | editor, preview mode |
@@ -36,7 +37,12 @@ app routes.
   from bodies.
 - The adapter stamps `createdAt: serverTimestamp()` on every created document.
 - Image paths point at files in `public/images`. Photos are WebP (since 1.5.0); the older JPEGs
-  stay, so data seeded before a release keeps rendering.
+  stay, so data seeded before a release keeps rendering. **Since 1.7.0, `IImage.src` can also be** an
+  uploaded image, `[c_crop,x_…,y_…,w_…,h_…/]v…/<id>`, or a full URL such as a YouTube thumbnail.
+- **Collections in drafts (1.7.0):** `drafts/gallery`, `drafts/team`, `drafts/showFormats` and `drafts/videos`
+  hold `{ path, content: { _items: [...] }, savedAt }`. Publishing expands the list into numbered documents
+  with `order` and deletes unused numbers. Limits, enforced by rules through the highest id: gallery 60, team
+  24, shows 20, videos 60.
 - **Since 1.6.0, Firestore is the source of truth for live content**: the owner edits it.
   `seed:firestore` creates missing documents only (`--overwrite` replaces after listing), and
   `export:firestore` backs the content up. `fake-db.json` stays the fixture for development
@@ -48,8 +54,8 @@ app routes.
   required. Missing `labels` become empty, so "Call us" falls back to the number, the copyable
   address to plain text, and video cards to their titles. A missing `credit` hides the credit, and
   missing `socials` or `promotion` show none. One absent field never blanks a section.
-- `firestore.rules` denies by default and is tested (`npm run test:rules`). Content is read-only;
-  `proposals` is create-only, with exact keys, length limits from `PROPOSAL_MAX_LENGTH`, and
+- `firestore.rules` denies by default and is tested (`npm run test:rules`). Visitors can only read content, and
+  only the admin may change it, with the shape the site renders; `proposals` is create-only, with exact keys, length limits from `PROPOSAL_MAX_LENGTH`, and
   `createdAt == request.time`.
 
 ```mermaid

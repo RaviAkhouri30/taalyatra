@@ -73,7 +73,7 @@ classDiagram
 ```
 
 The same port → adapter → factory shape applies to `IAuthService`, `IEmailService` and
-`IMediaService`. `IEmailService` is implemented (1.1.0):
+`IMediaService` (below). `IEmailService` is implemented (1.1.0):
 
 ```mermaid
 classDiagram
@@ -194,4 +194,46 @@ classDiagram
   PublishPageViewModel --> PublishService
   SiteShellViewModel --> SiteVisibilityService
   SiteConfigModel ..> PromotionSchedule
+```
+
+Media (1.7.0, [ADR-0017](adr/0017-upload-function-and-media.md)):
+
+```mermaid
+classDiagram
+  direction LR
+  class IMediaService {
+    <<abstract port, admin routes only>>
+    +upload(file) Observable~MediaUploadEvent~
+    +remove(publicId) Observable~void~
+  }
+  class CloudinaryMediaService
+  class FakeMediaService
+  class ImagePreparer { +prepare(file) Observable~Blob~ }
+  class mediaServiceFactory { <<function>> }
+  class MediaLibraryService { +assets() · +asset(id) · +register() · +describe() · +remove() }
+  class MediaUsageService { +usages() · +replace(old, next) }
+  class MediaUploadViewModel { queue of three · progress · retry }
+  class MediaLibraryViewModel { list · describe }
+  class MediaManageViewModel { where used · replace · delete }
+  class ImageFieldViewModel { finds the file behind a crop }
+  class CropFrame { +moveBy() · +zoomTo() · +transformation }
+  class ImageInLibraryRule
+  class OneFeaturedShowRule
+  class IPublishRule { <<interface>> }
+  IMediaService <|.. CloudinaryMediaService
+  IMediaService <|.. FakeMediaService
+  mediaServiceFactory ..> IMediaService : creates
+  CloudinaryMediaService --> ImagePreparer
+  CloudinaryMediaService --> IAuthService : ID token
+  MediaLibraryService --> IDocumentStore
+  MediaUsageService --> DraftService
+  MediaUploadViewModel --> IMediaService
+  MediaUploadViewModel --> MediaLibraryService
+  MediaLibraryViewModel --> MediaLibraryService
+  MediaLibraryViewModel <|-- MediaManageViewModel
+  MediaManageViewModel --> IMediaService
+  MediaManageViewModel --> MediaUsageService
+  ImageFieldViewModel --> MediaLibraryService
+  IPublishRule <|.. ImageInLibraryRule
+  IPublishRule <|.. OneFeaturedShowRule
 ```

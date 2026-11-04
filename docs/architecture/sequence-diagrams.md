@@ -86,28 +86,56 @@ sequenceDiagram
   VM->>VM: forkJoin → any true ? sent (form reset) : failed
 ```
 
-## 4. Media delivery and upload (Cloudinary)
+## 4. Media delivery and upload (Cloudinary, 1.7.0)
+
+Delivery, on every page ([ADR-0017](adr/0017-upload-function-and-media.md)):
 
 ```mermaid
 sequenceDiagram
   autonumber
   participant C as Component
   participant IMG as NgOptimizedImage
+  participant L as mediaImageUrl (IMAGE_LOADER)
   participant CDN as Cloudinary CDN
-  participant VM as ViewModel
-  participant M as IMediaService
-  participant FN as Backend function
 
-  C->>IMG: ngSrc="folder/id" (Cloudinary loader)
-  IMG->>CDN: GET /image/upload/f_auto,q_auto,w_{n}/folder/id
-  CDN-->>IMG: optimised image (srcset)
+  C->>IMG: ngSrc = image.src
+  IMG->>L: src and width
+  alt a local path or full URL
+    L-->>IMG: unchanged
+  else an uploaded image, with or without a crop
+    L-->>IMG: /image/upload/[crop/]f_auto,q_auto,w_{n}/v…/id
+    IMG->>CDN: GET
+    CDN-->>IMG: optimised image
+  end
+```
 
-  VM->>M: upload(file)
-  M->>FN: request signature
-  FN-->>M: signature + timestamp (API secret stays server-side)
-  M->>CDN: POST signed upload
-  CDN-->>M: public_id
-  M-->>VM: Observable<MediaAsset>
+Upload, in the admin area only:
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor O as Owner
+  participant VM as MediaUploadViewModel
+  participant M as CloudinaryMediaService
+  participant P as ImagePreparer
+  participant FN as /api/media/sign
+  participant CDN as Cloudinary
+  participant LIB as MediaLibraryService
+
+  O->>VM: chooses photos
+  VM->>VM: checks type and 15 MB limit
+  VM->>M: upload(file), three at a time
+  M->>P: shrink to 2400 px, drop metadata
+  Note over P: a file it can't decode, like HEIC in Chrome, goes as it is
+  M->>FN: POST with x-firebase-token
+  FN->>FN: verify the token, sub is the admin
+  FN-->>M: signed settings (the API secret stays server-side)
+  M->>CDN: POST the file and signed settings
+  CDN->>CDN: a_exif, resize, fl_force_strip
+  CDN-->>M: progress, then id, size, format
+  M-->>VM: progress events, then the stored file
+  VM->>LIB: register, writes media/{id}
+  VM-->>O: shows it, ready to use
 ```
 
 ## 5. Chat assistant question
@@ -195,4 +223,55 @@ sequenceDiagram
   S-->>P: done → toast, reload, recount drafts
   O->>P: Undo this publish → Restore
   PS->>S: commit([set drafts from record.before])
+```
+
+## 9. Publish a collection (1.7.0)
+
+The gallery, team, shows and videos are drafted as one document, and stored as numbered documents.
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant VM as PublishPageViewModel
+  participant PS as PublishService
+  participant D as DraftService
+  participant E as expandCollection
+  participant S as IDocumentStore
+
+  VM->>PS: publish(drafts)
+  PS->>D: live(path), collapsed into one list, kept for undo
+  PS->>S: readAll(path), the stored numbers
+  PS->>E: the draft's _items and the stored numbers
+  E-->>PS: set 001…N with order, delete the rest
+  PS->>S: commit live, history and draft removal (atomic)
+  S-->>VM: done, or nothing stored
+```
+
+## 10. Replace and delete an image (1.7.0)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor O as Owner
+  participant VM as MediaManageViewModel
+  participant U as MediaUsageService
+  participant M as IMediaService
+  participant LIB as MediaLibraryService
+
+  O->>VM: Delete
+  VM->>U: usages(), live and drafts
+  alt the image is in use
+    VM-->>O: refused, and the card lists where
+  else not in use
+    VM-->>O: asks to confirm
+    O->>VM: Yes, delete
+    VM->>M: remove(publicId), "not found" counts as done
+    VM->>LIB: remove the entry
+  end
+
+  O->>VM: Replace, with a new file
+  VM->>M: upload(file)
+  VM->>LIB: register, copying the description
+  VM->>U: replace(old, new), rewrites each use into drafts, without crops
+  VM-->>O: "Replaced in N places as a draft"
 ```

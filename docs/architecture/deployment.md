@@ -22,6 +22,13 @@ verification records at GoDaddy).
 **Hosting:** Azure Static Web Apps (`.github/workflows/azure-static-web-apps-*.yml`). Firebase
 Hosting isn't used.
 
+**Upload function (1.7.0, [ADR-0017](adr/0017-upload-function-and-media.md)):** a managed Azure Function in
+`api/`, built and tested on the CI runner and deployed with the site (`api_location: api`, `skip_api_build`,
+`apiRuntime: node:22`). In the Azure portal, under the Static Web App's **Settings → Environment variables →
+Production**, it needs `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` and `CLOUDINARY_API_SECRET`. The secret is
+never committed or sent to the browser. The cloud name is public, and is in `environment.ts` too, for image
+delivery. Preview sites don't have these settings, so uploads fail there with a clear message.
+
 **Runtime config:** the Firebase web config is public by design (it's protected by
 `firestore.rules`) but kept out of git (CLAUDE.md §10).
 - `public/runtime-config.js` is git-ignored. Copy it from `public/runtime-config.example.js`
@@ -45,8 +52,11 @@ Hosting isn't used.
 When the site moves to `taalyatra.in`, change `siteUrl` in `environment.ts` (or set `SITE_URL`
 in CI).
 
+**Rollback after 1.7.0:** once published data points at Cloudinary, a 1.6.0 build can't show those images,
+because it has no loader. Rolling back means restoring content from a backup too.
+
 **Rules and data (manual, from a developer machine):** merging to `main` deploys the app, so when
-a release adds rules for new writes, do steps 1–3 **before** the merge.
+a release adds rules for new writes, do steps 1–3 **before** the merge, and add any Azure settings before it too.
 1. `npx firebase login`
 2. `npm run export:firestore -- <key.json>`: a dated backup in `backups/` (git-ignored)
 3. `npm run deploy:rules`
@@ -65,7 +75,8 @@ flowchart LR
   J --> R[npm run test:rules<br/>Firestore emulator]
   R --> B[npm run build<br/>+ postbuild: SITE_URL, modulepreload,<br/>robots.txt, sitemap.xml]
   B --> C[write-runtime-config.mjs<br/>from GitHub secrets]
-  C --> D[Azure Static Web Apps upload]
+  C --> A[api: npm ci, test, build,<br/>prune dev dependencies]
+  A --> D[Azure Static Web Apps upload<br/>site and function]
 ```
 
 PR preview environments get the production config, so a proposal submitted on a preview lands in
