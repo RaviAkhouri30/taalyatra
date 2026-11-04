@@ -17,6 +17,12 @@ See [docs/versioning.md](docs/versioning.md).
 - **Gallery, Team, Shows and Videos tabs.** Every field, with add, remove and reorder. Publish checks require a
   description on each photo, allow one featured show, and catch a photo deleted from the library. Videos can take
   their thumbnail from a YouTube link.
+- **Experiences tab.** Every field of each experience, images with crop, add, remove and reorder, and a Featured
+  switch. One is always featured, because the home page's layout needs that card.
+- **Side panel in the admin area.** Grouped links with icons on the left, collapsible to icons on desktop and a
+  slide-in menu on phones and tablets.
+- **Clearer checks.** Required fields say so, placeholders are flagged at the field, and the review page explains
+  each finding and links to its card.
 - **Upload function (`api/`).** An Azure Function that signs uploads and deletes for the admin only, so the
   Cloudinary secret never reaches the browser (ADR-0017).
 
@@ -24,6 +30,8 @@ See [docs/versioning.md](docs/versioning.md).
 
 - Images load through our own loader: local images are unchanged, and uploaded ones come from Cloudinary.
 - The dashboard's placeholder list now covers team, shows and videos.
+- The editor's preview no longer shows the floating buttons and offer badge. The full preview still does.
+- "Where we play" and the gallery have the usual space above them.
 
 ### Fixed
 

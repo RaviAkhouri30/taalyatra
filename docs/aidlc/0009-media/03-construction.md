@@ -75,6 +75,9 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
   Unlike Shows, exactly one is always featured, because the home page's layout needs that card.
 - **More space above "Where we play" and the gallery, at the owner's request.** Both had turned off the shared section
   spacing, following the prototype. Their screenshot baselines were re-recorded.
+- **The editor's navigation moved to a left side panel, at the owner's request (2026-11-05).** Links are grouped with
+  icons, and the panel collapses to an icon rail on desktop, remembered per browser. Phones and tablets get a slide-in
+  menu. Its screenshot baseline for the dashboard was re-recorded.
 - **The owner kept the forms over in-page editing (2026-11-05).** D8's reason, that click-to-edit "can't be made
   accessible without duplicating" components, was overstated: it was harder and costlier, not impossible.
 - **A file the browser can't encode goes as it is,** the same as one it can't decode, because Cloudinary's

@@ -99,4 +99,32 @@ export const ICON_REGISTRY: Readonly<Record<IconName, readonly IconNode[]>> = {
     { tag: 'rect', x: 9, y: 9, width: 11, height: 11, rx: 2 },
     { tag: 'path', d: 'M15 9V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h4' },
   ],
+  [IconName.Document]: [
+    { tag: 'path', d: 'M6 3h8l4 4v14H6z' },
+    { tag: 'path', d: 'M14 3v4h4M9 12h6M9 16h6' },
+  ],
+  [IconName.Image]: [
+    { tag: 'rect', x: 3, y: 5, width: 18, height: 14, rx: 2 },
+    { tag: 'circle', cx: 8.5, cy: 10, r: 1.5 },
+    { tag: 'path', d: 'M21 16l-5-5-8 8' },
+  ],
+  [IconName.Video]: [
+    { tag: 'rect', x: 3, y: 6, width: 18, height: 12, rx: 2 },
+    { tag: 'path', d: 'M10.5 9.5v5l4-2.5z' },
+  ],
+  [IconName.Toggle]: [
+    { tag: 'rect', x: 3, y: 7, width: 18, height: 10, rx: 5 },
+    { tag: 'circle', cx: 16, cy: 12, r: 2.5 },
+  ],
+  [IconName.Folder]: [
+    {
+      tag: 'path',
+      d: 'M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z',
+    },
+  ],
+  [IconName.Menu]: [{ tag: 'path', d: 'M4 7h16M4 12h16M4 17h16' }],
+  [IconName.PanelLeft]: [
+    { tag: 'rect', x: 3, y: 4, width: 18, height: 16, rx: 2 },
+    { tag: 'path', d: 'M9 4v16' },
+  ],
 };

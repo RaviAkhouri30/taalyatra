@@ -78,8 +78,8 @@
 
 .ep-preview {
   position: sticky;
-  top: 100px;
-  height: calc(100vh - 124px);
+  top: 136px;
+  height: calc(100vh - 152px);
   min-height: 480px;
 
   @include bp.down(bp.$tablet) {
@@ -104,5 +104,5 @@
 
 // A link from the review page lands on a card's heading, clear of the sticky tab bar.
 .ep-card h2 {
-  scroll-margin-top: 110px;
+  scroll-margin-top: 136px;
 }

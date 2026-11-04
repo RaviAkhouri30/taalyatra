@@ -8,17 +8,232 @@
   color: t.$color-cream;
 }
 
-.ed-top {
-  background: t.$color-ink;
-}
+// The bar's height on desktop, where it stays in view above the side panel and status line.
+$bar-height: 80px;
+$side-width: 236px;
+$rail-width: 64px;
 
-// Only the tabs and the save status stay in view: the account bar would fill a phone screen.
-.ed-sticky {
+.ed-top {
   position: sticky;
   top: 0;
-  z-index: t.$z-header;
-  background: t.$color-ink-deep;
+  z-index: t.$z-header + 1;
+  background: t.$color-ink;
   border-bottom: 1px solid t.$color-line;
+
+  // Phones and tablets: it wraps, and would fill the screen, so only the status line stays in view.
+  @include bp.down(bp.$tablet) {
+    position: static;
+  }
+}
+
+.ed-body {
+  display: grid;
+  grid-template-columns: $side-width minmax(0, 1fr);
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.ed--collapsed .ed-body {
+  grid-template-columns: $rail-width minmax(0, 1fr);
+
+  @include bp.down(bp.$tablet) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.ed-main {
+  min-width: 0;
+}
+
+.ed-side {
+  position: sticky;
+  top: $bar-height;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - #{$bar-height});
+  overflow-y: auto;
+  background: t.$color-ink;
+  border-right: 1px solid t.$color-line;
+
+  @include bp.down(bp.$tablet) {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: t.$z-loader;
+    width: min($side-width + 44px, 85vw);
+    height: 100vh;
+    // Hidden, not just moved: a closed menu mustn't take keyboard focus.
+    visibility: hidden;
+    transform: translateX(-100%);
+  }
+}
+
+@include bp.down(bp.$tablet) {
+  .ed--drawer .ed-side {
+    visibility: visible;
+    transform: none;
+  }
+}
+
+.ed-backdrop {
+  display: none;
+
+  @include bp.down(bp.$tablet) {
+    position: fixed;
+    inset: 0;
+    z-index: t.$z-loader - 1;
+    display: block;
+    padding: 0;
+    border: 0;
+    background: rgb(0 0 0 / 60%);
+    cursor: pointer;
+  }
+}
+
+.ed-nav {
+  flex: 1;
+  padding: 12px 10px;
+
+  ul {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    box-sizing: border-box;
+    min-height: 38px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    color: t.$color-muted-strong;
+    text-decoration: none;
+    font-size: 14.5px;
+    font-weight: 600;
+
+    &:hover {
+      background: t.$color-surface;
+      color: t.$color-cream;
+    }
+
+    &.sel {
+      background: color-mix(in srgb, t.$color-amber 18%, transparent);
+      color: t.$color-amber;
+    }
+  }
+
+  app-icon {
+    flex: none;
+  }
+}
+
+.ed-group + .ed-group {
+  margin-top: 14px;
+}
+
+.ed-group-label {
+  margin: 0 0 6px;
+  padding: 0 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: t.$color-muted-strong;
+}
+
+.ed-label {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.ed-collapse {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 11px;
+  box-sizing: border-box;
+  min-height: 44px;
+  margin: 0 10px;
+  padding: 8px 10px;
+  border: 0;
+  border-top: 1px solid t.$color-line;
+  background: transparent;
+  color: t.$color-muted-strong;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    color: t.$color-cream;
+  }
+
+  @include bp.down(bp.$tablet) {
+    display: none;
+  }
+}
+
+// Icons only. The words stay for screen readers, and each link's title shows them on hover.
+@include bp.up(bp.$tablet + 1) {
+  .ed--collapsed {
+    .ed-label,
+    .ed-group-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .ed-nav a,
+    .ed-collapse {
+      justify-content: center;
+      padding-inline: 0;
+    }
+
+    .ed-group + .ed-group {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid t.$color-line;
+    }
+
+    .count {
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      min-width: 16px;
+      padding: 0 4px;
+      font-size: 10.5px;
+    }
+  }
+}
+
+.ed-menu {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 12px;
+  border: 1px solid t.$color-field-border;
+  border-radius: t.$radius-pill;
+  background: transparent;
+  color: t.$color-cream;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  @include bp.down(bp.$tablet) {
+    display: inline-flex;
+    flex: none;
+  }
 }
 
 .ed-bar {
@@ -71,36 +286,6 @@
   }
 }
 
-.ed-tabs {
-  display: flex;
-  background: t.$color-ink;
-  gap: 4px;
-  padding: 0 16px;
-  overflow-x: auto;
-
-  a {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 12px;
-    color: t.$color-muted-strong;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 600;
-    white-space: nowrap;
-    border-bottom: 3px solid transparent;
-
-    &:hover {
-      color: t.$color-cream;
-    }
-
-    &.sel {
-      color: t.$color-cream;
-      border-bottom-color: t.$color-amber;
-    }
-  }
-}
-
 .count {
   min-width: 20px;
   padding: 1px 6px;
@@ -124,10 +309,18 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  position: sticky;
+  top: $bar-height;
+  z-index: t.$z-header;
   padding: 8px 24px;
+  background: t.$color-ink-deep;
+  border-bottom: 1px solid t.$color-line;
   font-size: 13px;
   color: t.$color-muted-strong;
-  border-top: 1px solid t.$color-line;
+
+  @include bp.down(bp.$tablet) {
+    top: 0;
+  }
 
   @include bp.down(bp.$phone) {
     padding: 8px 16px;
