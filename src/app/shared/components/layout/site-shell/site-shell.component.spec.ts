@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { Subject } from 'rxjs';
+import { EMPTY, Subject } from 'rxjs';
 import { FakeClipboardService } from '@core/backends/fake/fake-clipboard.service';
+import { FakeVitalsReporter } from '@core/backends/fake/fake-vitals-reporter';
 import { IClipboardService } from '@core/interfaces/i-clipboard-service';
+import { IVitalsReporter } from '@core/interfaces/i-vitals-reporter';
 import { APP_PREVIEW, APP_PREVIEW_FRAME } from '@core/tokens/app-preview.token';
 import { ROUTE_DATA_KEYS } from '@shared/constants/route-data.constants';
 import { PageLayout } from '@shared/enums/page-layout.enum';
@@ -28,6 +30,7 @@ describe('SiteShellComponent', () => {
         provideSiteConfig(new SiteConfigModel({ ...SITE_DTO, promotion })),
         provideVisibility(visibility),
         { provide: IClipboardService, useClass: FakeClipboardService },
+        { provide: IVitalsReporter, useClass: FakeVitalsReporter },
         provideRouter([
           {
             path: '',
@@ -111,6 +114,17 @@ describe('SiteShellComponent', () => {
     expect(element.querySelector('app-mobile-action-bar')).toBeNull();
   });
 
+  it('should note when the site data has arrived', async () => {
+    const markReady = vi.fn();
+    TestBed.overrideProvider(IVitalsReporter, {
+      useValue: { markReady, report: () => EMPTY },
+    });
+
+    await renderAt('/shows');
+
+    expect(markReady).toHaveBeenCalled();
+  });
+
   it('should show no preview banner on a normal visit', async () => {
     const { element } = await renderAt('/shows');
 
@@ -138,6 +152,7 @@ describe('SiteShellComponent', () => {
         providers: [
           { provide: SiteConfigService, useValue: { getSiteConfig: () => site$.asObservable() } },
           provideVisibility(),
+          { provide: IVitalsReporter, useClass: FakeVitalsReporter },
           provideRouter([{ path: '**', component: PageComponent }]),
         ],
       });

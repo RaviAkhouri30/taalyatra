@@ -86,6 +86,13 @@ Do this in order, and stop as soon as the evidence answers the question:
 3. **Choose B or C from those results, in its own ADR.** Take C only if real phones are slow and B
    isn't enough, and design it together with 1.7.0's backend function.
 
+## Update — step 1 built (2026-11-05)
+
+Real-phone reports are built: see the [0012 design](../../aidlc/0012-real-phone-speed/02-design.md). Each report also has a
+`site-ready` time, which answers this ADR's open question of how much of the wait is the app starting and how much is the
+data. **This ADR stays Proposed** until there are at least 200 phone visits to decide from. Older iPhones without LCP are
+still counted, with their other numbers.
+
 ## Consequences if accepted
 
 - A small piece of telemetry joins the public site. It has to stay within the performance budget and

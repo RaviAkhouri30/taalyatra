@@ -21,4 +21,4 @@ Each phase ends with **human approval** recorded at the bottom of its file. No p
 | 0007 | [Performance & SEO](0007-performance-seo/)                          | 1.5.0            | Released 2026-10-30 · verification: mobile performance below target              |
 | 0008 | [Admin content editor](0008-admin-content-editor/)                  | 1.6.0            | 1.6.0 released 2026-10-31 · verification: mobile performance below target        |
 | 0009 | [Media](0009-media/)                                                | 1.7.0 (1.7.1)    | Released 2026-11-05 · approved · mobile performance still below target           |
-| 0012 | [Real-phone speed reports](0012-real-phone-speed/)                  | 1.8.0 (proposed) | Design · awaiting approval                                                       |
+| 0012 | [Real-phone speed reports](0012-real-phone-speed/)                  | 1.8.0 (proposed) | Construction · in progress                                                       |

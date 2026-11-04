@@ -58,6 +58,12 @@ Cloudinary, and an Azure Function in `api/` signs the request for the admin only
 shows and videos use `FieldKind.Image`, with a crop per use. A collection is drafted as one list and expanded into
 numbered documents when published ([ADR-0017](adr/0017-upload-function-and-media.md)).
 
+## Real-phone speed reports (0012)
+
+Once the page has loaded and the browser is idle, the site shell loads a small chunk that measures the visit with the browser's
+own `PerformanceObserver`, and stores one anonymous report in `vitals/*`. It sends nothing from the admin area or previews, or when
+the browser asks not to be tracked, and failures are silent. The owner reads the results on the dashboard.
+
 ## Dependency rules
 
 1. `features → shared → core/interfaces`. Arrows never point back up.

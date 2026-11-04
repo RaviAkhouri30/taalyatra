@@ -275,3 +275,24 @@ sequenceDiagram
   VM->>U: replace(old, new), rewrites each use into drafts, without crops
   VM-->>O: "Replaced in N places as a draft"
 ```
+
+## 11. Real-phone speed report (0012)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant S as SiteShellViewModel
+  participant R as BrowserVitalsReporter
+  participant M as BrowserVitalsSource (own chunk)
+  participant F as IHttpBackend → Firestore
+  participant D as SpeedReportService (admin)
+
+  S->>R: report(), when the shell starts
+  R->>R: public page, not a preview, no opt-out signal?
+  R->>R: wait for page load, then browser idle
+  R->>M: load the chunk, measure()
+  M->>M: PerformanceObserver (buffered)
+  M-->>R: 5 s after the main content settles, or when the page is hidden
+  R->>F: post to vitals, failures ignored
+  D->>F: on request: read, delete reports over 30 days
+```

@@ -33,6 +33,8 @@ export interface IAppEnvironment {
    * and a local placeholder for uploaded images.
    */
   readonly cloudinary: { readonly cloudName: string };
+  /** Whether real visits send anonymous speed reports (0012). */
+  readonly reportVitals: boolean;
   /** EmailJS identifiers (public by design). Empty values select the fake email adapter. */
   readonly emailJs: {
     readonly serviceId: string;

@@ -28,5 +28,6 @@ export const environment: IAppEnvironment = {
   // Not a real cloud: the smoke suite answers every call to it, so the real adapter runs in a browser
   // with no account behind it.
   cloudinary: { cloudName: 'emulator-demo' },
+  reportVitals: true,
   emailJs: { serviceId: '', templateId: '', publicKey: '' },
 };

@@ -1,0 +1,72 @@
+@use 'tokens' as t;
+
+:host {
+  display: grid;
+  gap: 8px;
+}
+
+h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+p {
+  margin: 0;
+  color: t.$color-muted-strong;
+}
+
+.sr-verdict {
+  color: t.$color-cream;
+  font-weight: 600;
+}
+
+.sr-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  color: t.$color-muted-strong;
+}
+
+caption {
+  padding-bottom: 6px;
+  font-size: 13px;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 6px 12px 6px 0;
+  border-top: 1px solid t.$color-line;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  color: t.$color-cream;
+  font-weight: 700;
+}
+
+.sr-load {
+  justify-self: start;
+  min-height: 38px;
+  margin-top: 4px;
+  padding: 6px 14px;
+  border: 1px solid t.$color-line;
+  border-radius: t.$radius-pill;
+  background: transparent;
+  color: t.$color-cream;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
