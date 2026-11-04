@@ -6,6 +6,8 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [1.7.1] - 2026-11-05
+
 ### Changed
 
 - The admin area's top bar is slimmer, with outlined buttons. **Preview** shows or hides the preview column, and
