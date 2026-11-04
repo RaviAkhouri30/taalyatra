@@ -73,6 +73,13 @@ service cloud.firestore {
       allow create: if isValidProposal(request.resource.data);
     }
 
+    // Anonymous speed reports from real visits (0012). Visitors may create a well-formed one and
+    // nothing else; only the admin reads or deletes them. Nothing in them identifies anyone.
+    match /vitals/{report} {
+      allow create: if isValidVitals(request.resource.data);
+      allow read, delete: if isAdmin();
+    }
+
     // The limits mirror PROPOSAL_MAX_LENGTH (proposal-limits.constants.ts); the rules tests build
     // their payloads from that constant, so the two can't drift apart unnoticed.
     function isValidProposal(data) {
@@ -91,6 +98,27 @@ service cloud.firestore {
         && isText(data.message, 0, 2000)
         // Stamped by the adapter with serverTimestamp(): a client can't backdate a record.
         && data.createdAt == request.time;
+    }
+
+    function isValidVitals(data) {
+      let fields = ['page', 'device', 'connection', 'lcp', 'fcp', 'ttfb', 'ready', 'cls',
+                    'createdAt'];
+      return data.keys().hasAll(fields)
+        && data.keys().hasOnly(fields)
+        && data.page in ['/', '/shows', '/videos', '/team', '/achievements']
+        && data.device in ['phone', 'tablet', 'desktop']
+        && data.connection in ['', 'slow-2g', '2g', '3g', '4g']
+        && isMsOrNull(data.lcp)
+        && isMsOrNull(data.fcp)
+        && isMsOrNull(data.ttfb)
+        && isMsOrNull(data.ready)
+        && data.cls is number && data.cls >= 0 && data.cls <= 10
+        // Stamped by the adapter with serverTimestamp(): a client can't backdate a report.
+        && data.createdAt == request.time;
+    }
+
+    function isMsOrNull(value) {
+      return value == null || (value is int && value >= 0 && value <= 120000);
     }
 
     // The single admin account (0006, ADR-0012). A UID is an identifier, not a secret. The emulator

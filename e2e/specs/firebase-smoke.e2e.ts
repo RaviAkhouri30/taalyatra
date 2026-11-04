@@ -132,6 +132,29 @@ test.describe('Firebase smoke (emulator)', () => {
     await expect(page.locator('#experiences').getByRole('heading', { name })).toBeAttached();
   });
 
+  test('should store a real visit’s speed report through the rules, and show it', async ({
+    editor,
+    page,
+  }) => {
+    await page.goto('/');
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    const stored = page.waitForResponse(
+      (response) => response.url().includes(':commit') && response.status() === 200,
+      { timeout: 20_000 },
+    );
+    // Hiding the page sends it at once, as when a visitor switches away.
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await stored;
+
+    await editor.signIn({ email: 'admin@taalyatra.test', password: 'emulator-admin-password' });
+    await page.getByRole('button', { name: 'Load speed report' }).click();
+
+    await expect(page.getByRole('caption')).toContainText('3 in 4 visits');
+  });
+
   test('should upload through the real adapter and store it through the Firestore rules', async ({
     editor,
     page,

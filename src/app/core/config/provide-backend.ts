@@ -5,11 +5,13 @@ import { clipboardServiceFactory } from '@core/factories/clipboard-service.facto
 import { documentStoreFactory } from '@core/factories/document-store.factory';
 import { emailServiceFactory } from '@core/factories/email-service.factory';
 import { httpBackendFactory } from '@core/factories/http-backend.factory';
+import { vitalsReporterFactory } from '@core/factories/vitals-reporter.factory';
 import { IAuthService } from '@core/interfaces/i-auth-service';
 import { IClipboardService } from '@core/interfaces/i-clipboard-service';
 import { IDocumentStore } from '@core/interfaces/i-document-store';
 import { IEmailService } from '@core/interfaces/i-email-service';
 import { IHttpBackend } from '@core/interfaces/i-http-backend';
+import { IVitalsReporter } from '@core/interfaces/i-vitals-reporter';
 
 /** Registers the adapters: `HttpClient`, and the `IHttpBackend`, `IEmailService`, `IClipboardService` and `IAuthService`
  * ports. */
@@ -21,5 +23,6 @@ export function provideBackend(): (Provider | EnvironmentProviders)[] {
     { provide: IClipboardService, useFactory: clipboardServiceFactory },
     { provide: IAuthService, useFactory: authServiceFactory },
     { provide: IDocumentStore, useFactory: documentStoreFactory },
+    { provide: IVitalsReporter, useFactory: vitalsReporterFactory },
   ];
 }

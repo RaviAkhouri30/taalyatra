@@ -1,0 +1,47 @@
+<h2 id="db-speed">Real visitors’ speed</h2>
+<p>
+  How fast the site was on visitors’ own devices over the last 30 days. Nothing here identifies
+  anyone.
+</p>
+@if (model.data(); as report) {
+  <p class="sr-verdict" role="status">{{ report.verdict }}</p>
+  @if (report.rows.length > 0) {
+    <div class="sr-scroll">
+      <table>
+        <caption>
+          3 in 4 visits were this fast or faster
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Device</th>
+            <th scope="col">Visits</th>
+            <th scope="col">Main content</th>
+            <th scope="col">Data ready</th>
+            <th scope="col">First paint</th>
+            <th scope="col">Server</th>
+            <th scope="col">Layout shift</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of report.rows; track row.device) {
+            <tr>
+              <th scope="row">{{ row.device }}</th>
+              <td>{{ row.visits }}</td>
+              <td>{{ row.lcp }}</td>
+              <td>{{ row.ready }}</td>
+              <td>{{ row.fcp }}</td>
+              <td>{{ row.ttfb }}</td>
+              <td>{{ row.cls }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}
+@if (model.failed()) {
+  <p class="sr-verdict" role="alert">The speed report couldn’t be loaded. Try again.</p>
+}
+<button type="button" class="sr-load" [disabled]="model.loading()" (click)="model.load()">
+  {{ model.loading() ? 'Loading…' : model.data() ? 'Refresh speed report' : 'Load speed report' }}
+</button>

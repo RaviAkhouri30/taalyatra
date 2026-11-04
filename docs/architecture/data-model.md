@@ -18,6 +18,7 @@ into Firestore, and development, unit tests and the main e2e suite read it direc
 | `site/visibility` | `ISiteVisibilityDto`: `sections`, `pages`, `widgets`, maps of key → boolean (1.6.0, ADR-0015) | shell, home page, link lists, `pageEnabledGuard` |
 | `drafts/{id}` | `{ path, content, savedAt }`: an unpublished document; id is the path with `__` for `/` (1.6.0, ADR-0013, admin-only) | editor, preview mode |
 | `publishes/{id}` | `{ publishedAt, changed, before }`: the latest 20 publishes, each with the previous versions (admin-only) | editor history and undo |
+| `vitals/{autoId}` | `page`, `device`, `connection`, `lcp`, `fcp`, `ttfb`, `ready`, `cls`, `createdAt` (server time): an anonymous speed report from a real visit (0012). Nothing in it identifies anyone. Create-only for visitors; the admin reads and deletes; removed after 30 days when the report is loaded | written by the site shell; read on the admin dashboard |
 | `proposals/{autoId}` | proposal fields + `createdAt` (server time) | written by the contact form; read in the console |
 
 Navigation menus and design constants stay in code (`navigation.constants.ts`): they point at

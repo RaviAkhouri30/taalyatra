@@ -84,4 +84,4 @@ sequenceDiagram
 
 ---
 
-**Approval:** ☐ Pending
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-05, with all three recommendations: store the reports in Firestore, add a privacy page separately, and release as 1.8.0.

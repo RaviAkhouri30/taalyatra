@@ -40,4 +40,6 @@ export enum ApiEndpoint {
   SiteVisibility = 'site/visibility',
   /** Proposal requests from the contact form (create-only collection). */
   Proposals = 'proposals',
+  /** Anonymous speed reports from real visits (0012). */
+  Vitals = 'vitals',
 }

@@ -7,11 +7,12 @@ import { PUBLISH_PATH } from '../../models/editor-nav.constants';
 import { EditorTab } from '../../models/editor-tab.enum';
 import { DashboardViewModel } from '../../view-models/dashboard.view-model';
 import { PublishBarComponent } from '../publish-bar/publish-bar.component';
+import { SpeedReportComponent } from '../speed-report/speed-report.component';
 
 /** The editor's home: one card per thing worth knowing, each linking to where it's changed. */
 @Component({
   selector: 'app-dashboard',
-  imports: [PublishBarComponent, RouterLink],
+  imports: [PublishBarComponent, RouterLink, SpeedReportComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

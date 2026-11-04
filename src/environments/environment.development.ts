@@ -15,6 +15,7 @@ export const environment: IAppEnvironment = {
   adminUid: 'fake-admin-uid',
   fakeLatencyMs: 250,
   cloudinary: { cloudName: '' },
+  reportVitals: false,
   // Fill in from the EmailJS dashboard to send real email; empty values use the fake adapter.
   emailJs: { serviceId: '', templateId: '', publicKey: '' },
 };

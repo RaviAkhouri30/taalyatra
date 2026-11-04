@@ -244,6 +244,18 @@ test.describe('Admin editor', () => {
     await expect(frame).toHaveCSS('width', '390px');
   });
 
+  test('should load the speed report only when asked, and say there is nothing yet', async ({
+    page,
+  }) => {
+    const button = page.getByRole('button', { name: 'Load speed report' });
+    await expect(page.getByRole('heading', { name: 'Real visitors’ speed' })).toBeVisible();
+    await expect(page.getByText('No visits reported yet.')).toHaveCount(0);
+
+    await button.click();
+
+    await expect(page.getByText('No visits reported yet.')).toBeVisible();
+  });
+
   test('should hide and show the preview from the top bar, and only where there is one', async ({
     editor,
     page,

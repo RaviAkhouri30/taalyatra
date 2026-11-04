@@ -1,7 +1,8 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { type Observable, combineLatest, defaultIfEmpty, filter, map, tap } from 'rxjs';
+import { type Observable, combineLatest, defaultIfEmpty, filter, map, tap, merge } from 'rxjs';
 import { AnchorScrollService } from '@core/services/anchor-scroll.service';
+import { IVitalsReporter } from '@core/interfaces/i-vitals-reporter';
 import { APP_PREVIEW, APP_PREVIEW_FRAME } from '@core/tokens/app-preview.token';
 import { ViewModel } from '@shared/base/view-model';
 import { LAYOUT_CHROME } from '@shared/constants/navigation.constants';
@@ -55,6 +56,7 @@ export class SiteShellViewModel extends ViewModel<IShellState> {
   private readonly visibilityService = inject(SiteVisibilityService);
   private readonly anchorScroll = inject(AnchorScrollService);
   private readonly seo = inject(SeoService);
+  private readonly vitals = inject(IVitalsReporter);
 
   /**
    * Waits for the first completed navigation before drawing any chrome, so the home page never
@@ -78,13 +80,14 @@ export class SiteShellViewModel extends ViewModel<IShellState> {
           this.seo.describe(page, site);
         }
         this.settled.set(true);
+        this.vitals.markReady();
       }),
     );
   }
 
   /** Scrolls to linked sections once they have rendered (they load their data asynchronously). */
   protected override attachCommandHandler(): Observable<unknown> {
-    return this.anchorScroll.attachAnchorScrolling();
+    return merge(this.anchorScroll.attachAnchorScrolling(), this.vitals.report());
   }
 
   private isWidgetVisible(widget: SiteWidget): boolean {

@@ -1,4 +1,3 @@
-import { NgOptimizedImage } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,12 +15,12 @@ import {
 } from '@angular/router';
 import { BaseComponent } from '@shared/base/base-component';
 import { IconComponent } from '@shared/components/icon/icon.component';
-import { AppRoute } from '@shared/enums/app-route.enum';
 import { IconName } from '@shared/enums/icon-name.enum';
 import { type AdminPageModel } from '../../models/admin-page.model';
 import { EDITOR_NAV_GROUPS } from '../../models/editor-nav.constants';
 import { EditorNavService } from '../../services/editor-nav.service';
 import { EditorLayoutViewModel } from '../../view-models/editor-layout.view-model';
+import { EditorTopBarComponent } from '../editor-top-bar/editor-top-bar.component';
 
 const EXACT: IsActiveMatchOptions = {
   paths: 'exact',
@@ -37,7 +36,7 @@ const PREFIX: IsActiveMatchOptions = { ...EXACT, paths: 'subset' };
  */
 @Component({
   selector: 'app-editor-layout',
-  imports: [IconComponent, NgOptimizedImage, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [EditorTopBarComponent, IconComponent, RouterLink, RouterLinkActive, RouterOutlet],
   templateUrl: './editor-layout.component.html',
   styleUrl: './editor-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,9 +46,6 @@ const PREFIX: IsActiveMatchOptions = { ...EXACT, paths: 'subset' };
 export default class EditorLayoutComponent extends BaseComponent<AdminPageModel> {
   protected override readonly model = inject(EditorLayoutViewModel);
   protected readonly nav = inject(EditorNavService);
-  protected readonly dashboardUrl = AppRoute.Admin;
-  // A new tab, so the editor stays open, and a full load, so it reads the newest published content.
-  protected readonly siteUrl = AppRoute.Home;
   protected readonly icons = IconName;
   protected readonly groups = EDITOR_NAV_GROUPS.map((group, index) => ({
     ...group,
@@ -58,7 +54,7 @@ export default class EditorLayoutComponent extends BaseComponent<AdminPageModel>
   }));
 
   private readonly injector = inject(Injector);
-  private readonly menuButton = viewChild.required<ElementRef<HTMLButtonElement>>('menuButton');
+  private readonly topBar = viewChild.required(EditorTopBarComponent);
   private readonly sideNav = viewChild.required<ElementRef<HTMLElement>>('sideNav');
 
   /** Opens or closes the slide-in menu; opening moves focus into it, for keyboard users. */
@@ -78,7 +74,7 @@ export default class EditorLayoutComponent extends BaseComponent<AdminPageModel>
   protected closeDrawer(): void {
     if (this.nav.drawerOpen()) {
       this.nav.closeDrawer();
-      this.menuButton().nativeElement.focus();
+      this.topBar().focusMenu();
     }
   }
 }

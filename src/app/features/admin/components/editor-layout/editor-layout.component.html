@@ -1,55 +1,6 @@
-@let page = model.data();
 <div class="ed" [class.ed--collapsed]="nav.collapsed()" [class.ed--drawer]="nav.drawerOpen()">
   <header class="ed-top">
-    <div class="ed-bar">
-      <button
-        #menuButton
-        type="button"
-        class="ed-menu"
-        aria-controls="ed-side"
-        [attr.aria-expanded]="nav.drawerOpen()"
-        (click)="toggleDrawer()"
-      >
-        <app-icon [name]="icons.Menu" [size]="19" />
-        Menu
-      </button>
-      <a class="ed-brand" [routerLink]="dashboardUrl">
-        @if (page) {
-          <img [ngSrc]="page.brand.logoUrl" width="32" height="32" alt="" />
-          <span>{{ page.brand.name }} admin</span>
-        }
-      </a>
-      @if (page) {
-        <div class="ed-account">
-          <p class="who">
-            <span class="sr">{{ page.home.signedInAs }} </span>{{ model.email() }}
-          </p>
-          @if (nav.previewAvailable()) {
-            <button
-              type="button"
-              class="ed-action ed-action--preview"
-              [attr.aria-pressed]="!nav.previewHidden()"
-              (click)="nav.togglePreview()"
-            >
-              <app-icon [name]="icons.Columns" [size]="17" />
-              Preview
-            </button>
-          }
-          <a class="ed-action" [href]="siteUrl" target="_blank" rel="noopener">
-            {{ page.home.viewSite }}
-            <app-icon [name]="icons.ArrowUpRight" [size]="17" />
-          </a>
-          <button
-            type="button"
-            class="ed-action"
-            [disabled]="model.signingOut()"
-            (click)="model.signOut()"
-          >
-            {{ model.signingOut() ? page.home.signingOut : page.home.signOut }}
-          </button>
-        </div>
-      }
-    </div>
+    <app-editor-top-bar (menuToggled)="toggleDrawer()" />
   </header>
   <div class="ed-body">
     @if (nav.drawerOpen()) {

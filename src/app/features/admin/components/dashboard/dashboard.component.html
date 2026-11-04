@@ -27,6 +27,9 @@
         <p>{{ dash.lastPublished }}</p>
         <a [routerLink]="links.publish">See the publish history</a>
       </section>
+      <section class="db-card db-card--wide" aria-labelledby="db-speed">
+        <app-speed-report />
+      </section>
       <section class="db-card db-card--wide" aria-labelledby="db-warnings">
         <h2 id="db-warnings">Placeholders to replace</h2>
         @if (dash.warnings.length === 0) {
