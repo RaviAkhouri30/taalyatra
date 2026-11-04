@@ -43,17 +43,18 @@ export const CONTENT_MAX_LENGTH = {
 } as const;
 
 /**
- * The most items each list may hold, which keeps its draft and history records small (D16).
- * `firestore.rules` enforces the same limits through the numbered document ids, except for
- * experiences, which are stored in one document.
+ * The most items each collection may hold, which keeps its draft and history records small (D16).
+ * `firestore.rules` enforces the same limits through the numbered document ids.
  */
 export const COLLECTION_MAX_ITEMS = {
   gallery: 60,
   team: 24,
   showFormats: 20,
   videos: 60,
-  experiences: 12,
 } as const;
+
+/** The most experiences the editor offers. They live in one document, not a collection. */
+export const EXPERIENCES_MAX_ITEMS = 12;
 
 /**
  * Home documents the editor may change. `firestore.rules` lists the same documents.
