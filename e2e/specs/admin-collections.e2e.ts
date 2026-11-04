@@ -142,7 +142,7 @@ test.describe('Admin collections', () => {
     editor,
     page,
   }) => {
-    await editor.openTab('Experiences');
+    await editor.openTab('Music & creativity');
     const cards = editor.card('Experiences', { exact: true });
     const first = cards.getByRole('group', { name: 'Experience 1', exact: true });
     const second = cards.getByRole('group', { name: 'Experience 2', exact: true });

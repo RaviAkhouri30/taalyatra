@@ -1,10 +1,47 @@
 <div class="pf-bar">
-  <span>Preview with your draft</span>
-  <a [href]="fullUrl()" target="_blank" rel="noopener">Open full preview</a>
+  <span class="pf-title"
+    ><span class="pf-dot"></span><b>Live preview</b> <span>with your draft</span></span
+  >
+  <div class="pf-tools">
+    <div class="pf-devices" role="group" aria-label="Preview size">
+      <button
+        type="button"
+        aria-label="Desktop"
+        [attr.aria-pressed]="device() === 'desktop'"
+        (click)="show('desktop')"
+      >
+        <app-icon [name]="icons.Monitor" [size]="17" />
+      </button>
+      <button
+        type="button"
+        aria-label="Phone"
+        [attr.aria-pressed]="device() === 'phone'"
+        (click)="show('phone')"
+      >
+        <app-icon [name]="icons.Smartphone" [size]="17" />
+      </button>
+    </div>
+    <button type="button" class="pf-tool" aria-label="Refresh preview" (click)="refresh()">
+      <app-icon [name]="icons.Refresh" [size]="17" />
+    </button>
+    <a
+      class="pf-tool"
+      [href]="fullUrl()"
+      target="_blank"
+      rel="noopener"
+      aria-label="Open full preview"
+      title="Open full preview"
+    >
+      <app-icon [name]="icons.ExternalLink" [size]="17" />
+    </a>
+  </div>
 </div>
-<iframe
-  #frame
-  src="/?preview=1"
-  title="Preview of the site with your draft"
-  (load)="onLoad()"
-></iframe>
+<div #stage class="pf-stage">
+  <iframe
+    #frame
+    src="/?preview=1"
+    title="Preview of the site with your draft"
+    [appFrameFit]="fit()"
+    (load)="onLoad()"
+  ></iframe>
+</div>

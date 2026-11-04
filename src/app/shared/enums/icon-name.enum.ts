@@ -32,5 +32,10 @@ export enum IconName {
   Toggle = 'toggle',
   Folder = 'folder',
   Menu = 'menu',
-  PanelLeft = 'panel-left',
+  ChevronsLeft = 'chevrons-left',
+  ChevronsRight = 'chevrons-right',
+  Monitor = 'monitor',
+  Smartphone = 'smartphone',
+  Refresh = 'refresh',
+  ExternalLink = 'external-link',
 }

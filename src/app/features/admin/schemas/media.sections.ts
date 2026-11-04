@@ -40,7 +40,7 @@ function group(label: string, fields: readonly FieldSchema[]): IListFieldSchema[
 export const EXPERIENCES_SECTIONS: readonly IEditorSection[] = [
   {
     id: 'experiences',
-    title: 'Experiences heading',
+    title: 'Section heading',
     path: ContentPath.HomeExperiences,
     anchor: PageAnchor.Experiences,
     fields: [eyebrow, title, lead],

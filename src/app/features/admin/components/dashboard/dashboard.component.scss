@@ -2,12 +2,17 @@
 @use 'breakpoints' as bp;
 
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
 }
 
 .db {
-  padding: 24px;
-  max-width: 1200px;
+  flex: 1;
+  align-content: start;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 30px 32px 40px;
 
   @include bp.down(bp.$phone) {
     padding: 16px;

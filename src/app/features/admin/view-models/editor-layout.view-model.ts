@@ -37,6 +37,10 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
   public readonly email: Signal<string>;
   /** Emits when the owner asks to retry a failed save. */
   public readonly retries$: Observable<void>;
+  /** Emits whenever the drafts may have changed. */
+  public readonly changes$: Observable<void>;
+  /** Emits when the drafts were thrown away, so pages reload what they show. */
+  public readonly contentResets$: Observable<void>;
 
   private readonly auth = inject(IAuthService);
   private readonly router = inject(Router);
@@ -44,6 +48,7 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
   private readonly signOuts = new Subject<void>();
   private readonly refreshes = new Subject<void>();
   private readonly retryRequests = new Subject<void>();
+  private readonly contentResets = new Subject<void>();
 
   public constructor() {
     super();
@@ -52,6 +57,8 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
       initialValue: '',
     });
     this.retries$ = this.retryRequests.asObservable();
+    this.changes$ = this.refreshes.asObservable();
+    this.contentResets$ = this.contentResets.asObservable();
   }
 
   public reportSaving(): void {
@@ -74,6 +81,12 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
 
   public retry(): void {
     this.retryRequests.next();
+  }
+
+  /** Tells the page its drafts are gone. */
+  public resetContent(): void {
+    this.status.set(SaveStatus.Idle);
+    this.contentResets.next();
   }
 
   public signOut(): void {

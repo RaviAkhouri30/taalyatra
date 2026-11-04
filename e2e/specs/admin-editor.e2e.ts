@@ -5,7 +5,7 @@ const VIEWS = [
   'Dashboard',
   'Offer & theme',
   'Page content',
-  'Experiences',
+  'Music & creativity',
   'Gallery',
   'Team',
   'Shows',
@@ -178,6 +178,70 @@ test.describe('Admin editor', () => {
 
     await expect(page).toHaveURL(/\/admin\/contact#card-/u);
     await expect(editor.card('Contact details').getByRole('heading')).toBeInViewport();
+  });
+
+  test('should publish from the bar on the page, with no trip to the review page', async ({
+    editor,
+    page,
+  }) => {
+    const bar = page.locator('app-publish-bar');
+    await editor.openTab('Page content');
+    await expect(bar.getByText('All changes published.')).toBeVisible();
+    await expect(bar.getByRole('button', { name: 'Publish' })).toBeDisabled();
+
+    await editor.card('Hero').getByLabel('Headline, first line').fill('Beat with us.');
+    await editor.waitForSave();
+    await bar.getByRole('button', { name: 'Publish' }).click();
+
+    await expect(bar.getByText('All changes published.')).toBeVisible();
+    await page.goto('/');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Beat with us.');
+  });
+
+  test('should discard from the bar and put the published text back in the form', async ({
+    editor,
+    page,
+  }) => {
+    const bar = page.locator('app-publish-bar');
+    await editor.openTab('Page content');
+    const headline = editor.card('Hero').getByLabel('Headline, first line');
+    const published = await headline.inputValue();
+    await headline.fill('Not this.');
+    await editor.waitForSave();
+
+    await bar.getByRole('button', { name: 'Discard' }).click();
+    await bar.getByRole('button', { name: 'Yes, discard' }).click();
+
+    await expect(editor.card('Hero').getByLabel('Headline, first line')).toHaveValue(published);
+    await expect(bar.getByText('All changes published.')).toBeVisible();
+  });
+
+  test('should send the owner to the review page when something blocks publishing', async ({
+    editor,
+    page,
+  }) => {
+    const bar = page.locator('app-publish-bar');
+    await editor.openTab('Contact & links');
+    await editor.card('Contact details').getByLabel('Email').fill('');
+    await editor.waitForSave();
+
+    await expect(bar.getByRole('button', { name: 'Publish' })).toBeDisabled();
+    await bar.getByRole('link', { name: /to fix before publishing/u }).click();
+
+    await expect(editor.heading).toHaveText('Review & publish');
+  });
+
+  test('should show the preview at desktop and phone width', async ({ editor, page }) => {
+    await editor.openTab('Page content');
+    if (await page.getByRole('button', { name: 'Show preview' }).isVisible()) {
+      await page.getByRole('button', { name: 'Show preview' }).click();
+    }
+    const frame = page.locator('iframe[title="Preview of the site with your draft"]');
+    await expect(frame).toHaveCSS('width', '1280px');
+
+    await page.getByRole('button', { name: 'Phone', exact: true }).click();
+
+    await expect(frame).toHaveCSS('width', '390px');
   });
 
   test('should collapse the side panel on desktop and remember it', async ({ editor, page }) => {

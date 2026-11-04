@@ -11,6 +11,7 @@ import {
   from,
   map,
   merge,
+  startWith,
   switchMap,
   tap,
 } from 'rxjs';
@@ -85,6 +86,14 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
       return EMPTY;
     }
     const paths = [...new Set(tab.sections.map((section) => section.path))];
+    return this.layout.contentResets$.pipe(
+      startWith(undefined),
+      // switchMap: a reset replaces the page and its autosave with freshly read ones.
+      switchMap(() => this.loadPage(tab, paths)),
+    );
+  }
+
+  private loadPage(tab: IEditorTabSchema, paths: readonly ContentPath[]): Observable<unknown> {
     // forkJoin: every document the tab edits, read in parallel, before any form is built.
     return forkJoin(paths.map((path) => this.drafts.document(path))).pipe(
       map((documents) => {
@@ -92,6 +101,7 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
         return this.buildPage(tab);
       }),
       tap((page) => {
+        this.pending.set(false);
         this.setData(page);
         this.activeAnchor.set(tab.sections[0]?.anchor ?? PageAnchor.Top);
       }),

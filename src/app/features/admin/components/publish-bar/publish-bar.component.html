@@ -1,0 +1,44 @@
+<div class="pb-status" [class.pb-status--failed]="model.failed()">
+  <span role="status">{{ model.statusText() }}</span>
+  @if (model.failed()) {
+    <button type="button" class="pb-link" (click)="model.retry()">Retry</button>
+  } @else if (model.problems() > 0) {
+    <a class="pb-link" [routerLink]="reviewUrl">{{ model.problems() }} to fix before publishing</a>
+  }
+</div>
+<div class="pb-actions">
+  @if (model.confirmingDiscard()) {
+    <span class="pb-ask">Throw away all unpublished changes?</span>
+    <button
+      appButton
+      type="button"
+      [variant]="ghost"
+      [size]="compact"
+      [disabled]="model.busy()"
+      (click)="model.discard()"
+    >
+      Yes, discard
+    </button>
+    <button appButton type="button" [size]="compact" (click)="model.cancelDiscard()">Keep</button>
+  } @else {
+    <button
+      appButton
+      type="button"
+      [variant]="ghost"
+      [size]="compact"
+      [disabled]="!model.hasChanges() || model.busy()"
+      (click)="model.askToDiscard()"
+    >
+      Discard
+    </button>
+    <button
+      appButton
+      type="button"
+      [size]="compact"
+      [disabled]="!model.canPublish()"
+      (click)="model.publish()"
+    >
+      {{ model.busy() ? 'Publishing…' : 'Publish' }}
+    </button>
+  }
+</div>

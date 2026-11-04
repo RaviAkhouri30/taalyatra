@@ -3,25 +3,48 @@
 
 :host {
   display: block;
+  height: 100%;
+
+  @include bp.down(bp.$tablet) {
+    height: auto;
+  }
 }
 
 .ep {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 24px;
-  padding: 24px;
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  height: 100%;
 
   @include bp.down(bp.$tablet) {
     grid-template-columns: 1fr;
-    padding: 16px;
+    height: auto;
   }
 }
 
+// The fields scroll on their own, with the publish bar always under them.
 .ep-main {
-  display: grid;
-  gap: 20px;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+
+  @include bp.down(bp.$tablet) {
+    height: auto;
+    overflow: visible;
+  }
+}
+
+.ep-form {
+  display: grid;
+  flex: 1;
+  align-content: start;
+  gap: 26px;
+  padding: 30px 32px 40px;
+
+  @include bp.down(bp.$phone) {
+    padding: 20px 16px 28px;
+  }
 }
 
 .ep-head {
@@ -29,11 +52,23 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  margin-bottom: -18px;
 
   h1 {
     margin: 0;
-    font-size: 26px;
+    font-size: 34px;
+
+    @include bp.down(bp.$phone) {
+      font-size: 26px;
+    }
   }
+}
+
+.ep-lead {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: t.$color-muted-strong;
 }
 
 .ep-toggle {
@@ -46,20 +81,21 @@
   color: t.$color-cream;
   font: inherit;
   font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
 
   @include bp.down(bp.$tablet) {
     display: inline-block;
+    flex: none;
   }
 }
 
+// One surface with the page, not boxes on it: sections are divided by a line.
 .ep-card {
   display: grid;
   gap: 14px;
-  padding: 20px;
-  border: 1px solid t.$color-line;
-  border-radius: 18px;
-  background: t.$color-surface-raised;
+  padding-top: 24px;
+  border-top: 1px solid t.$color-line;
 
   h2 {
     margin: 0;
@@ -77,15 +113,14 @@
 }
 
 .ep-preview {
-  position: sticky;
-  top: 136px;
-  height: calc(100vh - 152px);
-  min-height: 480px;
+  min-width: 0;
+  height: 100%;
+  border-left: 1px solid t.$color-line;
 
   @include bp.down(bp.$tablet) {
     display: none;
-    position: static;
     height: 80vh;
+    border-left: 0;
   }
 }
 
@@ -102,7 +137,7 @@
   }
 }
 
-// A link from the review page lands on a card's heading, clear of the sticky tab bar.
+// A link from the review page lands on a card's heading, with a little room above it.
 .ep-card h2 {
-  scroll-margin-top: 136px;
+  scroll-margin-top: 16px;
 }

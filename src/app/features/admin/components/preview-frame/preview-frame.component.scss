@@ -4,31 +4,95 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  border: 1px solid t.$color-line;
-  border-radius: 16px;
-  overflow: hidden;
-  background: t.$color-ink;
+  background: t.$color-ink-deep;
 }
 
 .pf-bar {
   display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 8px 12px;
-  font-size: 13px;
+  gap: 6px 12px;
+  padding: 8px 16px;
+  font-size: 13.5px;
   color: t.$color-muted-strong;
+  background: t.$color-ink;
   border-bottom: 1px solid t.$color-line;
 
-  a {
+  b {
     color: t.$color-cream;
-    font-weight: 600;
   }
 }
 
-iframe {
+.pf-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.pf-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: t.$color-amber;
+}
+
+.pf-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pf-devices {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid t.$color-line;
+  border-radius: 9px;
+
+  button {
+    display: inline-flex;
+    padding: 5px 8px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: t.$color-muted-strong;
+    cursor: pointer;
+
+    &[aria-pressed='true'] {
+      background: color-mix(in srgb, t.$color-amber 18%, transparent);
+      color: t.$color-amber;
+    }
+  }
+}
+
+.pf-tool {
+  display: inline-flex;
+  padding: 7px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: t.$color-muted-strong;
+  cursor: pointer;
+
+  &:hover {
+    background: t.$color-surface;
+    color: t.$color-cream;
+  }
+}
+
+.pf-stage {
+  position: relative;
   flex: 1;
-  width: 100%;
-  min-height: 70vh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+iframe {
+  position: absolute;
+  top: 0;
   border: 0;
   background: t.$color-ink-deep;
+  transform-origin: top left;
 }

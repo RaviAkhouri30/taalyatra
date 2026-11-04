@@ -2,6 +2,17 @@
 <div class="ed" [class.ed--collapsed]="nav.collapsed()" [class.ed--drawer]="nav.drawerOpen()">
   <header class="ed-top">
     <div class="ed-bar">
+      <button
+        #menuButton
+        type="button"
+        class="ed-menu"
+        aria-controls="ed-side"
+        [attr.aria-expanded]="nav.drawerOpen()"
+        (click)="toggleDrawer()"
+      >
+        <app-icon [name]="icons.Menu" [size]="19" />
+        Menu
+      </button>
       <a class="ed-brand" [routerLink]="dashboardUrl">
         @if (page) {
           <img [ngSrc]="page.brand.logoUrl" width="34" height="34" alt="" />
@@ -41,6 +52,24 @@
       ></button>
     }
     <div class="ed-side" id="ed-side">
+      <div class="ed-side-head">
+        <button
+          type="button"
+          class="ed-collapse"
+          [attr.aria-expanded]="!nav.collapsed()"
+          [attr.aria-label]="nav.collapsed() ? 'Expand menu' : 'Collapse menu'"
+          [attr.title]="nav.collapsed() ? 'Expand menu' : 'Collapse menu'"
+          (click)="nav.toggleCollapsed()"
+        >
+          <app-icon
+            [name]="nav.collapsed() ? icons.ChevronsRight : icons.ChevronsLeft"
+            [size]="18"
+          />
+        </button>
+        <button type="button" class="ed-close" aria-label="Close menu" (click)="closeDrawer()">
+          <app-icon [name]="icons.Close" [size]="18" />
+        </button>
+      </div>
       <nav #sideNav class="ed-nav" aria-label="Editor">
         @for (group of groups; track group.id) {
           <div class="ed-group">
@@ -72,36 +101,8 @@
           </div>
         }
       </nav>
-      <button
-        type="button"
-        class="ed-collapse"
-        [attr.aria-expanded]="!nav.collapsed()"
-        [attr.aria-label]="nav.collapsed() ? 'Expand menu' : 'Collapse menu'"
-        [attr.title]="nav.collapsed() ? 'Expand menu' : null"
-        (click)="nav.toggleCollapsed()"
-      >
-        <app-icon [name]="icons.PanelLeft" [size]="19" />
-        <span class="ed-label">Collapse</span>
-      </button>
     </div>
     <div class="ed-main">
-      <div class="ed-status" [class.ed-status--failed]="model.failed()">
-        <button
-          #menuButton
-          type="button"
-          class="ed-menu"
-          aria-controls="ed-side"
-          [attr.aria-expanded]="nav.drawerOpen()"
-          (click)="toggleDrawer()"
-        >
-          <app-icon [name]="icons.Menu" [size]="19" />
-          Menu
-        </button>
-        <span role="status">{{ model.statusText() }}</span>
-        @if (model.failed()) {
-          <button type="button" class="ed-retry" (click)="model.retry()">Retry</button>
-        }
-      </div>
       <router-outlet />
     </div>
   </div>
