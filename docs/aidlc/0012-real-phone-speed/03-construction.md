@@ -32,4 +32,4 @@ the real rules and shown on the dashboard.
 
 ---
 
-**Approval:** ☐ Pending
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-05 (the owner asked for the release).
