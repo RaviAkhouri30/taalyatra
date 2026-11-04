@@ -38,4 +38,6 @@ export enum IconName {
   Smartphone = 'smartphone',
   Refresh = 'refresh',
   ExternalLink = 'external-link',
+  Columns = 'columns',
+  ArrowUpRight = 'arrow-up-right',
 }

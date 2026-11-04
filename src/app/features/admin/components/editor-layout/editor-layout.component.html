@@ -15,24 +15,33 @@
       </button>
       <a class="ed-brand" [routerLink]="dashboardUrl">
         @if (page) {
-          <img [ngSrc]="page.brand.logoUrl" width="34" height="34" alt="" />
-          <span
-            ><b>{{ page.brand.name }}</b> Admin</span
-          >
+          <img [ngSrc]="page.brand.logoUrl" width="32" height="32" alt="" />
+          <span>{{ page.brand.name }} admin</span>
         }
       </a>
       @if (page) {
         <div class="ed-account">
           <p class="who">
-            {{ page.home.signedInAs }} <b>{{ model.email() }}</b>
+            <span class="sr">{{ page.home.signedInAs }} </span>{{ model.email() }}
           </p>
-          <a appButton [variant]="ghost" [size]="compact" [href]="siteUrl">{{
-            page.home.viewSite
-          }}</a>
+          @if (nav.previewAvailable()) {
+            <button
+              type="button"
+              class="ed-action ed-action--preview"
+              [attr.aria-pressed]="!nav.previewHidden()"
+              (click)="nav.togglePreview()"
+            >
+              <app-icon [name]="icons.Columns" [size]="17" />
+              Preview
+            </button>
+          }
+          <a class="ed-action" [href]="siteUrl" target="_blank" rel="noopener">
+            {{ page.home.viewSite }}
+            <app-icon [name]="icons.ArrowUpRight" [size]="17" />
+          </a>
           <button
-            appButton
             type="button"
-            [size]="compact"
+            class="ed-action"
             [disabled]="model.signingOut()"
             (click)="model.signOut()"
           >

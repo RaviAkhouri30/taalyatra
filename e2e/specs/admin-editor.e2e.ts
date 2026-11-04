@@ -244,6 +244,29 @@ test.describe('Admin editor', () => {
     await expect(frame).toHaveCSS('width', '390px');
   });
 
+  test('should hide and show the preview from the top bar, and only where there is one', async ({
+    editor,
+    page,
+  }) => {
+    if (await editor.menu.isVisible()) {
+      return; // Phones and tablets switch between fields and preview on the page itself.
+    }
+    const preview = page.getByRole('button', { name: 'Preview', exact: true });
+    await expect(preview).toHaveCount(0);
+    await editor.openTab('Page content');
+    const frame = page.locator('iframe[title="Preview of the site with your draft"]');
+    await expect(frame).toBeVisible();
+
+    await preview.click();
+    await expect(frame).toBeHidden();
+    await page.reload();
+    await expect(editor.heading).toHaveText('Page content');
+    await expect(frame).toBeHidden();
+
+    await preview.click();
+    await expect(frame).toBeVisible();
+  });
+
   test('should collapse the side panel on desktop and remember it', async ({ editor, page }) => {
     // Phones and tablets have the slide-in menu instead, tested below.
     if (await editor.menu.isVisible()) {

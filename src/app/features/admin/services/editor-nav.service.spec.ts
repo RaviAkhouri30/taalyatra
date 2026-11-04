@@ -1,6 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { LocalStoreService } from '@core/services/local-store.service';
-import { EditorNavService, NAV_COLLAPSED_STORAGE_KEY } from './editor-nav.service';
+import {
+  EditorNavService,
+  NAV_COLLAPSED_STORAGE_KEY,
+  PREVIEW_HIDDEN_STORAGE_KEY,
+} from './editor-nav.service';
 
 describe('EditorNavService', () => {
   function create(stored: string | null = null) {
@@ -47,5 +51,25 @@ describe('EditorNavService', () => {
 
     expect(nav.drawerOpen()).toBe(false);
     expect(set).not.toHaveBeenCalled();
+  });
+
+  it('should show the preview unless it was hidden before', () => {
+    expect(create().nav.previewHidden()).toBe(false);
+  });
+
+  it('should start with the preview hidden when that was remembered', () => {
+    expect(create('1').nav.previewHidden()).toBe(true);
+  });
+
+  it('should remember each change to the preview', () => {
+    const { nav, set } = create();
+
+    nav.togglePreview();
+    expect(nav.previewHidden()).toBe(true);
+    expect(set).toHaveBeenLastCalledWith(PREVIEW_HIDDEN_STORAGE_KEY, '1');
+
+    nav.togglePreview();
+    expect(nav.previewHidden()).toBe(false);
+    expect(set).toHaveBeenLastCalledWith(PREVIEW_HIDDEN_STORAGE_KEY, '0');
   });
 });
