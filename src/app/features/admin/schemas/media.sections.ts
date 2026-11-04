@@ -5,6 +5,11 @@ import {
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { COLLECTION_ITEMS_FIELD } from '../models/collection-expander';
 import { ContentPath } from '../models/content-path.enum';
+import {
+  EXPERIENCE_CARDS_FIELD,
+  EXPERIENCES_VIEW,
+  FEATURED_CTA_DEFAULT,
+} from '../models/experiences-view';
 import { FieldKind } from '../models/field-kind.enum';
 import { type IEditorSection } from '../models/i-editor-section';
 import { type FieldSchema, type IListFieldSchema } from '../models/i-field-schema';
@@ -29,6 +34,68 @@ function items(
 function group(label: string, fields: readonly FieldSchema[]): IListFieldSchema['item'] {
   return { key: 'item', label, kind: FieldKind.Group, fields };
 }
+
+/** The Experiences tab: like the Shows tab, over a document stored as one featured card and a list. */
+export const EXPERIENCES_SECTIONS: readonly IEditorSection[] = [
+  {
+    id: 'experiences',
+    title: 'Experiences heading',
+    path: ContentPath.HomeExperiences,
+    anchor: PageAnchor.Experiences,
+    fields: [eyebrow, title, lead],
+  },
+  {
+    id: 'experiences-cards',
+    title: 'Experiences',
+    path: ContentPath.HomeExperiences,
+    anchor: PageAnchor.Experiences,
+    view: EXPERIENCES_VIEW,
+    tip: 'The featured experience gets the large card. The categories become the filters.',
+    fields: [
+      {
+        key: EXPERIENCE_CARDS_FIELD,
+        label: 'Experiences',
+        kind: FieldKind.List,
+        addLabel: 'Add experience',
+        maxItems: COLLECTION_MAX_ITEMS.experiences,
+        minItems: 1,
+        item: group('Experience', [
+          text('name', 'Name', { required: true, maxLength: CONTENT_MAX_LENGTH.experienceName }),
+          text('tag', 'Small label above the name', {
+            maxLength: CONTENT_MAX_LENGTH.experienceTag,
+          }),
+          text('category', 'Category', {
+            required: true,
+            maxLength: CONTENT_MAX_LENGTH.experienceCategory,
+            hint: 'Experiences with the same category are filtered together.',
+          }),
+          image('image', 'Image', IMAGE_ASPECT.experiences),
+          multiline('description', 'Description', {
+            maxLength: CONTENT_MAX_LENGTH.experienceDescription,
+          }),
+          text('duration', 'Duration', { maxLength: CONTENT_MAX_LENGTH.experienceDetail }),
+          text('groupSize', 'Group size', { maxLength: CONTENT_MAX_LENGTH.experienceDetail }),
+          text('venue', 'Venue', { maxLength: CONTENT_MAX_LENGTH.experienceDetail }),
+          {
+            key: 'featured',
+            label: 'Featured',
+            kind: FieldKind.Toggle,
+            offByDefault: true,
+            oneInList: true,
+            hint: 'One experience is always featured. Switch another on to move it.',
+          },
+          {
+            key: 'spotlight',
+            label: 'Featured card',
+            kind: FieldKind.Group,
+            onlyWhen: 'featured',
+            fields: [buttonLabel('cta', 'Button on the card', FEATURED_CTA_DEFAULT)],
+          },
+        ]),
+      },
+    ],
+  },
+];
 
 /** The Gallery tab (E1). */
 export const GALLERY_SECTIONS: readonly IEditorSection[] = [

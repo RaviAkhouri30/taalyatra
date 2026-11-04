@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { type AbstractControl, FormArray, FormRecord } from '@angular/forms';
+import { ensureOneOn } from '../../forms/one-in-list';
 import { buildListItem } from '../../forms/schema-control.factory';
 import { moveListItem } from '../../forms/list-items';
 import { FieldKind } from '../../models/field-kind.enum';
@@ -69,8 +70,15 @@ export class SchemaFieldsComponent {
     items.push(buildListItem(list));
   }
 
-  protected remove(items: FormArray, index: number): void {
+  protected remove(list: IListFieldSchema, items: FormArray, index: number): void {
     items.removeAt(index);
+    const unique =
+      list.item.kind === FieldKind.Group
+        ? list.item.fields.find((field) => field.kind === FieldKind.Toggle && field.oneInList)
+        : undefined;
+    if (unique) {
+      ensureOneOn(items, unique.key);
+    }
   }
 
   protected move(items: FormArray, index: number, offset: number): void {

@@ -115,6 +115,23 @@ test.describe('Firebase smoke (emulator)', () => {
     await expect(editor.card('Photos').getByLabel('Description').first()).toHaveValue(second);
   });
 
+  test('should publish a change to the experiences through the Firestore rules', async ({
+    editor,
+    page,
+  }, info) => {
+    const name = `Drum Circle (${info.project.name})`;
+    await editor.signIn({ email: 'admin@taalyatra.test', password: 'emulator-admin-password' });
+    await editor.openTab('Experiences');
+    const cards = editor.card('Experiences', { exact: true });
+
+    await cards.getByLabel('Name', { exact: true }).first().fill(name);
+    await editor.waitForSave();
+    await editor.publish();
+    await page.goto('/');
+
+    await expect(page.locator('#experiences').getByRole('heading', { name })).toBeAttached();
+  });
+
   test('should upload through the real adapter and store it through the Firestore rules', async ({
     editor,
     page,

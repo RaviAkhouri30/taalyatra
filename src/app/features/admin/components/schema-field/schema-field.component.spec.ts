@@ -158,4 +158,15 @@ describe('SchemaFieldComponent', () => {
 
     expect(element.querySelector('#f-note')?.textContent).toBe('');
   });
+
+  it('should leave an ordinary switch alone when it changes', () => {
+    const { control, element } = render(
+      { key: 'live', label: 'Live', kind: FieldKind.Toggle },
+      true,
+    );
+
+    element.querySelector('input')?.click();
+
+    expect(control.value).toBe(false);
+  });
 });

@@ -32,7 +32,7 @@
         @if (page.report.errors.length > 0) {
           <div class="pp-issues pp-issues--error">
             <h3>Fix before publishing ({{ page.report.errors.length }})</h3>
-            <p>Publishing is off until these are fixed. Each link takes you to the field.</p>
+            <p>Publishing is off until these are fixed. Each link takes you to the right card.</p>
             <ul>
               @for (issue of page.report.errors; track $index) {
                 <li>

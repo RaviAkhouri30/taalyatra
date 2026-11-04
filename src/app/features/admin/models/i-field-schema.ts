@@ -41,6 +41,8 @@ export interface IToggleFieldSchema extends IFieldBase {
   readonly kind: FieldKind.Toggle;
   /** Missing values are off, e.g. a new show isn't featured until the owner says so. */
   readonly offByDefault?: boolean;
+  /** In a list, exactly one item has it on: turning one on turns the others off. */
+  readonly oneInList?: boolean;
 }
 
 /** One stored value from a fixed list. */
@@ -76,6 +78,8 @@ export interface IListFieldSchema extends IFieldBase {
   /** The add button's label, e.g. "Add offer card". */
   readonly addLabel: string;
   readonly maxItems: number;
+  /** The fewest items allowed; the Remove buttons stop there. */
+  readonly minItems?: number;
 }
 
 /** Any editor field. */

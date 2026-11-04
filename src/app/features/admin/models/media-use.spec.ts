@@ -1,4 +1,4 @@
-import { GALLERY_SECTIONS, TEAM_SECTIONS } from '../schemas/media.sections';
+import { EXPERIENCES_SECTIONS, GALLERY_SECTIONS, TEAM_SECTIONS } from '../schemas/media.sections';
 import { MediaAsset } from './media-asset.model';
 import { imageUsesIn, replaceImage } from './media-use';
 
@@ -32,6 +32,18 @@ describe('media uses', () => {
 
       expect(imageUsesIn(team, content)).toEqual([
         { id: 'abc', label: 'Team members · Team member 1 · Photo' },
+      ]);
+    });
+
+    it('should find one in a section stored in another shape', () => {
+      const cards = EXPERIENCES_SECTIONS.at(-1)!;
+      const content = {
+        featured: { name: 'A', image: { src: uploaded, alt: 'A', width: 5, height: 5 } },
+        items: [],
+      };
+
+      expect(imageUsesIn(cards, content)).toEqual([
+        { id: 'abc', label: 'Experiences · Experience 1 · Image' },
       ]);
     });
 

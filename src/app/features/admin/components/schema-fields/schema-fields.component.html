@@ -48,8 +48,9 @@
             </button>
             <button
               type="button"
+              [disabled]="list.items.length <= (list.schema.minItems ?? 0)"
               [attr.aria-label]="'Remove ' + list.schema.item.label + ' ' + (i + 1)"
-              (click)="remove(list.items, i)"
+              (click)="remove(list.schema, list.items, i)"
             >
               Remove
             </button>

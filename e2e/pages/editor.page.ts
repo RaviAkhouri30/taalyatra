@@ -36,8 +36,8 @@ export class EditorPage extends BasePage {
   }
 
   /** The editor card with this heading. */
-  public card(name: string): Locator {
-    return this.page.getByRole('region', { name });
+  public card(name: string, options: { readonly exact?: boolean } = {}): Locator {
+    return this.page.getByRole('region', { name, ...options });
   }
 
   /** Waits until the last change is saved in the draft. */
