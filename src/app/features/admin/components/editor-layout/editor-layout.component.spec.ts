@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { provideEditorTesting } from '../../testing/editor-testing';
 import EditorLayoutComponent from './editor-layout.component';
 
@@ -13,24 +14,24 @@ describe('EditorLayoutComponent', () => {
     return { fixture, element: fixture.nativeElement as HTMLElement };
   }
 
-  it('should show the account, the tab bar and the draft count', () => {
+  it('should show the account, the side panel and the draft count', () => {
     const { element } = render();
-    const tabs = Array.from(element.querySelectorAll('.ed-tabs a')).map((link) =>
+    const tabs = Array.from(element.querySelectorAll('.ed-nav a')).map((link) =>
       link.getAttribute('href'),
     );
 
     expect(element.querySelector('.who')?.textContent).toContain('owner@example.com');
     expect(tabs).toEqual([
       '/admin',
-      '/admin/offer',
       '/admin/content',
+      '/admin/offer',
       '/admin/experiences',
       '/admin/gallery',
       '/admin/team',
       '/admin/shows',
       '/admin/videos',
-      '/admin/visibility',
       '/admin/contact',
+      '/admin/visibility',
       '/admin/media',
       '/admin/publish',
     ]);
@@ -48,5 +49,100 @@ describe('EditorLayoutComponent', () => {
 
     expect(element.querySelector('[role="status"]')?.textContent).toContain('Couldn’t save');
     expect(element.querySelector('.ed-retry')).not.toBeNull();
+  });
+
+  it('should group the links under small headings, with one group unlabelled', () => {
+    const { element } = render();
+
+    expect(
+      Array.from(element.querySelectorAll('.ed-group-label')).map((label) => label.textContent),
+    ).toEqual(['Content', 'Site', 'Publish']);
+    expect(element.querySelector('nav a app-icon')).not.toBeNull();
+  });
+
+  it('should collapse to icons, keeping the names and adding hover titles', async () => {
+    const { fixture, element } = render();
+    const toggle = element.querySelector<HTMLButtonElement>('.ed-collapse')!;
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    expect(toggle.getAttribute('aria-label')).toBe('Collapse menu');
+    expect(element.querySelector('nav a')?.getAttribute('title')).toBeNull();
+
+    toggle.click();
+    await fixture.whenStable();
+
+    expect(element.querySelector('.ed')?.classList).toContain('ed--collapsed');
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(toggle.getAttribute('aria-label')).toBe('Expand menu');
+    expect(element.querySelector('nav a')?.getAttribute('title')).toBe('Dashboard');
+    expect(element.querySelector('nav a .ed-label')?.textContent).toBe('Dashboard');
+  });
+
+  describe('the slide-in menu', () => {
+    async function open() {
+      const rendered = render();
+      rendered.element.querySelector<HTMLButtonElement>('.ed-menu')?.click();
+      await rendered.fixture.whenStable();
+      return rendered;
+    }
+
+    it('should open with a backdrop and move focus into the panel', async () => {
+      const { element } = await open();
+      document.body.append(element);
+
+      expect(element.querySelector('.ed')?.classList).toContain('ed--drawer');
+      expect(element.querySelector('.ed-menu')?.getAttribute('aria-expanded')).toBe('true');
+      expect(element.querySelector('.ed-backdrop')).not.toBeNull();
+    });
+
+    it('should close when the backdrop is pressed', async () => {
+      const { fixture, element } = await open();
+
+      element.querySelector<HTMLButtonElement>('.ed-backdrop')?.click();
+      await fixture.whenStable();
+
+      expect(element.querySelector('.ed')?.classList).not.toContain('ed--drawer');
+    });
+
+    it('should close on Escape and give focus back to the menu button', async () => {
+      const { fixture, element } = await open();
+      document.body.append(element);
+
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      await fixture.whenStable();
+
+      expect(element.querySelector('.ed')?.classList).not.toContain('ed--drawer');
+      expect(document.activeElement).toBe(element.querySelector('.ed-menu'));
+      element.remove();
+    });
+
+    it('should ignore Escape when it is already closed', async () => {
+      const { fixture, element } = render();
+      const focused = document.activeElement;
+
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      await fixture.whenStable();
+
+      expect(document.activeElement).toBe(focused);
+      expect(element.querySelector('.ed')?.classList).not.toContain('ed--drawer');
+    });
+
+    it('should close when a link is chosen', async () => {
+      const { fixture, element } = await open();
+      TestBed.inject(Router).resetConfig([{ path: '**', children: [] }]);
+
+      element.querySelector<HTMLAnchorElement>('nav a')?.click();
+      await fixture.whenStable();
+
+      expect(element.querySelector('.ed')?.classList).not.toContain('ed--drawer');
+    });
+
+    it('should close again when the menu button is pressed twice', async () => {
+      const { fixture, element } = await open();
+
+      element.querySelector<HTMLButtonElement>('.ed-menu')?.click();
+      await fixture.whenStable();
+
+      expect(element.querySelector('.ed')?.classList).not.toContain('ed--drawer');
+    });
   });
 });

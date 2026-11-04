@@ -13,7 +13,7 @@ flowchart TD
   RO -->|"achievements"| A["AchievementsPageComponent<br/>page-hero · stats · milestones · recognition · press · performances · page-cta"]
   RO -->|"videos · team · shows · achievements: pageEnabledGuard (canMatch)"| V
   RO -->|"admin (lazy, layout: Bare)"| AD["AdminShellComponent (noindex)<br/>sign-in · signedOutGuard → SignIn · reset-password → ResetPassword (app-auth-card)"]
-  AD -->|"'' · adminGuard"| EL["EditorLayoutComponent<br/>account bar · tabs · save status (EditorLayoutViewModel)"]
+  AD -->|"'' · adminGuard"| EL["EditorLayoutComponent<br/>account bar · side panel · save status (EditorLayoutViewModel)"]
   EL --> DB["'' → DashboardComponent"]
   EL --> EP["offer · content · gallery · team · shows · videos · visibility · contact → EditorPageComponent<br/>(unsavedChangesGuard) · schema-fields · schema-field · preview-frame"]
   EL --> ML["media → MediaLibraryComponent (MediaManageViewModel)<br/>MediaUploadComponent · MediaCardComponent"]

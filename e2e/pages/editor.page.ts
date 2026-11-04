@@ -7,6 +7,7 @@ export class EditorPage extends BasePage {
   public readonly heading: Locator;
   public readonly status: Locator;
   public readonly tabs: Locator;
+  public readonly menu: Locator;
   public readonly preview: FrameLocator;
   protected readonly path = '/admin';
 
@@ -15,7 +16,8 @@ export class EditorPage extends BasePage {
     this.heading = page.getByRole('heading', { level: 1 });
     // The editor's status line (the site's toasts are a separate status region).
     this.status = page.getByRole('status').filter({ hasText: /draft|Saving|save/ });
-    this.tabs = page.getByRole('navigation', { name: 'Editor' });
+    this.tabs = page.locator('nav[aria-label="Editor"]');
+    this.menu = page.getByRole('button', { name: 'Menu', exact: true });
     this.preview = page.frameLocator('iframe[title="Preview of the site with your draft"]');
   }
 
@@ -28,10 +30,18 @@ export class EditorPage extends BasePage {
     await this.heading.filter({ hasText: 'Welcome back' }).waitFor();
   }
 
-  /** Opens a tab from the tab bar and waits until it is the current page with its content. */
+  /** Opens a page from the side panel and waits until it is the current page with its content. */
   public async openTab(name: string): Promise<void> {
+    // The site hides the page until its data arrives, so the menu can't be judged before that.
+    await this.heading.waitFor();
+    // Phones and tablets keep the panel behind a menu.
+    if (await this.menu.isVisible()) {
+      await this.menu.click();
+    }
     await this.tabs.getByRole('link', { name }).first().click();
-    await this.tabs.locator('[aria-current="page"]', { hasText: name }).waitFor();
+    await this.tabs
+      .locator('[aria-current="page"]', { hasText: name })
+      .waitFor({ state: 'attached' });
     await this.heading.waitFor();
   }
 

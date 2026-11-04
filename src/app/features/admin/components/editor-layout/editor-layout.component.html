@@ -1,5 +1,5 @@
 @let page = model.data();
-<div class="ed">
+<div class="ed" [class.ed--collapsed]="nav.collapsed()" [class.ed--drawer]="nav.drawerOpen()">
   <header class="ed-top">
     <div class="ed-bar">
       <a class="ed-brand" [routerLink]="dashboardUrl">
@@ -31,27 +31,78 @@
       }
     </div>
   </header>
-  <div class="ed-sticky">
-    <nav class="ed-tabs" aria-label="Editor">
-      @for (link of nav; track link.url) {
-        <a
-          [routerLink]="link.url"
-          routerLinkActive="sel"
-          [routerLinkActiveOptions]="link.match"
-          ariaCurrentWhenActive="page"
-          >{{ link.label }}
-          @if (link.showsCount && model.changeCount() > 0) {
-            <span class="count">{{ model.changeCount() }}<span class="sr"> unpublished</span></span>
-          }
-        </a>
-      }
-    </nav>
-    <div class="ed-status" [class.ed-status--failed]="model.failed()" role="status">
-      <span>{{ model.statusText() }}</span>
-      @if (model.failed()) {
-        <button type="button" class="ed-retry" (click)="model.retry()">Retry</button>
-      }
+  <div class="ed-body">
+    @if (nav.drawerOpen()) {
+      <button
+        type="button"
+        class="ed-backdrop"
+        aria-label="Close menu"
+        (click)="closeDrawer()"
+      ></button>
+    }
+    <div class="ed-side" id="ed-side">
+      <nav #sideNav class="ed-nav" aria-label="Editor">
+        @for (group of groups; track group.id) {
+          <div class="ed-group">
+            @if (group.label) {
+              <p class="ed-group-label" [id]="group.id">{{ group.label }}</p>
+            }
+            <ul [attr.aria-labelledby]="group.label ? group.id : null">
+              @for (link of group.links; track link.url) {
+                <li>
+                  <a
+                    [routerLink]="link.url"
+                    routerLinkActive="sel"
+                    [routerLinkActiveOptions]="link.match"
+                    ariaCurrentWhenActive="page"
+                    [attr.title]="nav.collapsed() ? link.label : null"
+                    (click)="nav.closeDrawer()"
+                  >
+                    <app-icon [name]="link.icon" [size]="19" />
+                    <span class="ed-label">{{ link.label }}</span>
+                    @if (link.showsCount && model.changeCount() > 0) {
+                      <span class="count"
+                        >{{ model.changeCount() }}<span class="sr"> unpublished</span></span
+                      >
+                    }
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </nav>
+      <button
+        type="button"
+        class="ed-collapse"
+        [attr.aria-expanded]="!nav.collapsed()"
+        [attr.aria-label]="nav.collapsed() ? 'Expand menu' : 'Collapse menu'"
+        [attr.title]="nav.collapsed() ? 'Expand menu' : null"
+        (click)="nav.toggleCollapsed()"
+      >
+        <app-icon [name]="icons.PanelLeft" [size]="19" />
+        <span class="ed-label">Collapse</span>
+      </button>
+    </div>
+    <div class="ed-main">
+      <div class="ed-status" [class.ed-status--failed]="model.failed()">
+        <button
+          #menuButton
+          type="button"
+          class="ed-menu"
+          aria-controls="ed-side"
+          [attr.aria-expanded]="nav.drawerOpen()"
+          (click)="toggleDrawer()"
+        >
+          <app-icon [name]="icons.Menu" [size]="19" />
+          Menu
+        </button>
+        <span role="status">{{ model.statusText() }}</span>
+        @if (model.failed()) {
+          <button type="button" class="ed-retry" (click)="model.retry()">Retry</button>
+        }
+      </div>
+      <router-outlet />
     </div>
   </div>
-  <router-outlet />
 </div>

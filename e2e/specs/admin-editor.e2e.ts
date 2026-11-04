@@ -180,6 +180,65 @@ test.describe('Admin editor', () => {
     await expect(editor.card('Contact details').getByRole('heading')).toBeInViewport();
   });
 
+  test('should collapse the side panel on desktop and remember it', async ({ editor, page }) => {
+    // Phones and tablets have the slide-in menu instead, tested below.
+    if (await editor.menu.isVisible()) {
+      return;
+    }
+    const link = editor.tabs.getByRole('link', { name: 'Gallery' });
+    await expect(editor.tabs.getByText('Content', { exact: true })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Collapse menu' }).click();
+
+    await expect(page.getByRole('button', { name: 'Expand menu' })).toBeVisible();
+    await expect(link).toHaveAttribute('title', 'Gallery');
+    await page.reload();
+    await expect(page.getByRole('button', { name: 'Expand menu' })).toBeVisible();
+    await link.click();
+    await expect(editor.heading).toHaveText('Gallery');
+  });
+
+  test('should have no WCAG 2.2 AA violations with the panel collapsed or the menu open', async ({
+    editor,
+    page,
+    axe,
+  }) => {
+    if (await editor.menu.isVisible()) {
+      await editor.menu.click();
+      await expect(editor.tabs.getByRole('link', { name: 'Gallery' })).toBeVisible();
+    } else {
+      await page.getByRole('button', { name: 'Collapse menu' }).click();
+    }
+
+    const results = await axe().exclude('iframe').analyze();
+
+    expect(results.violations).toEqual([]);
+  });
+
+  test('should open the menu on small screens, and close it when a page is chosen', async ({
+    editor,
+    page,
+  }) => {
+    // Desktop keeps the panel in view instead, tested above.
+    if (!(await editor.menu.isVisible())) {
+      return;
+    }
+    const link = editor.tabs.getByRole('link', { name: 'Gallery' });
+    await expect(link).toBeHidden();
+
+    await editor.menu.click();
+    await expect(link).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(link).toBeHidden();
+    await expect(editor.menu).toBeFocused();
+
+    await editor.menu.click();
+    await link.click();
+
+    await expect(editor.heading).toHaveText('Gallery');
+    await expect(link).toBeHidden();
+  });
+
   for (const view of VIEWS) {
     test(`should have no WCAG 2.2 AA violations on ${view}`, async ({ editor, axe }) => {
       await editor.openTab(view);

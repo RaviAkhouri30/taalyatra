@@ -26,4 +26,11 @@ export enum IconName {
   Close = 'close',
   Send = 'send',
   Copy = 'copy',
+  Document = 'document',
+  Image = 'image',
+  Video = 'video',
+  Toggle = 'toggle',
+  Folder = 'folder',
+  Menu = 'menu',
+  PanelLeft = 'panel-left',
 }
