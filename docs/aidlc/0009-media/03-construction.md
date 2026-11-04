@@ -6,6 +6,8 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
 | --- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
 | 1   | Upload function (D1–D6)                              | `api/`: `media/sign`, `media/delete`, token verification, signing; `apiRuntime`; lint, `verify`, CI and Sonar cover `api/`; `scripts/prove-cloudinary.mjs` for the real-account proof                                                 | function (52), proof passed |
 | 2   | Rules, `media`, port, adapters, loader (D7–D11, D22) | `firestore.rules`; `IMediaService`, `CloudinaryMediaService`, `ImagePreparer`, `FakeMediaService`, factory; `IAuthService.idToken()`; `mediaImageUrl`, `provideMediaImages`; `CLOUDINARY_CONFIG`; `MediaAsset`, `MediaLibraryService` | see Checks                  |
+| 3   | Upload and library UI (D13, G5)                      | `MediaUploadComponent` and view model (queue of three, progress, retry); `MediaLibraryComponent` and view model; `MediaCardComponent`; **Media library** tab                                                                          | see Checks                  |
+| 4   | Image field and crop (D12, D14)                      | `FieldKind.Image`; `ImageFieldComponent` and view model; `MediaPickerComponent`; `ImageCropComponent`, `CropFrame`, `parseImageSrc`                                                                                                   | see Checks                  |
 
 ## Decisions & deviations from design
 
@@ -29,6 +31,16 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
 - **`EmailJsEmailService` gets the SDK function through a token, `EMAILJS_SENDER`.** Its spec patched the
   module, which fails if an earlier spec has loaded the real one, and adding specs exposed that. The spec
   now replaces the function through DI (CLAUDE.md §9).
+- **A retry after a failed library save doesn't upload again.** The queue keeps the stored file and only
+  retries the save, so a Firestore failure can't leave a duplicate at Cloudinary.
+- **Each library image has its own description,** offered as the default wherever it's used.
+- **The image description check is a validator, not a separate `ImageDescriptionRule`.** The existing
+  `SchemaRule` already blocks publishing on any field error, and the form shows the same message.
+- **An image field can be marked decorative,** so it needs no description. Video thumbnails sit next to a
+  title saying the same thing, and blocking them would add screen-reader noise.
+- **Choosing and cropping open in place, not in a pop-up.** It works the same on a phone and needs no focus
+  trap. Crop also has move buttons: arrow keys alone wouldn't meet WCAG 2.2's dragging rule for pointer
+  users.
 - **A file the browser can't encode goes as it is,** the same as one it can't decode, because Cloudinary's
   transformation removes its metadata either way.
 
@@ -40,6 +52,12 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
   tests at 100 %); 118 rules tests; `npm run e2e` 270 passed; `npm run e2e:firebase` 15 passed. The initial
   bundle grew by 0.71 kB (0.36 kB compressed), and the upload code is in one admin chunk that the public
   pages don't load.
+- **Increment 3:** `npm run verify` passes (845 site tests, coverage 99.78/98.24/99.55/99.96; 52 function
+  tests at 100 %); `npm run e2e` 282 passed in 3.5 minutes. Earlier runs failed with timeouts while other
+  software held the CPU (load average 40–67); the same code passed once the load fell.
+- **Increment 4:** `npm run verify` passes (920 site tests, coverage 99.79/98.19/99.57/99.96; 52 function
+  tests at 100 %); `npm run e2e` 282 passed. No admin code in the files public pages load. The field has
+  no browser test yet, because no tab uses it until increment 6.
 - **Real-account proof (2026-11-03, account `zqu2cpih`, run by the owner):** a signed SHA-256 upload is
   accepted, and delivered images have no GPS. The approved setting failed on the stored file, so three
   placements of Cloudinary's `fl_force_strip` were compared. Each cell is the stored file:

@@ -6,16 +6,19 @@ import {
   type ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { type IImage } from '@shared/interfaces/i-image';
 import { FieldKind } from '../models/field-kind.enum';
 import {
   type FieldSchema,
   type IChoiceFieldSchema,
+  type IImageFieldSchema,
   type IListFieldSchema,
   type INumberFieldSchema,
   type ITextFieldSchema,
 } from '../models/i-field-schema';
 import { emailAddressValidator, requiredTrimmedValidator } from './auth.validators';
 import { dateValidator, phoneE164Validator, urlValidator } from './content.validators';
+import { imageChosenValidator, imageDescribedValidator, toImage } from './image-value';
 import { fieldOf } from './json-node';
 
 /** The format check each kind of text field adds to its required and length checks. */
@@ -71,6 +74,8 @@ export function buildControl(field: FieldSchema, value: unknown): AbstractContro
       return new FormControl(value !== false, { nonNullable: true });
     case FieldKind.Choice:
       return choiceControl(field, value);
+    case FieldKind.Image:
+      return imageControl(field, value);
     case FieldKind.Group:
       return buildFormGroup(field.fields, value);
     case FieldKind.List:
@@ -92,6 +97,13 @@ function numberControl(field: INumberFieldSchema, value: unknown): FormControl<n
 function choiceControl(field: IChoiceFieldSchema, value: unknown): FormControl<string> {
   const known = field.options.find((option) => option.value === value);
   return new FormControl(known?.value ?? field.options[0]?.value ?? '', { nonNullable: true });
+}
+
+function imageControl(field: IImageFieldSchema, value: unknown): FormControl<IImage> {
+  return new FormControl(toImage(value), {
+    nonNullable: true,
+    validators: [imageChosenValidator, ...(field.decorative ? [] : [imageDescribedValidator])],
+  });
 }
 
 function textControl(field: ITextFieldSchema, value: unknown): FormControl<string> {

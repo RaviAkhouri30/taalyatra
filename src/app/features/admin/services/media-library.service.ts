@@ -30,6 +30,16 @@ export class MediaLibraryService {
   }
 
   /**
+   * @param id A library entry's id.
+   * @returns The entry, or `null` when there's none.
+   */
+  public asset(id: string): Observable<MediaAsset | null> {
+    return this.store
+      .read(`${MEDIA_COLLECTION}/${id}`)
+      .pipe(map((fields) => (fields === null ? null : MediaAsset.fromFields(fields))));
+  }
+
+  /**
    * @param media The stored file.
    * @param name The name of the file the owner chose.
    * @returns The new library entry, once it's saved.

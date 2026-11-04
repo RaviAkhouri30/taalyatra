@@ -1,0 +1,47 @@
+@let image = asset().dto;
+<div #stage class="ic-stage">
+  <img
+    [ngSrc]="asset().src"
+    [width]="image.width"
+    [height]="image.height"
+    sizes="(max-width: 620px) 100vw, 50vw"
+    alt=""
+  />
+  <div
+    class="ic-frame"
+    role="group"
+    tabindex="0"
+    aria-label="Crop frame. Use the arrow keys to move it."
+    [appCropBox]="position()"
+    (keydown)="keydown($event)"
+    (pointerdown)="startDrag($event, stage)"
+    (pointermove)="dragTo($event)"
+    (pointerup)="endDrag()"
+    (pointercancel)="endDrag()"
+  ></div>
+</div>
+<div class="ic-controls">
+  <div class="ic-moves">
+    @for (item of moves; track item.label) {
+      <button type="button" [attr.aria-label]="item.label" (click)="move(item)">
+        {{ item.symbol }}
+      </button>
+    }
+  </div>
+  <label class="ic-zoom">
+    Zoom
+    <input
+      #zoom
+      type="range"
+      step="0.1"
+      [min]="minZoom"
+      [max]="maxZoom"
+      [value]="frame().zoom"
+      (input)="zoomTo(zoom.valueAsNumber)"
+    />
+  </label>
+  <div class="ic-actions">
+    <button type="button" class="ic-apply" (click)="applied.emit(frame())">Use this crop</button>
+    <button type="button" (click)="cancelled.emit()">Cancel</button>
+  </div>
+</div>

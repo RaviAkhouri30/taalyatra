@@ -94,4 +94,22 @@ describe('schema control factory', () => {
 
     expect(empty.value).toBe('');
   });
+
+  it('should build an image field needing a photo and a description', () => {
+    const control = buildControl(
+      { key: 'photo', label: 'Photo', kind: FieldKind.Image, aspect: 1 },
+      undefined,
+    );
+
+    expect(control.errors).toEqual({ imageMissing: true, imageDescription: true });
+  });
+
+  it('should not ask a decorative image for a description', () => {
+    const control = buildControl(
+      { key: 'photo', label: 'Photo', kind: FieldKind.Image, aspect: 1, decorative: true },
+      { src: '/a.webp', alt: '', width: 1, height: 1 },
+    );
+
+    expect(control.valid).toBe(true);
+  });
 });

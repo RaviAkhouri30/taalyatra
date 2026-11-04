@@ -45,6 +45,15 @@ export interface IChoiceFieldSchema extends IFieldBase {
   readonly options: readonly { readonly value: string; readonly label: string }[];
 }
 
+/** An image on the site, stored as `IImage`: chosen from the library, described and cropped. */
+export interface IImageFieldSchema extends IFieldBase {
+  readonly kind: FieldKind.Image;
+  /** The slot's width divided by its height, which the crop frame keeps to (D14). */
+  readonly aspect: number;
+  /** Decoration next to text that says the same thing, so no description is required. */
+  readonly decorative?: boolean;
+}
+
 /** A nested object, edited as a set of fields. */
 export interface IGroupFieldSchema extends IFieldBase {
   readonly kind: FieldKind.Group;
@@ -54,8 +63,8 @@ export interface IGroupFieldSchema extends IFieldBase {
 /** A list the owner can add to, remove from and reorder. */
 export interface IListFieldSchema extends IFieldBase {
   readonly kind: FieldKind.List;
-  /** Each item: a text field (a list of strings) or a group (a list of objects). */
-  readonly item: ITextFieldSchema | IGroupFieldSchema;
+  /** Each item: a text field (strings), an image field (images) or a group (objects). */
+  readonly item: ITextFieldSchema | IImageFieldSchema | IGroupFieldSchema;
   /** The add button's label, e.g. "Add offer card". */
   readonly addLabel: string;
   readonly maxItems: number;
@@ -67,5 +76,6 @@ export type FieldSchema =
   | INumberFieldSchema
   | IToggleFieldSchema
   | IChoiceFieldSchema
+  | IImageFieldSchema
   | IGroupFieldSchema
   | IListFieldSchema;

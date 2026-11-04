@@ -1,0 +1,29 @@
+<app-media-upload (uploaded)="model.added($event)" />
+@if (model.loadFailed()) {
+  <p class="mp-note" role="alert">The library couldn’t be loaded. Close this and try again.</p>
+} @else if (model.data(); as assets) {
+  @if (assets.length === 0) {
+    <p class="mp-note">No photos yet. Upload one above, then choose it here.</p>
+  } @else {
+    <ul class="mp-grid">
+      @for (asset of assets; track asset.id) {
+        <li>
+          <button
+            type="button"
+            class="mp-choice"
+            [attr.aria-label]="'Choose ' + asset.dto.name"
+            (click)="picked.emit(asset)"
+          >
+            <img
+              [ngSrc]="asset.src"
+              fill
+              sizes="(max-width: 620px) 50vw, 15vw"
+              [alt]="asset.dto.description"
+            />
+          </button>
+        </li>
+      }
+    </ul>
+  }
+}
+<button type="button" class="mp-cancel" (click)="cancelled.emit()">Cancel</button>

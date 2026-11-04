@@ -72,6 +72,18 @@ describe('MediaLibraryService', () => {
     ]);
   });
 
+  it('should find one image by its id', async () => {
+    const { service } = setUp({ 'media/abc': entry('2026-11-01T00:00:00.000Z') });
+
+    const asset = await firstValueFrom(service.asset('abc'));
+
+    expect(asset?.id).toBe('abc');
+  });
+
+  it('should find nothing when the id is not in the library', async () => {
+    await expect(firstValueFrom(setUp().service.asset('gone'))).resolves.toBeNull();
+  });
+
   it('should tidy a description and keep the rest of the entry', async () => {
     const { service, store } = setUp();
     const asset = await firstValueFrom(service.register(media, 'photo.jpg'));

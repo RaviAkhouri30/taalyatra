@@ -11,6 +11,8 @@ const MESSAGES: readonly (readonly [string, (detail: unknown) => string])[] = [
   ['phone', () => 'Use the international format, for example +919284276168.'],
   ['email', () => 'Use a valid email address.'],
   ['date', () => 'Use a valid date.'],
+  ['imageMissing', () => 'Choose a photo.'],
+  ['imageDescription', () => 'Describe this photo for people who can’t see it.'],
   ['min', (detail) => `Use a number of at least ${String(numberIn(detail, 'min'))}.`],
   ['max', (detail) => `Use a number of at most ${String(numberIn(detail, 'max'))}.`],
 ];
