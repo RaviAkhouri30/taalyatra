@@ -2,7 +2,9 @@
 
 - **Version:** 1.7.0. The code went live in stages through PRs #18 to #24 (`109f979`, 2026-11-04). Tag `v1.7.0` is on the
   release commit.
-- **CHANGELOG entry:** ☑ `## [1.7.0] - 2026-11-05`
+- **1.7.1:** the admin area's top bar, deployed when PR #25 merged (`8aae774`, 2026-11-05). Tag `v1.7.1` is on its release
+  commit.
+- **CHANGELOG entries:** ☑ `## [1.7.0] - 2026-11-05`, `## [1.7.1] - 2026-11-05`
 - **Deploy notes:**
   - **Backup:** `backups/firestore-2026-11-04.json`, taken before the rules (git-ignored).
   - **Rules:** the owner deployed them on 2026-11-04, after the first merge. `/admin` couldn't load the media library or
@@ -30,4 +32,4 @@
 
 ---
 
-**Approval:** ☐ Pending
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-05.

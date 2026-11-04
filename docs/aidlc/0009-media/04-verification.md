@@ -31,8 +31,8 @@ real phones are the approved next step.
 | A phone photo with GPS has no location once stored or delivered           | ✔ The owner uploaded a photo they confirm had a location, on the real account. Both stored files have no EXIF data. `prove:cloudinary` passed all 15 checks, including delivered images. **Gap:** see below. |
 | A 15 MB phone photo goes through, stored at most 2400 px wide             | ◐ The owner's phone photos are stored at 2400 px wide. A file of that exact size wasn't tried.                                                                                                               |
 | An image with no description blocks publishing                            | ✔ Browser test                                                                                                                                                                                               |
-| A crop shows on the site, and the same image keeps its own crop elsewhere | ✔ Browser test, and the owner confirmed cropping on the live site (2026-11-05) |
-| An image in use can't be deleted, and the editor says where | ✔ Browser test; the live library shows "Used in", and the owner confirmed deleting on the live site (2026-11-05) |
+| A crop shows on the site, and the same image keeps its own crop elsewhere | ✔ Browser test, and the owner confirmed cropping on the live site (2026-11-05)                                                                                                                               |
+| An image in use can't be deleted, and the editor says where               | ✔ Browser test; the live library shows "Used in", and the owner confirmed deleting on the live site (2026-11-05)                                                                                             |
 | A collection publishes and undoes together                                | ✔ Browser test, and through the real rules on the emulator                                                                                                                                                   |
 | Any account but the admin is refused by the function                      | ✔ Function tests; live request with no token refused                                                                                                                                                         |
 | Public pages download no editor or upload code                            | ✔ Checked in the production build                                                                                                                                                                            |
@@ -53,6 +53,13 @@ real phones are the approved next step.
 - **The pipeline failed on PR #21:** I hadn't run the rules tests for that change, so nothing deployed until PR #22.
 - **A change made during a running save could be lost** (present since 1.6.0). Fixed before release.
 
+## 1.7.1 (2026-11-05)
+
+The top bar, on `main` at `8aae774`. `npm run verify` ✔ (1,152 site tests, 52 function tests, coverage 99.72 % / 97.92 % /
+99.49 % / 99.87 %); `npm run e2e` ✔ 357 of 357 in one clean run; `npm run test:rules` ✔ 120 of 120; `npm run e2e:firebase`
+✔ 24 of 24. The live site serves `main-VM3IXQBJ.js`, the same file the local build produces. Lighthouse wasn't run again:
+the change is only in the admin area, and public pages load none of it.
+
 ---
 
-**Approval:** ☐ Pending
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-05.
