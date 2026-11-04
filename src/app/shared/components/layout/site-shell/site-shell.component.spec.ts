@@ -4,7 +4,7 @@ import { Router, provideRouter } from '@angular/router';
 import { Subject } from 'rxjs';
 import { FakeClipboardService } from '@core/backends/fake/fake-clipboard.service';
 import { IClipboardService } from '@core/interfaces/i-clipboard-service';
-import { APP_PREVIEW } from '@core/tokens/app-preview.token';
+import { APP_PREVIEW, APP_PREVIEW_FRAME } from '@core/tokens/app-preview.token';
 import { ROUTE_DATA_KEYS } from '@shared/constants/route-data.constants';
 import { PageLayout } from '@shared/enums/page-layout.enum';
 import { type IPromotionDto } from '@shared/interfaces/i-site-config';
@@ -98,6 +98,17 @@ describe('SiteShellComponent', () => {
     const { element } = await renderAt('/shows');
 
     expect(element.querySelector('app-preview-banner')).not.toBeNull();
+  });
+
+  it('should drop the floating buttons and badge inside the editor preview frame', async () => {
+    TestBed.overrideProvider(APP_PREVIEW_FRAME, { useValue: true });
+
+    const { element } = await renderAt('/shows');
+
+    expect(element.querySelector('app-header')).not.toBeNull();
+    expect(element.querySelector('app-promo-badge')).toBeNull();
+    expect(element.querySelector('app-whatsapp-fab')).toBeNull();
+    expect(element.querySelector('app-mobile-action-bar')).toBeNull();
   });
 
   it('should show no preview banner on a normal visit', async () => {

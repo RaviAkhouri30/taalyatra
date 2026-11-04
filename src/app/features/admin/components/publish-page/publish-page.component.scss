@@ -96,6 +96,27 @@
   }
 }
 
+.pp-issues {
+  p {
+    margin: 0 0 10px;
+    font-size: 14px;
+    color: t.$color-muted-strong;
+  }
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2px 14px;
+  }
+
+  a {
+    color: t.$color-cream;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+}
+
 .pp-issues--error {
   border-color: t.$color-amber-soft;
 

@@ -25,6 +25,8 @@ export interface ITextFieldSchema extends IFieldBase {
   readonly maxLength?: number;
   /** The writing tip's target length: the counter warns past it, but saving still works. */
   readonly recommended?: number;
+  /** Filled in when nothing is stored yet, e.g. a button label that rarely needs changing. */
+  readonly defaultValue?: string;
 }
 
 /** A whole number, e.g. the copyright year. */

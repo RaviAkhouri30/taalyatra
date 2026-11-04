@@ -50,7 +50,7 @@ describe('ImageFieldComponent', () => {
   it('should show the image and describe it for screen readers', async () => {
     const { element } = await render(local);
 
-    expect(element.querySelector('.if-label')?.textContent).toBe('Photo');
+    expect(element.querySelector('.if-label')?.textContent).toBe('Photo · Required');
     expect(element.querySelector('img')?.alt).toBe('Asha');
     expect(element.querySelector('textarea')?.value).toBe('Asha');
     expect(element.querySelector('textarea')?.getAttribute('aria-describedby')).toBe('f-error');

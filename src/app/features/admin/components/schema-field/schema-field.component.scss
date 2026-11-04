@@ -58,6 +58,24 @@
   font-weight: 700;
 }
 
+// In CSS, not the label's text: aria-required tells screen readers, and the word mustn't read twice.
+.fd-label--required::after {
+  content: ' · Required';
+  font-weight: 600;
+  color: t.$color-amber-soft;
+}
+
+.fd-note {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: t.$color-cream;
+
+  &:empty {
+    display: none;
+  }
+}
+
 .fd-error {
   @include forms.field-error;
 

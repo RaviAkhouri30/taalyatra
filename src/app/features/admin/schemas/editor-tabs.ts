@@ -1,3 +1,4 @@
+import { AppRoute } from '@shared/enums/app-route.enum';
 import { type IEditorSection } from '../models/i-editor-section';
 import { EditorTab } from '../models/editor-tab.enum';
 import { CONTACT_SECTIONS } from './contact.sections';
@@ -34,6 +35,29 @@ export const ALL_SECTIONS: readonly IEditorSection[] = EDITOR_TABS.flatMap((tab)
 const TABS_BY_ID: ReadonlyMap<EditorTab, IEditorTabSchema> = new Map(
   EDITOR_TABS.map((entry) => [entry.tab, entry]),
 );
+
+/** Where to go to fix something: a tab, and the card on it. */
+export interface IIssueLink {
+  readonly tabLabel: string;
+  readonly url: string;
+  /** The card's heading id, which the page scrolls to. */
+  readonly fragment: string;
+}
+
+/**
+ * @param sectionId An editor section's id.
+ * @returns The tab and card that edit it, or `null` when no tab does.
+ */
+export function issueLink(sectionId: string): IIssueLink | null {
+  const entry = EDITOR_TABS.find(({ sections }) => sections.some(({ id }) => id === sectionId));
+  return entry
+    ? {
+        tabLabel: entry.label,
+        url: `${AppRoute.Admin}/${entry.tab}`,
+        fragment: `card-${sectionId}`,
+      }
+    : null;
+}
 
 /**
  * @param tab A tab, from the route.

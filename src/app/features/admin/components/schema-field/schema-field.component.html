@@ -31,21 +31,23 @@
         }
       }
       @case (kind.Multiline) {
-        <label [for]="fieldId()">{{ item.label }}</label>
+        <label [for]="fieldId()" [class.fd-label--required]="required()">{{ item.label }}</label>
         <textarea
           rows="3"
           [id]="fieldId()"
           [formControl]="control"
+          [attr.aria-required]="required()"
           [attr.aria-invalid]="control.invalid"
           [attr.aria-describedby]="describedBy()"
         ></textarea>
       }
       @default {
-        <label [for]="fieldId()">{{ item.label }}</label>
+        <label [for]="fieldId()" [class.fd-label--required]="required()">{{ item.label }}</label>
         <input
           [type]="inputType()"
           [id]="fieldId()"
           [formControl]="control"
+          [attr.aria-required]="required()"
           [attr.aria-invalid]="control.invalid"
           [attr.aria-describedby]="describedBy()"
         />
@@ -64,6 +66,7 @@
       </p>
     }
     <!-- Always present, so aria-describedby never points at a missing element. -->
+    <p class="fd-note" [id]="noteId()">{{ control.value | placeholderNote }}</p>
     <p class="fd-error" [id]="errorId()">{{ control.errors | fieldError }}</p>
   </div>
 }

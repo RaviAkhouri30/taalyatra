@@ -15,13 +15,13 @@
   </main>
   @if (chrome && site) {
     <app-footer [site]="site" [chrome]="chrome" />
-    @if (site.promotion; as promotion) {
+    @if (model.showPromoBadge() && site.promotion; as promotion) {
       <app-promo-badge [promotion]="promotion" [variant]="chrome.promo" />
     }
     @if (model.showActionBar()) {
       <app-mobile-action-bar [contact]="site.contact" [cta]="chrome.actionBarCta" />
     }
-    @if (chrome.showWhatsAppFab) {
+    @if (model.showWhatsAppFab()) {
       <app-whatsapp-fab [phone]="site.contact.phone" />
     }
   }

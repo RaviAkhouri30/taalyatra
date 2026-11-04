@@ -14,6 +14,16 @@
   color: t.$color-cream;
 }
 
+.if-required {
+  font-weight: 600;
+  color: t.$color-amber-soft;
+}
+
+.if-optional::after {
+  content: ' (optional)';
+  font-weight: 400;
+}
+
 .if-row {
   display: grid;
   grid-template-columns: 180px 1fr;

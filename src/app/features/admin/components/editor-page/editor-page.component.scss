@@ -101,3 +101,8 @@
     }
   }
 }
+
+// A link from the review page lands on a card's heading, clear of the sticky tab bar.
+.ep-card h2 {
+  scroll-margin-top: 110px;
+}

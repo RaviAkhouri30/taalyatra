@@ -1,6 +1,6 @@
 import { Injectable, computed, inject } from '@angular/core';
 import { type Observable, tap } from 'rxjs';
-import { APP_PREVIEW } from '@core/tokens/app-preview.token';
+import { APP_PREVIEW, APP_PREVIEW_FRAME } from '@core/tokens/app-preview.token';
 import { ViewModel } from '@shared/base/view-model';
 import { HomeSection } from '@shared/enums/home-section.enum';
 import { SiteWidget } from '@shared/enums/site-widget.enum';
@@ -33,12 +33,13 @@ export class HomePageViewModel extends ViewModel<SiteVisibility> {
       // The editor's preview reloads after every save; replaying the intro each time would hide
       // the change being checked.
       intro: !this.preview && (visibility?.isWidgetVisible(SiteWidget.Intro) ?? false),
-      assistant: visibility?.isWidgetVisible(SiteWidget.Assistant) ?? false,
+      assistant: !this.previewFrame && (visibility?.isWidgetVisible(SiteWidget.Assistant) ?? false),
     };
   });
 
   private readonly visibilityService = inject(SiteVisibilityService);
   private readonly preview = inject(APP_PREVIEW);
+  private readonly previewFrame = inject(APP_PREVIEW_FRAME);
 
   protected override attachViewHandler(): Observable<unknown> {
     return this.visibilityService.getVisibility().pipe(

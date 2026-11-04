@@ -63,6 +63,14 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
   sent. No test ran the real adapter in a browser: unit tests use a fake transport and e2e uses the fake adapter.
   `provideMedia` now brings an XHR `HttpClient` for the admin routes, and the Firebase smoke suite runs the real
   adapter in a browser, with the function and Cloudinary answered by stand-ins.
+- **Owner feedback from the live test (2026-11-05):**
+  - Spotlight buttons start with the usual labels (`defaultValue`).
+  - The preview inside the editor hides the floating buttons and offer badge, which covered the content. The full preview keeps
+    them, as it shows what visitors see.
+  - Required fields say so, and placeholders are flagged at the field as well as on the review page.
+  - Each finding on the review page explains itself, counts, and links to its card.
+- **The owner kept the forms over in-page editing (2026-11-05).** D8's reason, that click-to-edit "can't be made
+  accessible without duplicating" components, was overstated: it was harder and costlier, not impossible.
 - **A file the browser can't encode goes as it is,** the same as one it can't decode, because Cloudinary's
   transformation removes its metadata either way.
 

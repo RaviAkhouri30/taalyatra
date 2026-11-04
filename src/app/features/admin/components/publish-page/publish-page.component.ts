@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { BaseComponent } from '@shared/base/base-component';
+import { RouterLink } from '@angular/router';
 import { ButtonDirective } from '@shared/directives/button.directive';
+import { IssueLinkPipe } from '../../pipes/issue-link.pipe';
 import { ButtonSize, ButtonVariant } from '@shared/enums/button-variant.enum';
 import { type PublishPageModel } from '../../models/publish-page.model';
 import { PublishPageViewModel } from '../../view-models/publish-page.view-model';
@@ -8,7 +10,7 @@ import { PublishPageViewModel } from '../../view-models/publish-page.view-model'
 /** Review & publish: the drafts, what the checks found, publishing, and the history. */
 @Component({
   selector: 'app-publish-page',
-  imports: [ButtonDirective],
+  imports: [ButtonDirective, IssueLinkPipe, RouterLink],
   templateUrl: './publish-page.component.html',
   styleUrl: './publish-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
