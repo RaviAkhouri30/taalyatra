@@ -85,7 +85,7 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
   100 %); 118 rules tests; `npm run e2e:firebase` 21 passed; no admin code in the files public pages load.
   **`npm run e2e` has no single clean run for this increment.** Under heavy load from other software (load average
   20–26), two full runs ended with 14 and 10 timeouts, in different tests each time; every test passed on a rerun
-  (305 + 9 + 1 of 315). A clean full run is still needed for the release.
+  (305 + 9 + 1 of 315). Once the load fell, `npm run e2e` passed in one clean run: 315 passed in 3 minutes (2026-11-04).
 - **Real-account proof (2026-11-03, account `zqu2cpih`, run by the owner):** a signed SHA-256 upload is
   accepted, and delivered images have no GPS. The approved setting failed on the stored file, so three
   placements of Cloudinary's `fl_force_strip` were compared. Each cell is the stored file:
@@ -107,4 +107,4 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
 
 ---
 
-**Approval:** ☐ Pending
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-04, including the deviations from the design above.
