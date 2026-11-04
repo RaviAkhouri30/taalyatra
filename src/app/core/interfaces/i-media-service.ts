@@ -19,8 +19,15 @@ export type MediaUploadEvent =
 
 /** A failed media request, with a provider-independent reason. */
 export class MediaError extends Error {
-  public constructor(public readonly kind: MediaErrorKind) {
-    super(`Media request failed: ${kind}`);
+  /**
+   * @param kind Why it failed.
+   * @param cause The original error, kept for the logs: the kind alone can't explain a failure.
+   */
+  public constructor(
+    public readonly kind: MediaErrorKind,
+    cause?: unknown,
+  ) {
+    super(`Media request failed: ${kind}`, { cause });
     this.name = 'MediaError';
   }
 

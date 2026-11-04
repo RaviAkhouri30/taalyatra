@@ -17,7 +17,7 @@ const adminRoutes: Routes = [
   {
     path: '',
     // Here and not with the other ports: public pages must never download the upload code (D9).
-    providers: [provideMedia()],
+    providers: provideMedia(),
     loadComponent: () => import('./components/admin-shell/admin-shell.component'),
     children: [
       {

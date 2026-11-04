@@ -11,4 +11,10 @@ describe('MediaError', () => {
   it('should report unavailable when it is anything else', () => {
     expect(MediaError.kindOf(new Error('boom'))).toBe(MediaErrorKind.Unavailable);
   });
+
+  it('should keep the original error for the logs', () => {
+    const original = new Error('boom');
+
+    expect(new MediaError(MediaErrorKind.Unavailable, original).cause).toBe(original);
+  });
 });

@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { HttpBackend, HttpXhrBackend } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { CloudinaryMediaService } from '@core/backends/cloudinary/cloudinary-media.service';
 import { FakeMediaService } from '@core/backends/fake/fake-media.service';
@@ -20,7 +20,6 @@ describe('mediaServiceFactory', () => {
   ])('should provide %s', (_case, backend, cloudinary, adapter) => {
     TestBed.configureTestingModule({
       providers: [
-        provideHttpClient(),
         provideMedia(),
         { provide: IAuthService, useValue: {} },
         { provide: APP_ENVIRONMENT, useValue: { ...environment, backend, cloudinary } },
@@ -28,5 +27,14 @@ describe('mediaServiceFactory', () => {
     });
 
     expect(TestBed.inject(IMediaService)).toBeInstanceOf(adapter);
+  });
+
+  // Angular's default fetch transport refuses a request that asks for upload progress.
+  it('should send uploads over XHR, which can report progress', () => {
+    TestBed.configureTestingModule({
+      providers: [provideMedia(), { provide: IAuthService, useValue: {} }],
+    });
+
+    expect(TestBed.inject(HttpBackend)).toBeInstanceOf(HttpXhrBackend);
   });
 });

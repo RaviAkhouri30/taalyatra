@@ -58,6 +58,11 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
   screenshot baselines were re-recorded.
 - **Replacing a photo removes its crops** (D19 kept them only as a warning). Their numbers refer to the old
   file, and could cut off the wrong part or fall outside the new one. The owner re-crops if they want to.
+- **Uploads failed on the live site, found in the owner's first test (2026-11-05).** Angular 22 uses `fetch` by
+  default, which refuses a request asking for upload progress, so every real upload failed before anything was
+  sent. No test ran the real adapter in a browser: unit tests use a fake transport and e2e uses the fake adapter.
+  `provideMedia` now brings an XHR `HttpClient` for the admin routes, and the Firebase smoke suite runs the real
+  adapter in a browser, with the function and Cloudinary answered by stand-ins.
 - **A file the browser can't encode goes as it is,** the same as one it can't decode, because Cloudinary's
   transformation removes its metadata either way.
 

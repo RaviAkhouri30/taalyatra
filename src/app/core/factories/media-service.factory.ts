@@ -8,7 +8,7 @@ import { CLOUDINARY_CONFIG } from '@core/tokens/cloudinary-config.token';
 
 /**
  * Picks the media adapter: Cloudinary for a Firebase build with a cloud name, otherwise the fake
- * one (development, e2e and the emulator, which must never reach a real account).
+ * one (development and e2e). The emulator build's cloud name isn't a real one.
  *
  * @returns The active media adapter.
  */

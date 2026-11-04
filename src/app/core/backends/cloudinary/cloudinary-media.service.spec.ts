@@ -182,6 +182,16 @@ describe('CloudinaryMediaService', () => {
     });
   });
 
+  it('should keep the original error when a failure is reported', async () => {
+    const result = lastValueFrom(create().remove('taal-yatra/media/abc')).catch(
+      (error: unknown) => error,
+    );
+
+    http.expectOne('/api/media/delete').flush({}, { status: 500, statusText: 'Broken' });
+
+    expect(await result).toMatchObject({ cause: { status: 500 } });
+  });
+
   it('should report unavailable when the request takes too long', async () => {
     vi.useFakeTimers();
     const result = collect(create().remove('taal-yatra/media/abc'));

@@ -1,4 +1,5 @@
-import { Buffer } from 'node:buffer';
+import { randomUUID } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { expect, test } from '../fixtures/test';
 
 /** Emulator REST endpoint for the proposals collection; "owner" bypasses the rules. */
@@ -9,6 +10,9 @@ const PROPOSALS_URL =
 interface IProposalsListing {
   readonly documents?: readonly { readonly fields: { readonly name: { stringValue: string } } }[];
 }
+
+/** A real JPEG, so the browser's decoder and canvas really run. */
+const SAMPLE_PHOTO = 'public/images/og/taal-yatra.jpg';
 
 test.describe('Firebase smoke (emulator)', () => {
   test('should render documents, list sections and collections from Firestore', async ({
@@ -111,20 +115,57 @@ test.describe('Firebase smoke (emulator)', () => {
     await expect(editor.card('Photos').getByLabel('Description').first()).toHaveValue(second);
   });
 
-  test('should store an upload in the media library through the Firestore rules', async ({
+  test('should upload through the real adapter and store it through the Firestore rules', async ({
     editor,
     page,
   }, info) => {
+    // The function and Cloudinary are stand-ins; the browser, adapter, Auth and rules are real.
     const name = `smoke-${info.project.name}.jpg`;
+    const id = randomUUID();
+    const publicId = `taal-yatra/media/${id}`;
+    const uploadUrl = 'https://api.cloudinary.com/v1_1/emulator-demo/image/upload';
+    let signToken: string | undefined;
+    let sent: { readonly token: string | undefined; readonly body: string } | undefined;
+    await page.route('**/api/media/sign', async (route) => {
+      signToken = route.request().headers()['x-firebase-token'];
+      await route.fulfill({
+        json: { uploadUrl, fields: { api_key: 'key', signature: 'sig', public_id: publicId } },
+      });
+    });
+    await page.route(uploadUrl, async (route) => {
+      sent = {
+        token: route.request().headers()['x-firebase-token'],
+        body: route.request().postDataBuffer()?.toString('latin1') ?? '',
+      };
+      await route.fulfill({
+        json: {
+          public_id: publicId,
+          version: 1,
+          width: 1200,
+          height: 630,
+          bytes: 1000,
+          format: 'jpg',
+        },
+      });
+    });
+    await page.route('https://res.cloudinary.com/**', (route) =>
+      route.fulfill({ path: SAMPLE_PHOTO }),
+    );
     await editor.signIn({ email: 'admin@taalyatra.test', password: 'emulator-admin-password' });
     await editor.openTab('Media library');
 
     await editor.uploadPhotos({
       name,
       mimeType: 'image/jpeg',
-      buffer: Buffer.from([0xff, 0xd8, 0xff, 0xd9]),
+      buffer: readFileSync(SAMPLE_PHOTO),
     });
+
     await expect(page.getByRole('status').filter({ hasText: '1 of 1 uploaded.' })).toBeVisible();
+    expect(signToken).toBeTruthy();
+    expect(sent?.token).toBeUndefined();
+    expect(sent?.body).toContain(publicId);
+    // The browser redrew the photo, so the bytes sent are a JPEG it encoded, not the file itself.
+    expect(sent?.body).toContain('name="file"');
     await page.reload();
 
     await expect(page.getByText(name, { exact: true })).toBeVisible();

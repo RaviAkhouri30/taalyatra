@@ -25,6 +25,8 @@ export const environment: IAppEnvironment = {
   // creates an emulator user with it; keep the two in step.
   adminUid: '5zsz2DlUaja2Ss7wbFTrpiMMROk2',
   fakeLatencyMs: 0,
-  cloudinary: { cloudName: '' },
+  // Not a real cloud: the smoke suite answers every call to it, so the real adapter runs in a browser
+  // with no account behind it.
+  cloudinary: { cloudName: 'emulator-demo' },
   emailJs: { serviceId: '', templateId: '', publicKey: '' },
 };
