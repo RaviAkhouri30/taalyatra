@@ -6,11 +6,13 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-11-05
+
 ### Added
 
 - **Real-phone speed reports (0012).** Visits send one anonymous report of how fast the page was, with no IP address, ID or cookie.
   Nothing is sent from the admin area or previews, or when the browser asks not to be tracked. A dashboard card shows the results
-  and says whether phones meet the 2.5 s target. **New Firestore rules must be deployed before this is merged.**
+  and says whether phones meet the 2.5 s target.
 
 ### Changed
 
