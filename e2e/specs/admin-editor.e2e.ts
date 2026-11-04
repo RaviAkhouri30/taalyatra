@@ -5,6 +5,7 @@ const VIEWS = [
   'Dashboard',
   'Offer & theme',
   'Page content',
+  'Experiences',
   'Gallery',
   'Team',
   'Shows',

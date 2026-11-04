@@ -69,6 +69,12 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
     them, as it shows what visitors see.
   - Required fields say so, and placeholders are flagged at the field as well as on the review page.
   - Each finding on the review page explains itself, counts, and links to its card.
+- **An Experiences tab, brought forward from 1.8.0 at the owner's request (2026-11-05).** It works like Shows: a list
+  with images and a Featured switch. `home/experiences` is stored as one `featured` card plus `items`, so a section
+  can now have a `view` that translates between the two. The stored shape, the site and the rules don't change.
+  Unlike Shows, exactly one is always featured, because the home page's layout needs that card.
+- **More space above "Where we play" and the gallery, at the owner's request.** Both had turned off the shared section
+  spacing, following the prototype. Their screenshot baselines were re-recorded.
 - **The owner kept the forms over in-page editing (2026-11-05).** D8's reason, that click-to-edit "can't be made
   accessible without duplicating" components, was overstated: it was harder and costlier, not impossible.
 - **A file the browser can't encode goes as it is,** the same as one it can't decode, because Cloudinary's

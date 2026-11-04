@@ -81,7 +81,6 @@ export const CONTENT_SECTIONS: readonly IEditorSection[] = [
     ],
   },
   headings('audiences', 'Who it’s for', ContentPath.HomeAudiences, PageAnchor.ForEveryone),
-  headings('experiences', 'Experiences', ContentPath.HomeExperiences, PageAnchor.Experiences),
   headings('rhythmGame', 'Rhythm game', ContentPath.HomeRhythmGame, PageAnchor.Play),
   {
     ...headings('videos', 'Videos', ContentPath.HomeVideos, PageAnchor.Watch),

@@ -18,7 +18,7 @@ import { type DocumentFields } from '@core/interfaces/i-document-store';
 import { ViewModel } from '@shared/base/view-model';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { buildFormGroup } from '../forms/schema-control.factory';
-import { mergeSchemaValue, readSchemaValue } from '../forms/schema-value';
+import { sectionContent, writeSection } from '../forms/schema-value';
 import { type ContentPath } from '../models/content-path.enum';
 import { AUTOSAVE_DEBOUNCE_MS, EDITOR_TAB_ROUTE_KEY } from '../models/editor-nav.constants';
 import { EditorTab } from '../models/editor-tab.enum';
@@ -112,7 +112,10 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
       tab,
       sections: tab.sections.map((section) => ({
         section,
-        form: buildFormGroup(section.fields, this.documents.get(section.path)),
+        form: buildFormGroup(
+          section.fields,
+          sectionContent(section, this.documents.get(section.path)),
+        ),
         // Separate namespaces: section "hero" + field "title" must not reuse the heading's id.
         titleId: `card-${section.id}`,
         fieldPrefix: `field-${section.id}`,
@@ -143,12 +146,7 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
     const content = page.sections
       .filter(({ section }) => section.path === path)
       .reduce<DocumentFields>(
-        (document, { section, form }) =>
-          mergeSchemaValue(
-            document,
-            section.fields,
-            readSchemaValue(section.fields, form.getRawValue()),
-          ),
+        (document, { section, form }) => writeSection(section, document, form.getRawValue()),
         this.documents.get(path) ?? {},
       );
     this.layout.reportSaving();

@@ -1,5 +1,6 @@
 import { type DocumentFields } from '@core/interfaces/i-document-store';
 import { FieldKind } from '../models/field-kind.enum';
+import { type IEditorSection } from '../models/i-editor-section';
 import { type FieldSchema } from '../models/i-field-schema';
 import { entriesOf } from './json-node';
 
@@ -53,6 +54,32 @@ export function mergeSchemaValue(
     );
   }
   return Object.fromEntries(merged);
+}
+
+/**
+ * @param section An editor section.
+ * @param stored The stored document.
+ * @returns What the section's fields edit.
+ */
+export function sectionContent(section: IEditorSection, stored: unknown): unknown {
+  return section.view ? section.view.read(stored) : stored;
+}
+
+/**
+ * @param section An editor section.
+ * @param stored The stored document.
+ * @param raw The section's form's raw value.
+ * @returns The document with the section's values written back.
+ */
+export function writeSection(
+  section: IEditorSection,
+  stored: DocumentFields,
+  raw: unknown,
+): DocumentFields {
+  const values = readSchemaValue(section.fields, raw);
+  return section.view
+    ? section.view.write(stored, values)
+    : mergeSchemaValue(stored, section.fields, values);
 }
 
 function readField(field: FieldSchema, raw: unknown): unknown {

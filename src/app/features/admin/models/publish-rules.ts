@@ -7,6 +7,7 @@ import { fieldOf } from '../forms/json-node';
 import { placeholderMessage } from '../forms/placeholder';
 import { buildControl } from '../forms/schema-control.factory';
 import { schemaLeaves } from '../forms/schema-leaves';
+import { sectionContent } from '../forms/schema-value';
 import { type IEditorSection } from './i-editor-section';
 import { imageUsesIn } from './media-use';
 import { type IPublishIssue } from './i-publish-issue';
@@ -35,7 +36,7 @@ export interface IPublishRule {
 /** The same validation the form shows: required, length and format. Blocks publishing. */
 export class SchemaRule implements IPublishRule {
   public check(section: IEditorSection, content: DocumentFields): IPublishIssue[] {
-    return schemaLeaves(section.fields, content).flatMap((leaf) => {
+    return schemaLeaves(section.fields, sectionContent(section, content)).flatMap((leaf) => {
       const message = fieldErrorMessage(buildControl(leaf.field, leaf.value).errors);
       return message === null
         ? []
@@ -55,7 +56,7 @@ export class SchemaRule implements IPublishRule {
 /** Copy still marked as unfinished. A warning: brackets can be intended. */
 export class PlaceholderRule implements IPublishRule {
   public check(section: IEditorSection, content: DocumentFields): IPublishIssue[] {
-    return schemaLeaves(section.fields, content).flatMap((leaf) => {
+    return schemaLeaves(section.fields, sectionContent(section, content)).flatMap((leaf) => {
       const message = placeholderMessage(leaf.value);
       return message === null
         ? []

@@ -134,3 +134,76 @@ describe('SchemaFieldsComponent · a group that depends on a switch', () => {
     expect(element.querySelector('legend')?.textContent).toBe('Spotlight');
   });
 });
+
+describe('SchemaFieldsComponent · a list with one switch on', () => {
+  const fields: FieldSchema[] = [
+    {
+      key: 'cards',
+      label: 'Cards',
+      kind: FieldKind.List,
+      addLabel: 'Add card',
+      maxItems: 5,
+      minItems: 1,
+      item: {
+        key: 'card',
+        label: 'Card',
+        kind: FieldKind.Group,
+        fields: [
+          {
+            key: 'featured',
+            label: 'Featured',
+            kind: FieldKind.Toggle,
+            offByDefault: true,
+            oneInList: true,
+          },
+        ],
+      },
+    },
+  ];
+
+  function render(cards: readonly { featured: boolean }[]) {
+    const fixture = TestBed.createComponent(SchemaFieldsComponent);
+    const form = buildFormGroup(fields, { cards });
+    fixture.componentRef.setInput('fields', fields);
+    fixture.componentRef.setInput('group', form);
+    fixture.componentRef.setInput('idPrefix', 'x');
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const switches = () =>
+      Array.from(element.querySelectorAll<HTMLInputElement>('input[role="switch"]'));
+    const removeButton = (position: number) =>
+      element.querySelector<HTMLButtonElement>(`[aria-label="Remove Card ${String(position)}"]`);
+    return { fixture, form, switches, removeButton };
+  }
+
+  it('should move the switch when another is turned on', () => {
+    const { switches } = render([{ featured: true }, { featured: false }]);
+
+    switches()[1]?.click();
+
+    expect(switches().map((input) => input.checked)).toEqual([false, true]);
+  });
+
+  it('should keep the last one on', () => {
+    const { switches } = render([{ featured: true }, { featured: false }]);
+
+    switches()[0]?.click();
+
+    expect(switches().map((input) => input.checked)).toEqual([true, false]);
+  });
+
+  it('should pass the switch on when the item that had it is removed', async () => {
+    const { fixture, switches, removeButton } = render([{ featured: true }, { featured: false }]);
+
+    removeButton(1)?.click();
+    await fixture.whenStable();
+
+    expect(switches().map((input) => input.checked)).toEqual([true]);
+  });
+
+  it('should stop removing at the minimum', () => {
+    const { removeButton } = render([{ featured: true }]);
+
+    expect(removeButton(1)?.disabled).toBe(true);
+  });
+});

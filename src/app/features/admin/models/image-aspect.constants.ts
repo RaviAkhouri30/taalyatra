@@ -6,6 +6,8 @@ export const IMAGE_ASPECT = {
   gallery: 1.333_333,
   /** 16:10 */
   shows: 1.6,
+  /** 16:10 */
+  experiences: 1.6,
   /** 16:9 */
   videos: 1.777_778,
 } as const;

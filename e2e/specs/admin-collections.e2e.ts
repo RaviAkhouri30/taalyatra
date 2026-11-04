@@ -137,4 +137,32 @@ test.describe('Admin collections', () => {
     await expect(page.getByText('Only one show can be featured.')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Publish changes' })).toBeDisabled();
   });
+
+  test('should feature another experience with a new photo, and show it on the site', async ({
+    editor,
+    page,
+  }) => {
+    await editor.openTab('Experiences');
+    const cards = editor.card('Experiences', { exact: true });
+    const first = cards.getByRole('group', { name: 'Experience 1', exact: true });
+    const second = cards.getByRole('group', { name: 'Experience 2', exact: true });
+    await expect(first.getByLabel('Name', { exact: true })).toHaveValue('Drum Circle');
+    await expect(first.getByLabel('Button on the card')).toHaveValue('See full details');
+    await expect(second.getByLabel('Button on the card')).toHaveCount(0);
+
+    await second.getByRole('switch', { name: 'Featured' }).check();
+    await expect(first.getByRole('switch', { name: 'Featured' })).not.toBeChecked();
+    await expect(second.getByLabel('Button on the card')).toHaveValue('See full details');
+    await second.getByRole('button', { name: 'Choose or upload' }).click();
+    await second.getByLabel('Choose photos').setInputFiles([photo]);
+    await second.getByRole('button', { name: 'Choose new-photo.jpg' }).click();
+    await editor.waitForSave();
+    await editor.publish();
+    await page.goto('/');
+
+    const section = page.locator('#experiences');
+    await section.scrollIntoViewIfNeeded();
+    await expect(section.getByRole('heading', { level: 3 }).first()).toHaveText('Boombastic');
+    await expect(section.getByRole('heading', { name: 'Drum Circle' })).toBeVisible();
+  });
 });

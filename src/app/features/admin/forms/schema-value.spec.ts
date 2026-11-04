@@ -1,6 +1,8 @@
+import { PageAnchor } from '@shared/enums/page-anchor.enum';
+import { ContentPath } from '../models/content-path.enum';
 import { FieldKind } from '../models/field-kind.enum';
 import { type FieldSchema } from '../models/i-field-schema';
-import { mergeSchemaValue, readSchemaValue } from './schema-value';
+import { mergeSchemaValue, readSchemaValue, sectionContent, writeSection } from './schema-value';
 
 describe('schema value', () => {
   const fields: FieldSchema[] = [
@@ -105,6 +107,33 @@ describe('schema value', () => {
         featured: true,
         spotlight: { title: 'Shown' },
       });
+    });
+  });
+
+  describe('a section stored in another shape', () => {
+    const view = {
+      read: () => ({ shown: 'as edited' }),
+      write: (stored: object, edited: object) => ({ ...stored, written: edited }),
+    };
+    const base = {
+      id: 'x',
+      title: 'X',
+      path: ContentPath.HomeHero,
+      anchor: PageAnchor.Top,
+      fields: [{ key: 'title', label: 'Title', kind: FieldKind.Text }],
+    } as const;
+
+    it('should read through the view when there is one', () => {
+      expect(sectionContent({ ...base, view }, { stored: 1 })).toEqual({ shown: 'as edited' });
+      expect(sectionContent(base, { stored: 1 })).toEqual({ stored: 1 });
+    });
+
+    it('should write through the view when there is one', () => {
+      expect(writeSection({ ...base, view }, { stored: 1 }, { title: 'A' })).toEqual({
+        stored: 1,
+        written: { title: 'A' },
+      });
+      expect(writeSection(base, { stored: 1 }, { title: 'A' })).toEqual({ stored: 1, title: 'A' });
     });
   });
 });

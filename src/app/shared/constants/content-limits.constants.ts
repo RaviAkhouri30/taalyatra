@@ -35,17 +35,24 @@ export const CONTENT_MAX_LENGTH = {
   videoCaption: 200,
   videoDuration: 12,
   videoUrl: 500,
+  experienceName: 80,
+  experienceTag: 60,
+  experienceCategory: 40,
+  experienceDescription: 400,
+  experienceDetail: 40,
 } as const;
 
 /**
- * The most items each collection may hold, which keeps its draft and history records small (D16).
- * `firestore.rules` enforces the same limits through the numbered document ids.
+ * The most items each list may hold, which keeps its draft and history records small (D16).
+ * `firestore.rules` enforces the same limits through the numbered document ids, except for
+ * experiences, which are stored in one document.
  */
 export const COLLECTION_MAX_ITEMS = {
   gallery: 60,
   team: 24,
   showFormats: 20,
   videos: 60,
+  experiences: 12,
 } as const;
 
 /**

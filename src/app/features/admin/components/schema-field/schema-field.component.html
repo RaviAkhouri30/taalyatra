@@ -9,6 +9,7 @@
           [id]="fieldId()"
           [formControl]="control"
           [attr.aria-describedby]="describedBy()"
+          (change)="toggled(control)"
         />
         <label [for]="fieldId()">{{ item.label }}</label>
       }

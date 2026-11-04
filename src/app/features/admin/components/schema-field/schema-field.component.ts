@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { type AbstractControl, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { keepOneOn } from '../../forms/one-in-list';
 import { FieldKind } from '../../models/field-kind.enum';
 import { type FieldSchema } from '../../models/i-field-schema';
 import { type IImage } from '@shared/interfaces/i-image';
@@ -84,4 +85,12 @@ export class SchemaFieldComponent {
       .filter(Boolean)
       .join(' '),
   );
+
+  /** @param control The switch the owner changed; one that's unique in its list stays that way. */
+  protected toggled(control: AbstractControl): void {
+    const field = this.field();
+    if (field.kind === FieldKind.Toggle && field.oneInList) {
+      keepOneOn(control, field.key);
+    }
+  }
 }

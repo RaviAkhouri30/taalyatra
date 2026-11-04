@@ -1,6 +1,7 @@
 import { type DocumentFields } from '@core/interfaces/i-document-store';
 import { schemaLeaves } from '../forms/schema-leaves';
 import { toImage } from '../forms/image-value';
+import { sectionContent } from '../forms/schema-value';
 import { FieldKind } from './field-kind.enum';
 import { type IEditorSection } from './i-editor-section';
 import { parseImageSrc } from './image-src';
@@ -20,7 +21,7 @@ export interface IMediaUse {
  * @returns Every uploaded image the section's image fields show. Local images aren't included.
  */
 export function imageUsesIn(section: IEditorSection, content: unknown): IMediaUse[] {
-  return schemaLeaves(section.fields, content).flatMap((leaf) => {
+  return schemaLeaves(section.fields, sectionContent(section, content)).flatMap((leaf) => {
     const parsed =
       leaf.field.kind === FieldKind.Image ? parseImageSrc(toImage(leaf.value).src) : null;
     return parsed === null ? [] : [{ id: parsed.id, label: `${section.title} · ${leaf.label}` }];

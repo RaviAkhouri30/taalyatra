@@ -2,6 +2,7 @@
 export enum EditorTab {
   Offer = 'offer',
   Content = 'content',
+  Experiences = 'experiences',
   Gallery = 'gallery',
   Team = 'team',
   Shows = 'shows',

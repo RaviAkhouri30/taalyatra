@@ -4,7 +4,9 @@ import { SitePage } from '@shared/enums/site-page.enum';
 import { SiteWidget } from '@shared/enums/site-widget.enum';
 import { EditorTab } from '../models/editor-tab.enum';
 import { FieldKind } from '../models/field-kind.enum';
+import { PublishReport } from '../models/publish-report.model';
 import { type FieldSchema } from '../models/i-field-schema';
+import { sectionContent } from '../forms/schema-value';
 import { ALL_SECTIONS, EDITOR_TABS, issueLink, tabSchema } from './editor-tabs';
 
 /** Every stored key a field list edits, as paths into the document (`contact.phone.e164`). */
@@ -51,7 +53,9 @@ describe('editor schemas', () => {
       // A collection is a list in this file, and one document holding it in a draft (D15).
       const document = Array.isArray(stored) ? { _items: stored } : stored;
 
-      expect(keyPaths(section.fields).filter((path) => !has(document, path))).toEqual([]);
+      const edited = sectionContent(section, document);
+
+      expect(keyPaths(section.fields).filter((path) => !has(edited, path))).toEqual([]);
     },
   );
 
@@ -69,6 +73,32 @@ describe('editor schemas', () => {
     for (const item of items) {
       expect(new Set(fields.map((field) => field.key))).toEqual(new Set(Object.keys(item)));
     }
+  });
+
+  it('should edit every key of each experience, which the list replaces whole', () => {
+    const list = tabSchema(EditorTab.Experiences)?.sections.at(-1)?.fields[0];
+    const fields =
+      list?.kind === FieldKind.List && list.item.kind === FieldKind.Group ? list.item.fields : [];
+    const edited = new Set(fields.map((field) => field.key));
+
+    for (const item of fakeDb.home.experiences.items) {
+      expect(Object.keys(item).filter((key) => !edited.has(key))).toEqual([]);
+    }
+  });
+
+  it('should find nothing to block in the stored experiences', () => {
+    const report = PublishReport.check(
+      new Map([
+        [
+          'home/experiences',
+          { path: 'home/experiences', content: fakeDb.home.experiences, savedAt: 'x' },
+        ],
+      ]),
+      ALL_SECTIONS,
+      new Date('2026-11-05T00:00:00Z'),
+    );
+
+    expect(report.errors).toEqual([]);
   });
 
   it('should offer a switch for every section, page and widget key', () => {
