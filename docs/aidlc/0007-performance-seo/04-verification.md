@@ -37,4 +37,4 @@ are in [ADR-0016](../../architecture/adr/0016-mobile-lcp.md).
 
 ---
 
-**Approval:** ☐ Pending
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-05.
