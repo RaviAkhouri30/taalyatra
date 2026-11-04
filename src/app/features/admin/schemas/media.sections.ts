@@ -1,6 +1,7 @@
 import {
   COLLECTION_MAX_ITEMS,
   CONTENT_MAX_LENGTH,
+  EXPERIENCES_MAX_ITEMS,
 } from '@shared/constants/content-limits.constants';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { COLLECTION_ITEMS_FIELD } from '../models/collection-expander';
@@ -57,7 +58,7 @@ export const EXPERIENCES_SECTIONS: readonly IEditorSection[] = [
         label: 'Experiences',
         kind: FieldKind.List,
         addLabel: 'Add experience',
-        maxItems: COLLECTION_MAX_ITEMS.experiences,
+        maxItems: EXPERIENCES_MAX_ITEMS,
         minItems: 1,
         item: group('Experience', [
           text('name', 'Name', { required: true, maxLength: CONTENT_MAX_LENGTH.experienceName }),
