@@ -8,10 +8,20 @@
   color: t.$color-cream;
 }
 
-// The bar's height on desktop, where it stays in view above the side panel and status line.
-$bar-height: 80px;
 $side-width: 236px;
 $rail-width: 64px;
+
+// Desktop: one screen, with the panel, fields and preview each scrolling on their own.
+.ed {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100vh;
+
+  @include bp.down(bp.$tablet) {
+    display: block;
+    height: auto;
+  }
+}
 
 .ed-top {
   position: sticky;
@@ -19,16 +29,12 @@ $rail-width: 64px;
   z-index: t.$z-header + 1;
   background: t.$color-ink;
   border-bottom: 1px solid t.$color-line;
-
-  // Phones and tablets: it wraps, and would fill the screen, so only the status line stays in view.
-  @include bp.down(bp.$tablet) {
-    position: static;
-  }
 }
 
 .ed-body {
   display: grid;
   grid-template-columns: $side-width minmax(0, 1fr);
+  min-height: 0;
 
   @include bp.down(bp.$tablet) {
     grid-template-columns: minmax(0, 1fr);
@@ -45,14 +51,19 @@ $rail-width: 64px;
 
 .ed-main {
   min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+
+  @include bp.down(bp.$tablet) {
+    height: auto;
+    overflow: visible;
+  }
 }
 
 .ed-side {
-  position: sticky;
-  top: $bar-height;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - #{$bar-height});
+  height: 100%;
   overflow-y: auto;
   background: t.$color-ink;
   border-right: 1px solid t.$color-line;
@@ -76,6 +87,13 @@ $rail-width: 64px;
   }
 }
 
+.ed-side-head {
+  display: flex;
+  flex: none;
+  justify-content: flex-end;
+  padding: 10px 10px 0;
+}
+
 .ed-backdrop {
   display: none;
 
@@ -93,7 +111,7 @@ $rail-width: 64px;
 
 .ed-nav {
   flex: 1;
-  padding: 12px 10px;
+  padding: 4px 10px 12px;
 
   ul {
     display: grid;
@@ -153,30 +171,38 @@ $rail-width: 64px;
   text-align: left;
 }
 
-.ed-collapse {
-  display: flex;
-  flex: none;
+.ed-collapse,
+.ed-close {
+  display: inline-flex;
   align-items: center;
-  gap: 11px;
+  justify-content: center;
   box-sizing: border-box;
-  min-height: 44px;
-  margin: 0 10px;
-  padding: 8px 10px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
   border: 0;
-  border-top: 1px solid t.$color-line;
+  border-radius: 8px;
   background: transparent;
   color: t.$color-muted-strong;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
   cursor: pointer;
 
   &:hover {
+    background: t.$color-surface;
     color: t.$color-cream;
   }
+}
 
-  @include bp.down(bp.$tablet) {
+.ed-close {
+  display: none;
+}
+
+@include bp.down(bp.$tablet) {
+  .ed-collapse {
     display: none;
+  }
+
+  .ed-close {
+    display: inline-flex;
   }
 }
 
@@ -193,8 +219,11 @@ $rail-width: 64px;
       white-space: nowrap;
     }
 
-    .ed-nav a,
-    .ed-collapse {
+    .ed-side-head {
+      justify-content: center;
+    }
+
+    .ed-nav a {
       justify-content: center;
       padding-inline: 0;
     }
@@ -263,6 +292,16 @@ $rail-width: 64px;
 
   span {
     color: t.$color-muted-strong;
+
+    // Phones: there's no room for the words, but the link still needs its name.
+    @include bp.down(bp.$phone) {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
   }
 
   b {
@@ -278,11 +317,23 @@ $rail-width: 64px;
   flex-wrap: wrap;
   gap: 10px;
 
+  // Phones: its parts join the bar directly, so the buttons share the first line.
+  @include bp.down(bp.$phone) {
+    display: contents;
+  }
+
   .who {
     margin: 0;
     font-size: 13px;
     color: t.$color-muted-strong;
     overflow-wrap: anywhere;
+
+    // Phones: on its own small line, so the buttons above it fit.
+    @include bp.down(bp.$phone) {
+      flex: 1 0 100%;
+      order: 1;
+      font-size: 12.5px;
+    }
   }
 }
 
@@ -303,41 +354,4 @@ $rail-width: 64px;
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
-}
-
-.ed-status {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: sticky;
-  top: $bar-height;
-  z-index: t.$z-header;
-  padding: 8px 24px;
-  background: t.$color-ink-deep;
-  border-bottom: 1px solid t.$color-line;
-  font-size: 13px;
-  color: t.$color-muted-strong;
-
-  @include bp.down(bp.$tablet) {
-    top: 0;
-  }
-
-  @include bp.down(bp.$phone) {
-    padding: 8px 16px;
-  }
-}
-
-.ed-status--failed {
-  color: t.$color-amber-soft;
-  font-weight: 700;
-}
-
-.ed-retry {
-  background: none;
-  border: 0;
-  padding: 0;
-  color: t.$color-cream;
-  font: inherit;
-  text-decoration: underline;
-  cursor: pointer;
 }

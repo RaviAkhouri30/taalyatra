@@ -121,7 +121,7 @@ test.describe('Firebase smoke (emulator)', () => {
   }, info) => {
     const name = `Drum Circle (${info.project.name})`;
     await editor.signIn({ email: 'admin@taalyatra.test', password: 'emulator-admin-password' });
-    await editor.openTab('Experiences');
+    await editor.openTab('Music & creativity');
     const cards = editor.card('Experiences', { exact: true });
 
     await cards.getByLabel('Name', { exact: true }).first().fill(name);

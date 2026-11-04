@@ -17,6 +17,8 @@ import { VISIBILITY_SECTIONS } from './visibility.sections';
 export interface IEditorTabSchema {
   readonly tab: EditorTab;
   readonly label: string;
+  /** One line under the page's title, saying what's edited here. */
+  readonly description: string;
   readonly sections: readonly IEditorSection[];
 }
 
@@ -25,15 +27,61 @@ export interface IEditorTabSchema {
  * sections; nothing else changes (ADR-0014).
  */
 export const EDITOR_TABS: readonly IEditorTabSchema[] = [
-  { tab: EditorTab.Offer, label: 'Offer & theme', sections: OFFER_SECTIONS },
-  { tab: EditorTab.Content, label: 'Page content', sections: CONTENT_SECTIONS },
-  { tab: EditorTab.Experiences, label: 'Experiences', sections: EXPERIENCES_SECTIONS },
-  { tab: EditorTab.Gallery, label: 'Gallery', sections: GALLERY_SECTIONS },
-  { tab: EditorTab.Team, label: 'Team', sections: TEAM_SECTIONS },
-  { tab: EditorTab.Shows, label: 'Shows', sections: SHOWS_SECTIONS },
-  { tab: EditorTab.Videos, label: 'Videos', sections: VIDEOS_SECTIONS },
-  { tab: EditorTab.Visibility, label: 'Sections & pages', sections: VISIBILITY_SECTIONS },
-  { tab: EditorTab.Contact, label: 'Contact & links', sections: CONTACT_SECTIONS },
+  {
+    tab: EditorTab.Offer,
+    label: 'Offer & theme',
+    description: 'The festival offer, its dates and what it says.',
+    sections: OFFER_SECTIONS,
+  },
+  {
+    tab: EditorTab.Content,
+    label: 'Page content',
+    description: 'Your business details, the hero and the main section headings.',
+    sections: CONTENT_SECTIONS,
+  },
+  {
+    tab: EditorTab.Experiences,
+    label: 'Music & creativity',
+    description:
+      'The experiences on the home page: their images, details and which one is featured.',
+    sections: EXPERIENCES_SECTIONS,
+  },
+  {
+    tab: EditorTab.Gallery,
+    label: 'Gallery',
+    description: 'The photos in the home page gallery, and their heading.',
+    sections: GALLERY_SECTIONS,
+  },
+  {
+    tab: EditorTab.Team,
+    label: 'Team',
+    description: 'The people on the Team page. The first four also appear on the home page.',
+    sections: TEAM_SECTIONS,
+  },
+  {
+    tab: EditorTab.Shows,
+    label: 'Shows',
+    description: 'Your show formats, their images and which one is featured.',
+    sections: SHOWS_SECTIONS,
+  },
+  {
+    tab: EditorTab.Videos,
+    label: 'Videos',
+    description: 'Your videos, in the order they appear. The first is featured.',
+    sections: VIDEOS_SECTIONS,
+  },
+  {
+    tab: EditorTab.Visibility,
+    label: 'Sections & pages',
+    description: 'Switch home sections, pages and site-wide widgets on or off.',
+    sections: VISIBILITY_SECTIONS,
+  },
+  {
+    tab: EditorTab.Contact,
+    label: 'Contact & links',
+    description: 'Your phone number, email, address and social links.',
+    sections: CONTACT_SECTIONS,
+  },
 ];
 
 /** Every section in the editor, for checks that look across tabs. */

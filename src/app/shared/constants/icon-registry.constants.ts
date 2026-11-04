@@ -123,8 +123,21 @@ export const ICON_REGISTRY: Readonly<Record<IconName, readonly IconNode[]>> = {
     },
   ],
   [IconName.Menu]: [{ tag: 'path', d: 'M4 7h16M4 12h16M4 17h16' }],
-  [IconName.PanelLeft]: [
-    { tag: 'rect', x: 3, y: 4, width: 18, height: 16, rx: 2 },
-    { tag: 'path', d: 'M9 4v16' },
+  [IconName.ChevronsLeft]: [{ tag: 'path', d: 'M11 17l-5-5 5-5M18 17l-5-5 5-5' }],
+  [IconName.ChevronsRight]: [{ tag: 'path', d: 'M6 17l5-5-5-5M13 17l5-5-5-5' }],
+  [IconName.Monitor]: [
+    { tag: 'rect', x: 3, y: 4, width: 18, height: 12, rx: 2 },
+    { tag: 'path', d: 'M8 20h8M12 16v4' },
+  ],
+  [IconName.Smartphone]: [
+    { tag: 'rect', x: 7, y: 2, width: 10, height: 20, rx: 2 },
+    { tag: 'path', d: 'M11 18h2' },
+  ],
+  [IconName.Refresh]: [{ tag: 'path', d: 'M20 11a8 8 0 1 0-2.3 6M20 5v6h-6' }],
+  [IconName.ExternalLink]: [
+    {
+      tag: 'path',
+      d: 'M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5',
+    },
   ],
 };

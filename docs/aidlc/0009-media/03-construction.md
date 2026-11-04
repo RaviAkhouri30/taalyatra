@@ -78,6 +78,12 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
 - **The editor's navigation moved to a left side panel, at the owner's request (2026-11-05).** Links are grouped with
   icons, and the panel collapses to an icon rail on desktop, remembered per browser. Phones and tablets get a slide-in
   menu. Its screenshot baseline for the dashboard was re-recorded.
+- **A one-screen editor, at the owner's request (2026-11-05),** following their reference design: the panel, fields and
+  preview fill the screen and each scroll on their own. The form is one surface, not boxes. The preview has desktop and
+  phone views, and shrinks the desktop site to fit.
+- **Publishing moved onto each page as well.** A bar shows what's unpublished, with Publish and Discard, on every editor
+  page, the dashboard and the media library. Publish is one click with no confirmation, because undo is available from
+  the review page. Discard asks first, because it can't be undone. Both act on every draft, not only the current page's.
 - **The owner kept the forms over in-page editing (2026-11-05).** D8's reason, that click-to-edit "can't be made
   accessible without duplicating" components, was overstated: it was harder and costlier, not impossible.
 - **A file the browser can't encode goes as it is,** the same as one it can't decode, because Cloudinary's
@@ -124,8 +130,10 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
 
 - **Full proof with the new setting (2026-11-03, run by the owner):** all 15 checks passed, including a
   HEIC with GPS and Cloudinary confirming each deletion. This opens the gate after increment 1.
-- **Still to prove in Verification:** a real iPhone photo; the `x-firebase-token` header and the Azure
-  settings, which need a deployed function.
+- **Live test (2026-11-05, run by the owner):** real uploads work through the deployed function, so the Azure settings
+  and the `x-firebase-token` header are proven. The owner confirms a photo that had a location was uploaded, and
+  its stored file has no EXIF data at all (checked by downloading each stored file from its public URL).
+- **Still to prove in Verification:** a HEIC photo that reaches Cloudinary without the browser redrawing it.
 
 ---
 

@@ -11,6 +11,7 @@ import { type DocumentFields, IDocumentStore } from '@core/interfaces/i-document
 import { LoggerService } from '@core/services/logger.service';
 import { CLOCK } from '@core/tokens/clock.token';
 import { provideFakeContent, provideSiteConfig } from '@shared/testing/fixtures';
+import { SaveStatus } from '../models/save-status.enum';
 import { EditorLayoutViewModel } from '../view-models/editor-layout.view-model';
 import { MemoryDocumentStore } from './memory-document-store';
 
@@ -56,6 +57,11 @@ export interface ILayoutStub {
   readonly failed: WritableSignal<boolean>;
   readonly data: WritableSignal<unknown>;
   readonly retries$: Subject<void>;
+  readonly changes$: Subject<void>;
+  readonly contentResets$: Subject<void>;
+  readonly status: WritableSignal<SaveStatus>;
+  readonly retry: ReturnType<typeof vi.fn>;
+  readonly resetContent: ReturnType<typeof vi.fn>;
 }
 
 /** @returns A fresh layout stand-in. */
@@ -68,6 +74,11 @@ export function layoutStub(): ILayoutStub {
     failed: signal(false),
     data: signal<unknown>(undefined),
     retries$: new Subject<void>(),
+    changes$: new Subject<void>(),
+    contentResets$: new Subject<void>(),
+    status: signal(SaveStatus.Idle),
+    retry: vi.fn(),
+    resetContent: vi.fn(),
   };
 }
 

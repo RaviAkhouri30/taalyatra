@@ -38,19 +38,6 @@ describe('EditorLayoutComponent', () => {
     expect(element.querySelector('.count')?.textContent).toBe('1 unpublished');
   });
 
-  it('should offer a retry only after a failed save', () => {
-    const { fixture, element } = render();
-    expect(element.querySelector('.ed-retry')).toBeNull();
-
-    (
-      fixture.componentInstance as unknown as { model: { reportFailed(): void } }
-    ).model.reportFailed();
-    fixture.detectChanges();
-
-    expect(element.querySelector('[role="status"]')?.textContent).toContain('Couldn’t save');
-    expect(element.querySelector('.ed-retry')).not.toBeNull();
-  });
-
   it('should group the links under small headings, with one group unlabelled', () => {
     const { element } = render();
 

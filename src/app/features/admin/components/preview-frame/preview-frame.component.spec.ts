@@ -3,6 +3,32 @@ import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { PreviewFrameComponent } from './preview-frame.component';
 
 describe('PreviewFrameComponent', () => {
+  /** Fires the stage-size observer on demand: jsdom has no layout. */
+  let resized: () => void;
+
+  beforeEach(() => {
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        public constructor(callback: () => void) {
+          resized = callback;
+        }
+
+        public observe(): void {
+          // The test decides when the size changes.
+        }
+
+        public disconnect(): void {
+          // Nothing to release.
+        }
+      },
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   function render() {
     const fixture = TestBed.createComponent(PreviewFrameComponent);
     const element = fixture.nativeElement as HTMLElement;
@@ -58,5 +84,68 @@ describe('PreviewFrameComponent', () => {
 
     const reloads = location.replace.mock.calls.filter(([url]) => String(url).includes('&v='));
     expect(reloads).toEqual([['/?preview=1&v=2#top']]);
+  });
+
+  describe('the frame', () => {
+    async function sized(width: number, height: number) {
+      const rendered = render();
+      const stage = rendered.element.querySelector('.pf-stage')!;
+      Object.defineProperties(stage, {
+        clientWidth: { value: width },
+        clientHeight: { value: height },
+      });
+      await rendered.fixture.whenStable();
+      resized();
+      await rendered.fixture.whenStable();
+      return rendered;
+    }
+
+    it('should shrink the desktop site to fit the stage', async () => {
+      const { iframe } = await sized(640, 500);
+
+      expect(iframe.style.width).toBe('1280px');
+      expect(iframe.style.height).toBe('1000px');
+      expect(iframe.style.transform).toBe('scale(0.5)');
+      expect(iframe.style.left).toBe('0px');
+    });
+
+    it('should centre the phone site, at full size, in a wider stage', async () => {
+      const { fixture, element, iframe } = await sized(790, 500);
+
+      element.querySelector<HTMLButtonElement>('[aria-label="Phone"]')?.click();
+      await fixture.whenStable();
+
+      expect(iframe.style.width).toBe('390px');
+      expect(iframe.style.transform).toBe('scale(1)');
+      expect(iframe.style.left).toBe('200px');
+      expect(element.querySelector('[aria-label="Phone"]')?.getAttribute('aria-pressed')).toBe(
+        'true',
+      );
+    });
+
+    it('should go back to desktop when asked', async () => {
+      const { fixture, element, iframe } = await sized(790, 500);
+      element.querySelector<HTMLButtonElement>('[aria-label="Phone"]')?.click();
+      await fixture.whenStable();
+
+      element.querySelector<HTMLButtonElement>('[aria-label="Desktop"]')?.click();
+      await fixture.whenStable();
+
+      expect(iframe.style.width).toBe('1280px');
+    });
+
+    it('should not divide by nothing while the stage is hidden', () => {
+      const { iframe } = render();
+
+      expect(iframe.style.transform).toBe('scale(1)');
+    });
+
+    it('should load afresh when refreshed, even with nothing saved', () => {
+      const { element, location } = render();
+
+      element.querySelector<HTMLButtonElement>('[aria-label="Refresh preview"]')?.click();
+
+      expect(location.replace).toHaveBeenLastCalledWith('/?preview=1&v=0-1#top');
+    });
   });
 });

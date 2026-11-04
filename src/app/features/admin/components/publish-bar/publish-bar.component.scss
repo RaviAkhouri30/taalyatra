@@ -1,0 +1,64 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  position: sticky;
+  bottom: 0;
+  z-index: t.$z-header;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 12px 32px;
+  background: t.$color-ink;
+  border-top: 1px solid t.$color-line;
+
+  @include bp.down(bp.$phone) {
+    padding: 10px 16px;
+  }
+}
+
+.pb-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 10px;
+  min-width: 0;
+  font-size: 13.5px;
+  color: t.$color-muted-strong;
+}
+
+.pb-status--failed {
+  color: t.$color-amber-soft;
+  font-weight: 700;
+}
+
+.pb-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: t.$color-amber-soft;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.pb-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.pb-actions button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pb-ask {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: t.$color-cream;
+}

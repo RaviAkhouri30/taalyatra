@@ -4,11 +4,12 @@ import { type MediaAsset } from '../../models/media-asset.model';
 import { MediaManageViewModel } from '../../view-models/media-manage.view-model';
 import { MediaCardComponent } from '../media-card/media-card.component';
 import { MediaUploadComponent } from '../media-upload/media-upload.component';
+import { PublishBarComponent } from '../publish-bar/publish-bar.component';
 
 /** The media library page (G5–G7): upload, describe, replace and delete, and see where each is used. */
 @Component({
   selector: 'app-media-library',
-  imports: [MediaCardComponent, MediaUploadComponent],
+  imports: [MediaCardComponent, MediaUploadComponent, PublishBarComponent],
   templateUrl: './media-library.component.html',
   styleUrl: './media-library.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -17,10 +17,12 @@ See [docs/versioning.md](docs/versioning.md).
 - **Gallery, Team, Shows and Videos tabs.** Every field, with add, remove and reorder. Publish checks require a
   description on each photo, allow one featured show, and catch a photo deleted from the library. Videos can take
   their thumbnail from a YouTube link.
-- **Experiences tab.** Every field of each experience, images with crop, add, remove and reorder, and a Featured
+- **Music & creativity tab.** Every field of each experience, images with crop, add, remove and reorder, and a Featured
   switch. One is always featured, because the home page's layout needs that card.
-- **Side panel in the admin area.** Grouped links with icons on the left, collapsible to icons on desktop and a
-  slide-in menu on phones and tablets.
+- **A one-screen editor.** Grouped links with icons in a left panel, collapsible to icons on desktop and a slide-in
+  menu on phones and tablets. The fields and a live preview, with desktop and phone views, sit beside it.
+- **Publish from any page.** A bar under each editor page shows what's unpublished, with Publish and Discard. The
+  Review & publish page stays for looking through changes and for undo.
 - **Clearer checks.** Required fields say so, placeholders are flagged at the field, and the review page explains
   each finding and links to its card.
 - **Upload function (`api/`).** An Azure Function that signs uploads and deletes for the admin only, so the
