@@ -8,6 +8,7 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
 | 2   | Rules, `media`, port, adapters, loader (D7–D11, D22) | `firestore.rules`; `IMediaService`, `CloudinaryMediaService`, `ImagePreparer`, `FakeMediaService`, factory; `IAuthService.idToken()`; `mediaImageUrl`, `provideMediaImages`; `CLOUDINARY_CONFIG`; `MediaAsset`, `MediaLibraryService` | see Checks                  |
 | 3   | Upload and library UI (D13, G5)                      | `MediaUploadComponent` and view model (queue of three, progress, retry); `MediaLibraryComponent` and view model; `MediaCardComponent`; **Media library** tab                                                                          | see Checks                  |
 | 4   | Image field and crop (D12, D14)                      | `FieldKind.Image`; `ImageFieldComponent` and view model; `MediaPickerComponent`; `ImageCropComponent`, `CropFrame`, `parseImageSrc`                                                                                                   | see Checks                  |
+| 5   | Collections (D15, D16)                               | `collapseCollection`, `expandCollection`, `isCollection`; `DraftService.live`; `PublishService` expands on publish; `FakeDataStore` answers collections like Firestore                                                                | see Checks                  |
 
 ## Decisions & deviations from design
 
@@ -41,6 +42,10 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
 - **Choosing and cropping open in place, not in a pop-up.** It works the same on a phone and needs no focus
   trap. Crop also has move buttons: arrow keys alone wouldn't meet WCAG 2.2's dragging rule for pointer
   users.
+- **Collection expansion is two functions, not a `CollectionExpander` class:** the lint rules refuse a class
+  with only static members.
+- **`DraftOverlayBackend` needed no code for collections (D16).** A collection's draft is read like any list
+  section, so only a test was added.
 - **A file the browser can't encode goes as it is,** the same as one it can't decode, because Cloudinary's
   transformation removes its metadata either way.
 
@@ -58,6 +63,9 @@ Built from the approved [design](02-design.md) on `feat/media`, one commit per i
 - **Increment 4:** `npm run verify` passes (920 site tests, coverage 99.79/98.19/99.57/99.96; 52 function
   tests at 100 %); `npm run e2e` 282 passed. No admin code in the files public pages load. The field has
   no browser test yet, because no tab uses it until increment 6.
+- **Increment 5:** `npm run verify` passes (950 site tests, coverage 99.8/98.04/99.58/99.96; 52 function
+  tests at 100 %); `npm run e2e` 282 passed; `npm run e2e:firebase` 15 passed. Publishing a collection through
+  the real rules gets its browser test with the tabs, in increment 6.
 - **Real-account proof (2026-11-03, account `zqu2cpih`, run by the owner):** a signed SHA-256 upload is
   accepted, and delivered images have no GPS. The approved setting failed on the stored file, so three
   placements of Cloudinary's `fl_force_strip` were compared. Each cell is the stored file:

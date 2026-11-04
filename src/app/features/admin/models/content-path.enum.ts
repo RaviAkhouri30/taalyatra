@@ -1,4 +1,4 @@
-/** The stored documents the 1.6.0 editor changes (`firestore.rules` allows the same ones). */
+/** The stored documents and collections the editor changes (`firestore.rules` allows the same). */
 export enum ContentPath {
   SiteConfig = 'site/config',
   SiteVisibility = 'site/visibility',
@@ -10,4 +10,10 @@ export enum ContentPath {
   HomeVideos = 'home/videos',
   HomeTeam = 'home/team',
   HomeContact = 'home/contact',
+  HomeGallery = 'home/gallery',
+  HomeShows = 'home/shows',
+  Gallery = 'gallery',
+  Team = 'team',
+  ShowFormats = 'showFormats',
+  Videos = 'videos',
 }

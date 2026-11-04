@@ -3,8 +3,13 @@ import { type Observable, defer, map, shareReplay } from 'rxjs';
 import { type DocumentFields, type DocumentWrite } from '@core/interfaces/i-document-store';
 import { DocumentWriteKind } from '@core/enums/document-write-kind.enum';
 import { LocalStoreService } from '@core/services/local-store.service';
+import { withoutOrder } from '@core/backends/firebase/firestore-envelope';
+import { FIRESTORE_ORDER_FIELD } from '@core/backends/firebase/firestore.constants';
 
 type FakeNode = Readonly<Record<string, unknown>>;
+
+/** The numbered ids run 001, 002…, as the seed script stores them. */
+const ID_DIGITS = 3;
 
 /** Where the Fake backend keeps written documents between reloads (development and e2e only). */
 export const FAKE_OVERLAY_STORAGE_KEY = 'taal-yatra.fake-db.overlay';
@@ -52,9 +57,39 @@ export class FakeDataStore {
 
   /**
    * @param path A document or collection path.
-   * @returns What is stored there (written documents first), or `undefined` when nothing is.
+   * @returns What is stored there (written documents first), or `undefined` when nothing is. A
+   *   collection answers with its documents as a list in order, as the Firestore adapter does.
    */
   public read(path: string): Observable<unknown> {
+    return this.node(path).pipe(
+      map((node) => {
+        const key = FakeDataStore.segments(path).join('/');
+        return Array.isArray(node) && this.hasWritesUnder(key)
+          ? this.listWithWrites(key, node)
+          : node;
+      }),
+    );
+  }
+
+  /**
+   * @param collection A collection path.
+   * @returns Its documents by id, written documents included and deleted ones left out.
+   */
+  public children(collection: string): Observable<ReadonlyMap<string, unknown>> {
+    const key = FakeDataStore.segments(collection).join('/');
+    return this.node(collection).pipe(map((node) => this.documentsIn(key, node)));
+  }
+
+  /** @param writes Applied together, then saved for the next reload. */
+  public apply(writes: readonly DocumentWrite[]): void {
+    for (const write of writes) {
+      const key = FakeDataStore.segments(write.path).join('/');
+      this.overlay.set(key, write.kind === DocumentWriteKind.Set ? write.fields : null);
+    }
+    this.persist();
+  }
+
+  private node(path: string): Observable<unknown> {
     const key = FakeDataStore.segments(path).join('/');
     return this.base$.pipe(
       map((base) =>
@@ -68,37 +103,39 @@ export class FakeDataStore {
     );
   }
 
-  /**
-   * @param collection A collection path.
-   * @returns Its documents by id, written documents included and deleted ones left out.
-   */
-  public children(collection: string): Observable<ReadonlyMap<string, unknown>> {
-    const prefix = `${FakeDataStore.segments(collection).join('/')}/`;
-    return this.read(collection).pipe(
-      map((node) => {
-        const documents = new Map<string, unknown>(
-          typeof node === 'object' && node !== null && !Array.isArray(node)
-            ? Object.entries(node)
-            : [],
-        );
-        for (const [path, fields] of this.overlay) {
-          const id = path.slice(prefix.length);
-          if (path.startsWith(prefix) && !id.includes('/')) {
-            this.setOrDelete(documents, id, fields);
-          }
-        }
-        return documents;
-      }),
-    );
+  private documentsIn(key: string, node: unknown): Map<string, unknown> {
+    const documents = new Map(this.baseEntries(node));
+    const prefix = `${key}/`;
+    for (const [path, fields] of this.overlay) {
+      const id = path.slice(prefix.length);
+      if (path.startsWith(prefix) && !id.includes('/')) {
+        this.setOrDelete(documents, id, fields);
+      }
+    }
+    return documents;
   }
 
-  /** @param writes Applied together, then saved for the next reload. */
-  public apply(writes: readonly DocumentWrite[]): void {
-    for (const write of writes) {
-      const key = FakeDataStore.segments(write.path).join('/');
-      this.overlay.set(key, write.kind === DocumentWriteKind.Set ? write.fields : null);
+  private baseEntries(node: unknown): [string, unknown][] {
+    if (Array.isArray(node)) {
+      // A list in the database stands for numbered documents, as the seed script stores it.
+      return node.map((item: unknown, index) => [
+        String(index + 1).padStart(ID_DIGITS, '0'),
+        { ...(item as FakeNode), [FIRESTORE_ORDER_FIELD]: index },
+      ]);
     }
-    this.persist();
+    return typeof node === 'object' && node !== null ? Object.entries(node) : [];
+  }
+
+  private hasWritesUnder(key: string): boolean {
+    return [...this.overlay.keys()].some((path) => path.startsWith(`${key}/`));
+  }
+
+  private listWithWrites(key: string, node: readonly unknown[]): unknown[] {
+    const order = (fields: unknown): number =>
+      Number(new Map(Object.entries(fields as FakeNode)).get(FIRESTORE_ORDER_FIELD) ?? 0);
+    return [...this.documentsIn(key, node).values()]
+      .sort((first, second) => order(first) - order(second))
+      .map((fields) => withoutOrder(fields as FakeNode));
   }
 
   private setOrDelete(

@@ -18,6 +18,7 @@ describe('DraftOverlayBackend', () => {
   const drafts = new Map<string, DocumentFields>([
     ['home__hero', { path: 'home/hero', content: { title: 'Draft' }, savedAt: 'x' }],
     ['home__marquee', { path: 'home/marquee', content: { _items: ['Drum'] }, savedAt: 'x' }],
+    ['videos', { path: 'videos', content: { _items: [{ title: 'Drafted' }] }, savedAt: 'x' }],
   ]);
 
   function create(
@@ -95,5 +96,13 @@ describe('DraftOverlayBackend', () => {
     expect(inner.put).toHaveBeenCalledWith('x/y', {});
     expect(inner.patch).toHaveBeenCalledWith('x/y', {});
     expect(inner.delete).toHaveBeenCalledWith('x/y');
+  });
+
+  it('should answer a collection read from its draft, as a list', async () => {
+    const { backend } = create(admin);
+
+    const response = await firstValueFrom(backend.get('videos'));
+
+    expect(response.body).toEqual([{ title: 'Drafted' }]);
   });
 });

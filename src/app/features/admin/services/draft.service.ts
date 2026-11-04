@@ -10,6 +10,7 @@ import {
   draftsByPath,
   toDraft,
 } from '@core/interfaces/i-draft';
+import { collapseCollection, isCollection } from '../models/collection-expander';
 
 /**
  * The owner's unpublished changes (ADR-0013): one draft per changed document, holding the whole
@@ -32,8 +33,18 @@ export class DraftService {
   public document(path: string): Observable<DocumentFields | null> {
     return forkJoin([
       this.store.read(`${DRAFTS_COLLECTION}/${draftId(path)}`),
-      this.store.read(path),
+      this.live(path),
     ]).pipe(map(([draft, live]) => toDraft(draft)?.content ?? live));
+  }
+
+  /**
+   * @param path A document or collection path.
+   * @returns What's published there; a collection comes as one document holding its list (D15).
+   */
+  public live(path: string): Observable<DocumentFields | null> {
+    return isCollection(path)
+      ? this.store.readAll(path).pipe(map((documents) => collapseCollection(documents)))
+      : this.store.read(path);
   }
 
   /**

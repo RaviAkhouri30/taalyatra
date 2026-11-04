@@ -91,4 +91,49 @@ describe('FakeDataStore', () => {
 
     expect(hero).toHaveProperty('title');
   });
+
+  describe('collections', () => {
+    const write = (path: string, fields: object) => ({
+      kind: DocumentWriteKind.Set as const,
+      path,
+      fields: { ...fields },
+    });
+
+    it('should list a collection as numbered documents with their order', async () => {
+      const documents = await firstValueFrom(create().children('gallery'));
+
+      expect([...documents.keys()].slice(0, 2)).toEqual(['001', '002']);
+      expect(documents.get('002')).toMatchObject({ order: 1 });
+    });
+
+    it('should answer a collection read as the plain list when nothing was written', async () => {
+      const store = create();
+
+      const list = await firstValueFrom(store.read('gallery'));
+
+      expect(Array.isArray(list)).toBe(true);
+      expect(list).toHaveLength((await firstValueFrom(store.children('gallery'))).size);
+    });
+
+    it('should answer in the new order, without it, after a publish rewrites the list', async () => {
+      const store = create();
+      store.apply([
+        write('gallery/001', { src: '/b.webp', order: 1 }),
+        write('gallery/002', { src: '/a.webp', order: 0 }),
+      ]);
+
+      const list = (await firstValueFrom(store.read('gallery'))) as object[];
+
+      expect(list.slice(0, 2)).toEqual([{ src: '/a.webp' }, { src: '/b.webp' }]);
+    });
+
+    it('should drop a deleted item from the list', async () => {
+      const store = create();
+      const before = ((await firstValueFrom(store.read('gallery'))) as object[]).length;
+
+      store.apply([{ kind: DocumentWriteKind.Delete, path: 'gallery/001' }]);
+
+      await expect(firstValueFrom(store.read('gallery'))).resolves.toHaveLength(before - 1);
+    });
+  });
 });
