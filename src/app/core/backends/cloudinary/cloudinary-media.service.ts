@@ -37,7 +37,7 @@ function toMediaError(error: unknown): MediaError {
     return error;
   }
   const status = error instanceof HttpErrorResponse ? error.status : 0;
-  return new MediaError(ERROR_KINDS.get(status) ?? MediaErrorKind.Unavailable);
+  return new MediaError(ERROR_KINDS.get(status) ?? MediaErrorKind.Unavailable, error);
 }
 
 /** @returns The app's view of Cloudinary's answer. */
