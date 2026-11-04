@@ -5,7 +5,7 @@
 - **CHANGELOG entry:** ☑ `## [1.8.0] - 2026-11-05`
 - **Deploy notes:**
   - **Rules:** the owner deployed them just before the merge, in the right order this time.
-  - **Backup:** the owner's rules step included `export:firestore`.
+  - **Backup:** `backups/firestore-2026-11-04.json` was written just before the rules (git-ignored).
   - **Settings and seed:** none needed.
 - **Monitoring:**
   - **Real visitors' speed** on the admin dashboard.
