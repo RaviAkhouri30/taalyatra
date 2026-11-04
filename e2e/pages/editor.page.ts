@@ -42,6 +42,11 @@ export class EditorPage extends BasePage {
 
   /** Waits until the last change is saved in the draft. */
   public async waitForSave(): Promise<void> {
+    // The status changes on the next render, so first let an earlier "Saved" give way to "Saving…".
+    await this.status
+      .filter({ hasText: 'Saving' })
+      .waitFor({ timeout: 2000 })
+      .catch(() => undefined);
     await this.status.filter({ hasText: 'Saved in your draft' }).waitFor();
   }
 
