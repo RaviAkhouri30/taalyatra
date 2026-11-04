@@ -125,4 +125,18 @@ describe('schema control factory', () => {
 
     expect(control.value).toBe(expected);
   });
+
+  it.each([
+    [undefined, 'Book a concert'],
+    [null, 'Book a concert'],
+    ['Book us', 'Book us'],
+    ['', ''],
+  ])('should fill a default in only when nothing is stored: %s', (value, expected) => {
+    const control = buildControl(
+      { key: 'cta', label: 'Button', kind: FieldKind.Text, defaultValue: 'Book a concert' },
+      value,
+    );
+
+    expect(control.value).toBe(expected);
+  });
 });

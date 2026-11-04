@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { type Observable, combineLatest, defaultIfEmpty, filter, map, tap } from 'rxjs';
 import { AnchorScrollService } from '@core/services/anchor-scroll.service';
-import { APP_PREVIEW } from '@core/tokens/app-preview.token';
+import { APP_PREVIEW, APP_PREVIEW_FRAME } from '@core/tokens/app-preview.token';
 import { ViewModel } from '@shared/base/view-model';
 import { LAYOUT_CHROME } from '@shared/constants/navigation.constants';
 import { SiteWidget } from '@shared/enums/site-widget.enum';
@@ -39,9 +39,17 @@ export class SiteShellViewModel extends ViewModel<IShellState> {
   });
   public readonly showUtilityBar = computed(() => this.isWidgetVisible(SiteWidget.UtilityBar));
   public readonly showActionBar = computed(
-    () => this.chrome() !== null && this.isWidgetVisible(SiteWidget.ActionBar),
+    () =>
+      !this.previewFrame && this.chrome() !== null && this.isWidgetVisible(SiteWidget.ActionBar),
+  );
+  /** Whether the floating offer badge may show. */
+  public readonly showPromoBadge = computed(() => !this.previewFrame);
+  /** Whether the floating WhatsApp button shows. */
+  public readonly showWhatsAppFab = computed(
+    () => !this.previewFrame && this.chrome()?.showWhatsAppFab === true,
   );
 
+  private readonly previewFrame = inject(APP_PREVIEW_FRAME);
   private readonly router = inject(Router);
   private readonly siteConfigService = inject(SiteConfigService);
   private readonly visibilityService = inject(SiteVisibilityService);

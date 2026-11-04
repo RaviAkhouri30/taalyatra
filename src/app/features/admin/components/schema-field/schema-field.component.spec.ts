@@ -41,7 +41,7 @@ describe('SchemaFieldComponent', () => {
     const input = element.querySelector('input')!;
 
     expect(element.querySelector('label')?.getAttribute('for')).toBe('f');
-    expect(input.getAttribute('aria-describedby')).toBe('f-hint f-count f-error');
+    expect(input.getAttribute('aria-describedby')).toBe('f-hint f-count f-note f-error');
     expect(element.querySelector('#f-count')?.textContent.trim()).toBe('5 / 20 characters');
   });
 
@@ -53,7 +53,9 @@ describe('SchemaFieldComponent', () => {
     );
 
     expect(element.querySelector('app-image-field')).not.toBeNull();
-    expect(element.querySelector('textarea')?.getAttribute('aria-describedby')).toBe('f-error');
+    expect(element.querySelector('textarea')?.getAttribute('aria-describedby')).toBe(
+      'f-note f-error',
+    );
     expect(element.querySelector('#f-error')?.textContent).toBe('Choose a photo.');
   });
 
@@ -121,5 +123,39 @@ describe('SchemaFieldComponent', () => {
     fixture.detectChanges();
 
     expect((fixture.nativeElement as HTMLElement).querySelector('.fd')).toBeNull();
+  });
+
+  it('should mark a required field, and leave others alone', () => {
+    const required = render(
+      { key: 'title', label: 'Title', kind: FieldKind.Text, required: true },
+      'Hello',
+    ).element;
+
+    expect(required.querySelector('label')?.classList).toContain('fd-label--required');
+    expect(required.querySelector('input')?.getAttribute('aria-required')).toBe('true');
+  });
+
+  it('should not mark an optional field', () => {
+    const { element } = render({ key: 'lead', label: 'Lead', kind: FieldKind.Multiline }, 'Hi');
+
+    expect(element.querySelector('label')?.classList).not.toContain('fd-label--required');
+    expect(element.querySelector('textarea')?.getAttribute('aria-required')).toBe('false');
+  });
+
+  it('should flag a placeholder at the field, and drop it once replaced', async () => {
+    const { fixture, control, element } = render(
+      { key: 'name', label: 'Name', kind: FieldKind.Text },
+      '[NAME]',
+    );
+    expect(element.querySelector('#f-note')?.textContent).toContain('[NAME]');
+
+    control.setValue('Asha');
+    fixture.componentInstance.control.set(control);
+    (fixture.nativeElement as HTMLElement)
+      .querySelector('input')
+      ?.dispatchEvent(new Event('input'));
+    await fixture.whenStable();
+
+    expect(element.querySelector('#f-note')?.textContent).toBe('');
   });
 });

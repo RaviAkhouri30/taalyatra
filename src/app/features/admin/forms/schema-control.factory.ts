@@ -115,7 +115,7 @@ function textControl(field: ITextFieldSchema, value: unknown): FormControl<strin
     ...(field.maxLength === undefined ? [] : [Validators.maxLength(field.maxLength)]),
     ...(format ? [format] : []),
   ];
-  return new FormControl(typeof value === 'string' ? value : '', {
+  return new FormControl(typeof value === 'string' ? value : (field.defaultValue ?? ''), {
     nonNullable: true,
     validators,
   });

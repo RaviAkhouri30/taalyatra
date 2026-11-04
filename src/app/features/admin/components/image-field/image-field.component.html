@@ -1,5 +1,5 @@
 @let current = image();
-<p class="if-label">{{ field().label }}</p>
+<p class="if-label">{{ field().label }}<span class="if-required"> · Required</span></p>
 <div class="if-row">
   <div class="if-frame">
     @if (current.src) {
@@ -9,13 +9,15 @@
     }
   </div>
   <div class="if-body">
-    <label [for]="fieldId()">Description</label>
+    <label [for]="fieldId()" [class.if-optional]="field().decorative">Description</label>
     <textarea
       #description
       rows="2"
       [id]="fieldId()"
       [maxLength]="maxLength"
       [value]="current.alt"
+      [attr.aria-required]="!field().decorative"
+      [attr.aria-invalid]="control().invalid"
       [attr.aria-describedby]="describedBy()"
       (input)="describe(description.value)"
     ></textarea>

@@ -3,6 +3,7 @@ import { throwError } from 'rxjs';
 import fakeDb from '@core/backends/fake/fake-db.json';
 import { ToastTone } from '@shared/enums/toast-tone.enum';
 import { ToastService } from '@shared/services/toast.service';
+import { MediaLibraryService } from '../services/media-library.service';
 import { PublishService } from '../services/publish.service';
 import { layoutStub, provideEditorTesting, provideLayout } from '../testing/editor-testing';
 import { PUBLISH_MESSAGES, PublishPageViewModel } from './publish-page.view-model';
@@ -35,6 +36,17 @@ describe('PublishPageViewModel', () => {
   }
 
   it('should load the drafts with their checks', () => {
+    const { model } = setUp();
+
+    expect(model.data()?.changes.map((change) => change.title)).toEqual(['Hero']);
+    expect(model.data()?.report.canPublish).toBe(true);
+  });
+
+  it('should still load, skipping that check, when the media library cannot be read', () => {
+    vi.spyOn(MediaLibraryService.prototype, 'assets').mockReturnValueOnce(
+      throwError(() => new Error('denied')),
+    );
+
     const { model } = setUp();
 
     expect(model.data()?.changes.map((change) => change.title)).toEqual(['Hero']);

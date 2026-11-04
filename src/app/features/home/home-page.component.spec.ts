@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { EMPTY } from 'rxjs';
 import { IEmailService } from '@core/interfaces/i-email-service';
 import { IHttpBackend } from '@core/interfaces/i-http-backend';
+import { APP_PREVIEW_FRAME } from '@core/tokens/app-preview.token';
 import { SiteVisibility } from '@shared/models/site-visibility.model';
 import { provideVisibility } from '@shared/testing/fixtures';
 import HomePageComponent from './home-page.component';
@@ -81,5 +82,25 @@ describe('HomePageComponent', () => {
     }
     expect(element.querySelector('app-home-hero')).not.toBeNull();
     expect(element.querySelector('app-home-contact')).not.toBeNull();
+  });
+
+  it('should leave out the assistant inside the editor preview frame', async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        { provide: IHttpBackend, useValue: { get: () => EMPTY } },
+        { provide: IEmailService, useValue: { send: () => EMPTY } },
+        { provide: APP_PREVIEW_FRAME, useValue: true },
+        provideVisibility(new SiteVisibility({})),
+      ],
+    });
+    const fixture = TestBed.createComponent(HomePageComponent);
+    fixture.detectChanges();
+    const [belowTheFold] = await fixture.getDeferBlocks();
+    await belowTheFold!.render(DeferBlockState.Complete);
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('app-home-faq')).not.toBeNull();
+    expect(element.querySelector('app-home-assistant')).toBeNull();
   });
 });

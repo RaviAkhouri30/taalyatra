@@ -134,6 +134,51 @@ test.describe('Admin editor', () => {
     );
   });
 
+  test('should keep the visitor-only floating buttons and badge out of the preview', async ({
+    editor,
+  }) => {
+    await editor.openTab('Page content');
+
+    // Attached, not visible: phones keep the preview behind a switch, but it still loads.
+    await expect(editor.preview.locator('app-home-hero')).toBeAttached();
+    await expect(editor.preview.locator('app-home-assistant')).toHaveCount(0);
+    await expect(editor.preview.locator('app-promo-badge')).toHaveCount(0);
+    await expect(editor.preview.locator('app-whatsapp-fab')).toHaveCount(0);
+    await expect(editor.preview.locator('app-mobile-action-bar')).toHaveCount(0);
+  });
+
+  test('should keep them on the full preview, which shows what visitors see', async ({ page }) => {
+    await page.goto('/?preview=1');
+
+    await expect(page.locator('app-home-assistant')).toBeAttached();
+    await expect(page.locator('app-promo-badge')).toBeAttached();
+  });
+
+  test('should mark a required field and flag a placeholder where it is', async ({ editor }) => {
+    await editor.openTab('Page content');
+    const title = editor.card('Hero').getByLabel('Headline, first line');
+    await expect(title).toHaveAttribute('aria-required', 'true');
+
+    await title.fill('[Add a headline]');
+
+    await expect(editor.card('Hero').getByText('Still has a placeholder')).toBeVisible();
+    await title.fill('');
+    await expect(editor.card('Hero').getByText('Fill this in.').first()).toBeVisible();
+  });
+
+  test('should link from a problem on the review page to its card', async ({ editor, page }) => {
+    await editor.openTab('Contact & links');
+    await editor.card('Contact details').getByLabel('Email').fill('');
+    await editor.waitForSave();
+    await editor.openTab('Review & publish');
+    await expect(page.getByText('Publishing is off until these are fixed.')).toBeVisible();
+
+    await page.getByRole('link', { name: 'Fix in Contact & links' }).click();
+
+    await expect(page).toHaveURL(/\/admin\/contact#card-/u);
+    await expect(editor.card('Contact details').getByRole('heading')).toBeInViewport();
+  });
+
   for (const view of VIEWS) {
     test(`should have no WCAG 2.2 AA violations on ${view}`, async ({ editor, axe }) => {
       await editor.openTab(view);

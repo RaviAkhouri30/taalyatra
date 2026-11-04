@@ -128,9 +128,9 @@ test.describe('Admin collections', () => {
 
     await second.getByRole('switch', { name: 'Featured' }).check();
     await expect(second.getByRole('group', { name: 'Spotlight text' })).toBeVisible();
+    await expect(second.getByLabel('Button to the proposal form')).toHaveValue('Book a concert');
+    await expect(second.getByLabel('Button to the Videos page')).toHaveValue('Watch a recital');
     await second.getByLabel('Title', { exact: true }).last().fill('A second spotlight');
-    await second.getByLabel('Button to the proposal form').fill('Book');
-    await second.getByLabel('Button to the Videos page').fill('Watch');
     await editor.waitForSave();
     await editor.openTab('Review & publish');
 

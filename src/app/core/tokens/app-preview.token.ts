@@ -15,3 +15,16 @@ export const APP_PREVIEW = new InjectionToken<boolean>('APP_PREVIEW', {
       PREVIEW_QUERY_PARAM,
     ),
 });
+
+/**
+ * Whether this preview is inside the editor's frame. The site's floating buttons and offer badge are
+ * for visitors, and there they'd cover the content being checked. The full preview in its own tab keeps them, as it
+ * shows the site as visitors will see it.
+ */
+export const APP_PREVIEW_FRAME = new InjectionToken<boolean>('APP_PREVIEW_FRAME', {
+  providedIn: 'root',
+  factory: () => {
+    const view = inject(DOCUMENT).defaultView;
+    return inject(APP_PREVIEW) && view !== null && view.top !== view;
+  },
+});

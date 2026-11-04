@@ -4,6 +4,7 @@ import { FieldKind } from '../../models/field-kind.enum';
 import { type FieldSchema } from '../../models/i-field-schema';
 import { type IImage } from '@shared/interfaces/i-image';
 import { FieldErrorPipe } from '../../pipes/field-error.pipe';
+import { PlaceholderNotePipe } from '../../pipes/placeholder-note.pipe';
 import { TextLengthPipe } from '../../pipes/text-length.pipe';
 import { ImageFieldComponent } from '../image-field/image-field.component';
 
@@ -22,7 +23,13 @@ const INPUT_TYPES: ReadonlyMap<FieldKind, string> = new Map([
  */
 @Component({
   selector: 'app-schema-field',
-  imports: [FieldErrorPipe, ImageFieldComponent, ReactiveFormsModule, TextLengthPipe],
+  imports: [
+    FieldErrorPipe,
+    ImageFieldComponent,
+    PlaceholderNotePipe,
+    ReactiveFormsModule,
+    TextLengthPipe,
+  ],
   templateUrl: './schema-field.component.html',
   styleUrl: './schema-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,6 +51,12 @@ export class SchemaFieldComponent {
   protected readonly hintId = computed(() => `${this.fieldId()}-hint`);
   protected readonly errorId = computed(() => `${this.fieldId()}-error`);
   protected readonly countId = computed(() => `${this.fieldId()}-count`);
+  protected readonly noteId = computed(() => `${this.fieldId()}-note`);
+  /** Publishing is blocked while this field is empty, so the label says so. */
+  protected readonly required = computed(() => {
+    const field = this.field();
+    return 'required' in field && field.required;
+  });
   /** The character limit the counter shows: the writing tip's, else the stored maximum. */
   protected readonly limit = computed(() => {
     const field = this.field();
@@ -62,7 +75,12 @@ export class SchemaFieldComponent {
   // An image field's control holds an IImage; the factory builds it from the same schema.
   protected readonly imageControl = computed(() => this.formControl() as FormControl<IImage>);
   protected readonly describedBy = computed(() =>
-    [this.field().hint ? this.hintId() : '', this.limit() ? this.countId() : '', this.errorId()]
+    [
+      this.field().hint ? this.hintId() : '',
+      this.limit() ? this.countId() : '',
+      this.noteId(),
+      this.errorId(),
+    ]
       .filter(Boolean)
       .join(' '),
   );

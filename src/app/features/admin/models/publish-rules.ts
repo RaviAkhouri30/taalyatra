@@ -4,15 +4,13 @@ import { COLLECTION_ITEMS_FIELD } from './collection-expander';
 import { ContentPath } from './content-path.enum';
 import { fieldErrorMessage } from '../forms/field-errors';
 import { fieldOf } from '../forms/json-node';
+import { placeholderMessage } from '../forms/placeholder';
 import { buildControl } from '../forms/schema-control.factory';
 import { schemaLeaves } from '../forms/schema-leaves';
 import { type IEditorSection } from './i-editor-section';
 import { imageUsesIn } from './media-use';
 import { type IPublishIssue } from './i-publish-issue';
 import { IssueSeverity } from './issue-severity.enum';
-
-/** Text in square brackets, the way unfinished copy is marked, e.g. "[Add duration & price]". */
-const PLACEHOLDER = /\[[^\]\n]{1,80}\]/;
 
 /** " · ", between a use's section and field. */
 const LABEL_SEPARATOR_LENGTH = 3;
@@ -41,7 +39,15 @@ export class SchemaRule implements IPublishRule {
       const message = fieldErrorMessage(buildControl(leaf.field, leaf.value).errors);
       return message === null
         ? []
-        : [{ severity: IssueSeverity.Error, section: section.title, field: leaf.label, message }];
+        : [
+            {
+              severity: IssueSeverity.Error,
+              sectionId: section.id,
+              section: section.title,
+              field: leaf.label,
+              message,
+            },
+          ];
     });
   }
 }
@@ -50,15 +56,16 @@ export class SchemaRule implements IPublishRule {
 export class PlaceholderRule implements IPublishRule {
   public check(section: IEditorSection, content: DocumentFields): IPublishIssue[] {
     return schemaLeaves(section.fields, content).flatMap((leaf) => {
-      const found = typeof leaf.value === 'string' ? PLACEHOLDER.exec(leaf.value) : null;
-      return found === null
+      const message = placeholderMessage(leaf.value);
+      return message === null
         ? []
         : [
             {
               severity: IssueSeverity.Warning,
+              sectionId: section.id,
               section: section.title,
               field: leaf.label,
-              message: `Still has a placeholder: “${found[0]}”.`,
+              message,
             },
           ];
     });
@@ -83,6 +90,7 @@ export class ImageInLibraryRule implements IPublishRule {
       .filter((use) => !libraryIds.has(use.id))
       .map((use) => ({
         severity: IssueSeverity.Error,
+        sectionId: section.id,
         section: section.title,
         field: use.label.slice(section.title.length + LABEL_SEPARATOR_LENGTH),
         message: 'This photo was deleted from the library. Choose another.',
@@ -104,6 +112,7 @@ export class OneFeaturedShowRule implements IPublishRule {
       ? [
           {
             severity: IssueSeverity.Error,
+            sectionId: section.id,
             section: section.title,
             field: 'Featured',
             message: 'Only one show can be featured. Switch the others off.',
@@ -141,6 +150,6 @@ export class PromotionDatesRule implements IPublishRule {
   }
 
   private issue(section: IEditorSection, severity: IssueSeverity, message: string): IPublishIssue {
-    return { severity, section: section.title, field: 'Ends on', message };
+    return { severity, sectionId: section.id, section: section.title, field: 'Ends on', message };
   }
 }

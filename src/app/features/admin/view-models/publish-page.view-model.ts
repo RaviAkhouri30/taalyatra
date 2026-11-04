@@ -10,6 +10,7 @@ import {
   forkJoin,
   map,
   merge,
+  of,
   startWith,
   switchMap,
   tap,
@@ -87,10 +88,15 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
       startWith(undefined),
       // switchMap: a newer reload replaces one still in flight.
       switchMap(() =>
-        forkJoin([this.drafts.drafts(), this.publishes.history(), this.library.assets()]),
+        forkJoin([
+          this.drafts.drafts(),
+          this.publishes.history(),
+          // A failed read means "not known": that skips one check, and mustn't stop all publishing.
+          this.library.assets().pipe(catchError(() => of(null))),
+        ]),
       ),
       map(([drafts, history, assets]) => {
-        const libraryIds = new Set(assets.map((asset) => asset.id));
+        const libraryIds = assets && new Set(assets.map((asset) => asset.id));
         const report = PublishReport.check(drafts, ALL_SECTIONS, this.clock.now(), libraryIds);
         return new PublishPageModel(drafts, history, ALL_SECTIONS, report);
       }),

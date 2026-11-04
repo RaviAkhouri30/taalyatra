@@ -36,10 +36,15 @@ export function multiline(
 /**
  * @param key The stored key.
  * @param label The visible label.
+ * @param defaultValue What it says until the owner changes it, if anything.
  * @returns A button label field.
  */
-export function buttonLabel(key: string, label: string): ITextFieldSchema {
-  return text(key, label, { required: true, maxLength: BUTTON_LABEL_MAX });
+export function buttonLabel(key: string, label: string, defaultValue?: string): ITextFieldSchema {
+  return text(key, label, {
+    required: true,
+    maxLength: BUTTON_LABEL_MAX,
+    ...(defaultValue === undefined ? {} : { defaultValue }),
+  });
 }
 
 /**

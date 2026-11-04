@@ -72,6 +72,7 @@ describe('DashboardModel', () => {
   it('should keep the placeholder warnings it was given', () => {
     const warning = {
       severity: IssueSeverity.Warning,
+      sectionId: 'offer',
       section: 'Hero',
       field: 'Title',
       message: 'x',

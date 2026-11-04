@@ -5,7 +5,7 @@ import { SiteWidget } from '@shared/enums/site-widget.enum';
 import { EditorTab } from '../models/editor-tab.enum';
 import { FieldKind } from '../models/field-kind.enum';
 import { type FieldSchema } from '../models/i-field-schema';
-import { ALL_SECTIONS, EDITOR_TABS, tabSchema } from './editor-tabs';
+import { ALL_SECTIONS, EDITOR_TABS, issueLink, tabSchema } from './editor-tabs';
 
 /** Every stored key a field list edits, as paths into the document (`contact.phone.e164`). */
 function keyPaths(fields: readonly FieldSchema[], prefix = ''): string[] {
@@ -81,5 +81,9 @@ describe('editor schemas', () => {
         ...Object.values(SiteWidget).map((key) => `widgets.${key}`),
       ].sort((a, b) => a.localeCompare(b)),
     );
+  });
+
+  it('should have no link for a section no tab edits', () => {
+    expect(issueLink('gone')).toBeNull();
   });
 });

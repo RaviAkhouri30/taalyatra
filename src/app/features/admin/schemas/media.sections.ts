@@ -146,8 +146,8 @@ export const SHOWS_SECTIONS: readonly IEditorSection[] = [
             fields: [
               text('eyebrow', 'Small heading', { maxLength: CONTENT_MAX_LENGTH.eyebrow }),
               text('title', 'Title', { required: true, maxLength: CONTENT_MAX_LENGTH.title }),
-              buttonLabel('primaryCta', 'Button to the proposal form'),
-              buttonLabel('secondaryCta', 'Button to the Videos page'),
+              buttonLabel('primaryCta', 'Button to the proposal form', 'Book a concert'),
+              buttonLabel('secondaryCta', 'Button to the Videos page', 'Watch a recital'),
             ],
           },
         ]),
