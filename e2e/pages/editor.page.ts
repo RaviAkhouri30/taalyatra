@@ -45,6 +45,13 @@ export class EditorPage extends BasePage {
     await this.status.filter({ hasText: 'Saved in your draft' }).waitFor();
   }
 
+  /** Chooses files on the media library's upload zone. */
+  public async uploadPhotos(
+    ...files: readonly { name: string; mimeType: string; buffer: Buffer }[]
+  ): Promise<void> {
+    await this.page.getByLabel('Choose photos').setInputFiles([...files]);
+  }
+
   /** Publishes every draft from the review page and waits for the confirmation. */
   public async publish(): Promise<void> {
     await this.openTab('Review & publish');

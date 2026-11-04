@@ -1,0 +1,20 @@
+@let image = asset();
+<div class="mc-frame">
+  <img
+    [ngSrc]="image.src"
+    fill
+    sizes="(max-width: 640px) 100vw, 25vw"
+    [alt]="image.dto.description"
+  />
+</div>
+<p class="mc-name">{{ image.dto.name }}</p>
+<p class="mc-size">{{ image.sizeLabel }}</p>
+<label class="mc-label" [for]="fieldId()">Description</label>
+<textarea
+  class="mc-field"
+  rows="2"
+  [id]="fieldId()"
+  [maxLength]="maxLength"
+  [formControl]="description"
+  (change)="described.emit(description.value)"
+></textarea>

@@ -1,0 +1,103 @@
+@use 'tokens' as t;
+
+:host {
+  display: grid;
+  gap: 10px;
+}
+
+.mu-zone {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 28px 16px;
+  border: 2px dashed t.$color-line;
+  border-radius: 16px;
+  background: t.$color-surface-raised;
+  text-align: center;
+  cursor: pointer;
+
+  // The input is hidden, so the zone shows its keyboard focus.
+  &:focus-within {
+    outline: 2px solid t.$color-amber;
+    outline-offset: 2px;
+  }
+}
+
+.mu-zone--over {
+  border-color: t.$color-amber;
+}
+
+.mu-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.mu-title {
+  font-weight: 800;
+  color: t.$color-cream;
+}
+
+.mu-hint,
+.mu-state {
+  font-size: 13.5px;
+  color: t.$color-muted-strong;
+}
+
+.mu-summary {
+  margin: 0;
+  font-size: 13.5px;
+  color: t.$color-muted-strong;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.mu-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mu-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 10px 12px;
+  border: 1px solid t.$color-line;
+  border-radius: 12px;
+}
+
+.mu-name {
+  flex: 1 1 160px;
+  overflow-wrap: anywhere;
+  font-weight: 600;
+  color: t.$color-cream;
+}
+
+.mu-progress {
+  flex: 0 1 160px;
+  accent-color: t.$color-amber;
+}
+
+.mu-error {
+  flex: 1 1 100%;
+  font-size: 13.5px;
+  color: t.$color-cream;
+}
+
+.mu-retry {
+  padding: 6px 12px;
+  border: 1px solid t.$color-line;
+  border-radius: t.$radius-pill;
+  background: transparent;
+  color: t.$color-cream;
+  font-weight: 700;
+  cursor: pointer;
+}

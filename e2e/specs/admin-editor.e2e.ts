@@ -7,6 +7,7 @@ const VIEWS = [
   'Page content',
   'Sections & pages',
   'Contact & links',
+  'Media library',
   'Review & publish',
 ];
 

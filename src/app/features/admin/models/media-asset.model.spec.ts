@@ -22,6 +22,10 @@ describe('MediaAsset', () => {
     expect(new MediaAsset(dto).src).toBe('v123/taal-yatra/media/abc-123');
   });
 
+  it('should describe its size for the library', () => {
+    expect(new MediaAsset({ ...dto, bytes: 2_621_440 }).sizeLabel).toBe('2400 × 1800 · 2.5 MB');
+  });
+
   it('should rebuild from stored fields when they are complete', () => {
     expect(MediaAsset.fromFields({ ...dto })?.dto.publicId).toBe(dto.publicId);
   });

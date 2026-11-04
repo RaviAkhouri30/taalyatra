@@ -3,7 +3,7 @@ import { provideMedia } from '@core/config/provide-media';
 import { adminGuard } from './guards/admin.guard';
 import { signedOutGuard } from './guards/signed-out.guard';
 import { unsavedChangesGuard } from './guards/unsaved-changes.guard';
-import { EDITOR_TAB_ROUTE_KEY, PUBLISH_PATH } from './models/editor-nav.constants';
+import { EDITOR_TAB_ROUTE_KEY, MEDIA_PATH, PUBLISH_PATH } from './models/editor-nav.constants';
 import { EDITOR_TABS } from './schemas/editor-tabs';
 
 /** Every admin page is on the bare layout, without the site's chrome. */
@@ -48,6 +48,11 @@ const adminRoutes: Routes = [
             canDeactivate: [unsavedChangesGuard],
             loadComponent: () => import('./components/editor-page/editor-page.component'),
           })),
+          {
+            path: MEDIA_PATH,
+            title: `Media library — ${ADMIN_TITLE_SUFFIX}`,
+            loadComponent: () => import('./components/media-library/media-library.component'),
+          },
           {
             path: PUBLISH_PATH,
             title: `Review & publish — ${ADMIN_TITLE_SUFFIX}`,

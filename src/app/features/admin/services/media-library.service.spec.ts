@@ -72,6 +72,28 @@ describe('MediaLibraryService', () => {
     ]);
   });
 
+  it('should tidy a description and keep the rest of the entry', async () => {
+    const { service, store } = setUp();
+    const asset = await firstValueFrom(service.register(media, 'photo.jpg'));
+
+    const described = await firstValueFrom(service.describe(asset, '  A circle  '));
+
+    expect(described.dto.description).toBe('A circle');
+    expect(store.documents.get('media/abc')).toMatchObject({
+      name: 'photo.jpg',
+      description: 'A circle',
+    });
+  });
+
+  it('should shorten a description to what the rules accept', async () => {
+    const { service } = setUp();
+    const asset = await firstValueFrom(service.register(media, 'photo.jpg'));
+
+    const described = await firstValueFrom(service.describe(asset, 'x'.repeat(500)));
+
+    expect(described.dto.description).toHaveLength(CONTENT_MAX_LENGTH.imageAlt);
+  });
+
   it('should shorten a very long file name to what the rules accept', async () => {
     const { service } = setUp();
 

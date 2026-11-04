@@ -41,6 +41,22 @@ export class MediaLibraryService {
       description: '',
       uploadedAt: this.clock.now().toISOString(),
     };
+    return this.save(dto);
+  }
+
+  /**
+   * @param asset The image to describe.
+   * @param description What it shows.
+   * @returns The updated entry, once it's saved.
+   */
+  public describe(asset: MediaAsset, description: string): Observable<MediaAsset> {
+    return this.save({
+      ...asset.dto,
+      description: description.trim().slice(0, CONTENT_MAX_LENGTH.imageAlt),
+    });
+  }
+
+  private save(dto: IMediaAssetDto): Observable<MediaAsset> {
     const asset = new MediaAsset(dto);
     return this.store
       .commit([

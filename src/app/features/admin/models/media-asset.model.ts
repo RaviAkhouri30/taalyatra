@@ -3,6 +3,7 @@ import { type IMediaAssetDto } from './i-media-asset';
 
 const STRING_FIELDS = ['publicId', 'format', 'name', 'description', 'uploadedAt'] as const;
 const NUMBER_FIELDS = ['version', 'width', 'height', 'bytes'] as const;
+const BYTES_PER_MB = 1_048_576;
 
 function isMediaAssetDto(fields: DocumentFields): fields is DocumentFields & IMediaAssetDto {
   const entries = new Map(Object.entries(fields));
@@ -25,6 +26,12 @@ export class MediaAsset {
   /** What `IImage.src` holds for this file when it's used uncropped (D14). */
   public get src(): string {
     return `v${String(this.dto.version)}/${this.dto.publicId}`;
+  }
+
+  /** Its size in pixels and on disk, for the library. */
+  public get sizeLabel(): string {
+    const { width, height, bytes } = this.dto;
+    return `${String(width)} × ${String(height)} · ${(bytes / BYTES_PER_MB).toFixed(1)} MB`;
   }
 
   /**
