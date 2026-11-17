@@ -187,6 +187,9 @@ logic stores nothing. The catalogue below lists every feature: **P** = in the pr
 
 ## Units of work (proposed releases)
 
+**Renumbered 2026-11-05:** 1.8.0 went to real-phone speed reports (0012), so remaining content is now 1.9.0, and proposals and
+account 1.10.0. The table below shows the original plan.
+
 The programme is too large for one release, so it's split into four. Each one gets its own
 design and approval and is useful on its own.
 
