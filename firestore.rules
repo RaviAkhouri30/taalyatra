@@ -94,7 +94,9 @@ service cloud.firestore {
         && isText(data.date, 0, 100)
         && isText(data.name, 1, 100)
         && isText(data.phone, 1, 20)
-        && isText(data.email, 0, 254)
+        // Required since 1.8.1, so every request can be answered by email (and auto-replied to).
+        && isText(data.email, 3, 254)
+        && data.email.matches('[^@ ]+@[^@ ]+')
         && isText(data.message, 0, 2000)
         // Stamped by the adapter with serverTimestamp(): a client can't backdate a record.
         && data.createdAt == request.time;

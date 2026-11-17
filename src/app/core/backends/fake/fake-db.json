@@ -854,7 +854,7 @@
         "errors": {
           "name": "Please tell us your name.",
           "phone": "Please enter a 10-digit phone number.",
-          "email": "Please check the email address."
+          "email": "Please enter a valid email address."
         }
       },
       "message": {

@@ -85,15 +85,14 @@
         }
       </label>
       <label
-        ><span
-          >{{ text.fields.email }} <i>{{ text.fields.optional }}</i></span
-        >
+        ><span>{{ text.fields.email }}</span>
         <input
           class="inp2"
           type="email"
           formControlName="email"
           [attr.maxlength]="maxLength.email"
           autocomplete="email"
+          required
           [placeholder]="text.placeholders.email"
           [attr.aria-invalid]="showError('email')"
           [attr.aria-describedby]="showError('email') ? 'proposal-email-error' : null"

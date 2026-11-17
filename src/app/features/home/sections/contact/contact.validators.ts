@@ -31,10 +31,8 @@ export const requiredTextValidator: ValidatorFn = (
 ): ValidationErrors | null => (String(control.value ?? '').trim() ? null : { required: true });
 
 /**
- * Optional email: empty passes, otherwise `Validators.email` applies.
- * @returns `null` when empty or valid, else `{ email: true }`.
+ * Required email: it must be filled in, and `Validators.email` must accept it.
+ * @returns `null` when valid, `{ required: true }` when empty, else `{ email: true }`.
  */
-export const optionalEmailValidator: ValidatorFn = (
-  control: AbstractControl,
-): ValidationErrors | null =>
-  String(control.value ?? '').trim() ? Validators.email(control) : null;
+export const emailValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null =>
+  requiredTextValidator(control) ?? Validators.email(control);

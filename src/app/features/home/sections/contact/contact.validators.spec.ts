@@ -1,9 +1,5 @@
 import { FormControl } from '@angular/forms';
-import {
-  optionalEmailValidator,
-  phoneValidator,
-  requiredTextValidator,
-} from './contact.validators';
+import { emailValidator, phoneValidator, requiredTextValidator } from './contact.validators';
 
 describe('contact validators', () => {
   const check = (validator: typeof phoneValidator, value: unknown) =>
@@ -26,10 +22,17 @@ describe('contact validators', () => {
     expect(check(requiredTextValidator, null)).toEqual({ required: true });
   });
 
-  it('should accept an empty or valid email and reject an invalid one', () => {
-    expect(check(optionalEmailValidator, '')).toBeNull();
-    expect(check(optionalEmailValidator, null)).toBeNull();
-    expect(check(optionalEmailValidator, 'asha@example.com')).toBeNull();
-    expect(check(optionalEmailValidator, 'asha@')).toEqual({ email: true });
+  it('should accept a valid email when one is given', () => {
+    expect(check(emailValidator, 'asha@example.com')).toBeNull();
+  });
+
+  it('should require an email when it is empty or only spaces', () => {
+    expect(check(emailValidator, '')).toEqual({ required: true });
+    expect(check(emailValidator, null)).toEqual({ required: true });
+    expect(check(emailValidator, '  ')).toEqual({ required: true });
+  });
+
+  it('should reject an email when it is malformed', () => {
+    expect(check(emailValidator, 'asha@')).toEqual({ email: true });
   });
 });
