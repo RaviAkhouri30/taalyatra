@@ -89,3 +89,20 @@ export const SAVE_STATUS_TEXT: Readonly<Record<SaveStatus, string>> = {
 
 /** How long the editor waits after the last keystroke before saving (0008 D3). */
 export const AUTOSAVE_DEBOUNCE_MS = 800;
+
+/**
+ * The line that counts as "being read": a thin band 30 % down the screen. Cards don't overlap,
+ * so only one can touch it at a time; a taller band could hold the end of one card and the start
+ * of the next, and whichever reported last would win.
+ */
+export const READING_BAND = '-30% 0px -69% 0px';
+
+/** How long the editor waits for scrolling to pause before the preview follows. */
+export const PREVIEW_FOLLOW_DEBOUNCE_MS = 250;
+
+/** The preview's fade out before it jumps to a section, and its fade back in. */
+export const PREVIEW_FADE_OUT_MS = 150;
+export const PREVIEW_FADE_IN_MS = 250;
+
+/** How long the preview keeps a section in place while the site's content arrives. */
+export const PREVIEW_SETTLE_MS = 4000;

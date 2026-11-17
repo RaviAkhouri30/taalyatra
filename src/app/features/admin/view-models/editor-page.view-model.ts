@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import {
   EMPTY,
   type Observable,
+  Subject,
   catchError,
   concatMap,
   debounceTime,
@@ -21,7 +22,11 @@ import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { buildFormGroup } from '../forms/schema-control.factory';
 import { sectionContent, writeSection } from '../forms/schema-value';
 import { type ContentPath } from '../models/content-path.enum';
-import { AUTOSAVE_DEBOUNCE_MS, EDITOR_TAB_ROUTE_KEY } from '../models/editor-nav.constants';
+import {
+  AUTOSAVE_DEBOUNCE_MS,
+  EDITOR_TAB_ROUTE_KEY,
+  PREVIEW_FOLLOW_DEBOUNCE_MS,
+} from '../models/editor-nav.constants';
 import { EditorTab } from '../models/editor-tab.enum';
 import { type IEditorSection } from '../models/i-editor-section';
 import { type IEditorTabSchema, tabSchema } from '../schemas/editor-tabs';
@@ -66,9 +71,17 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
   private readonly pending = signal(false);
   /** Counts changes, so a save can tell whether a newer change arrived while it ran. */
   private changeCount = 0;
+  /** Cards the owner has scrolled to. */
+  private readonly scrolledTo = new Subject<PageAnchor>();
 
+  /** The owner is working in `section`: the preview moves there now. */
   public focus(section: IEditorSection): void {
     this.activeAnchor.set(section.anchor);
+  }
+
+  /** The owner has scrolled to `section`: the preview follows once scrolling pauses. */
+  public follow(section: IEditorSection): void {
+    this.scrolledTo.next(section.anchor);
   }
 
   public togglePreview(): void {
@@ -78,6 +91,16 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
   /** @returns Whether leaving now could lose a change (still saving, or the save failed). */
   public hasUnsavedChanges(): boolean {
     return this.pending() || this.layout.failed();
+  }
+
+  protected override attachCommandHandler(): Observable<unknown> {
+    // debounceTime: a quick scroll past several cards moves the preview once, to where it stops.
+    return this.scrolledTo.pipe(
+      debounceTime(PREVIEW_FOLLOW_DEBOUNCE_MS),
+      tap((anchor) => {
+        this.activeAnchor.set(anchor);
+      }),
+    );
   }
 
   protected override attachViewHandler(): Observable<unknown> {

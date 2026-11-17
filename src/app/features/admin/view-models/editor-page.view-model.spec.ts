@@ -1,10 +1,15 @@
+import { effect } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, type Subscription, throwError } from 'rxjs';
 import fakeDb from '@core/backends/fake/fake-db.json';
 import { type IDraft } from '@core/interfaces/i-draft';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
-import { AUTOSAVE_DEBOUNCE_MS, EDITOR_TAB_ROUTE_KEY } from '../models/editor-nav.constants';
+import {
+  AUTOSAVE_DEBOUNCE_MS,
+  EDITOR_TAB_ROUTE_KEY,
+  PREVIEW_FOLLOW_DEBOUNCE_MS,
+} from '../models/editor-nav.constants';
 import { EditorTab } from '../models/editor-tab.enum';
 import { DraftService } from '../services/draft.service';
 import { layoutStub, provideEditorTesting, provideLayout } from '../testing/editor-testing';
@@ -152,6 +157,34 @@ describe('EditorPageViewModel', () => {
 
     expect(model.activeAnchor()).toBe(PageAnchor.Watch);
     expect(model.previewOpen()).toBe(true);
+  });
+
+  it('should move the preview to the card scrolled to once scrolling pauses', () => {
+    const { model, section } = setUp();
+
+    model.follow(section('videos')!.section);
+    expect(model.activeAnchor()).toBe(PageAnchor.Top);
+    vi.advanceTimersByTime(PREVIEW_FOLLOW_DEBOUNCE_MS);
+
+    expect(model.activeAnchor()).toBe(PageAnchor.Watch);
+  });
+
+  it('should move the preview once, to the last card, after a quick scroll past several', () => {
+    const { model, section } = setUp();
+    const moves: PageAnchor[] = [];
+    TestBed.runInInjectionContext(() => {
+      effect(() => {
+        moves.push(model.activeAnchor());
+      });
+    });
+
+    model.follow(section('videos')!.section);
+    model.follow(section('team')!.section);
+    vi.advanceTimersByTime(PREVIEW_FOLLOW_DEBOUNCE_MS);
+    TestBed.tick();
+
+    expect(moves.at(-1)).toBe(PageAnchor.Team);
+    expect(moves).not.toContain(PageAnchor.Watch);
   });
 
   it('should open the offer tab for an unknown tab in the route', () => {

@@ -2,10 +2,6 @@
 @use 'tokens' as t;
 @use 'breakpoints' as bp;
 
-html {
-  scroll-behavior: smooth;
-}
-
 body {
   margin: 0;
   background: t.$color-ink;
@@ -45,9 +41,5 @@ p {
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;
-  }
-
-  html {
-    scroll-behavior: auto;
   }
 }
