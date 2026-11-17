@@ -6,6 +6,8 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-11-18
+
 ### Added
 
 - **Reorder lists easily:** shows, experiences, team, videos and gallery photos have an Order panel: drag a name, or use the
