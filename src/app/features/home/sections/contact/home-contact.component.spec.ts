@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { type Observable, Subject, of, throwError } from 'rxjs';
-import { IEmailService } from '@core/interfaces/i-email-service';
+import { type IEmailMessage, IEmailService } from '@core/interfaces/i-email-service';
 import { LoggerService } from '@core/services/logger.service';
 import { ApiEndpoint } from '@shared/enums/api-endpoint.enum';
 import { queryAll, texts } from '@shared/testing/fixtures';
@@ -116,9 +116,10 @@ describe('HomeContactComponent', () => {
 
     submit();
 
-    expect(send).toHaveBeenCalledWith(
-      expect.objectContaining({ subject: 'Proposal request: Drum Circle', fromName: 'Asha' }),
-    );
+    // The stub's signature takes no arguments, so the recorded call needs the port's type.
+    const [sent] = send.mock.lastCall as unknown as [IEmailMessage];
+    expect(sent.subject).toBe('Proposal request: Drum Circle');
+    expect(sent.fields['name']).toBe('Asha');
     expect(create).toHaveBeenCalledWith(
       expect.objectContaining({ name: 'Asha', phone: '98765 43210', experience: 'Drum Circle' }),
     );
