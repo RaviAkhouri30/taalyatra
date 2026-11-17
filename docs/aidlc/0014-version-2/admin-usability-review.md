@@ -1,0 +1,26 @@
+# Admin usability review (2026-11-18)
+
+A walkthrough of the admin area as a first-time, non-technical owner would use it, with everyday tasks: change a heading,
+replace a picture, reorder shows, hide a section, publish, undo. Done at the owner's request, after the drum circle's About
+picture turned out to be "extremely hard to find".
+
+## What makes it hard
+
+| #   | Problem                                                                                                                                                     | Example                                                                                                                            | Fix                                                                                         | Status          |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | --------------- |
+| 1   | **The menu follows how the data is stored, not the website.** A section's heading and its content are often in different tabs, and some tabs are grab-bags. | "Page content" holds the business name, the hero and five other sections' headings; the drum circle was under "Music & creativity" | A menu that mirrors the site: Home page → each section in page order; Other pages; Settings | Proposed (U1)   |
+| 2   | **You can't click what you see.** The preview shows the site, but clicking a section did nothing.                                                           | Wanting to change the drum circle picture, there was no way to start from it                                                       | Click a section in the preview to open its card                                             | ✔ Done (1.11.0) |
+| 3   | **No search.**                                                                                                                                              | "Where do I change the phone number?"                                                                                              | A "Find" box: type "about", "phone", "Diwali" and jump to the field                         | Proposed (U2)   |
+| 4   | **The dashboard's to-do list can't be clicked**, and speaks in field paths.                                                                                 | "Offer section · Offer card 1 · Duration and price: Still has a placeholder"                                                       | A to-do list in plain words, each item linking to its field                                 | Proposed (U3)   |
+| 5   | **Technical words.**                                                                                                                                        | Discard, Placeholders, Site-wide, Spotlight, Featured card, "Small heading above the title"                                        | Plain words throughout, with one-line help where a word must stay                           | Proposed (U4)   |
+| 6   | **Visual noise.** A character counter under every field, and boxed groups inside boxed cards.                                                               | "10 / 60 characters" under the business name                                                                                       | Counters only near the limit; flatter cards                                                 | Proposed (U5)   |
+| 7   | **On phones, the top bar takes two rows** and the preview switch is at the top of a long form.                                                              | Menu, View site, Sign out and the email on a 390 px screen                                                                         | One-row top bar; preview switch in the bottom bar                                           | Proposed (U6)   |
+| 8   | **The drum circle was hidden** under an unrelated tab name.                                                                                                 | About text and picture in "Music & creativity", below the experiences list                                                         | Its own "Drum circle" entry; "Music & creativity" renamed "Experiences"                     | ✔ Done (1.11.0) |
+| 9   | **No guidance on first use.**                                                                                                                               | Nothing explains draft vs published                                                                                                | The guided tour (V9)                                                                        | Planned (2.1.0) |
+
+## Recommendation
+
+Problems 1, 3 and 4 cause most of the difficulty: the owner has to know where something is stored before they can change it.
+Fixing them (U1–U6) is the version 2 programme's V6, "make the admin more intuitive", planned for 2.1.0. Given how hard the
+admin is to use today, the recommendation is to **do it next**, before backups and the rest of 1.11.0's design, and to design
+it with the owner using screenshots of the new menu before any code.

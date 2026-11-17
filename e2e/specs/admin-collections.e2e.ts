@@ -142,7 +142,7 @@ test.describe('Admin collections', () => {
     editor,
     page,
   }) => {
-    await editor.openTab('Music & creativity');
+    await editor.openTab('Experiences');
     const cards = editor.card('Experiences', { exact: true });
     // Items fold to their names (0015 V14), and a featured item moves to the top: find them by name.
     const item = (name: string) =>

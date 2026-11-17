@@ -9,6 +9,7 @@ import {
   effect,
   inject,
   input,
+  output,
   signal,
   untracked,
   viewChild,
@@ -19,6 +20,7 @@ import { AppRoute } from '@shared/enums/app-route.enum';
 import { IconName } from '@shared/enums/icon-name.enum';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { FrameFitDirective, type IFrameFit } from '../../directives/frame-fit.directive';
+import { PreviewPicker } from './preview-picker';
 import { PreviewScroller } from './preview-scroller';
 
 /** The widths the site is shown at, so it lays out as it does on each device. */
@@ -47,6 +49,10 @@ export class PreviewFrameComponent {
   public readonly anchor = input(PageAnchor.Top);
   /** Changes after every save, which reloads the frame. */
   public readonly version = input(0);
+  /** Page sections the owner can click, by element id, with the tab that edits each (1.11.0). */
+  public readonly pickable = input<ReadonlyMap<string, string>>(new Map());
+  /** Emits a clicked section's element id. */
+  public readonly picked = output<string>();
 
   protected readonly icons = IconName;
   /** Which device the site is shown as. */
@@ -133,6 +139,14 @@ export class PreviewFrameComponent {
       return;
     }
     this.moveTo(untracked(this.anchor));
+    const site = this.site();
+    const pickable = untracked(this.pickable);
+    if (site !== null && pickable.size > 0) {
+      // Each load is a new document, so the clicks are wired up again.
+      new PreviewPicker(pickable, (anchor) => {
+        this.picked.emit(anchor);
+      }).attach(site);
+    }
   }
 
   /**

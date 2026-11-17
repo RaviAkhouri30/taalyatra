@@ -42,7 +42,12 @@
       <app-publish-bar />
     </div>
     <aside #previewColumn id="editor-preview" class="ep-preview" aria-label="Preview">
-      <app-preview-frame [anchor]="model.activeAnchor()" [version]="model.previewVersion()" />
+      <app-preview-frame
+        [anchor]="model.activeAnchor()"
+        [version]="model.previewVersion()"
+        [pickable]="pickable"
+        (picked)="openSection($event)"
+      />
     </aside>
   </div>
 }

@@ -28,8 +28,8 @@ describe('DRUM_CIRCLE_SECTIONS', () => {
     );
   });
 
-  it('should all edit home/drumCircle, on the Music & creativity tab', () => {
-    const tab = tabSchema(EditorTab.Experiences);
+  it('should all edit home/drumCircle, on its own Drum circle tab', () => {
+    const tab = tabSchema(EditorTab.DrumCircle);
 
     expect(
       DRUM_CIRCLE_SECTIONS.every((section) => section.path === ContentPath.HomeDrumCircle),

@@ -6,6 +6,16 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+### Added
+
+- **Click a section in the preview to edit it.** Hovering a section outlines it and says which tab edits it; clicking opens
+  that card, on the current tab or another.
+
+### Changed
+
+- **The drum circle has its own entry in the side panel**, so its About text and picture are one click away, and
+  "Music & creativity" is now called "Experiences", as on the website.
+
 ## [1.10.0] - 2026-11-18
 
 ### Added
