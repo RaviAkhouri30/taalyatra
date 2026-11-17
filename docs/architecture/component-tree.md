@@ -15,12 +15,13 @@ flowchart TD
   RO -->|"admin (lazy, layout: Bare)"| AD["AdminShellComponent (noindex)<br/>sign-in · signedOutGuard → SignIn · reset-password → ResetPassword (app-auth-card)"]
   AD -->|"'' · adminGuard"| EL["EditorLayoutComponent<br/>account bar · side panel · save status (EditorLayoutViewModel)"]
   EL --> DB["'' → DashboardComponent"]
-  EL --> EP["offer · content · gallery · team · shows · videos · visibility · contact → EditorPageComponent<br/>(unsavedChangesGuard) · schema-fields · schema-field · preview-frame"]
+  EL --> EP["offer · content · gallery · team · shows · videos · visibility · contact → EditorPageComponent<br/>(unsavedChangesGuard) · cards with appInView · schema-fields · schema-field · preview-frame (PreviewScroller)"]
   EL --> ML["media → MediaLibraryComponent (MediaManageViewModel)<br/>MediaUploadComponent · MediaCardComponent"]
   EL --> PP["publish → PublishPageComponent"]
   RO -->|"** → ''"| Home
   Home --> Eager["intro · hero · marquee · trust<br/>(each optional section only when switched on)"]
-  Home --> Deferred{{"@defer (on idle)<br/>offer … contact · assistant"}}
+  Home --> Deferred{{"@defer (on idle)<br/>offer … contact (each with appReveal) · assistant"}}
+  Home -.->|"#fragment"| Hold["SectionHoldService<br/>keeps a linked section in place while the page fills in"]
 ```
 
 The home page's full section tree is in

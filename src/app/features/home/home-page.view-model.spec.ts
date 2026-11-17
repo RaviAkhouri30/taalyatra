@@ -1,21 +1,50 @@
 import { TestBed } from '@angular/core/testing';
-import { firstValueFrom } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { BehaviorSubject, NEVER, firstValueFrom } from 'rxjs';
 import { APP_PREVIEW } from '@core/tokens/app-preview.token';
 import { SiteVisibility } from '@shared/models/site-visibility.model';
 import { provideVisibility } from '@shared/testing/fixtures';
 import { HomePageViewModel } from './home-page.view-model';
+import { SectionHoldService } from './section-hold.service';
 
 describe('HomePageViewModel', () => {
+  const fragment = new BehaviorSubject<string | null>(null);
+  const hold = vi.fn(() => NEVER);
+
+  beforeEach(() => {
+    fragment.next(null);
+    hold.mockClear();
+  });
+
   function setUp(visibility?: SiteVisibility, preview = false) {
     TestBed.configureTestingModule({
       providers: [
         HomePageViewModel,
         provideVisibility(visibility),
         { provide: APP_PREVIEW, useValue: preview },
+        { provide: ActivatedRoute, useValue: { fragment } },
+        { provide: SectionHoldService, useValue: { hold } },
       ],
     });
     return TestBed.inject(HomePageViewModel);
   }
+
+  it('should hold each linked section in place while the page fills in', () => {
+    const subscription = setUp().init().subscribe();
+
+    fragment.next('contact');
+    fragment.next('faq');
+
+    expect(hold.mock.calls).toEqual([['contact'], ['faq']]);
+    subscription.unsubscribe();
+  });
+
+  it('should hold nothing when the address links to no section', () => {
+    const subscription = setUp().init().subscribe();
+
+    expect(hold).not.toHaveBeenCalled();
+    subscription.unsubscribe();
+  });
 
   it('should render no optional section before the switches arrive', () => {
     const model = setUp();

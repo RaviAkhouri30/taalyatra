@@ -398,3 +398,5 @@ decisions get an ADR (`adr/NNNN-title.md`).
 - State why before adding any dependency, and install it with `--save-exact`.
 - No `eslint-disable` without a comment explaining why **and** user approval.
 - If a rule truly cannot be met, say so and record the exception in an ADR.
+- **Never push automatically.** Commit locally, report the results and how to try the change (`npm start`), then
+  wait. The owner reviews and tests every change locally first; push only after they say so.

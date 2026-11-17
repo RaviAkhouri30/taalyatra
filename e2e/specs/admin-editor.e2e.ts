@@ -135,6 +135,23 @@ test.describe('Admin editor', () => {
     );
   });
 
+  test('should move the preview to the card the owner is working in', async ({ editor, page }) => {
+    await editor.openTab('Page content');
+    const card = editor.card('Plan your session');
+
+    await card.evaluate((element) => {
+      element.scrollIntoView({ block: 'start' });
+    });
+    // Phones and tablets keep the preview behind a switch; there it shows the last card worked in.
+    const showPreview = page.getByRole('button', { name: 'Show preview' });
+    if (await showPreview.isVisible()) {
+      await card.getByRole('textbox').first().click();
+      await showPreview.click();
+    }
+
+    await expect(editor.preview.locator('#contact')).toBeInViewport();
+  });
+
   test('should keep the visitor-only floating buttons and badge out of the preview', async ({
     editor,
   }) => {

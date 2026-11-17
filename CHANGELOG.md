@@ -6,8 +6,17 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+### Added
+
+- Home page sections fade in and rise gently the first time they scroll into view. Nothing moves for visitors who ask for
+  less motion.
+- The editor's preview follows the section you scroll to, fades instead of racing across the page, and comes back to the
+  same section after each save.
+
 ### Fixed
 
+- Links to a home section, such as **Request proposal**, now land on it. Before, they could stop thousands of pixels short
+  while the page was still filling in, after a fast blur of scrolling.
 - Proposal requests now reach `contact@taalyatra.in` by email. Before, they were only stored. Each form field arrives as its own line.
 
 ### Changed

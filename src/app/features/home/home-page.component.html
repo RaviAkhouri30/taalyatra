@@ -14,53 +14,53 @@
   so deep links such as /#contact still find their section (ADR-0007).
 -->
 @defer (on idle) {
-  <app-home-offer />
+  <app-home-offer appReveal />
   @if (shown.audiences) {
-    <app-home-audiences />
+    <app-home-audiences appReveal />
   }
   @if (shown.experiences) {
-    <app-home-experiences />
+    <app-home-experiences appReveal />
   }
   @if (shown.shows) {
-    <app-home-shows />
+    <app-home-shows appReveal />
   }
   @if (shown.drumCircle) {
-    <app-home-drum-circle />
+    <app-home-drum-circle appReveal />
   }
   @if (shown.rhythmGame) {
-    <app-home-rhythm-game />
+    <app-home-rhythm-game appReveal />
   }
   @if (shown.videos) {
-    <app-home-videos />
+    <app-home-videos appReveal />
   }
   @if (shown.gallery) {
-    <app-home-gallery />
+    <app-home-gallery appReveal />
   }
   @if (shown.philosophy) {
-    <app-home-philosophy />
+    <app-home-philosophy appReveal />
   }
   @if (shown.midCta) {
-    <app-home-mid-cta />
+    <app-home-mid-cta appReveal />
   }
   @if (shown.cities) {
-    <app-home-cities />
+    <app-home-cities appReveal />
   }
   @if (shown.how) {
-    <app-home-how />
+    <app-home-how appReveal />
   }
   @if (shown.team) {
-    <app-home-team />
+    <app-home-team appReveal />
   }
   @if (shown.instagram) {
-    <app-home-instagram />
+    <app-home-instagram appReveal />
   }
   @if (shown.proof) {
-    <app-home-proof />
+    <app-home-proof appReveal />
   }
   @if (shown.faq) {
-    <app-home-faq />
+    <app-home-faq appReveal />
   }
-  <app-home-contact />
+  <app-home-contact appReveal />
   @if (shown.assistant) {
     <app-home-assistant />
   }

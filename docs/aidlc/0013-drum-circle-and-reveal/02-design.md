@@ -40,22 +40,21 @@ editor writes a section the live rules refuse.
 
 ### Behaviour
 
-- Each home section **below the first screen** fades from transparent to visible and rises 24 px, over 600 ms, the first
+- Each home section **below the first screen** fades from transparent to visible and rises 40 px, over 1 s with a soft ease-out (slowed from 600 ms and 24 px at the owner's request), the first
   time it comes into view. It never animates again.
 - Sections on the first screen (hero, marquee, trust bar, and anything already in view when the page opens) never animate,
   so the first screen and its load time are unchanged.
 - **Reduced motion:** when the device asks for it, nothing is hidden or animated.
-- **Links to a section** (such as `/#contact`) scroll there as now. The section reveals as it arrives. A transform doesn't
-  change layout, so the scroll position is exact and there is no layout shift (CLS ignores transforms).
+- **Inside the editor's preview** nothing is hidden: the preview moves to sections itself (Part 3).
 
 ### Decisions (recommendations)
 
-| #   | Decision                 | Recommendation                                                                                                                                                                                               |
-| --- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | Pages                    | Home page only for now. The inner pages are short. Add them later if the owner wants it there too.                                                                                                           |
-| 2   | Pictures inside sections | No separate picture fade. The section's fade covers most of it. A per-picture fade touches every image component.                                                                                            |
-| 3   | Smooth-scrolling library | No. Libraries such as Lenis take over wheel and touch scrolling, often feel worse on phones, and fight assistive tech. Link scrolling is already smooth (`scroll-behavior: smooth`, off for reduced motion). |
-| 4   | The assistant            | Not wrapped. It has `position: fixed` parts, which a transform on its host would break.                                                                                                                      |
+| #   | Decision                 | Recommendation                                                                                                         |
+| --- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| 1   | Pages                    | Home page only for now. The inner pages are short. Add them later if the owner wants it there too.                     |
+| 2   | Pictures inside sections | No separate picture fade. The section's fade covers most of it. A per-picture fade touches every image component.      |
+| 3   | Smooth-scrolling library | No. Libraries such as Lenis take over wheel and touch scrolling, often feel worse on phones, and fight assistive tech. |
+| 4   | The assistant            | Not wrapped. It has `position: fixed` parts, which a transform on its host would break.                                |
 
 ### How it works
 
@@ -65,33 +64,63 @@ in `home-page.component.html`.
 ```mermaid
 sequenceDiagram
   participant D as RevealDirective
-  participant W as Window (matchMedia, IntersectionObserver)
   participant E as Section element
-  D->>W: reduced motion? IntersectionObserver available?
-  alt reduced motion, no observer, or already in view
-    D-->>E: nothing (shown as normal)
+  participant O as Resize / IntersectionObserver
+  D->>D: motion wanted? (observers exist, no reduced motion, not the editor's preview)
+  D->>O: wait until E has content (it's created empty, near the top)
+  O-->>D: E has a height
+  alt E is on the first screen (or above it)
+    D-->>E: nothing
   else below the screen
-    D->>E: animate(fade + rise), paused at the start (hidden)
-    D->>W: observe(E)
-    W-->>D: E enters the viewport
-    D->>E: play, then cancel when finished (no leftover styles)
-    D->>W: disconnect
+    D->>E: hide by opacity only (layout and position untouched)
+    D->>O: observe(E)
+    O-->>D: E enters the viewport
+    D->>E: animate fade + rise (no fill), cancel the hiding
+    D->>O: disconnect
   end
 ```
 
+- **Found while building:** sections are created before their data arrives, empty and near the top, so deciding at
+  creation saw them all as "in view". The directive now waits until the section has content.
+- **Found while building:** hiding with the rise applied moved the section down by the rise while hidden, so a link to it landed
+  that far off. Hidden sections are now transparent only; the rise happens only while revealing.
 - **No CSS and no inline styles.** It uses the Web Animations API (`element.animate`), so nothing is added to the global
-  stylesheet. The initial download stays as it is, because the directive only loads with the home page's deferred sections.
-- **Browser APIs through `inject(DOCUMENT).defaultView`**, as `LocalStoreService` and the vitals reporter do, so unit tests
-  give it a fake observer and a fake `matchMedia`. (CLAUDE.md lists a `WINDOW` token, but the code has never had one; this
-  follows the existing code rather than adding it.)
+  stylesheet, and the directive loads only with the home page's deferred sections.
+- **Browser APIs:** the global observers and `inject(DOCUMENT).defaultView`, as the rest of the code does. (CLAUDE.md lists
+  a `WINDOW` token, but the code has never had one.)
 - **Timings and offset** are constants in `shared/constants/reveal.constants.ts`.
-- **Clean-up:** the observer disconnects on reveal or when the section is destroyed (`DestroyRef`).
 
 ### Risk: content that never reveals
 
-If the observer never fires, the section stays invisible. Guards: no hiding without `IntersectionObserver`; no hiding with
-reduced motion; and a section already in view at start isn't hidden. The "in view" margin is generous (the section counts as in
-view 10 % before its top reaches the screen's bottom edge), so a fast scroll can't skip it.
+If the observer never fires, the section stays invisible. Guards: nothing is hidden without both observers, with reduced
+motion, or in the editor; a section on the first screen isn't hidden; nothing is hidden before it has content.
+
+## Part 3 · Links that land, and an editor preview that follows (added 2026-11-17)
+
+The owner reported three more problems while this design waited for approval, and asked for them to be fixed with the
+reveal: scrolling "so fast that it irritates the eyes"; the editor's preview not following the section scrolled to; and
+the preview not coming back to the section after a save.
+
+### Public site: links to a section
+
+- **Measured bug (since 1.1.0):** with motion on, `/#contact` scrolled smoothly to where the contact form was when it first
+  existed (about 1,300 px), but the sections above it were still empty. They filled in during the scroll and the page
+  stopped at "Who it's for", 11,000 px short. The long smooth scroll was also the "too fast" blur.
+- **Fix:** no site-wide `scroll-behavior: smooth`. A link jumps straight to its section, which then fades in (Part 2).
+  `SectionHoldService` (home page only, so not in the initial download) keeps the section at the top while the page above it
+  grows, for up to 3 s, and lets go the moment the visitor scrolls, presses a key or touches the screen.
+  `HomePageViewModel` starts it for every fragment (`switchMap`: a new link lets go of the old one).
+
+### Editor preview
+
+- **Follows scrolling:** `InViewDirective` on each card says when it reaches a line 30 % down the screen. `EditorPageViewModel`
+  moves the preview there once scrolling pauses for 250 ms (`debounceTime`), so a quick scroll past several cards moves it
+  once. Clicking into a field still moves it at once.
+- **No racing scroll:** `PreviewScroller` fades the preview out (150 ms), jumps, and fades it back in (250 ms). With reduced
+  motion it just jumps.
+- **Comes back after a save:** the reload no longer carries `#section` (the site would race to it itself). The frame is
+  hidden while it reloads, then jumps to the section and stays there while the live data arrives (the same 4 s hold, using
+  the frame's own `ResizeObserver`), unless the owner scrolls the preview.
 
 ## Testing
 
@@ -99,8 +128,9 @@ view 10 % before its top reaches the screen's bottom edge), so a fast scroll can
   in-view and reduced-motion sections alone, disconnects on destroy, does nothing without an observer.
 - **Rules:** the admin can update `home/drumCircle` with the existing keys; a visitor can't; extra keys are refused.
 - **E2E:** edit a drum circle picture's description and title, publish, and see them on the home page. The suite runs with
-  reduced motion, so screenshots don't change. One extra desktop test runs with motion on and checks a lower section ends
-  fully visible after scrolling to it.
+  reduced motion, so screenshots don't change. `home-reveal.e2e.ts` runs with motion on: a lower section starts hidden and
+  ends visible, `/#contact` lands exactly, and reduced motion leaves everything visible. `admin-editor.e2e.ts`: scrolling the
+  editor to a card moves the preview to its section.
 - **Speed:** initial download size and Lighthouse on mobile and desktop, compared with 1.8.0.
 
 ## Diagrams and docs to update
@@ -110,4 +140,5 @@ in the data model, editor docs (ADR-0014 list of editable sections), CHANGELOG.
 
 ---
 
-**Approval:** ☐ Pending
+**Approval:** ☐ Pending. Parts 2 and 3 were built on the owner's request of 2026-11-17 ("please check and update the
+code"), ahead of approving this record, for the owner to try locally. Part 1 waits for approval.

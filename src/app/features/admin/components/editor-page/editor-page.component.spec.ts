@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { EDITOR_TAB_ROUTE_KEY } from '../../models/editor-nav.constants';
 import { EditorTab } from '../../models/editor-tab.enum';
 import { layoutStub, provideEditorTesting, provideLayout } from '../../testing/editor-testing';
+import { EditorPageViewModel } from '../../view-models/editor-page.view-model';
 import EditorPageComponent from './editor-page.component';
 
 describe('EditorPageComponent', () => {
@@ -46,6 +47,25 @@ describe('EditorPageComponent', () => {
 
     expect(toggle.getAttribute('aria-expanded')).toBe('true');
     expect(element.querySelector('.ep')?.classList).toContain('ep--preview');
+  });
+
+  it('should let the preview follow the card scrolled to only while it is beside the form', () => {
+    const { fixture, element } = render();
+    const model = fixture.debugElement.injector.get(EditorPageViewModel);
+    const follow = vi.spyOn(model, 'follow');
+    const card = fixture.debugElement.query(
+      (node) =>
+        node.nativeElement instanceof HTMLElement &&
+        node.nativeElement.classList.contains('ep-card'),
+    );
+
+    // jsdom has no layout: the preview column has no width, as when phones hide it.
+    card.triggerEventHandler('entered');
+    expect(follow).not.toHaveBeenCalled();
+    Object.defineProperty(element.querySelector('#editor-preview'), 'offsetWidth', { value: 600 });
+    card.triggerEventHandler('entered');
+
+    expect(follow).toHaveBeenCalledTimes(1);
   });
 
   it('should ask the browser to confirm closing only while a change could be lost', () => {

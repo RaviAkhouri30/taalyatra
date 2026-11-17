@@ -24,6 +24,7 @@ import { HomeShowsComponent } from './sections/shows/home-shows.component';
 import { HomeVideosComponent } from './sections/videos/home-videos.component';
 import { HomeTeamComponent } from './sections/team/home-team.component';
 import { HomeTrustComponent } from './sections/trust/home-trust.component';
+import { RevealDirective } from '@shared/directives/reveal.directive';
 
 /**
  * Home page (design: Main.dc.html). A composition container only: each section owns its
@@ -55,6 +56,7 @@ import { HomeTrustComponent } from './sections/trust/home-trust.component';
     HomeTeamComponent,
     HomeTrustComponent,
     HomeVideosComponent,
+    RevealDirective,
   ],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',

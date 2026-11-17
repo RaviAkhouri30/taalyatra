@@ -3,15 +3,19 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  type ElementRef,
   Injector,
   afterNextRender,
   effect,
   inject,
   untracked,
+  viewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BaseComponent } from '@shared/base/base-component';
 import { type IUnsavedChanges } from '../../guards/unsaved-changes.guard';
+import { InViewDirective } from '../../directives/in-view.directive';
+import { type IEditorSection } from '../../models/i-editor-section';
 import { EditorNavService } from '../../services/editor-nav.service';
 import { type IEditorPage, EditorPageViewModel } from '../../view-models/editor-page.view-model';
 import { PreviewFrameComponent } from '../preview-frame/preview-frame.component';
@@ -24,7 +28,7 @@ import { SchemaFieldsComponent } from '../schema-fields/schema-fields.component'
  */
 @Component({
   selector: 'app-editor-page',
-  imports: [PreviewFrameComponent, PublishBarComponent, SchemaFieldsComponent],
+  imports: [InViewDirective, PreviewFrameComponent, PublishBarComponent, SchemaFieldsComponent],
   templateUrl: './editor-page.component.html',
   styleUrl: './editor-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,6 +46,7 @@ export default class EditorPageComponent
   private readonly document = inject(DOCUMENT);
   private readonly injector = inject(Injector);
   private readonly fragment = inject(ActivatedRoute).snapshot.fragment;
+  private readonly previewColumn = viewChild.required<ElementRef<HTMLElement>>('previewColumn');
   private arrived = false;
 
   public constructor() {
@@ -70,6 +75,18 @@ export default class EditorPageComponent
 
   public hasUnsavedChanges(): boolean {
     return this.model.hasUnsavedChanges();
+  }
+
+  /**
+   * Follows the card scrolled to, but only while the preview is beside the form. Phones and
+   * tablets keep it behind a switch at the top of the form; scrolling back up to that switch would
+   * otherwise take the preview back to the first card. There it shows the last card worked in.
+   * @param section The card's section.
+   */
+  protected follow(section: IEditorSection): void {
+    if (this.previewColumn().nativeElement.offsetWidth > 0) {
+      this.model.follow(section);
+    }
   }
 
   /** Asks the browser to confirm closing the tab while a change could be lost. */

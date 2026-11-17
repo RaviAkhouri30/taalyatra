@@ -23,6 +23,8 @@
           <section
             class="ep-card"
             [attr.aria-labelledby]="entry.titleId"
+            appInView
+            (entered)="follow(entry.section)"
             (focusin)="model.focus(entry.section)"
           >
             <h2 class="d" [id]="entry.titleId">{{ entry.section.title }}</h2>
@@ -39,7 +41,7 @@
       </div>
       <app-publish-bar />
     </div>
-    <aside id="editor-preview" class="ep-preview" aria-label="Preview">
+    <aside #previewColumn id="editor-preview" class="ep-preview" aria-label="Preview">
       <app-preview-frame [anchor]="model.activeAnchor()" [version]="model.previewVersion()" />
     </aside>
   </div>
