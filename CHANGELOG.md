@@ -6,6 +6,22 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+### Added
+
+- **Reorder lists easily:** shows, experiences, team, videos and gallery photos have an Order panel: drag a name, or use the
+  arrows. The featured show or experience is pinned first. Long items fold to one line.
+- **Fold less important home sections** behind Show more: Our philosophy and Good to know everywhere, and Where we play, How it
+  works, Proof in the room and From our circles on phones. Each is changeable in Sections & pages; Find on page still opens
+  them.
+
+### Changed
+
+- The drum circle section shows one picture beside the About text, with smaller tags and the proposal button; on phones its
+  session flow folds. The editor edits one picture.
+- WhatsApp and Call buttons are green and terracotta with dark icons, and animate a few times like the chat icon, then rest.
+  The chat icon now rests too. Nothing moves for visitors who ask for less motion.
+- The editor's preview stays hidden until the section being edited has loaded, instead of showing a blank page.
+
 ## [1.9.0] - 2026-11-17
 
 ### Added

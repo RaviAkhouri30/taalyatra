@@ -207,3 +207,75 @@ describe('SchemaFieldsComponent · a list with one switch on', () => {
     expect(removeButton(1)?.disabled).toBe(true);
   });
 });
+
+const SORTED: FieldSchema[] = [
+  {
+    key: 'shows',
+    label: 'Shows',
+    kind: FieldKind.List,
+    addLabel: 'Add show',
+    maxItems: 5,
+    sortable: { titleKey: 'title' },
+    item: {
+      key: 'show',
+      label: 'Show',
+      kind: FieldKind.Group,
+      fields: [{ key: 'title', label: 'Name', kind: FieldKind.Text }],
+    },
+  },
+];
+
+@Component({
+  imports: [SchemaFieldsComponent],
+  template: '<app-schema-fields [fields]="fields" [group]="form" idPrefix="s" />',
+})
+class SortedHostComponent {
+  public readonly fields = SORTED;
+  public readonly form = buildFormGroup(SORTED, {
+    shows: [{ title: 'Live band' }, { title: 'Acoustic' }],
+  });
+}
+
+describe('SchemaFieldsComponent · a sortable list', () => {
+  async function render() {
+    const fixture = TestBed.createComponent(SortedHostComponent);
+    await fixture.whenStable();
+    const element = fixture.nativeElement as HTMLElement;
+    const toggles = () =>
+      Array.from(element.querySelectorAll<HTMLButtonElement>('.sf-item-toggle'));
+    const bodies = () => Array.from(element.querySelectorAll<HTMLElement>('.sf-item-body'));
+    return { fixture, element, toggles, bodies };
+  }
+
+  it('should show the Order panel, and fold each item to its name', async () => {
+    const { element, toggles, bodies } = await render();
+
+    expect(element.querySelector('app-list-order')).not.toBeNull();
+    expect(toggles().map((toggle) => toggle.textContent.trim())).toEqual(['Live band', 'Acoustic']);
+    expect(toggles()[0]?.getAttribute('aria-expanded')).toBe('false');
+    expect(bodies().every((body) => body.hidden)).toBe(true);
+  });
+
+  it('should open and close an item from its name', async () => {
+    const { fixture, toggles, bodies } = await render();
+
+    toggles()[1]?.click();
+    await fixture.whenStable();
+    expect(bodies()[1]?.hidden).toBe(false);
+    expect(toggles()[1]?.getAttribute('aria-expanded')).toBe('true');
+
+    toggles()[1]?.click();
+    await fixture.whenStable();
+    expect(bodies()[1]?.hidden).toBe(true);
+  });
+
+  it('should open a newly added item, ready to fill in', async () => {
+    const { fixture, element, toggles, bodies } = await render();
+
+    element.querySelector<HTMLButtonElement>('.sf-add')?.click();
+    await fixture.whenStable();
+
+    expect(toggles()[2]?.textContent.trim()).toBe('Show 3');
+    expect(bodies()[2]?.hidden).toBe(false);
+  });
+});

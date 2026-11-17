@@ -1,0 +1,96 @@
+// Floating contact buttons (0015 V17): WhatsApp, Call and the chat toggle share one look, and a
+// short attention animation that plays a few times after they appear, then rests. Endless motion
+// would need a way to stop it (WCAG 2.2.2); nothing moves for visitors who ask for less.
+@use 'tokens' as t;
+
+// How many times an attention animation plays before it rests.
+$fab-plays: 3;
+
+@mixin fab-button($size: 56px) {
+  position: relative;
+  width: $size;
+  height: $size;
+  border-radius: 50%;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 0 2px t.$color-fab-ring,
+    0 8px 24px rgb(0 0 0 / 50%);
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.08);
+  }
+}
+
+// WhatsApp: brand green, and a ring that pulses outwards.
+@mixin fab-whatsapp($delay: 1.2s) {
+  background: t.$color-whatsapp;
+  color: t.$color-ink;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid t.$color-whatsapp;
+    opacity: 0;
+    animation: fab-ring 1.4s ease-out $delay $fab-plays;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::after {
+      animation: none;
+    }
+  }
+
+  @keyframes fab-ring {
+    0% {
+      transform: scale(1);
+      opacity: 0.9;
+    }
+
+    100% {
+      transform: scale(1.6);
+      opacity: 0;
+    }
+  }
+}
+
+// Call: terracotta, and the handset gives a short ring-shake.
+@mixin fab-call($delay: 1.6s) {
+  background: t.$color-clay;
+  color: t.$color-ink;
+
+  > * {
+    animation: fab-shake 1.4s ease-in-out $delay $fab-plays;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    > * {
+      animation: none;
+    }
+  }
+
+  @keyframes fab-shake {
+    0%,
+    40%,
+    100% {
+      transform: rotate(0);
+    }
+
+    8%,
+    24% {
+      transform: rotate(-14deg);
+    }
+
+    16%,
+    32% {
+      transform: rotate(14deg);
+    }
+  }
+}

@@ -1157,6 +1157,14 @@
         "whatsApp": true,
         "utilityBar": true,
         "intro": true
+      },
+      "folded": {
+        "philosophy": "always",
+        "cities": "phone",
+        "how": "phone",
+        "instagram": "phone",
+        "proof": "phone",
+        "faq": "always"
       }
     }
   },

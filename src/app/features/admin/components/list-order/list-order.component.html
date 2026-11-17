@@ -1,0 +1,48 @@
+<div class="lo">
+  <p class="lo-title">
+    <b>Order</b> <span>Drag a name, or use the arrows. The site shows them in this order.</span>
+  </p>
+  <ol class="lo-list" cdkDropList cdkDropListLockAxis="y" (cdkDropListDropped)="drop($event)">
+    @for (row of rows(); track row.control) {
+      <li
+        class="lo-row"
+        cdkDrag
+        [cdkDragDisabled]="row.featured"
+        [class.lo-row--featured]="row.featured"
+      >
+        <span class="lo-handle" cdkDragHandle aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24">
+            <path
+              d="M9 5h.01M15 5h.01M9 12h.01M15 12h.01M9 19h.01M15 19h.01"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"
+            />
+          </svg>
+        </span>
+        <span class="lo-name">{{ row.title }}</span>
+        @if (row.featured) {
+          <span class="lo-star">★ Featured, always first</span>
+        }
+        <span class="lo-actions">
+          <button
+            type="button"
+            [disabled]="!canMoveUp(row)"
+            [attr.aria-label]="'Move ' + row.title + ' up'"
+            (click)="move(row, -1)"
+          >
+            ↑
+          </button>
+          <button
+            type="button"
+            [disabled]="!canMoveDown(row)"
+            [attr.aria-label]="'Move ' + row.title + ' down'"
+            (click)="move(row, 1)"
+          >
+            ↓
+          </button>
+        </span>
+      </li>
+    }
+  </ol>
+</div>

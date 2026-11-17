@@ -1,0 +1,17 @@
+<div class="fold-body" [id]="bodyId" [attr.hidden]="hidden()" (beforematch)="onFound()">
+  <ng-content />
+</div>
+@if (foldable()) {
+  <button
+    type="button"
+    class="fold-toggle"
+    [attr.aria-expanded]="opened()"
+    [attr.aria-controls]="bodyId"
+    (click)="toggle()"
+  >
+    {{ opened() ? labels.less : labels.more }}
+    <svg class="fold-chev" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" />
+    </svg>
+  </button>
+}

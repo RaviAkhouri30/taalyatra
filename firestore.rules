@@ -171,7 +171,7 @@ service cloud.firestore {
     // Keys mirror the HomeSection, SitePage and SiteWidget enums; the rules tests build the
     // document from them. Values are switches; the site treats anything but `false` as visible.
     function isValidVisibility(data) {
-      return data.keys().hasOnly(['sections', 'pages', 'widgets'])
+      return data.keys().hasOnly(['sections', 'pages', 'widgets', 'folded'])
         && (!('sections' in data) || (data.sections is map
             && data.sections.keys().hasOnly(['marquee', 'trust', 'audiences', 'experiences',
                                              'shows', 'drumCircle', 'rhythmGame', 'videos',
@@ -181,7 +181,12 @@ service cloud.firestore {
             && data.pages.keys().hasOnly(['videos', 'team', 'shows', 'achievements'])))
         && (!('widgets' in data) || (data.widgets is map
             && data.widgets.keys().hasOnly(['assistant', 'actionBar', 'whatsApp', 'utilityBar',
-                                            'intro'])));
+                                            'intro'])))
+        // Foldable sections mirror FOLD_DEFAULTS, and the modes FoldMode (0015).
+        && (!('folded' in data) || (data.folded is map
+            && data.folded.keys().hasOnly(['philosophy', 'cities', 'how', 'instagram', 'proof',
+                                           'faq'])
+            && data.folded.values().hasOnly(['never', 'phone', 'desktop', 'always'])));
     }
 
     // A collection's numbered document, from 001 up to its item limit.

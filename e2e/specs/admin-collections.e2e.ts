@@ -99,7 +99,7 @@ test.describe('Admin collections', () => {
   test('should add a video with its YouTube thumbnail', async ({ editor, page }) => {
     await editor.openTab('Videos');
     const videos = editor.card('Videos');
-    const count = await videos.getByLabel('Title').count();
+    const count = await videos.getByRole('group', { name: /^Video \d+$/ }).count();
     await videos.getByRole('button', { name: 'Add video' }).click();
     const video = videos.getByRole('group', { name: `Video ${String(count + 1)}` });
     await video.getByRole('button', { name: 'Use the YouTube thumbnail' }).click();
@@ -144,18 +144,27 @@ test.describe('Admin collections', () => {
   }) => {
     await editor.openTab('Music & creativity');
     const cards = editor.card('Experiences', { exact: true });
-    const first = cards.getByRole('group', { name: 'Experience 1', exact: true });
-    const second = cards.getByRole('group', { name: 'Experience 2', exact: true });
-    await expect(first.getByLabel('Name', { exact: true })).toHaveValue('Drum Circle');
-    await expect(first.getByLabel('Button on the card')).toHaveValue('See full details');
-    await expect(second.getByLabel('Button on the card')).toHaveCount(0);
+    // Items fold to their names (0015 V14), and a featured item moves to the top: find them by name.
+    const item = (name: string) =>
+      cards
+        .getByRole('group', { name: /^Experience \d+$/ })
+        .filter({ has: page.getByRole('button', { name, exact: true }) });
+    const drumCircle = item('Drum Circle');
+    const boombastic = item('Boombastic');
+    await expect(drumCircle.getByLabel('Name', { exact: true })).toHaveValue('Drum Circle');
+    await expect(drumCircle.getByLabel('Button on the card')).toHaveValue('See full details');
+    await expect(boombastic.getByLabel('Button on the card')).toHaveCount(0);
 
-    await second.getByRole('switch', { name: 'Featured' }).check();
-    await expect(first.getByRole('switch', { name: 'Featured' })).not.toBeChecked();
-    await expect(second.getByLabel('Button on the card')).toHaveValue('See full details');
-    await second.getByRole('button', { name: 'Choose or upload' }).click();
-    await second.getByLabel('Choose photos').setInputFiles([photo]);
-    await second.getByRole('button', { name: 'Choose new-photo.jpg' }).click();
+    await cards.getByRole('button', { name: 'Boombastic', exact: true }).click();
+    await boombastic.getByRole('switch', { name: 'Featured' }).check();
+    await expect(drumCircle.getByRole('switch', { name: 'Featured' })).not.toBeChecked();
+    await expect(cards.getByRole('group', { name: 'Experience 1', exact: true })).toContainText(
+      'Boombastic',
+    );
+    await expect(boombastic.getByLabel('Button on the card')).toHaveValue('See full details');
+    await boombastic.getByRole('button', { name: 'Choose or upload' }).click();
+    await boombastic.getByLabel('Choose photos').setInputFiles([photo]);
+    await boombastic.getByRole('button', { name: 'Choose new-photo.jpg' }).click();
     await editor.waitForSave();
     await editor.publish();
     await page.goto('/');

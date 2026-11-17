@@ -1,0 +1,105 @@
+@use 'tokens' as t;
+
+.lo {
+  margin-bottom: 18px;
+  padding: 14px;
+  border: 1px solid t.$color-line;
+  border-radius: 12px;
+  background: t.$color-ink;
+}
+
+.lo-title {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: t.$color-muted;
+
+  b {
+    color: t.$color-cream;
+    margin-right: 4px;
+  }
+}
+
+.lo-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid t.$color-field-border;
+  border-radius: 9px;
+  background: t.$color-surface;
+  font-size: 14px;
+}
+
+.lo-row--featured {
+  border-color: t.$color-amber;
+}
+
+.lo-handle {
+  display: inline-flex;
+  color: t.$color-muted-strong;
+  cursor: grab;
+
+  .lo-row--featured & {
+    visibility: hidden;
+  }
+}
+
+.lo-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lo-star {
+  font-size: 12px;
+  color: t.$color-amber;
+  white-space: nowrap;
+}
+
+.lo-actions {
+  display: inline-flex;
+  gap: 4px;
+
+  button {
+    min-width: 32px;
+    min-height: 32px;
+    border: 1px solid t.$color-field-border;
+    border-radius: 7px;
+    background: transparent;
+    color: t.$color-cream;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+  }
+}
+
+// The row being dragged, and the gap it leaves.
+:host ::ng-deep .cdk-drag-preview {
+  box-shadow: 0 8px 24px rgb(0 0 0 / 50%);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+
+.cdk-drag-animating,
+.lo-list.cdk-drop-list-dragging .lo-row:not(.cdk-drag-placeholder) {
+  transition: transform 0.2s;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}

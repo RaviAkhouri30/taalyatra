@@ -18,8 +18,9 @@ describe('DRUM_CIRCLE_SECTIONS', () => {
   const list = (key: string) => lists.find((field) => field.key === key);
 
   it('should edit every key of the stored section, each in exactly one card', () => {
+    // The picture card edits `gallery` through its view.
     const keys = DRUM_CIRCLE_SECTIONS.flatMap((section) =>
-      section.fields.map((field) => field.key),
+      section.view === undefined ? section.fields.map((field) => field.key) : ['gallery'],
     );
 
     expect([...keys].sort((a, b) => a.localeCompare(b))).toEqual(
@@ -36,13 +37,18 @@ describe('DRUM_CIRCLE_SECTIONS', () => {
     expect(DRUM_CIRCLE_SECTIONS.every((section) => tab?.sections.includes(section))).toBe(true);
   });
 
-  it('should keep exactly four facts and three pictures, which the layout has columns for', () => {
-    expect([list('specs')?.minItems, list('specs')?.maxItems]).toEqual([4, 4]);
-    expect([list('gallery')?.minItems, list('gallery')?.maxItems]).toEqual([
-      DRUM_CIRCLE_ITEMS.pictures,
-      DRUM_CIRCLE_ITEMS.pictures,
+  it('should keep exactly four facts, which the layout has columns for', () => {
+    expect([list('specs')?.minItems, list('specs')?.maxItems]).toEqual([
+      DRUM_CIRCLE_ITEMS.facts,
+      DRUM_CIRCLE_ITEMS.facts,
     ]);
-    expect(list('gallery')?.item.kind).toBe(FieldKind.Image);
+  });
+
+  it('should edit one picture, stored as the first of the gallery list', () => {
+    const card = DRUM_CIRCLE_SECTIONS.find((section) => section.id === 'drum-circle-picture');
+
+    expect(card?.fields.map((field) => field.kind)).toEqual([FieldKind.Image]);
+    expect(sectionContent(card!, stored)).toEqual({ picture: stored.gallery[0] });
   });
 
   it('should hold the stored content in valid forms', () => {
@@ -69,14 +75,14 @@ describe('DRUM_CIRCLE_SECTIONS', () => {
   });
 
   it('should block publishing a picture with no description', () => {
-    const [first, ...rest] = stored.gallery;
+    const [first] = stored.gallery;
     const report = PublishReport.check(
       new Map([
         [
           ContentPath.HomeDrumCircle,
           {
             path: ContentPath.HomeDrumCircle,
-            content: { ...stored, gallery: [{ ...first, alt: '' }, ...rest] },
+            content: { ...stored, gallery: [{ ...first, alt: '' }] },
             savedAt: 'x',
           },
         ],

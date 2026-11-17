@@ -4,6 +4,9 @@ import {
   PREVIEW_SETTLE_MS,
 } from '../../models/editor-nav.constants';
 
+/** When the waiting frame's own fallback fade-in starts, as a share of the hold. */
+const WAIT_FADE_START = 0.94;
+
 /** What the owner does in the preview that means "leave the scroll position to me". */
 const TAKE_OVER_EVENTS = ['wheel', 'touchstart', 'keydown', 'mousedown'] as const;
 
@@ -17,6 +20,8 @@ const TAKE_OVER_EVENTS = ['wheel', 'touchstart', 'keydown', 'mousedown'] as cons
 export class PreviewScroller {
   private fade: Animation | null = null;
   private stopPinning: (() => void) | null = null;
+  /** Hidden until the section being edited has rendered (the site is still loading). */
+  private waiting = false;
 
   /**
    * @param frame The preview's frame.
@@ -44,7 +49,7 @@ export class PreviewScroller {
       this.arrive(anchor);
       return;
     }
-    if (this.fade?.effect?.getComputedTiming().progress === 1) {
+    if (this.waiting || this.fade?.effect?.getComputedTiming().progress === 1) {
       this.arrive(anchor);
       return;
     }
@@ -71,10 +76,24 @@ export class PreviewScroller {
     this.fade?.cancel();
   }
 
-  /** Jumps while hidden, fades back in, and keeps the section in place. */
+  /**
+   * Jumps while hidden, then fades back in and keeps the section in place. If the section hasn't
+   * rendered yet (the site is still loading), the frame stays hidden until it has: a blank page
+   * would flash otherwise.
+   */
   private arrive(anchor: string): void {
-    this.jump(anchor);
+    if (this.jump(anchor) || !this.animate) {
+      this.reveal();
+    } else {
+      this.waitHidden();
+    }
+    this.pin(anchor);
+  }
+
+  /** Fades the frame in, replacing whatever was hiding it. */
+  private reveal(): void {
     const hidden = this.fade;
+    this.waiting = false;
     this.fade = this.animate
       ? this.frame.animate([{ opacity: 0 }, { opacity: 1 }], {
           duration: PREVIEW_FADE_IN_MS,
@@ -83,18 +102,34 @@ export class PreviewScroller {
       : null;
     // Cancelled after the fade-in starts, so the frame never shows at full opacity in between.
     hidden?.cancel();
-    this.pin(anchor);
   }
 
-  private jump(anchor: string): void {
+  /**
+   * Keeps the frame hidden while the section loads, for as long as the hold lasts at most. The
+   * animation is also the fallback: it ends with a fade-in, so a section that never appears
+   * can't leave the preview hidden. No timer is needed.
+   */
+  private waitHidden(): void {
+    const hidden = this.fade;
+    this.waiting = true;
+    this.fade = this.frame.animate(
+      [{ opacity: 0 }, { opacity: 0, offset: WAIT_FADE_START }, { opacity: 1 }],
+      { duration: PREVIEW_SETTLE_MS },
+    );
+    hidden?.cancel();
+  }
+
+  /** @returns Whether the section was there to jump to. */
+  private jump(anchor: string): boolean {
     const site = this.site();
     const section = site?.document.getElementById(anchor);
     if (!site || !section) {
-      return;
+      return false;
     }
     // The site's own window only: `scrollIntoView` would also scroll the editor's panels that
     // hold the frame. 'instant': never an animated scroll, whatever the site's scroll behaviour.
     site.scrollTo({ top: section.getBoundingClientRect().top + site.scrollY, behavior: 'instant' });
+    return true;
   }
 
   /**
@@ -114,7 +149,9 @@ export class PreviewScroller {
         stop();
         return;
       }
-      this.jump(anchor);
+      if (this.jump(anchor) && this.waiting) {
+        this.reveal();
+      }
     });
     const stop = (): void => {
       observer.disconnect();

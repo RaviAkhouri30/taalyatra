@@ -1,0 +1,37 @@
+@use 'tokens' as t;
+
+:host {
+  display: block;
+}
+
+.fold-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 9px 18px;
+  border: 1px solid t.$color-bronze;
+  border-radius: t.$radius-pill;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover {
+    border-color: t.$color-amber;
+  }
+
+  &[aria-expanded='true'] .fold-chev {
+    transform: rotate(180deg);
+  }
+}
+
+.fold-chev {
+  transition: transform 0.2s;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}

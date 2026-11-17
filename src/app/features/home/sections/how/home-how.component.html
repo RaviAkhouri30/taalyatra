@@ -3,7 +3,9 @@
     <div class="wrap">
       <p class="eyebrow">{{ section.eyebrow }}</p>
       <h2 class="d h2 title">{{ section.title }}</h2>
-      <app-steps [steps]="section.steps" />
+      <app-fold [mode]="fold()">
+        <app-steps [steps]="section.steps" />
+      </app-fold>
     </div>
   </section>
 }

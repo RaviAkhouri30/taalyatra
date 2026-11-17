@@ -33,18 +33,17 @@ describe('HomeDrumCircleComponent', () => {
     const { element } = render(DRUM_CIRCLE_DTO);
 
     expect(queryAll(element, '.body')).toHaveLength(2);
-    expect(texts(element, '.chips--objectives .chip')).toEqual(DRUM_CIRCLE_DTO.objectives);
-    expect(texts(element, '.chips--occasions .chip')).toEqual(DRUM_CIRCLE_DTO.occasions);
-    expect(element.querySelector('.two .btn')?.getAttribute('href')).toBe('/#contact');
+    const [objectives, occasions] = queryAll(element, '.text .chips');
+    expect(texts(objectives!, '.chip')).toEqual(DRUM_CIRCLE_DTO.objectives);
+    expect(texts(occasions!, '.chip')).toEqual(DRUM_CIRCLE_DTO.occasions);
+    expect(element.querySelector('.text .btn')?.getAttribute('href')).toBe('/#contact');
   });
 
-  it('should render the photos and the similar-experience links', () => {
+  it('should show one picture beside the text, and the similar-experience links', () => {
     const { element } = render(DRUM_CIRCLE_DTO);
 
-    expect(queryAll(element, '.gal img').map((image) => image.getAttribute('alt'))).toEqual([
+    expect(queryAll(element, '.two img').map((image) => image.getAttribute('alt'))).toEqual([
       'Drum circle seen from above',
-      'Hands on a drum',
-      'Djembe close-up',
     ]);
     expect(
       queryAll(element, '.rel a').every((link) => link.getAttribute('href') === '/#experiences'),
@@ -70,6 +69,12 @@ describe('HomeDrumCircleComponent', () => {
       true,
       false,
     ]);
+  });
+
+  it('should leave the picture out when none is stored', () => {
+    const { element } = render({ ...DRUM_CIRCLE_DTO, gallery: [] });
+
+    expect(element.querySelector('.pic')).toBeNull();
   });
 
   it('should render nothing until the details have loaded', () => {

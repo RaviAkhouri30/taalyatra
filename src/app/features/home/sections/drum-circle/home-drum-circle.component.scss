@@ -98,81 +98,61 @@
 .two {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
-  gap: 56px;
-  align-items: start;
+  gap: 48px;
+  align-items: stretch;
 
   @include bp.down(bp.$tablet) {
     grid-template-columns: 1fr;
+    gap: 28px;
   }
 }
 
 .about-title {
-  font-size: 26px;
-  margin-bottom: 16px;
+  font-size: 24px;
+  margin-bottom: 14px;
 }
 
 .body {
   max-width: 64ch;
-
-  &:not(:last-child) {
-    margin-bottom: 18px;
-  }
+  margin-bottom: 16px;
 }
 
 .list-title {
-  font-size: 20px;
-  margin-bottom: 12px;
+  font-size: 16px;
+  margin: 22px 0 10px;
 }
 
-.chips--objectives {
-  margin-bottom: 20px;
+.chips {
+  margin-bottom: 4px;
 }
 
-.chips--occasions {
-  margin-bottom: 24px;
-}
-
+// Small tags, so the lists stay compact beside the picture.
 .chip {
   display: inline-block;
   border: 1px solid #7e8a55;
   border-radius: t.$radius-pill;
-  padding: 5px 14px;
-  font-size: 14px;
-  margin: 0 8px 10px 0;
+  padding: 3px 10px;
+  font-size: 12.5px;
+  margin: 0 6px 8px 0;
   color: #d7dfbe;
-
-  @include bp.down(bp.$phone) {
-    font-size: 13px;
-    padding: 4px 12px;
-  }
 }
 
-.gal {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
-  gap: 16px;
-  margin-top: 56px;
+.text a {
+  margin-top: 18px;
+}
+
+// The one picture: as tall as the text beside it; on phones and tablets, first and shorter.
+.pic {
+  position: relative;
+  display: block;
+  min-height: 360px;
+  border-radius: 18px;
+  overflow: hidden;
 
   @include bp.down(bp.$tablet) {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  @include bp.down(bp.$phone) {
-    grid-template-columns: 1fr;
-  }
-
-  // Photo frame: NgOptimizedImage `fill` crops the photo to it (design: img with object-fit).
-  .ph {
-    position: relative;
-    display: block;
-    width: 100%;
-    height: 240px;
-    border-radius: 16px;
-    overflow: hidden;
-
-    @include bp.down(bp.$phone) {
-      height: 170px;
-    }
+    order: -1;
+    min-height: 0;
+    aspect-ratio: 16 / 10;
   }
 
   img {

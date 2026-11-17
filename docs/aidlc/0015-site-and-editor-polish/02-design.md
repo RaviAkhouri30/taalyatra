@@ -114,4 +114,4 @@ component.
 
 ---
 
-**Approval:** ☐ Pending
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-17, with decisions 1–5 as recommended.

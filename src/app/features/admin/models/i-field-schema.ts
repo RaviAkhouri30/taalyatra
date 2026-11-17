@@ -70,6 +70,14 @@ export interface IGroupFieldSchema extends IFieldBase {
   readonly onlyWhen?: string;
 }
 
+/** A list that gets an Order panel and folding items (0015 V14). */
+export interface ISortableList {
+  /** The item value's key that names it in the Order panel, e.g. `title` (or `alt` for a picture). */
+  readonly titleKey: string;
+  /** The item's on/off key that marks it featured: pinned first, and can't be moved below others. */
+  readonly featuredKey?: string;
+}
+
 /** A list the owner can add to, remove from and reorder. */
 export interface IListFieldSchema extends IFieldBase {
   readonly kind: FieldKind.List;
@@ -80,6 +88,8 @@ export interface IListFieldSchema extends IFieldBase {
   readonly maxItems: number;
   /** The fewest items allowed; the Remove buttons stop there. */
   readonly minItems?: number;
+  /** Long lists get an Order panel above them, and their items fold (0015 V14). */
+  readonly sortable?: ISortableList;
 }
 
 /** Any editor field. */

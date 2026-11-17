@@ -18,9 +18,12 @@ test.describe('Home reveal', () => {
     await home.open('contact');
 
     await expect(home.contactSection).toBeInViewport();
+    // Within 2 px: tablets round sub-pixel positions (before the fix it stopped thousands short).
     await expect
-      .poll(() => home.contactSection.evaluate((section) => section.getBoundingClientRect().top))
-      .toBeCloseTo(0, 0);
+      .poll(() =>
+        home.contactSection.evaluate((section) => Math.abs(section.getBoundingClientRect().top)),
+      )
+      .toBeLessThanOrEqual(2);
   });
 
   test('should leave everything visible when the visitor asks for less motion', async ({

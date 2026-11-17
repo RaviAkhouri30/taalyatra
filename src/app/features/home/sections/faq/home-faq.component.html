@@ -5,14 +5,16 @@
         <p class="eyebrow">{{ section.eyebrow }}</p>
         <h2 class="d h2 title">{{ section.title }}</h2>
       </div>
-      <div class="faq">
-        @for (item of section.items; track item.question) {
-          <details [open]="item.open">
-            <summary>{{ item.question }}</summary>
-            <p>{{ item.answer }}</p>
-          </details>
-        }
-      </div>
+      <app-fold [mode]="fold()">
+        <div class="faq">
+          @for (item of section.items; track item.question) {
+            <details [open]="item.open">
+              <summary>{{ item.question }}</summary>
+              <p>{{ item.answer }}</p>
+            </details>
+          }
+        </div>
+      </app-fold>
     </div>
   </section>
 }
