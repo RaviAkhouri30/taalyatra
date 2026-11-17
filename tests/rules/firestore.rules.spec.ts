@@ -106,6 +106,9 @@ describe('firestore.rules', () => {
       const longest = Object.fromEntries(
         Object.entries(PROPOSAL_MAX_LENGTH).map(([field, max]) => [field, 'x'.repeat(max)]),
       );
+      // The email must still look like one: the longest valid address, not 254 x's.
+      const domain = '@example.com';
+      longest['email'] = 'x'.repeat(PROPOSAL_MAX_LENGTH.email - domain.length) + domain;
 
       await expect(
         addDoc(collection(visitor, 'proposals'), { ...proposal(), ...longest }),
@@ -124,6 +127,8 @@ describe('firestore.rules', () => {
     it.each([
       ['an empty name', { name: '' }],
       ['an empty phone', { phone: '' }],
+      ['an empty email', { email: '' }],
+      ['an email without an @', { email: 'asha.example.com' }],
       ['a non-string field', { groupSize: 30 }],
       ['an extra field', { admin: true }],
       ['a client-supplied time', { createdAt: Timestamp.fromDate(new Date('2020-01-01')) }],

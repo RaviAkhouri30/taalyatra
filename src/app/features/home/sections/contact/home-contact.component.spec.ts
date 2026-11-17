@@ -103,16 +103,19 @@ describe('HomeContactComponent', () => {
     expect(texts(element, '.err')).toEqual([
       'Please tell us your name.',
       'Please enter a 10-digit phone number.',
+      'Please enter a valid email address.',
     ]);
     expect(field('name').getAttribute('aria-invalid')).toBe('true');
     expect(field('name').getAttribute('aria-describedby')).toBe('proposal-name-error');
-    expect(field('email').getAttribute('aria-invalid')).toBe('false');
+    expect(field('email').getAttribute('aria-invalid')).toBe('true');
+    expect(field('email').required).toBe(true);
   });
 
   it('should email and store a valid request, confirm it and clear the answers', () => {
     const { send, create, submit, type, field, status } = render(HOME.contact);
     type('name', 'Asha');
     type('phone', '98765 43210');
+    type('email', 'asha@example.com');
 
     submit();
 
@@ -132,6 +135,7 @@ describe('HomeContactComponent', () => {
     const { submit, type, status, log } = render(HOME.contact, offline, ok);
     type('name', 'Asha');
     type('phone', '9876543210');
+    type('email', 'asha@example.com');
 
     submit();
 
@@ -143,6 +147,7 @@ describe('HomeContactComponent', () => {
     const { submit, type, status } = render(HOME.contact, ok, offline);
     type('name', 'Asha');
     type('phone', '9876543210');
+    type('email', 'asha@example.com');
 
     submit();
 
@@ -156,6 +161,7 @@ describe('HomeContactComponent', () => {
     expect(field('message').getAttribute('maxlength')).toBe(String(PROPOSAL_MAX_LENGTH.message));
     type('name', 'A'.repeat(PROPOSAL_MAX_LENGTH.name + 1));
     type('phone', '9876543210');
+    type('email', 'asha@example.com');
     submit();
 
     expect(send).not.toHaveBeenCalled();
@@ -166,6 +172,7 @@ describe('HomeContactComponent', () => {
     const { element, send, submit, type } = render(HOME.contact, () => pending);
     type('name', 'Asha');
     type('phone', '9876543210');
+    type('email', 'asha@example.com');
 
     submit();
     submit();
@@ -180,6 +187,7 @@ describe('HomeContactComponent', () => {
     const { submit, type, alert, field } = render(HOME.contact, offline, offline);
     type('name', 'Asha');
     type('phone', '9876543210');
+    type('email', 'asha@example.com');
 
     submit();
 

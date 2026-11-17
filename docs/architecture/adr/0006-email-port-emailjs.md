@@ -37,3 +37,7 @@ every message after `fakeLatencyMs`. `emailServiceFactory()` picks EmailJS only 
   who copies the public key can send junk to `contact@taalyatra.in` or use up the 200 emails a month. Nobody else can
   be emailed, because the template's recipient is fixed, and no request is lost, because the form also stores each
   one. Revisit if junk arrives, with the proposals inbox (1.10.0), or if the plan is upgraded.
+- **Email is required (1.8.1)** on the form and in `firestore.rules`, so every request can be answered. The owner
+  enabled EmailJS's auto-reply to `{{email}}`. That widens the exception: someone abusing the public key could make
+  the account send the auto-reply to addresses of their choosing. If that happens, switch the auto-reply off first.
+  Each request uses two of the free plan's 200 emails a month.

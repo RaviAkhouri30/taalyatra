@@ -1,9 +1,5 @@
 import { FormControl, FormGroup, type ValidatorFn, Validators } from '@angular/forms';
-import {
-  optionalEmailValidator,
-  phoneValidator,
-  requiredTextValidator,
-} from './contact.validators';
+import { emailValidator, phoneValidator, requiredTextValidator } from './contact.validators';
 import { type IProposalFormCopyDto, type ProposalField } from './i-contact';
 import { PROPOSAL_MAX_LENGTH as MAX } from './proposal-limits.constants';
 
@@ -19,8 +15,8 @@ function text(value = '', validators: ValidatorFn[] = []): FormControl<string> {
 }
 
 /**
- * Builds the typed proposal form (CLAUDE.md §6: typed Reactive Forms). Name and phone are
- * required; email is optional but must be valid when given. Every field has the same maximum
+ * Builds the typed proposal form (CLAUDE.md §6: typed Reactive Forms). Name, phone and email are
+ * required, and the email must be valid. Every field has the same maximum
  * length that `firestore.rules` enforces.
  * @returns A new form group.
  */
@@ -33,7 +29,7 @@ export function createProposalForm(): FormGroup<ProposalControls> {
     date: text('', [Validators.maxLength(MAX.date)]),
     name: text('', [requiredTextValidator, Validators.maxLength(MAX.name)]),
     phone: text('', [phoneValidator, Validators.maxLength(MAX.phone)]),
-    email: text('', [optionalEmailValidator, Validators.maxLength(MAX.email)]),
+    email: text('', [emailValidator, Validators.maxLength(MAX.email)]),
     message: text('', [Validators.maxLength(MAX.message)]),
   });
 }

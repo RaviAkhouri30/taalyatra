@@ -8,7 +8,12 @@ See [docs/versioning.md](docs/versioning.md).
 
 ### Fixed
 
-- Proposal requests now reach `contact@taalyatra.in` by email. Before, they were only stored.
+- Proposal requests now reach `contact@taalyatra.in` by email. Before, they were only stored. Each form field arrives as its own line.
+
+### Changed
+
+- The proposal form now asks for an email address, so every request can be answered (and sent an automatic reply).
+  WhatsApp still works without one.
 
 ## [1.8.0] - 2026-11-05
 

@@ -50,6 +50,7 @@ test.describe('Firebase smoke (emulator)', () => {
 
     await form.getByRole('textbox', { name: 'Your name' }).fill(name);
     await form.getByRole('textbox', { name: 'Phone' }).fill('98765 43210');
+    await form.getByRole('textbox', { name: 'Email' }).fill('asha@example.com');
     await form.getByRole('button', { name: 'Request proposal' }).click();
     await expect(form.getByRole('status')).toContainText('on its way');
 
