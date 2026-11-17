@@ -15,7 +15,7 @@ export const environment: IAppEnvironment = {
   fakeLatencyMs: 0,
   cloudinary: { cloudName: 'zqu2cpih' },
   reportVitals: true,
-  // Public by design (ADR-0006); restrict them to this site's domain in the EmailJS account.
+  // Public by design (ADR-0006). The free plan has no domain lock: see the exception there.
   emailJs: {
     serviceId: 'service_932a32s',
     templateId: 'template_xy3amdu',
