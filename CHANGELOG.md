@@ -15,6 +15,8 @@ See [docs/versioning.md](docs/versioning.md).
 
 ### Fixed
 
+- Speed reports leave out automated visitors (Lighthouse, PageSpeed, search crawlers, scripted browsers), so the dashboard
+  shows real people's visits.
 - Links to a home section, such as **Request proposal**, now land on it. Before, they could stop thousands of pixels short
   while the page was still filling in, after a fast blur of scrolling.
 - Proposal requests now reach `contact@taalyatra.in` by email. Before, they were only stored. Each form field arrives as its own line.

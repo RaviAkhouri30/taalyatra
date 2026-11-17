@@ -15,6 +15,13 @@ const REPORTED_PAGES: ReadonlySet<string> = new Set<string>([
 /** Signals a browser can send to ask not to be tracked. */
 type PrivacyNavigator = Navigator & { readonly globalPrivacyControl?: boolean };
 
+/**
+ * Visitors that aren't people, by what they call themselves: search crawlers (`Googlebot/2.1`,
+ * `bingbot/2.0`), speed tools (Lighthouse and PageSpeed send `Chrome-Lighthouse`, WebPageTest
+ * `PTST`) and headless browsers. `bot/` and not `bot`, so phone makers such as Cubot still count.
+ */
+const AUTOMATED_AGENT = /bot\/|crawler|spider|slurp|lighthouse|headless|pagespeed|ptst/i;
+
 /** How long after the main content settles to send: late enough to be its final value. */
 const SEND_AFTER_LCP_MS = 5000;
 
@@ -75,7 +82,10 @@ export class BrowserVitalsSource implements IVitalsSource {
     return (
       REPORTED_PAGES.has(this.view.location.pathname) &&
       navigator.globalPrivacyControl !== true &&
-      navigator.doNotTrack !== '1'
+      navigator.doNotTrack !== '1' &&
+      // A browser driven by a script (Playwright, Selenium, Puppeteer) says so here.
+      !navigator.webdriver &&
+      !AUTOMATED_AGENT.test(navigator.userAgent)
     );
   }
 

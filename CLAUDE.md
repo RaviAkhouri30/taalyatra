@@ -263,9 +263,10 @@ docs/              architecture, ADRs, AIDLC records
 - **Segregate the UI**: a smart container plus small presentational children. A component
   that grows past one responsibility gets split.
 - **Injection tokens** (`core/tokens/*.token.ts`) for every non-class dependency:
-  `APP_ENVIRONMENT`, `FIREBASE_CONFIG`, `EMAILJS_CONFIG`, `CLOUDINARY_CONFIG`, `WINDOW`,
-  `COMMAND_CONTEXT`, `REQUEST_TIMEOUT_MS`, `CLOCK` (the current time), `APP_PREVIEW`
-  (`?preview` visits). Group them in `provideXxx()` helpers.
+  `APP_ENVIRONMENT` (also carries the EmailJS keys and the request timeout), `FIREBASE_CONFIG`,
+  `CLOUDINARY_CONFIG`, `CLOCK` (the current time), `APP_PREVIEW` / `APP_PREVIEW_FRAME` (`?preview`
+  visits), `EMAILJS_SENDER`, and the lazy `*_LOADER` tokens. Browser globals come from
+  `inject(DOCUMENT).defaultView`; there is no `WINDOW` token. Group them in `provideXxx()` helpers.
 
 ---
 

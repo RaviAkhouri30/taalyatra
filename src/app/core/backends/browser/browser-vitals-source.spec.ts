@@ -2,6 +2,14 @@ import { Subject } from 'rxjs';
 import { type IVitalsMeasurement } from '@core/interfaces/i-vitals-reporter';
 import { BrowserVitalsSource } from './browser-vitals-source';
 
+/** Real user agents: an Android phone, a Cubot phone (its name ends in "bot"), and Google's crawler. */
+const PHONE_AGENT =
+  'Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36';
+const CUBOT_AGENT =
+  'Mozilla/5.0 (Linux; Android 10; CUBOT X30) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36';
+const GOOGLEBOT_AGENT =
+  'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
+
 describe('BrowserVitalsSource', () => {
   type Callback = (list: { getEntries: () => object[] }) => void;
   let observers: Map<string, Callback>;
@@ -196,11 +204,24 @@ describe('BrowserVitalsSource', () => {
     expect(results[0]).toMatchObject({ lcp: null, fcp: null, ttfb: null, ready: null });
   });
 
+  it.each([PHONE_AGENT, CUBOT_AGENT])('should report a real phone such as %s', (userAgent) => {
+    const { results } = start(fakeWindow({ navigator: { userAgent } }));
+
+    lcp(1000);
+    vi.advanceTimersByTime(5000);
+
+    expect(results).toHaveLength(1);
+  });
+
   it.each([
     ['the admin area', { path: '/admin' }],
     ['a page not on the list', { path: '/somewhere' }],
     ['Global Privacy Control', { navigator: { globalPrivacyControl: true } }],
     ['Do Not Track', { navigator: { doNotTrack: '1' } }],
+    ['a browser driven by a script', { navigator: { webdriver: true } }],
+    ['Lighthouse and PageSpeed', { navigator: { userAgent: `${PHONE_AGENT} Chrome-Lighthouse` } }],
+    ['a search crawler', { navigator: { userAgent: GOOGLEBOT_AGENT } }],
+    ['a headless browser', { navigator: { userAgent: 'Mozilla/5.0 HeadlessChrome/131.0.0.0' } }],
   ])('should report nothing, and observe nothing, for %s', (_case, options) => {
     const { results } = start(fakeWindow(options));
 

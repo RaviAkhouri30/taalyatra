@@ -82,6 +82,14 @@ sequenceDiagram
 - **Low traffic:** 200 phone visits may take a while, which is why the card says so plainly.
 - **Deploy order:** the last two releases went out with the rules late. The pull request for this one will say so at the top.
 
+## Update — automated visitors left out (2026-11-17)
+
+1.8.0's live check showed Lighthouse runs being stored as visits (6 of the first 7 reports), and crawlers that run JavaScript
+would be too. Reports are now also skipped when the browser says it's driven by a script (`navigator.webdriver`: Playwright,
+Selenium, Puppeteer) or its user agent names a crawler or speed tool (`bot/`, crawler, spider, Lighthouse and PageSpeed,
+WebPageTest's `PTST`, headless browsers). The check runs in the lazy reporting chunk, so the initial download doesn't change.
+Some automated visitors may still get through; they can't be told apart from people with certainty.
+
 ---
 
 **Approval:** ☑ Approved by Ravi Akhouri on 2026-11-05, with all three recommendations: store the reports in Firestore, add a privacy page separately, and release as 1.8.0.

@@ -137,6 +137,11 @@ test.describe('Firebase smoke (emulator)', () => {
     editor,
     page,
   }) => {
+    // Playwright's browser says it's driven by a script, and the site rightly doesn't report
+    // those. This test stands in for a person's visit, so it hides that one signal.
+    await page.addInitScript(() => {
+      Object.defineProperty(Navigator.prototype, 'webdriver', { get: () => false });
+    });
     await page.goto('/');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     const stored = page.waitForResponse(
