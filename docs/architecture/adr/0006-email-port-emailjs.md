@@ -21,3 +21,13 @@ every message after `fakeLatencyMs`. `emailServiceFactory()` picks EmailJS only 
 - Only the public key reaches the browser. Abuse is limited by EmailJS domain allow-listing and
   rate limits, which must be set in the dashboard before go-live.
 - The view model never sees the SDK; specs inject a stub `IEmailService`.
+
+## Update — account set up (1.8.1, 2026-11-17)
+
+- **Service: SMTP server**, sending as `contact@taalyatra.in` through GoDaddy (`smtpout.secureserver.net`, port 465).
+  The domain's SPF record (`include:secureserver.net -all`) rejects mail for taalyatra.in sent any other way, so a
+  Gmail or Outlook service would bounce or land in spam.
+- **Template fields** must match what `EmailJsEmailService` sends: `subject`, `message`, `from_name`, `phone` and
+  `reply_to`. The template's Reply To is `{{reply_to}}`, so replying answers the visitor.
+- **Only production sends real email.** Development, e2e and the emulator keep empty values and the fake adapter.
+- The account must allow only the site's domain, with a rate limit. Add `taalyatra.in` there when the domain moves.

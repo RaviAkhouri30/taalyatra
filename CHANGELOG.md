@@ -6,6 +6,10 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+### Fixed
+
+- Proposal requests now reach `contact@taalyatra.in` by email. Before, they were only stored.
+
 ## [1.8.0] - 2026-11-05
 
 ### Added

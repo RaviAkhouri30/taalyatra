@@ -15,6 +15,10 @@ export const environment: IAppEnvironment = {
   fakeLatencyMs: 0,
   cloudinary: { cloudName: 'zqu2cpih' },
   reportVitals: true,
-  // Fill in from the EmailJS dashboard to send real email; empty values use the fake adapter.
-  emailJs: { serviceId: '', templateId: '', publicKey: '' },
+  // Public by design (ADR-0006); restrict them to this site's domain in the EmailJS account.
+  emailJs: {
+    serviceId: 'service_932a32s',
+    templateId: 'template_xy3amdu',
+    publicKey: 'FFg5vZcafY-iAWML3',
+  },
 };
