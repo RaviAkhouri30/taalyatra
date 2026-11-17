@@ -9,26 +9,57 @@
   } @else if (entry.list; as list) {
     <fieldset class="sf-list">
       <legend>{{ entry.field.label }}</legend>
+      @if (list.schema.sortable; as sortable) {
+        <app-list-order
+          [items]="list.items"
+          [value]="list.items.value"
+          [sortable]="sortable"
+          [itemLabel]="list.schema.item.label"
+        />
+      }
       @for (item of list.items.controls; track item; let i = $index, first = $first, last = $last) {
         <div
           class="sf-item"
           role="group"
           [attr.aria-label]="list.schema.item.label + ' ' + (i + 1)"
         >
-          @if (list.schema.item.kind === kind.Group) {
-            <p class="sf-item-title">{{ list.schema.item.label }} {{ i + 1 }}</p>
-            <app-schema-fields
-              [fields]="list.schema.item.fields"
-              [group]="item"
-              [idPrefix]="entry.id + '-' + i"
-            />
-          } @else {
-            <app-schema-field
-              [field]="list.schema.item"
-              [control]="item"
-              [fieldId]="entry.id + '-' + i"
-            />
+          @if (list.schema.sortable; as sortable) {
+            <!-- Long items fold to one line; the Order panel above arranges them. -->
+            <button
+              type="button"
+              class="sf-item-toggle"
+              [attr.aria-expanded]="isOpen(item)"
+              [attr.aria-controls]="entry.id + '-' + i + '-body'"
+              (click)="toggleItem(item)"
+            >
+              {{ itemTitle(sortable, list.schema.item.label, item, i) }}
+              <svg class="sf-chev" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" />
+              </svg>
+            </button>
           }
+          <div
+            class="sf-item-body"
+            [id]="entry.id + '-' + i + '-body'"
+            [hidden]="list.schema.sortable !== undefined && !isOpen(item)"
+          >
+            @if (list.schema.item.kind === kind.Group) {
+              @if (!list.schema.sortable) {
+                <p class="sf-item-title">{{ list.schema.item.label }} {{ i + 1 }}</p>
+              }
+              <app-schema-fields
+                [fields]="list.schema.item.fields"
+                [group]="item"
+                [idPrefix]="entry.id + '-' + i"
+              />
+            } @else {
+              <app-schema-field
+                [field]="list.schema.item"
+                [control]="item"
+                [fieldId]="entry.id + '-' + i"
+              />
+            }
+          </div>
           <div class="sf-item-actions">
             <button
               type="button"

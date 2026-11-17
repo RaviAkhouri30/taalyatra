@@ -4,6 +4,10 @@ import { ContentPath } from '../models/content-path.enum';
 import { FieldKind } from '../models/field-kind.enum';
 import { type IEditorSection } from '../models/i-editor-section';
 import { type IListFieldSchema } from '../models/i-field-schema';
+import {
+  DRUM_CIRCLE_PICTURE_FIELD,
+  DRUM_CIRCLE_PICTURE_VIEW,
+} from '../models/drum-circle-picture-view';
 import { IMAGE_ASPECT } from '../models/image-aspect.constants';
 import { HEADING_FIELDS, buttonLabel, image, multiline, text } from './schema-fields';
 
@@ -120,22 +124,13 @@ export const DRUM_CIRCLE_SECTIONS: readonly IEditorSection[] = [
     ],
   },
   {
-    id: 'drum-circle-pictures',
-    title: 'Drum circle pictures',
+    id: 'drum-circle-picture',
+    title: 'Drum circle picture',
     path: ContentPath.HomeDrumCircle,
     anchor: PageAnchor.DrumCircleDetails,
-    tip: 'Three pictures, side by side. Replace or reorder them; the layout keeps three.',
-    fields: [
-      {
-        key: 'gallery',
-        label: 'Pictures',
-        kind: FieldKind.List,
-        addLabel: 'Add picture',
-        minItems: ITEMS.pictures,
-        maxItems: ITEMS.pictures,
-        item: image('gallery', 'Picture', IMAGE_ASPECT.drumCircle),
-      },
-    ],
+    tip: 'One picture, beside the About text on the right.',
+    view: DRUM_CIRCLE_PICTURE_VIEW,
+    fields: [image(DRUM_CIRCLE_PICTURE_FIELD, 'Picture', IMAGE_ASPECT.drumCircle)],
   },
   {
     id: 'drum-circle-flow',

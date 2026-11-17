@@ -1,4 +1,5 @@
 import fakeDb from '@core/backends/fake/fake-db.json';
+import { FOLD_DEFAULTS } from '@shared/constants/fold.constants';
 import { HomeSection } from '@shared/enums/home-section.enum';
 import { SitePage } from '@shared/enums/site-page.enum';
 import { SiteWidget } from '@shared/enums/site-widget.enum';
@@ -104,10 +105,25 @@ describe('editor schemas', () => {
     expect(report.errors).toEqual([]);
   });
 
+  it('should offer a folding choice for each foldable section, its default first', () => {
+    const [visibility] = tabSchema(EditorTab.Visibility)?.sections ?? [];
+    const folded = visibility?.fields.find((field) => field.key === 'folded');
+    const choices = folded?.kind === FieldKind.Group ? folded.fields : [];
+
+    expect(choices.map((choice) => choice.key)).toEqual([...FOLD_DEFAULTS.keys()]);
+    const defaults = new Map<string, string>(FOLD_DEFAULTS);
+    for (const choice of choices) {
+      expect(choice.kind === FieldKind.Choice && choice.options[0]?.value).toBe(
+        defaults.get(choice.key),
+      );
+    }
+  });
+
   it('should offer a switch for every section, page and widget key', () => {
     const [visibility] = tabSchema(EditorTab.Visibility)?.sections ?? [];
+    const switches = (visibility?.fields ?? []).filter((field) => field.key !== 'folded');
 
-    expect(keyPaths(visibility?.fields ?? []).sort((a, b) => a.localeCompare(b))).toEqual(
+    expect(keyPaths(switches).sort((a, b) => a.localeCompare(b))).toEqual(
       [
         ...Object.values(HomeSection).map((key) => `sections.${key}`),
         ...Object.values(SitePage).map((key) => `pages.${key}`),

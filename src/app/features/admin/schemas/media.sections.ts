@@ -13,7 +13,11 @@ import {
 } from '../models/experiences-view';
 import { FieldKind } from '../models/field-kind.enum';
 import { type IEditorSection } from '../models/i-editor-section';
-import { type FieldSchema, type IListFieldSchema } from '../models/i-field-schema';
+import {
+  type FieldSchema,
+  type IListFieldSchema,
+  type ISortableList,
+} from '../models/i-field-schema';
 import { IMAGE_ASPECT } from '../models/image-aspect.constants';
 import { HEADING_FIELDS, buttonLabel, image, multiline, text } from './schema-fields';
 
@@ -24,12 +28,20 @@ const SKILL_MAX_LENGTH = 40;
 
 /** Each collection's one list field, stored in the draft's list envelope (D15). */
 function items(
-  label: string,
-  addLabel: string,
+  [label, addLabel]: readonly [label: string, addLabel: string],
   maxItems: number,
   item: IListFieldSchema['item'],
+  sortable: ISortableList,
 ): IListFieldSchema {
-  return { key: COLLECTION_ITEMS_FIELD, label, kind: FieldKind.List, addLabel, maxItems, item };
+  return {
+    key: COLLECTION_ITEMS_FIELD,
+    label,
+    kind: FieldKind.List,
+    addLabel,
+    maxItems,
+    item,
+    sortable,
+  };
 }
 
 function group(label: string, fields: readonly FieldSchema[]): IListFieldSchema['item'] {
@@ -60,6 +72,7 @@ export const EXPERIENCES_SECTIONS: readonly IEditorSection[] = [
         addLabel: 'Add experience',
         maxItems: EXPERIENCES_MAX_ITEMS,
         minItems: 1,
+        sortable: { titleKey: 'name', featuredKey: 'featured' },
         item: group('Experience', [
           text('name', 'Name', { required: true, maxLength: CONTENT_MAX_LENGTH.experienceName }),
           text('tag', 'Small label above the name', {
@@ -122,10 +135,10 @@ export const GALLERY_SECTIONS: readonly IEditorSection[] = [
     tip: 'Move your best photo to the top: it’s shown largest.',
     fields: [
       items(
-        'Photos',
-        'Add photo',
+        ['Photos', 'Add photo'],
         COLLECTION_MAX_ITEMS.gallery,
         image('photo', 'Photo', IMAGE_ASPECT.gallery),
+        { titleKey: 'alt' },
       ),
     ],
   },
@@ -141,8 +154,7 @@ export const TEAM_SECTIONS: readonly IEditorSection[] = [
     tip: 'The first four people also appear on the home page.',
     fields: [
       items(
-        'Team members',
-        'Add team member',
+        ['Team members', 'Add team member'],
         COLLECTION_MAX_ITEMS.team,
         group('Team member', [
           text('name', 'Name', { required: true, maxLength: CONTENT_MAX_LENGTH.memberName }),
@@ -159,6 +171,7 @@ export const TEAM_SECTIONS: readonly IEditorSection[] = [
           text('funFact', 'Fun fact', { maxLength: CONTENT_MAX_LENGTH.memberFunFact }),
           image('photo', 'Photo', IMAGE_ASPECT.team),
         ]),
+        { titleKey: 'name' },
       ),
     ],
   },
@@ -181,8 +194,7 @@ export const SHOWS_SECTIONS: readonly IEditorSection[] = [
     tip: 'One show can be featured: it gets the spotlight above the others.',
     fields: [
       items(
-        'Show formats',
-        'Add show',
+        ['Show formats', 'Add show'],
         COLLECTION_MAX_ITEMS.showFormats,
         group('Show', [
           {
@@ -219,6 +231,7 @@ export const SHOWS_SECTIONS: readonly IEditorSection[] = [
             ],
           },
         ]),
+        { titleKey: 'title', featuredKey: 'featured' },
       ),
     ],
   },
@@ -234,8 +247,7 @@ export const VIDEOS_SECTIONS: readonly IEditorSection[] = [
     tip: 'The first video is the featured one, so move your best to the top.',
     fields: [
       items(
-        'Videos',
-        'Add video',
+        ['Videos', 'Add video'],
         COLLECTION_MAX_ITEMS.videos,
         group('Video', [
           {
@@ -260,6 +272,7 @@ export const VIDEOS_SECTIONS: readonly IEditorSection[] = [
             thumbnailFromLink: 'url',
           }),
         ]),
+        { titleKey: 'title' },
       ),
     ],
   },

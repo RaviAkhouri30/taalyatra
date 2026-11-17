@@ -14,21 +14,19 @@
       </div>
 
       <div class="two">
-        <div>
+        <div class="text">
           <h3 class="d about-title">{{ dc.aboutTitle }}</h3>
           @for (paragraph of dc.about; track $index) {
             <p class="body">{{ paragraph }}</p>
           }
-        </div>
-        <div>
           <h3 class="d list-title">{{ dc.objectivesTitle }}</h3>
-          <div class="chips chips--objectives">
+          <div class="chips">
             @for (objective of dc.objectives; track objective) {
               <span class="chip">{{ objective }}</span>
             }
           </div>
           <h3 class="d list-title">{{ dc.occasionsTitle }}</h3>
-          <div class="chips chips--occasions">
+          <div class="chips">
             @for (occasion of dc.occasions; track occasion) {
               <span class="chip">{{ occasion }}</span>
             }
@@ -37,11 +35,15 @@
             dc.proposal.label
           }}</a>
         </div>
-      </div>
-
-      <div class="gal">
-        @for (image of dc.gallery; track image.src) {
-          <span class="ph"><img [ngSrc]="image.src" fill [alt]="image.alt" /></span>
+        @if (dc.picture; as picture) {
+          <span class="pic">
+            <img
+              [ngSrc]="picture.src"
+              fill
+              sizes="(max-width: 1000px) 100vw, 45vw"
+              [alt]="picture.alt"
+            />
+          </span>
         }
       </div>
 
@@ -54,11 +56,13 @@
 
       <div class="flow-block">
         <h3 class="d flow-title">{{ dc.flowTitle }}</h3>
-        <div class="flow">
-          @for (step of dc.flow; track step.title; let odd = $odd) {
-            <app-flow-segment [step]="step" [highlighted]="odd" />
-          }
-        </div>
+        <app-fold [mode]="flowFold">
+          <div class="flow">
+            @for (step of dc.flow; track step.title; let odd = $odd) {
+              <app-flow-segment [step]="step" [highlighted]="odd" />
+            }
+          </div>
+        </app-fold>
       </div>
     </div>
   </section>

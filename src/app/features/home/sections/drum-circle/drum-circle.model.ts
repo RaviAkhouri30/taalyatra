@@ -25,7 +25,8 @@ export class DrumCircleModel {
   public readonly occasionsTitle: string;
   public readonly occasions: readonly string[];
   public readonly proposal: INavLink;
-  public readonly gallery: readonly IImage[];
+  /** The one picture beside the About text: the stored gallery's first (0015 V16). */
+  public readonly picture: IImage | null;
   public readonly relatedTitle: string;
   public readonly related: readonly INavLink[];
   public readonly flowTitle: string;
@@ -42,7 +43,7 @@ export class DrumCircleModel {
     this.occasionsTitle = dto.occasionsTitle;
     this.occasions = dto.occasions;
     this.proposal = navLink(dto.cta, AppRoute.Home, { fragment: PageAnchor.Contact });
-    this.gallery = dto.gallery;
+    this.picture = dto.gallery[0] ?? null;
     this.relatedTitle = dto.relatedTitle;
     this.related = dto.related.map((name) =>
       navLink(name, AppRoute.Home, { fragment: PageAnchor.Experiences }),

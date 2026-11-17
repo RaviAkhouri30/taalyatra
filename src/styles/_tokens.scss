@@ -29,6 +29,10 @@ $color-logo-ground: #fdf9f3;
 $color-promo-ink: #3a2213;
 $color-header-glass: rgb(23 18 16 / 94%);
 $color-promo-gradient: linear-gradient(135deg, $color-amber, $color-clay);
+$color-whatsapp: #25d366; // WhatsApp's green: dark icons on it reach about 9:1
+$color-fab-ring: rgb(
+  239 230 217 / 55%
+); // light ring that lifts the floating buttons off dark sections
 
 // ---- Typography ----------------------------------------------------------
 // Each web font is followed by a metric-matched local fallback (see _fonts.scss), so the swap

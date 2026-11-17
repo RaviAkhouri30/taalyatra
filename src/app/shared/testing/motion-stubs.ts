@@ -50,12 +50,17 @@ export function stubAnimate(): FakeAnimation[] {
   return started;
 }
 
-/** @param reduced Whether the device asks for reduced motion. */
+/**
+ * Installs a `matchMedia` that answers the reduced-motion query; undo with `vi.unstubAllGlobals()`,
+ * so it can't leak into later test files in the same worker.
+ * @param reduced Whether the device asks for reduced motion.
+ */
 export function stubMatchMedia(reduced: boolean): void {
-  Object.defineProperty(window, 'matchMedia', {
-    configurable: true,
-    value: (query: string) => ({ matches: reduced && query.includes('reduce') }),
-  });
+  vi.stubGlobal('matchMedia', (query: string) => ({
+    matches: reduced && query.includes('reduce'),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+  }));
 }
 
 /** An observer whose callback the test fires; covers both intersection and resize. */

@@ -1,0 +1,18 @@
+<a
+  class="cf call"
+  [class.cf--hidden]="hidden()"
+  [href]="callHref()"
+  [attr.aria-label]="callLabel()"
+  [attr.tabindex]="hidden() ? -1 : null"
+  [attr.aria-hidden]="hidden() || null"
+  ><app-icon [name]="icon.Phone" [size]="26"
+/></a>
+<a
+  class="cf wa"
+  [class.cf--hidden]="hidden()"
+  [href]="whatsAppHref()"
+  [attr.aria-label]="whatsAppLabel()"
+  [attr.tabindex]="hidden() ? -1 : null"
+  [attr.aria-hidden]="hidden() || null"
+  ><app-icon [name]="icon.WhatsApp" [size]="28"
+/></a>

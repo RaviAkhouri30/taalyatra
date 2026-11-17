@@ -1,3 +1,5 @@
+import { FOLD_DEFAULTS } from '@shared/constants/fold.constants';
+import { FoldMode } from '@shared/enums/fold-mode.enum';
 import { HomeSection } from '@shared/enums/home-section.enum';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { SitePage } from '@shared/enums/site-page.enum';
@@ -5,7 +7,7 @@ import { SiteWidget } from '@shared/enums/site-widget.enum';
 import { ContentPath } from '../models/content-path.enum';
 import { FieldKind } from '../models/field-kind.enum';
 import { type IEditorSection } from '../models/i-editor-section';
-import { type IToggleFieldSchema } from '../models/i-field-schema';
+import { type IChoiceFieldSchema, type IToggleFieldSchema } from '../models/i-field-schema';
 
 /** The owner-facing name of each home section, in page order. */
 const SECTION_LABELS: readonly (readonly [HomeSection, string])[] = [
@@ -43,6 +45,31 @@ const WIDGET_LABELS: readonly (readonly [SiteWidget, string, string])[] = [
   [SiteWidget.WhatsApp, 'Floating WhatsApp button', 'On the inner pages.'],
 ];
 
+const FOLD_OPTIONS: readonly (readonly [FoldMode, string])[] = [
+  [FoldMode.Never, 'Never folded'],
+  [FoldMode.Phone, 'Folded on phones'],
+  [FoldMode.Desktop, 'Folded on desktop'],
+  [FoldMode.Always, 'Folded on phones and desktop'],
+];
+
+/**
+ * One choice per foldable section. Its default comes first: a choice with nothing stored shows
+ * (and saves) its first option, which must be what the site already does.
+ */
+function foldChoice(section: HomeSection, fallback: FoldMode): IChoiceFieldSchema {
+  const label = SECTION_LABELS.find(([key]) => key === section)?.[1] ?? section;
+  const options = [
+    ...FOLD_OPTIONS.filter(([mode]) => mode === fallback),
+    ...FOLD_OPTIONS.filter(([mode]) => mode !== fallback),
+  ];
+  return {
+    key: section,
+    label,
+    kind: FieldKind.Choice,
+    options: options.map(([value, text]) => ({ value, label: text })),
+  };
+}
+
 function toggle(key: string, label: string, hint?: string): IToggleFieldSchema {
   return hint === undefined
     ? { key, label, kind: FieldKind.Toggle }
@@ -75,6 +102,13 @@ export const VISIBILITY_SECTIONS: readonly IEditorSection[] = [
         label: 'Site-wide',
         kind: FieldKind.Group,
         fields: WIDGET_LABELS.map(([key, label, hint]) => toggle(key, label, hint)),
+      },
+      {
+        key: 'folded',
+        label: 'Folded behind “Show more”',
+        kind: FieldKind.Group,
+        hint: 'A folded section shows its heading and a Show more button, which keeps the page short. Find on page still opens it.',
+        fields: [...FOLD_DEFAULTS].map(([section, fallback]) => foldChoice(section, fallback)),
       },
     ],
   },

@@ -1,0 +1,37 @@
+@use 'breakpoints' as bp;
+@use 'fab';
+
+$ease-pop: cubic-bezier(0.16, 1, 0.3, 1);
+
+// The buttons sit in the launcher's floating column.
+:host {
+  display: contents;
+}
+
+.cf {
+  @include fab.fab-button;
+
+  pointer-events: auto;
+  transition:
+    opacity 0.25s ease,
+    transform 0.3s $ease-pop;
+
+  @include bp.down(bp.$phone) {
+    // The mobile action bar already offers call and WhatsApp.
+    display: none;
+  }
+}
+
+.cf--hidden {
+  opacity: 0;
+  transform: scale(0.5) translateY(14px);
+  pointer-events: none;
+}
+
+.call {
+  @include fab.fab-call(1.2s);
+}
+
+.wa {
+  @include fab.fab-whatsapp(1.8s);
+}

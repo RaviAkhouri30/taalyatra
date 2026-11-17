@@ -1,10 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { type AbstractControl, FormArray, FormRecord } from '@angular/forms';
+import { fieldOf } from '../../forms/json-node';
 import { ensureOneOn } from '../../forms/one-in-list';
 import { buildListItem } from '../../forms/schema-control.factory';
 import { moveListItem } from '../../forms/list-items';
 import { FieldKind } from '../../models/field-kind.enum';
-import { type FieldSchema, type IListFieldSchema } from '../../models/i-field-schema';
+import {
+  type FieldSchema,
+  type IListFieldSchema,
+  type ISortableList,
+} from '../../models/i-field-schema';
+import { ListOrderComponent } from '../list-order/list-order.component';
 import { SchemaFieldComponent } from '../schema-field/schema-field.component';
 
 /** One field as the template needs it: its control already narrowed to the right kind. */
@@ -24,7 +30,7 @@ interface IFieldEntry {
  */
 @Component({
   selector: 'app-schema-fields',
-  imports: [SchemaFieldComponent],
+  imports: [ListOrderComponent, SchemaFieldComponent],
   templateUrl: './schema-fields.component.html',
   styleUrl: './schema-fields.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -56,6 +62,9 @@ export class SchemaFieldsComponent {
     });
   });
 
+  /** The folding list items the owner has opened. */
+  private readonly opened = signal<ReadonlySet<AbstractControl>>(new Set());
+
   /**
    * @param field A field.
    * @returns Whether it shows: a group that depends on a switch shows only while it's on.
@@ -67,7 +76,38 @@ export class SchemaFieldsComponent {
   }
 
   protected add(list: IListFieldSchema, items: FormArray): void {
-    items.push(buildListItem(list));
+    const item = buildListItem(list);
+    items.push(item);
+    // A new item opens, ready to fill in.
+    this.opened.update((opened) => new Set(opened).add(item));
+  }
+
+  /** Whether a folding list item is open. */
+  protected isOpen(item: AbstractControl): boolean {
+    return this.opened().has(item);
+  }
+
+  protected toggleItem(item: AbstractControl): void {
+    this.opened.update((opened) => {
+      const next = new Set(opened);
+      if (!next.delete(item)) {
+        next.add(item);
+      }
+      return next;
+    });
+  }
+
+  /** @returns A folded item's one-line name: its title, else its label and number. */
+  protected itemTitle(
+    sortable: ISortableList,
+    label: string,
+    item: AbstractControl,
+    index: number,
+  ): string {
+    const title = fieldOf(item.value, sortable.titleKey);
+    return typeof title === 'string' && title.trim()
+      ? title.trim()
+      : `${label} ${String(index + 1)}`;
   }
 
   protected remove(list: IListFieldSchema, items: FormArray, index: number): void {

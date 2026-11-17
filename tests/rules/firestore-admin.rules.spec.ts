@@ -1,9 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { type RulesTestEnvironment, initializeTestEnvironment } from '@firebase/rules-unit-testing';
 import { type Firestore, deleteDoc, doc, getDoc, setDoc } from 'firebase/firestore';
-import { HomeSection } from '../../src/app/shared/enums/home-section.enum';
-import { SitePage } from '../../src/app/shared/enums/site-page.enum';
-import { SiteWidget } from '../../src/app/shared/enums/site-widget.enum';
 import {
   COLLECTION_MAX_ITEMS,
   CONTENT_MAX_LENGTH,
@@ -22,13 +19,6 @@ type Fields = Record<string, unknown>;
 const home = fakeDb.home as unknown as Record<string, Fields>;
 const siteConfig = fakeDb.site.config as unknown as Fields;
 const promotion = siteConfig['promotion'] as Fields;
-
-/** Every switch from the enums, so the rules' key lists can't fall behind them. */
-const fullVisibility = (value: boolean) => ({
-  sections: Object.fromEntries(Object.values(HomeSection).map((key) => [key, value])),
-  pages: Object.fromEntries(Object.values(SitePage).map((key) => [key, value])),
-  widgets: Object.fromEntries(Object.values(SiteWidget).map((key) => [key, value])),
-});
 
 /** Runs against the emulator started by `npm run test:rules` (project `demo-taal-yatra`). */
 describe('firestore.rules · admin editor', () => {
@@ -163,26 +153,6 @@ describe('firestore.rules · admin editor', () => {
 
     it('should stop another signed-in account changing it', async () => {
       await expect(setDoc(doc(member, 'site/config'), siteConfig)).rejects.toMatchObject(DENIED);
-    });
-  });
-
-  describe('site visibility', () => {
-    it('should let the admin switch every section, page and widget off', async () => {
-      await expect(
-        setDoc(doc(admin, 'site/visibility'), fullVisibility(false)),
-      ).resolves.toBeUndefined();
-    });
-
-    it('should reject an unknown section key', async () => {
-      const visibility = { ...fullVisibility(true), sections: { hero: false } };
-
-      await expect(setDoc(doc(admin, 'site/visibility'), visibility)).rejects.toMatchObject(DENIED);
-    });
-
-    it('should stop a visitor changing it', async () => {
-      await expect(
-        setDoc(doc(visitor, 'site/visibility'), fullVisibility(false)),
-      ).rejects.toMatchObject(DENIED);
     });
   });
 

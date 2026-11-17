@@ -5,9 +5,10 @@ import { APP_PREVIEW, APP_PREVIEW_FRAME } from '@core/tokens/app-preview.token';
 import { ViewModel } from '@shared/base/view-model';
 import { HomeSection } from '@shared/enums/home-section.enum';
 import { SiteWidget } from '@shared/enums/site-widget.enum';
-import { type SiteVisibility } from '@shared/models/site-visibility.model';
+import { SiteVisibility } from '@shared/models/site-visibility.model';
 import { SiteVisibilityService } from '@shared/services/site-visibility.service';
 import { SectionHoldService } from './section-hold.service';
+import { type SectionFolds, sectionFolds } from './section-folds';
 
 /** Which home sections and home widgets to render. */
 export type HomeShown = Readonly<Record<HomeSection, boolean>> & {
@@ -39,6 +40,11 @@ export class HomePageViewModel extends ViewModel<SiteVisibility> {
       assistant: !this.previewFrame && (visibility?.isWidgetVisible(SiteWidget.Assistant) ?? false),
     };
   });
+
+  /** How each section folds: the owner's choice or the default (0015 V15). */
+  public readonly folds = computed<SectionFolds>(() =>
+    sectionFolds(this.data() ?? SiteVisibility.allVisible),
+  );
 
   private readonly visibilityService = inject(SiteVisibilityService);
   private readonly preview = inject(APP_PREVIEW);

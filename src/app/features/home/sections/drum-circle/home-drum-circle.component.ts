@@ -2,6 +2,8 @@ import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BaseComponent } from '@shared/base/base-component';
+import { FoldComponent } from '@shared/components/fold/fold.component';
+import { FoldMode } from '@shared/enums/fold-mode.enum';
 import { ButtonDirective } from '@shared/directives/button.directive';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { type DrumCircleModel } from './drum-circle.model';
@@ -14,7 +16,7 @@ import { HomeDrumCircleViewModel } from './home-drum-circle.view-model';
  */
 @Component({
   selector: 'app-home-drum-circle',
-  imports: [ButtonDirective, FlowSegmentComponent, NgOptimizedImage, RouterLink],
+  imports: [FoldComponent, ButtonDirective, FlowSegmentComponent, NgOptimizedImage, RouterLink],
   templateUrl: './home-drum-circle.component.html',
   styleUrl: './home-drum-circle.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,5 +24,7 @@ import { HomeDrumCircleViewModel } from './home-drum-circle.view-model';
 })
 export class HomeDrumCircleComponent extends BaseComponent<DrumCircleModel> {
   protected override readonly model = inject(HomeDrumCircleViewModel);
+  /** The session flow folds on phones, where the section is longest (0015 V16). */
+  protected readonly flowFold = FoldMode.Phone;
   protected readonly anchor = PageAnchor.DrumCircleDetails;
 }

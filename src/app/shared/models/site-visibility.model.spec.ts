@@ -1,3 +1,4 @@
+import { FoldMode } from '@shared/enums/fold-mode.enum';
 import { HomeSection } from '@shared/enums/home-section.enum';
 import { SitePage } from '@shared/enums/site-page.enum';
 import { SiteWidget } from '@shared/enums/site-widget.enum';
@@ -31,5 +32,12 @@ describe('SiteVisibility', () => {
     const malformed = { sections: { gallery: 'no' } } as unknown as ISiteVisibilityDto;
 
     expect(new SiteVisibility(malformed).isSectionVisible(HomeSection.Gallery)).toBe(true);
+  });
+
+  it('should hand back the stored folding choice unchecked, for the home page to validate', () => {
+    const visibility = new SiteVisibility({ folded: { faq: FoldMode.Never } });
+
+    expect(visibility.foldSetting(HomeSection.Faq)).toBe(FoldMode.Never);
+    expect(visibility.foldSetting(HomeSection.How)).toBeUndefined();
   });
 });

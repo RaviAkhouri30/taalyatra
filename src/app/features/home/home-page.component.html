@@ -1,4 +1,5 @@
 @let shown = model.shown();
+@let folds = model.folds();
 @if (shown.intro) {
   <app-home-intro />
 }
@@ -37,28 +38,28 @@
     <app-home-gallery appReveal />
   }
   @if (shown.philosophy) {
-    <app-home-philosophy appReveal />
+    <app-home-philosophy appReveal [fold]="folds.philosophy" />
   }
   @if (shown.midCta) {
     <app-home-mid-cta appReveal />
   }
   @if (shown.cities) {
-    <app-home-cities appReveal />
+    <app-home-cities appReveal [fold]="folds.cities" />
   }
   @if (shown.how) {
-    <app-home-how appReveal />
+    <app-home-how appReveal [fold]="folds.how" />
   }
   @if (shown.team) {
     <app-home-team appReveal />
   }
   @if (shown.instagram) {
-    <app-home-instagram appReveal />
+    <app-home-instagram appReveal [fold]="folds.instagram" />
   }
   @if (shown.proof) {
-    <app-home-proof appReveal />
+    <app-home-proof appReveal [fold]="folds.proof" />
   }
   @if (shown.faq) {
-    <app-home-faq appReveal />
+    <app-home-faq appReveal [fold]="folds.faq" />
   }
   <app-home-contact appReveal />
   @if (shown.assistant) {

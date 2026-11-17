@@ -3,23 +3,13 @@
   @if (!open() && !hasOpened()) {
     <div class="tease" aria-hidden="true">{{ chat.tease }}</div>
   }
-  <!-- Hidden behind the open panel: out of the tab order and the accessibility tree too. -->
-  <a
-    class="fabb call"
-    [href]="chat.callHref"
-    [attr.aria-label]="chat.labels.call"
-    [attr.tabindex]="open() ? -1 : null"
-    [attr.aria-hidden]="open() || null"
-    ><app-icon [name]="icon.Phone" [size]="26"
-  /></a>
-  <a
-    class="fabb wa"
-    [href]="chat.whatsAppHref"
-    [attr.aria-label]="chat.labels.whatsApp"
-    [attr.tabindex]="open() ? -1 : null"
-    [attr.aria-hidden]="open() || null"
-    ><app-icon [name]="icon.WhatsApp" [size]="28"
-  /></a>
+  <app-contact-fabs
+    [callHref]="chat.callHref"
+    [whatsAppHref]="chat.whatsAppHref"
+    [callLabel]="chat.labels.call"
+    [whatsAppLabel]="chat.labels.whatsApp"
+    [hidden]="open()"
+  />
   <button
     #toggle
     class="fabb chatb"

@@ -6,17 +6,16 @@ import {
   output,
   viewChild,
 } from '@angular/core';
-import { IconComponent } from '@shared/components/icon/icon.component';
-import { IconName } from '@shared/enums/icon-name.enum';
 import { type AssistantModel } from '../assistant.model';
+import { ContactFabsComponent } from '../contact-fabs/contact-fabs.component';
 
 /**
- * Floating cluster (design `.fab`): call and WhatsApp shortcuts plus the chat toggle, with a
+ * Floating cluster (design `.fab`): call and WhatsApp shortcuts (`ContactFabsComponent`) plus the chat toggle, with a
  * one-time "Questions?" tease and badge until the visitor first opens the chat.
  */
 @Component({
   selector: 'app-assistant-launcher',
-  imports: [IconComponent],
+  imports: [ContactFabsComponent],
   templateUrl: './assistant-launcher.component.html',
   styleUrl: './assistant-launcher.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,7 +30,6 @@ export class AssistantLauncherComponent {
   /** Emitted when the chat toggle is pressed. */
   public readonly toggled = output();
 
-  protected readonly icon = IconName;
   private readonly toggleButton = viewChild.required<ElementRef<HTMLButtonElement>>('toggle');
 
   /** Moves focus back to the toggle, e.g. after the panel closes. */

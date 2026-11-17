@@ -22,10 +22,19 @@ test.describe('Home journeys', () => {
     await expect(tiles.nth(1)).toBeFocused();
   });
 
-  test('should open and close FAQ answers', async ({ home }) => {
+  test('should open the folded FAQ, then open and close its answers', async ({ home }) => {
     await home.open('faq');
-    const questions = home.section('faq').locator('details');
+    const faq = home.section('faq');
+    const questions = faq.locator('details');
+    const showMore = faq.getByRole('button', { name: 'Show more' });
 
+    // Good to know folds behind Show more by default (0015 V15).
+    await expect(questions.first()).toBeHidden();
+    await showMore.click();
+    await expect(faq.getByRole('button', { name: 'Show less' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
     await expect(questions.first()).toHaveAttribute('open', '');
     await questions.nth(1).locator('summary').click();
 

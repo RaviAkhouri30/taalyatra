@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, NEVER, firstValueFrom } from 'rxjs';
 import { APP_PREVIEW } from '@core/tokens/app-preview.token';
+import { FoldMode } from '@shared/enums/fold-mode.enum';
 import { SiteVisibility } from '@shared/models/site-visibility.model';
 import { provideVisibility } from '@shared/testing/fixtures';
 import { HomePageViewModel } from './home-page.view-model';
@@ -81,5 +82,15 @@ describe('HomePageViewModel', () => {
 
     expect(model.shown().intro).toBe(false);
     expect(model.shown().gallery).toBe(true);
+  });
+
+  it('should fold each section by the owner’s choice or its default', async () => {
+    const model = setUp(new SiteVisibility({ folded: { faq: FoldMode.Phone } }));
+
+    await firstValueFrom(model.init(), { defaultValue: undefined });
+
+    expect(model.folds().faq).toBe(FoldMode.Phone);
+    expect(model.folds().philosophy).toBe(FoldMode.Always);
+    expect(model.folds().gallery).toBe(FoldMode.Never);
   });
 });

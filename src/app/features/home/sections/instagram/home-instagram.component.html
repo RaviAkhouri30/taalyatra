@@ -7,17 +7,19 @@
           {{ section.followLabel }}
         </a>
       </app-section-header>
-      <div class="iggrid">
-        @for (post of section.posts; track post.image.src) {
-          <a class="igc" [href]="post.url" [attr.aria-label]="section.postLabel">
-            <span class="igthumb">
-              <img [ngSrc]="post.image.src" fill alt="" />
-              <span class="igbadge"><app-icon [name]="instagramIcon" [size]="18" /></span>
-            </span>
-            <p>{{ post.caption }}</p>
-          </a>
-        }
-      </div>
+      <app-fold [mode]="fold()">
+        <div class="iggrid">
+          @for (post of section.posts; track post.image.src) {
+            <a class="igc" [href]="post.url" [attr.aria-label]="section.postLabel">
+              <span class="igthumb">
+                <img [ngSrc]="post.image.src" fill alt="" />
+                <span class="igbadge"><app-icon [name]="instagramIcon" [size]="18" /></span>
+              </span>
+              <p>{{ post.caption }}</p>
+            </a>
+          }
+        </div>
+      </app-fold>
     </div>
   </section>
 }

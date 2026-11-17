@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { DeferBlockState, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { EMPTY, Subject } from 'rxjs';
 import { FakeClipboardService } from '@core/backends/fake/fake-clipboard.service';
@@ -66,7 +66,11 @@ describe('SiteShellComponent', () => {
   });
 
   it('should frame inner pages with page chrome and the WhatsApp button', async () => {
-    const { element } = await renderAt('/shows');
+    const { fixture, element } = await renderAt('/shows');
+    // The button loads after the first screen (@defer on idle); finish loading it.
+    await Promise.all(
+      (await fixture.getDeferBlocks()).map((block) => block.render(DeferBlockState.Complete)),
+    );
 
     expect(element.querySelector('app-header a.navhome')).not.toBeNull();
     expect(element.querySelector('app-promo-card')).not.toBeNull();

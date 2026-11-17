@@ -15,6 +15,7 @@ export class SiteVisibility {
   private readonly sections: ReadonlyMap<string, unknown>;
   private readonly pages: ReadonlyMap<string, unknown>;
   private readonly widgets: ReadonlyMap<string, unknown>;
+  private readonly folded: ReadonlyMap<string, unknown>;
 
   /** @param dto The stored `site/visibility` document. */
   public constructor(dto: ISiteVisibilityDto) {
@@ -22,6 +23,7 @@ export class SiteVisibility {
     this.sections = new Map(Object.entries(dto.sections ?? {}));
     this.pages = new Map(Object.entries(dto.pages ?? {}));
     this.widgets = new Map(Object.entries(dto.widgets ?? {}));
+    this.folded = new Map(Object.entries(dto.folded ?? {}));
   }
 
   /**
@@ -46,5 +48,15 @@ export class SiteVisibility {
    */
   public isWidgetVisible(widget: SiteWidget): boolean {
     return this.widgets.get(widget) !== false;
+  }
+
+  /**
+   * The owner's folding choice for a home section, unchecked: the home page validates it and fills
+   * in defaults, so that logic stays out of the initial download (0015 V15).
+   * @param section The home section.
+   * @returns The stored value, or `undefined`.
+   */
+  public foldSetting(section: HomeSection): unknown {
+    return this.folded.get(section);
   }
 }

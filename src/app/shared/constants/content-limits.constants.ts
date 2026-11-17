@@ -48,12 +48,11 @@ export const CONTENT_MAX_LENGTH = {
 } as const;
 
 /**
- * How many of each list the drum circle section holds (0013). Facts and pictures are fixed: the
- * page lays them out in four and three columns.
+ * How many of each list the drum circle section holds (0013). The facts are fixed: the page lays
+ * them out in four columns. It shows one picture (0015 V16).
  */
 export const DRUM_CIRCLE_ITEMS = {
   facts: 4,
-  pictures: 3,
   aboutMin: 1,
   aboutMax: 4,
   chipsMin: 1,

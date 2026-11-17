@@ -16,9 +16,8 @@ test.describe('Admin drum circle', () => {
       .first()
       .fill('Drum Circle, live');
     await editor
-      .card('Drum circle pictures')
+      .card('Drum circle picture')
       .getByLabel('Description')
-      .first()
       .fill('Forty people drumming together in a circle');
     await editor.waitForSave();
     await editor.publish();
@@ -32,13 +31,11 @@ test.describe('Admin drum circle', () => {
     ).toBeAttached();
   });
 
-  test('should keep three pictures, so pictures can be replaced but not added or removed', async ({
-    editor,
-  }) => {
+  test('should edit one picture, with no list to add to', async ({ editor }) => {
     await editor.openTab('Music & creativity');
-    const pictures = editor.card('Drum circle pictures');
+    const picture = editor.card('Drum circle picture');
 
-    await expect(pictures.getByRole('button', { name: 'Choose or upload' })).toHaveCount(3);
-    await expect(pictures.getByRole('button', { name: 'Add picture' })).toBeDisabled();
+    await expect(picture.getByRole('button', { name: 'Choose or upload' })).toHaveCount(1);
+    await expect(picture.getByRole('button', { name: /^Add/ })).toHaveCount(0);
   });
 });

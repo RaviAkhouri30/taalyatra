@@ -22,7 +22,10 @@
       <app-mobile-action-bar [contact]="site.contact" [cta]="chrome.actionBarCta" />
     }
     @if (model.showWhatsAppFab()) {
-      <app-whatsapp-fab [phone]="site.contact.phone" />
+      <!-- Not needed for the first screen: loading it later keeps it out of the initial download. -->
+      @defer (on idle) {
+        <app-whatsapp-fab [phone]="site.contact.phone" />
+      }
     }
   }
   <app-toast-host />

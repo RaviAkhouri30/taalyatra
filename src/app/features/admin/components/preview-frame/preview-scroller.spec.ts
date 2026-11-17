@@ -16,12 +16,14 @@ describe('PreviewScroller', () => {
     let resized = (): void => undefined;
     const observer = { observe: vi.fn(), disconnect: vi.fn() };
     const listeners = new Map<string, () => void>();
+    // The sections the site has rendered so far.
+    const rendered = new Set(['shows']);
     const site = {
       scrollY: 100,
       scrollTo,
       document: {
         getElementById: vi.fn((id: string) =>
-          id === 'shows' ? { getBoundingClientRect: () => ({ top: 500 }) } : null,
+          rendered.has(id) ? { getBoundingClientRect: () => ({ top: 500 }) } : null,
         ),
         body: {},
       },
@@ -43,6 +45,7 @@ describe('PreviewScroller', () => {
     Object.defineProperty(element, 'contentWindow', { value: site });
     return {
       element,
+      rendered,
       scrollTo,
       observer,
       listeners,
@@ -122,5 +125,37 @@ describe('PreviewScroller', () => {
     expect(() => {
       new PreviewScroller(element, false).goTo('shows');
     }).not.toThrow();
+  });
+
+  it('should stay hidden while the section loads, then fade in once it appears', () => {
+    const { element, rendered, resize } = frame();
+    const scroller = new PreviewScroller(element, true);
+    scroller.hide();
+
+    scroller.goTo('faq');
+    const waiting = animations.at(-1);
+    expect(waiting?.keyframes.at(-1)).toEqual({ opacity: 1 });
+    expect(waiting?.options.duration).toBe(PREVIEW_SETTLE_MS);
+
+    rendered.add('faq');
+    resize(500);
+
+    expect(animations.at(-1)?.keyframes).toEqual([{ opacity: 0 }, { opacity: 1 }]);
+    expect(waiting?.cancel).toHaveBeenCalled();
+  });
+
+  it('should not flash the page when moved again while waiting', () => {
+    const { element } = frame();
+    const scroller = new PreviewScroller(element, true);
+    scroller.hide();
+    scroller.goTo('faq');
+    const started = animations.length;
+
+    scroller.goTo('shows');
+
+    // Straight to the fade-in: no fade-out from full opacity in between.
+    expect(animations.slice(started).map((animation) => animation.keyframes)).toEqual([
+      [{ opacity: 0 }, { opacity: 1 }],
+    ]);
   });
 });

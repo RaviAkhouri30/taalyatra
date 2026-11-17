@@ -56,7 +56,8 @@ app routes.
   address to plain text, and video cards to their titles. A missing `credit` hides the credit, and
   missing `socials` or `promotion` show none. One absent field never blanks a section.
 - `firestore.rules` denies by default and is tested (`npm run test:rules`). Visitors can only read content, and
-  only the admin may change it, with the shape the site renders (the editable `home` sections are listed in
+  only the admin may change it, with the shape the site renders; `site/visibility` may also hold `folded`, one of `never`,
+  `phone`, `desktop`, `always` per foldable section (1.10.0) (the editable `home` sections are listed in
   `EDITABLE_HOME_SECTIONS`; `drumCircle` joined them in 1.9.0); `proposals` is create-only, with exact keys, length limits from `PROPOSAL_MAX_LENGTH`, a required email (since 1.8.1), and
   `createdAt == request.time`.
 

@@ -32,6 +32,36 @@ legend {
   background: t.$color-surface;
 }
 
+// A folded item's one-line header (0015 V14).
+.sf-item-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: t.$color-cream;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+
+  .sf-chev {
+    flex: none;
+    color: t.$color-muted-strong;
+  }
+
+  &[aria-expanded='true'] .sf-chev {
+    transform: rotate(180deg);
+  }
+}
+
+.sf-item-body {
+  display: grid;
+  gap: 12px;
+}
+
 .sf-item-title {
   margin: 0;
   font-weight: 700;
