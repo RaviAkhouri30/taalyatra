@@ -1,0 +1,144 @@
+# 01 · Inception — Version 2 programme
+
+The owner's list of 2026-11-17, turned into a plan. Like the [0008 programme](../0008-admin-content-editor/01-inception.md),
+this record covers the whole programme once (V1–V13 from the first list, V14–V17 added the same day); each release then gets its own design (and its own record when it's large)
+for approval before any code.
+
+## Goal
+
+Run the business from the admin area without a developer: a second, limited account for a content manager; nothing lost
+(offline edits, backups, undo); numbers that show what's working (visits, leads); AI help where it saves time; and an
+admin that explains itself.
+
+## What already exists
+
+The plan builds on these rather than replacing them.
+
+| Area           | Today (1.9.0)                                                                                              |
+| -------------- | ---------------------------------------------------------------------------------------------------------- |
+| Undo a publish | The last **20** publishes are kept; Review & publish can restore any of them into the draft (ADR-0013)     |
+| Unsaved edits  | Every change autosaves to a Firestore draft after 0.8 s; a failed save stays in the form with a Retry      |
+| Accounts       | One admin, hard-coded by user id in `firestore.rules`; Firebase Auth behind `IAuthService`                 |
+| Visits         | No visit counts. Speed reports (0012) are a sample: 5 pages, not "do not track" browsers, not bots         |
+| Leads          | Each proposal is stored in `proposals` and emailed; only the Firebase console can read them                |
+| Server side    | One Azure Function (`api/`), checks the admin's sign-in, signs and deletes uploads                         |
+| Chat assistant | Scripted answers on the home page, no AI                                                                   |
+| Backups        | A developer script (`npm run export:firestore`) writes a JSON file; there's no restore and no owner button |
+
+## Four things that work differently from the request
+
+1. **Electron can't build phone apps.** It makes desktop apps (Windows, macOS, Linux) only. For the two phones, the owner
+   chose an **installable web app** of the admin area (decision D2).
+2. **There's no free OpenAI or Anthropic API.** Neither has a standing free tier now (Anthropic gives a small one-time trial).
+   Groq, Cloudflare Workers AI and Google's Gemini have free tiers; Gemini's may use prompts to improve Google's products.
+   The owner chose **Groq** (decision D1).
+3. **AI must never see visitors' personal details.** Leads hold names, phone numbers and emails. The lead analysis (V11) sends
+   only anonymous fields (event type, group size, month, experience), never who asked.
+4. **Visit graphs need a visit counter first.** Nothing counts visits today, so the graphs start from the day counting does.
+   Past visits can't be recovered.
+
+## Feature catalogue
+
+Effort: S = a few days, M = about a week, L = two weeks or more of work and review.
+
+| #   | Feature (the owner's words, shortened)                                 | Recommended approach                                                                                                                                                                                                                                                                                                                                                                                  | Effort | Risk   |
+| --- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------ |
+| V1  | **Releases page:** version, latest features, each release's notes      | A "What's new" page in the admin area. Its notes come from `CHANGELOG.md`, turned into data at build time, so they can never disagree with the real releases. A small "New" dot when the version changed since the last visit                                                                                                                                                                         | S      | Low    |
+| V2  | **Local safety copy** of changes that couldn't be saved anywhere       | Keep each unsaved change in the browser (IndexedDB) until its draft save succeeds. On return, offer "Restore the changes you made offline". Only for the admin area. Not Firestore's offline cache: publishing uses transactions, which fail offline                                                                                                                                                  | M      | Medium |
+| V3  | **Go back to an earlier publish**, with a warning                      | Keep the 20 publishes kept today (the owner's choice). Add a clear "Go back to this version" on each. Before it, warn: the publishes made after it will be replaced on the site, and they'll be hard to get back unless there's a backup on this device, with a "Download a backup first" button (V13). The chosen version goes into the draft and through Review & publish                           | S      | Low    |
+| V4  | **A second account:** `content-manager@taalyatra.in`                   | You create it in the Firebase console (no password ever passes through me or the code). Roles live in Firestore (`roles/{uid}`), checked by `firestore.rules`. The admin is no longer hard-coded                                                                                                                                                                                                      | M      | High   |
+| V5  | **Permissions per section:** upload, edit, publish; approval otherwise | Per section, one of: **Can publish** or **Needs approval** (the default); plus **Can upload photos** on or off. A manager can always edit drafts. "Publish" without permission becomes "Send for approval": the admin sees a queue, reviews the changes, and approves or sends back                                                                                                                   | L      | High   |
+| V6  | **More intuitive admin**, for both roles                               | A review of the editor with you, then targeted fixes: clearer page names, plain help text on every card, empty states, the approval queue and permissions shown where they matter. Done after V5, so it covers the manager's view                                                                                                                                                                     | M      | Low    |
+| V7  | **A smart chat assistant** on the site                                 | The assistant sends the visitor's question to the Azure Function, which asks the AI with the site's own content (experiences, FAQ, contact details) as background, so answers stay true to the business. The key stays in Azure. Limits per visitor and per day; the scripted answers take over when the AI is unavailable or the day's limit is reached                                              | M      | Medium |
+| V8  | **AI help in the admin area**: a little help, and rewrite with AI      | On every text field, **Rewrite with AI** (clearer, shorter, warmer, more formal; you accept, edit or ignore) and **Help** (what this field does and where it shows on the site, plus a suggestion when it's empty). On pictures, **Suggest a description**. Admin and manager only                                                                                                                    | M      | Low    |
+| V9  | **A guided tour** on first sign-in, and from Help                      | Step-by-step highlights of each area ("this card edits the hero…"). Different steps for admin and manager. Loads only in the admin area                                                                                                                                                                                                                                                               | M      | Low    |
+| V10 | **Phone app** for admin and manager only                               | An installable web app for the admin area only (D2): its own icon and name, opens at the sign-in, works full screen, photo upload from the camera. The public home page isn't part of it                                                                                                                                                                                                              | S–M    | Low    |
+| V11 | **Graphs** of visits (year, month, week, day) and of proposals         | A privacy-friendly visit counter: one anonymous "+1" per page view into a daily total, with no cookies or ids. It loads after the page, like the speed reports, so it adds nothing to the first download. Charts drawn in the admin area without a heavy library                                                                                                                                      | M      | Medium |
+| V12 | **Leads page** for marketing, with AI analysis                         | The planned proposals inbox, extended: list, filters (event type, group size, month), status (new, contacted, won, lost), CSV export, and an "Analyse" button that sends only anonymous fields (point 3 above)                                                                                                                                                                                        | L      | Medium |
+| V13 | **Backups** you can make and restore                                   | After each publish, offer "Download a backup" (one JSON file with all content). Warn when the last backup is older than 14 days. A copy is also kept in this browser. Restore from either: it goes into the draft and through Review & publish, so you see what will change                                                                                                                           | M      | Medium |
+| V14 | **Reorder lists easily**; the featured item first                      | Above each list (shows, experiences, team, videos, gallery), a short **Order** list of names: drag to sort, or Move up / Move down for keyboard and phone. The featured item is pinned first, marked with a star. Long items fold away, so the list is readable. The order is what the site shows, on the home page as well as the item's page                                                        | M      | Low    |
+| V15 | **Fold less important home sections** to shorten the page              | Sections such as Our philosophy and Good to know open with a **Show more** heading instead of their full content. Defaults: most of them folded on phones; Our philosophy and Good to know folded on desktop too. In Sections & pages, the owner can choose per section: folded on phones, on desktop, both, or never. The content stays in the page, so search engines and Find on page still see it | M      | Low    |
+| V16 | **A smaller drum circle section**                                      | One picture on the right half. On the left, the About text, then Objectives and Occasions with smaller tags, then **Request proposal**. The three-picture gallery goes; the editor keeps one picture                                                                                                                                                                                                  | S      | Low    |
+| V17 | **Clearer floating buttons**, animated like the chat                   | WhatsApp and Call get stronger colours (WhatsApp green, Call amber) that pass contrast checks, and the same kind of short attention animation the chat icon has. To stay comfortable and accessible, they animate a few times after the page opens, then rest; nothing moves for visitors who ask for less motion                                                                                     | S      | Low    |
+
+Already planned and still to place: the content programme (0010: festival themes, SEO settings, hiding single items, the
+remaining images). V12 replaces the separate proposals inbox (0011).
+
+## Decisions for the owner
+
+| #   | Decision                                                 | Recommendation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| --- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | **AI provider** (V7, V8, V12)                            | **Decided 2026-11-17: Groq**, on its free tier, which by its terms doesn't use API data for training. **Universal by design:** the Azure Function talks to any OpenAI-compatible chat API (Groq, Cloudflare Workers AI, Gemini, OpenRouter, Mistral, OpenAI all offer one), with the address, model and key in Azure settings. Changing provider, or adding a backup provider, is a settings change, not a rebuild                                                                                |
+| D2  | **Phone app** (V10)                                      | **Decided 2026-11-17: an installable web app**, on two phones only (the admin's and the website manager's). Installed from the browser: Chrome → Install app on Android, Safari → Add to Home Screen on iPhone. It opens straight to the admin sign-in, full screen with its own icon, and updates itself with every release. Not a sideloaded app: on iPhone that needs a Mac and stops working after 7 days without a paid Apple account, and both phones would need reinstalling every release |
+| D3  | **Visit counting** (V11)                                 | **Our own anonymous counter**, not Google Analytics: no cookie banner, no personal data, and the numbers live with the rest of the site. It costs a few Firestore writes per visit, well inside the free plan at today's traffic                                                                                                                                                                                                                                                                  |
+| D4  | **Permission levels** (V5)                               | Per section **Needs approval / Can publish**, plus **upload photos on/off**; the admin can also hide a section from the manager entirely. Default for a new manager: needs approval everywhere, uploads on                                                                                                                                                                                                                                                                                        |
+| D5  | **Notifying the admin** of a change waiting for approval | A badge in the admin area to start with. An email would use the 200-a-month EmailJS allowance shared with proposals                                                                                                                                                                                                                                                                                                                                                                               |
+| D6  | **What a backup holds** (V13)                            | All site content and settings. **Leads only if you tick a box**: a downloaded file with customers' phone numbers is personal data to keep safe. Photos stay in Cloudinary; the backup holds their links                                                                                                                                                                                                                                                                                           |
+| D7  | **Version number**                                       | **2.0.0 is the accounts and permissions release** (V4, V5): it changes how the admin is identified, which is a breaking change. Everything before it stays in 1.x                                                                                                                                                                                                                                                                                                                                 |
+| D8  | **Order**                                                | As below: safety first, then numbers, then roles, then AI and apps                                                                                                                                                                                                                                                                                                                                                                                                                                |
+
+## Proposed releases
+
+| Version | Contents                                                                                    | Why this order                                                                                         |
+| ------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| 1.10.0  | V14 Reorder lists, V15 Fold sections, V16 Smaller drum circle section, V17 Floating buttons | Added by the owner on 2026-11-17: small, visible and low risk, so they go first                        |
+| 1.11.0  | V1 Releases page, V13 Backups, V3 Go back to a publish (with warning), V2 Local safety copy | Nothing can be lost before more people and features are added; and a backup comes before 2.0.0's rules |
+| 1.12.0  | V11 Visit counter and graphs, V12 Leads page (without AI)                                   | The counter should start early: graphs only show data from the day it does                             |
+| 2.0.0   | V4 Content manager account, V5 Permissions and approvals                                    | The biggest change: new rules, tested on the emulator, deployed with care                              |
+| 2.1.0   | V9 Guided tour, V6 Intuitive admin pass                                                     | After 2.0.0, so the tour and the polish cover both roles                                               |
+| 2.2.0   | V7 Smart chat, V8 Admin AI help, V12's AI analysis                                          | Needs D1 settled, the Azure Function extended, and limits in place                                     |
+| 2.3.0   | V10 Installable admin app on the two phones                                                 | Last, so the app shows the finished admin                                                              |
+| later   | 0010 content programme (festival themes, SEO settings, hiding items, images)                | Can move earlier if you'd rather have it before the version 2 work                                     |
+
+## User stories and acceptance criteria (programme level)
+
+Each release's design adds detail. These are the outcomes that define "done".
+
+- **As the owner, I want to know what changed.** Given a new release, when I open the admin, then I see a "New" dot and can
+  read every release's notes. (V1)
+- **As the owner, I never want to lose work.**
+  - Given a change that couldn't be saved (offline), when I come back, then I'm offered my unsaved changes. (V2)
+  - Given any of the last 20 publishes, when I choose to go back to it, then I'm warned that later publishes will be replaced
+    and hard to recover without a backup on this device, and offered one first; then that version is in my draft, ready to
+    publish. (V3)
+  - Given a publish, when it finishes, then I'm offered a backup; given no backup for 14 days, then I'm warned. (V13)
+  - Given a backup file or the browser copy, when I restore it, then I review the differences before anything goes live. (V13)
+- **As the owner, I want a content manager with limited rights.**
+  - Given the manager's account, when they sign in, then they see only the sections I allowed. (V4, V5)
+  - Given "Needs approval", when they press Publish, then they're told it waits for my approval, and I see it in my queue. (V5)
+  - Given "Can publish", when they press Publish, then it goes live without me. (V5)
+  - Given no upload permission, when they try to upload, then it's refused, by the rules as well as the screen. (V5)
+- **As a visitor, I want useful answers.** Given a question the site's content covers, when I ask the assistant, then the answer
+  is correct and points me to a proposal or WhatsApp; given the AI is unavailable, then the scripted answers still work. (V7)
+- **As the owner, I want help writing.** Given any text field or picture, when I press Suggest, then I get a suggestion I can
+  accept or ignore. (V8)
+- **As a new user, I want to be shown around.** Given my first sign-in, or Help, when the tour runs, then it highlights each
+  area and what it does, and I can skip or replay it. (V9)
+- **As the owner, I want the admin on my phone.** Given my phone, when I install the admin, then it opens like an app, without
+  the public home page. (V10)
+- **As the owner, I want to arrange my lists.** Given shows, experiences, team, videos or photos, when I drag or move an item in
+  the Order list, then the site shows that order, home page included; the featured item always comes first. (V14)
+- **As a visitor, I want a shorter page.** Given a less important section, when the page opens, then I see its heading with
+  Show more, and its content when I ask; on phones most of them start folded. (V15)
+- **As a visitor, I want the drum circle section compact.** Given the section, then it shows one picture beside the text, with
+  smaller tags and the Request proposal button. (V16)
+- **As a visitor, I want to notice WhatsApp and Call.** Given the page, then both buttons stand out and briefly animate, and stay
+  still if I ask for less motion. (V17)
+- **As the owner, I want to see what's working.**
+  - Given visits since counting began, when I open the dashboard, then I see visits per day, week, month and year. (V11)
+  - Given proposals, when I open Leads, then I can filter, mark their status, export them, and ask for an anonymous AI analysis. (V12)
+
+## Risks
+
+- **Roles touch every rule.** A mistake could let the manager publish, or lock the admin out. Mitigation: every permission tested on
+  the emulator (allowed and refused), a backup before the rules deploy (V13 comes first for this reason), and a rollback ruleset.
+- **AI costs and abuse.** A public chat can be spammed. Mitigation: per-visitor and daily limits in the function, a spending cap,
+  scripted fallback.
+- **The initial download has 120 bytes to spare.** The visit counter and AI chat must load after the page, like the speed reports.
+- **Free tiers change.** Groq's free limits (about 1,000 requests a day, per third-party trackers) can be cut. The function speaks a universal format, so another provider is a settings change, and the scripted answers cover any gap.
+- **Scope.** This is about six releases. Each is designed and approved separately, and can be reordered.
+
+---
+
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-17 ("if plan is ready, start implementing it 1 by 1"), with D1 Groq, D2
+installable web app, and D3–D8 as recommended. V14–V17 were added the same day and placed first.
