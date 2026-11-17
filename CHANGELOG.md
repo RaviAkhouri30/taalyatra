@@ -6,6 +6,8 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-11-17
+
 ### Added
 
 - **Drum circle details are editable** (Music & creativity tab): headings, the four facts, About, objectives, occasions,
