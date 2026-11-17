@@ -52,4 +52,4 @@ Two small, visible changes the owner asked for on 2026-11-17, released together 
 
 ---
 
-**Approval:** ☐ Pending
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-17.
