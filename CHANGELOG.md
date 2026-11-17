@@ -8,6 +8,8 @@ See [docs/versioning.md](docs/versioning.md).
 
 ### Added
 
+- **Drum circle details are editable** (Music & creativity tab): headings, the four facts, About, objectives, occasions,
+  the three pictures (upload, crop, description), similar experiences and the session flow.
 - Home page sections fade in and rise gently the first time they scroll into view. Nothing moves for visitors who ask for
   less motion.
 - The editor's preview follows the section you scroll to, fades instead of racing across the page, and comes back to the

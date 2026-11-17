@@ -12,6 +12,7 @@ import {
 } from './media.sections';
 import { OFFER_SECTIONS } from './offer.sections';
 import { VISIBILITY_SECTIONS } from './visibility.sections';
+import { DRUM_CIRCLE_SECTIONS } from './drum-circle.sections';
 
 /** One editor tab: its label and the sections it edits. */
 export interface IEditorTabSchema {
@@ -43,8 +44,8 @@ export const EDITOR_TABS: readonly IEditorTabSchema[] = [
     tab: EditorTab.Experiences,
     label: 'Music & creativity',
     description:
-      'The experiences on the home page: their images, details and which one is featured.',
-    sections: EXPERIENCES_SECTIONS,
+      'The experiences on the home page, which one is featured, and the drum circle details.',
+    sections: [...EXPERIENCES_SECTIONS, ...DRUM_CIRCLE_SECTIONS],
   },
   {
     tab: EditorTab.Gallery,

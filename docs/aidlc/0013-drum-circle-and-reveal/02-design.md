@@ -140,5 +140,5 @@ in the data model, editor docs (ADR-0014 list of editable sections), CHANGELOG.
 
 ---
 
-**Approval:** ☐ Pending. Parts 2 and 3 were built on the owner's request of 2026-11-17 ("please check and update the
-code"), ahead of approving this record, for the owner to try locally. Part 1 waits for approval.
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-17 ("1.9.0 design approved"). Parts 2 and 3 had been built earlier
+that day at the owner's request, ahead of this approval.

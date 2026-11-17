@@ -12,6 +12,7 @@ export enum ContentPath {
   HomeContact = 'home/contact',
   HomeGallery = 'home/gallery',
   HomeShows = 'home/shows',
+  HomeDrumCircle = 'home/drumCircle',
   Gallery = 'gallery',
   Team = 'team',
   ShowFormats = 'showFormats',

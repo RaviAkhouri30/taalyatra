@@ -2,6 +2,7 @@ import fakeDb from '@core/backends/fake/fake-db.json';
 import { HomeSection } from '@shared/enums/home-section.enum';
 import { SitePage } from '@shared/enums/site-page.enum';
 import { SiteWidget } from '@shared/enums/site-widget.enum';
+import { ContentPath } from '../models/content-path.enum';
 import { EditorTab } from '../models/editor-tab.enum';
 import { FieldKind } from '../models/field-kind.enum';
 import { PublishReport } from '../models/publish-report.model';
@@ -76,7 +77,9 @@ describe('editor schemas', () => {
   });
 
   it('should edit every key of each experience, which the list replaces whole', () => {
-    const list = tabSchema(EditorTab.Experiences)?.sections.at(-1)?.fields[0];
+    const list = tabSchema(EditorTab.Experiences)?.sections.find(
+      (section) => section.path === ContentPath.HomeExperiences && section.view !== undefined,
+    )?.fields[0];
     const fields =
       list?.kind === FieldKind.List && list.item.kind === FieldKind.Group ? list.item.fields : [];
     const edited = new Set(fields.map((field) => field.key));

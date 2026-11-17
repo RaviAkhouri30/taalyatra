@@ -8,6 +8,8 @@ export const IMAGE_ASPECT = {
   shows: 1.6,
   /** 16:10 */
   experiences: 1.6,
+  /** 16:10: the gallery's frames vary by screen, and the site fills them (0013). */
+  drumCircle: 1.6,
   /** 16:9 */
   videos: 1.777_778,
 } as const;

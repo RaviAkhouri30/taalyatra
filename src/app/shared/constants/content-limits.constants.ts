@@ -40,6 +40,29 @@ export const CONTENT_MAX_LENGTH = {
   experienceCategory: 40,
   experienceDescription: 400,
   experienceDetail: 40,
+  drumCircleFactLabel: 30,
+  drumCircleFactValue: 40,
+  drumCircleChip: 40,
+  drumCircleFlowStep: 40,
+  drumCircleFlowUnit: 10,
+} as const;
+
+/**
+ * How many of each list the drum circle section holds (0013). Facts and pictures are fixed: the
+ * page lays them out in four and three columns.
+ */
+export const DRUM_CIRCLE_ITEMS = {
+  facts: 4,
+  pictures: 3,
+  aboutMin: 1,
+  aboutMax: 4,
+  chipsMin: 1,
+  chipsMax: 10,
+  relatedMax: 6,
+  flowMin: 2,
+  flowMax: 8,
+  minutesMin: 1,
+  minutesMax: 240,
 } as const;
 
 /**
@@ -70,4 +93,5 @@ export const EDITABLE_HOME_SECTIONS: readonly string[] = [
   'contact',
   'gallery',
   'shows',
+  'drumCircle',
 ];

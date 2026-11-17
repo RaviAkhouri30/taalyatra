@@ -12,7 +12,7 @@ service cloud.firestore {
       allow read: if true;
       allow update: if isAdmin()
         && section in ['hero', 'offer', 'audiences', 'experiences', 'rhythmGame', 'videos', 'team',
-                       'contact', 'gallery', 'shows']
+                       'contact', 'gallery', 'shows', 'drumCircle']
         && isValidHomeSection(request.resource.data, resource.data);
     }
     match /site/{document} {
