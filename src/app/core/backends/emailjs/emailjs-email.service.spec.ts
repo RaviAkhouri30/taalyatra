@@ -10,10 +10,7 @@ describe('EmailJsEmailService', () => {
   const emailJs = { serviceId: 'service', templateId: 'template', publicKey: 'key' };
   const message = {
     subject: 'Proposal request: Drum Circle',
-    body: 'Hi',
-    fromName: 'Asha',
-    phone: '9876543210',
-    replyTo: 'asha@example.com',
+    fields: { name: 'Asha', phone: '9876543210', email: 'asha@example.com' },
   };
 
   beforeEach(() => {
@@ -41,10 +38,9 @@ describe('EmailJsEmailService', () => {
       'template',
       {
         subject: message.subject,
-        message: 'Hi',
-        from_name: 'Asha',
+        name: 'Asha',
         phone: '9876543210',
-        reply_to: 'asha@example.com',
+        email: 'asha@example.com',
       },
       { publicKey: 'key' },
     );

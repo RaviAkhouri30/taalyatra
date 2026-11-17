@@ -18,13 +18,8 @@ export class EmailJsEmailService implements IEmailService {
       this.sender(
         this.config.serviceId,
         this.config.templateId,
-        {
-          subject: message.subject,
-          message: message.body,
-          from_name: message.fromName,
-          phone: message.phone,
-          reply_to: message.replyTo,
-        },
+        // Each field becomes a template variable of the same name (ADR-0006 lists them).
+        { ...message.fields, subject: message.subject },
         { publicKey: this.config.publicKey },
       ),
     ).pipe(map(() => undefined));

@@ -38,12 +38,20 @@ describe('ProposalMessage', () => {
     expect(message.subject({ ...value, experience: '' })).toBe('Proposal request');
   });
 
-  it('should build the email with trimmed sender details', () => {
-    expect(message.email({ ...value, email: ' asha@example.com ' })).toMatchObject({
-      fromName: 'Asha',
-      phone: '9876543210',
-      replyTo: 'asha@example.com',
+  it('should send every form field, trimmed, under its own name when building the email', () => {
+    expect(message.email({ ...value, email: ' asha@example.com ' })).toEqual({
       subject: 'Proposal request: Drum Circle',
+      fields: {
+        need: 'A workshop or drum circle',
+        eventType: 'Corporate team',
+        experience: 'Drum Circle',
+        groupSize: '20–50',
+        date: '',
+        name: 'Asha',
+        phone: '9876543210',
+        email: 'asha@example.com',
+        message: 'Terrace venue',
+      },
     });
   });
 });

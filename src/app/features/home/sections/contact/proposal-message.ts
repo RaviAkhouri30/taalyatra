@@ -35,14 +35,11 @@ export class ProposalMessage {
     return value.experience ? `${this.copy.subject}: ${value.experience}` : this.copy.subject;
   }
 
-  /** @returns The email to send for `value`. */
+  /** @returns The email to send for `value`: every form field, trimmed, under its own name. */
   public email(value: ProposalValue): IEmailMessage {
-    return {
-      subject: this.subject(value),
-      body: this.body(value),
-      fromName: value.name.trim(),
-      phone: value.phone.trim(),
-      replyTo: value.email.trim(),
-    };
+    const fields = Object.fromEntries(
+      Object.entries(value).map(([field, text]) => [field, text.trim()]),
+    );
+    return { subject: this.subject(value), fields };
   }
 }

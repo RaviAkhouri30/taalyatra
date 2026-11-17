@@ -3,11 +3,11 @@ import { type Observable } from 'rxjs';
 /** An email to the business (e.g. a proposal request). */
 export interface IEmailMessage {
   readonly subject: string;
-  readonly body: string;
-  readonly fromName: string;
-  readonly phone: string;
-  /** Visitor's email for replies; empty when not given. */
-  readonly replyTo: string;
+  /**
+   * Named values for the email template, one per form field (e.g. `name`, `phone`); a field the
+   * visitor left blank is an empty string.
+   */
+  readonly fields: Readonly<Record<string, string>>;
 }
 
 /**
