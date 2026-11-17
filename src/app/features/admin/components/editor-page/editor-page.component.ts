@@ -11,10 +11,11 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BaseComponent } from '@shared/base/base-component';
 import { type IUnsavedChanges } from '../../guards/unsaved-changes.guard';
 import { InViewDirective } from '../../directives/in-view.directive';
+import { PICKABLE_SECTIONS, cardForAnchor } from '../../schemas/editor-tabs';
 import { type IEditorSection } from '../../models/i-editor-section';
 import { EditorNavService } from '../../services/editor-nav.service';
 import { type IEditorPage, EditorPageViewModel } from '../../view-models/editor-page.view-model';
@@ -42,10 +43,12 @@ export default class EditorPageComponent
   protected override readonly model = inject(EditorPageViewModel);
 
   protected readonly nav = inject(EditorNavService);
+  protected readonly pickable = PICKABLE_SECTIONS;
 
   private readonly document = inject(DOCUMENT);
   private readonly injector = inject(Injector);
   private readonly fragment = inject(ActivatedRoute).snapshot.fragment;
+  private readonly router = inject(Router);
   private readonly previewColumn = viewChild.required<ElementRef<HTMLElement>>('previewColumn');
   private arrived = false;
 
@@ -87,6 +90,26 @@ export default class EditorPageComponent
     if (this.previewColumn().nativeElement.offsetWidth > 0) {
       this.model.follow(section);
     }
+  }
+
+  /**
+   * The owner clicked a section in the preview: open the card that edits it, on this tab or the
+   * tab that has it. On phones the preview covers the form, so it closes first.
+   * @param anchor The clicked section's element id.
+   */
+  protected openSection(anchor: string): void {
+    const card = cardForAnchor(anchor, this.model.data()?.tab.tab);
+    if (card === null) {
+      return;
+    }
+    if (this.model.previewOpen()) {
+      this.model.togglePreview();
+    }
+    if (this.router.url.split('#')[0] !== card.url) {
+      void this.router.navigate([card.url], { fragment: card.fragment });
+      return;
+    }
+    this.document.getElementById(card.fragment)?.scrollIntoView({ block: 'start' });
   }
 
   /** Asks the browser to confirm closing the tab while a change could be lost. */

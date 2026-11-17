@@ -9,7 +9,7 @@ test.describe('Admin drum circle', () => {
     editor,
     page,
   }) => {
-    await editor.openTab('Music & creativity');
+    await editor.openTab('Drum circle');
     await editor
       .card('Drum circle details')
       .getByLabel(/^Title/)
@@ -32,7 +32,7 @@ test.describe('Admin drum circle', () => {
   });
 
   test('should edit one picture, with no list to add to', async ({ editor }) => {
-    await editor.openTab('Music & creativity');
+    await editor.openTab('Drum circle');
     const picture = editor.card('Drum circle picture');
 
     await expect(picture.getByRole('button', { name: 'Choose or upload' })).toHaveCount(1);

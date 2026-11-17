@@ -27,6 +27,7 @@ describe('EditorLayoutComponent', () => {
       '/admin/content',
       '/admin/offer',
       '/admin/experiences',
+      '/admin/drum-circle',
       '/admin/gallery',
       '/admin/team',
       '/admin/shows',

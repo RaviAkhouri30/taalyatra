@@ -1,6 +1,7 @@
 import fakeDb from '@core/backends/fake/fake-db.json';
 import { FOLD_DEFAULTS } from '@shared/constants/fold.constants';
 import { HomeSection } from '@shared/enums/home-section.enum';
+import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { SitePage } from '@shared/enums/site-page.enum';
 import { SiteWidget } from '@shared/enums/site-widget.enum';
 import { ContentPath } from '../models/content-path.enum';
@@ -9,7 +10,14 @@ import { FieldKind } from '../models/field-kind.enum';
 import { PublishReport } from '../models/publish-report.model';
 import { type FieldSchema } from '../models/i-field-schema';
 import { sectionContent } from '../forms/schema-value';
-import { ALL_SECTIONS, EDITOR_TABS, issueLink, tabSchema } from './editor-tabs';
+import {
+  ALL_SECTIONS,
+  EDITOR_TABS,
+  PICKABLE_SECTIONS,
+  cardForAnchor,
+  issueLink,
+  tabSchema,
+} from './editor-tabs';
 
 /** Every stored key a field list edits, as paths into the document (`contact.phone.e164`). */
 function keyPaths(fields: readonly FieldSchema[], prefix = ''): string[] {
@@ -134,5 +142,19 @@ describe('editor schemas', () => {
 
   it('should have no link for a section no tab edits', () => {
     expect(issueLink('gone')).toBeNull();
+  });
+
+  it('should open the card for a clicked page section, preferring the current tab', () => {
+    expect(cardForAnchor(PageAnchor.Shows)?.url).toBe('/admin/shows');
+    expect(cardForAnchor(PageAnchor.DrumCircleDetails)?.fragment).toBe('card-drum-circle');
+  });
+
+  it('should open Hero, not the business details, for the top of the page', () => {
+    expect(cardForAnchor(PageAnchor.Top)?.fragment).toBe('card-hero');
+  });
+
+  it('should list each clickable page section with the tab that edits it', () => {
+    expect(PICKABLE_SECTIONS.get(PageAnchor.DrumCircleDetails)).toBe('Drum circle');
+    expect(cardForAnchor('cities')).toBeNull();
   });
 });

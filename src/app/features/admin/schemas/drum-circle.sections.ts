@@ -90,7 +90,7 @@ export const DRUM_CIRCLE_SECTIONS: readonly IEditorSection[] = [
     title: 'Drum circle details',
     path: ContentPath.HomeDrumCircle,
     anchor: PageAnchor.DrumCircleDetails,
-    tip: 'The section about the drum circle, below the experiences.',
+    tip: 'The drum circle section on the home page, below the shows.',
     fields: [
       eyebrow,
       title,

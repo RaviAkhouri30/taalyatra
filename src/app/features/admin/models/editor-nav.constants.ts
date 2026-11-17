@@ -58,7 +58,8 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
     links: [
       tabLink(EditorTab.Content, IconName.Document),
       tabLink(EditorTab.Offer, IconName.Sparkle),
-      tabLink(EditorTab.Experiences, IconName.Djembe),
+      tabLink(EditorTab.Experiences, IconName.Star),
+      tabLink(EditorTab.DrumCircle, IconName.Djembe),
       tabLink(EditorTab.Gallery, IconName.Image),
       tabLink(EditorTab.Team, IconName.Group),
       tabLink(EditorTab.Shows, IconName.Mic),

@@ -3,6 +3,7 @@ export enum EditorTab {
   Offer = 'offer',
   Content = 'content',
   Experiences = 'experiences',
+  DrumCircle = 'drum-circle',
   Gallery = 'gallery',
   Team = 'team',
   Shows = 'shows',
