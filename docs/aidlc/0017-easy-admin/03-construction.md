@@ -29,4 +29,4 @@ Show or hide sections, and the phone's Hero tab and menu. The e2e screenshot bas
 
 ---
 
-**Approval:** ☐ Pending
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-18.
