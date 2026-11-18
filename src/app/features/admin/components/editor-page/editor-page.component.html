@@ -10,6 +10,28 @@
           <h1 class="d">{{ page.tab.label }}</h1>
         </div>
         <p class="ep-lead">{{ page.tab.description }}</p>
+        @if (model.unsaved(); as unsaved) {
+          <!-- Changes kept on this device when a save didn't happen (0016 V2). -->
+          <div class="ep-unsaved" role="group" aria-labelledby="ep-unsaved-text">
+            <p id="ep-unsaved-text">
+              Changes made on this device on {{ unsaved.when }} weren’t saved.
+            </p>
+            <div class="ep-unsaved-actions">
+              <button appButton type="button" [size]="compact" (click)="model.restoreUnsaved()">
+                Restore them
+              </button>
+              <button
+                appButton
+                type="button"
+                [variant]="ghost"
+                [size]="compact"
+                (click)="model.discardUnsaved()"
+              >
+                Throw them away
+              </button>
+            </div>
+          </div>
+        }
         @for (entry of page.sections; track entry.section.id) {
           <section
             class="ep-card"

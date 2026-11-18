@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { EditorNavService } from '../../services/editor-nav.service';
+import { EditorLayoutViewModel } from '../../view-models/editor-layout.view-model';
 import { provideEditorTesting } from '../../testing/editor-testing';
 import EditorLayoutComponent from './editor-layout.component';
 
@@ -12,7 +13,7 @@ describe('EditorLayoutComponent', () => {
     TestBed.configureTestingModule({ providers: testing.providers });
     const fixture = TestBed.createComponent(EditorLayoutComponent);
     fixture.detectChanges();
-    return { fixture, element: fixture.nativeElement as HTMLElement };
+    return { fixture, element: fixture.nativeElement as HTMLElement, testing };
   }
 
   it('should show the account, the side panel and the draft count', () => {
@@ -40,8 +41,21 @@ describe('EditorLayoutComponent', () => {
       '/admin/contact',
       '/admin/visibility',
       '/admin/media',
+      '/admin/releases',
     ]);
     expect(element.querySelector('.count')?.textContent).toBe('1 unpublished');
+  });
+
+  it('should mark What’s new as New until the owner opens it', async () => {
+    const { fixture, element } = render();
+    const releases = (): HTMLAnchorElement =>
+      element.querySelector<HTMLAnchorElement>('a[href="/admin/releases"]')!;
+    expect(releases().textContent).toContain('New');
+
+    fixture.debugElement.injector.get(EditorLayoutViewModel).markReleasesSeen();
+    await fixture.whenStable();
+
+    expect(releases().textContent).not.toContain('New');
   });
 
   it('should group the links under small headings, with one group unlabelled', () => {

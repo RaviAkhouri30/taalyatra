@@ -1,0 +1,90 @@
+@use 'tokens' as t;
+
+:host {
+  display: block;
+}
+
+.bk {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid t.$color-line;
+  border-radius: 18px;
+  background: t.$color-surface-raised;
+
+  h2 {
+    margin: 0;
+    font-size: 19px;
+  }
+
+  p {
+    margin: 0;
+    color: t.$color-muted-strong;
+  }
+}
+
+// The reminder, and the offer after a publish: worth noticing, not alarming.
+.bk-due {
+  padding: 10px 14px;
+  border-left: 3px solid t.$color-amber;
+  border-radius: 8px;
+  background: t.$color-surface;
+
+  .bk & {
+    color: t.$color-cream;
+  }
+}
+
+.bk-note {
+  font-size: 14px;
+}
+
+.bk-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+// The file picker is the button's label; the input stays focusable for keyboards.
+.bk-file {
+  position: relative;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    opacity: 0;
+  }
+
+  &:focus-within {
+    outline: 2px solid t.$color-amber;
+    outline-offset: 2px;
+  }
+}
+
+.bk-confirm {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid t.$color-bronze;
+  border-radius: 12px;
+
+  .bk & p {
+    color: t.$color-cream;
+  }
+}
+
+.bk-problem {
+  padding: 10px 14px;
+  border: 1px solid t.$color-danger-line;
+  border-radius: 8px;
+  background: t.$color-danger-tint;
+
+  .bk & {
+    color: t.$color-danger-text;
+  }
+}

@@ -25,7 +25,8 @@
       "@shared/*": ["./src/app/shared/*"],
       "@features/*": ["./src/app/features/*"],
       "@layout/*": ["./src/app/layout/*"],
-      "@env/*": ["./src/environments/*"]
+      "@env/*": ["./src/environments/*"],
+      "@changelog": ["./CHANGELOG.md"]
     }
   },
   "angularCompilerOptions": {

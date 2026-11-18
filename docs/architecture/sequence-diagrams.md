@@ -203,7 +203,7 @@ sequenceDiagram
   X-->>F: the draft, else the live document
 ```
 
-## 8. Publish and undo (1.6.0)
+## 8. Publish and go back (1.6.0, 0016)
 
 ```mermaid
 sequenceDiagram
@@ -221,8 +221,40 @@ sequenceDiagram
   PS->>S: read live versions · readAll(publishes)
   PS->>S: commit([set live…, set publishes/{id} with before, delete drafts…, trim history to 20])
   S-->>P: done → toast, reload, recount drafts
-  O->>P: Undo this publish → Restore
-  PS->>S: commit([set drafts from record.before])
+  O->>P: Go back to before this publish → (Download a backup first) → Go back
+  Note right of PS: 0016 V3: the chosen publish and every later one;<br/>each document takes its "before" from the earliest of them
+  PS->>S: commit([set drafts from the combined before])
+```
+
+## 8a. Backups and the safety copy (0016)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor O as Owner
+  participant V as BackupPanelViewModel
+  participant B as BackupService
+  participant D as DraftService
+  participant S as IDocumentStore
+  participant F as IFileService
+  participant L as DeviceStoreService
+  O->>V: Download a backup (or after a publish, or before going back)
+  V->>B: make()
+  B->>D: live(every ContentPath)
+  B->>S: readAll(media)
+  B->>F: download(taal-yatra-backup-YYYY-MM-DD.json)
+  B->>L: keep the latest copy (if it fits, about 4 MB)
+  B->>S: commit([set adminState/backups { lastAt }])
+  B-->>V: made$ → every card shows the new date
+  O->>V: Restore from a file / this browser's copy
+  V->>F: read(file)
+  V->>V: checkBackup: JSON · site · format · known paths only (else: say why, change nothing)
+  O->>V: Yes, restore it
+  V->>B: restore(backup)
+  B->>D: saveAll(content → drafts)
+  B->>S: commit([library entries that still exist])
+  V-->>O: Review & publish lists the changes; nothing is live until Publish
+  Note over O,L: Safety copy (V2): each change is kept in DeviceStoreService at once and dropped once its draft saves.<br/>Opening a tab whose copy differs from what loaded offers "Restore them" (saveAll → reload) or "Throw them away".
 ```
 
 ## 9. Publish a collection (1.7.0)

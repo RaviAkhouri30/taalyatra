@@ -25,7 +25,9 @@ import { PublishReport } from '../models/publish-report.model';
 import { ALL_SECTIONS, SECTIONS_WITH_TABS } from '../schemas/editor-tabs';
 import { DraftService } from '../services/draft.service';
 import { MediaLibraryService } from '../services/media-library.service';
+import { BackupService } from '../services/backup.service';
 import { PublishService } from '../services/publish.service';
+import { downloadBackup } from './backup-download';
 import { EditorLayoutViewModel } from './editor-layout.view-model';
 
 /** What the owner is told after each action. */
@@ -37,26 +39,33 @@ export const PUBLISH_MESSAGES = {
   failed: 'Something went wrong. Please try again.',
 } as const;
 
-/** Review & publish (0008 D4, D5, D18): drafts, checks, publish with confirmation, history. */
+/**
+ * Review & publish (0008 D4, D5, D18; 0016 V3): drafts, checks, publish with confirmation, and
+ * the history to go back to.
+ */
 @Injectable()
 export class PublishPageViewModel extends ViewModel<PublishPageModel> {
   /** The publish confirmation is showing. */
   public readonly confirming = signal(false);
-  /** The history record whose restore is being confirmed. */
-  public readonly restoring = signal<string | null>(null);
-  /** A publish, discard or restore is running. */
+  /** The history record whose go-back is being confirmed. */
+  public readonly goingBack = signal<string | null>(null);
+  /** A publish, discard, go-back or backup is running. */
   public readonly busy = signal(false);
+  /** A publish just finished: the backups card offers to keep a copy of it (0016 V13). */
+  public readonly justPublished = signal(false);
 
   private readonly drafts = inject(DraftService);
   private readonly publishes = inject(PublishService);
   private readonly library = inject(MediaLibraryService);
+  private readonly backups = inject(BackupService);
   private readonly layout = inject(EditorLayoutViewModel);
   private readonly toasts = inject(ToastService);
   private readonly clock = inject(CLOCK);
   private readonly reloads = new Subject<void>();
   private readonly publishRequests = new Subject<void>();
   private readonly discardRequests = new Subject<string>();
-  private readonly restoreRequests = new Subject<IPublishRecord>();
+  private readonly goBackRequests = new Subject<IPublishRecord>();
+  private readonly backupRequests = new Subject<void>();
 
   public askToPublish(): void {
     this.confirming.set(true);
@@ -68,23 +77,28 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
 
   public cancel(): void {
     this.confirming.set(false);
-    this.restoring.set(null);
+    this.goingBack.set(null);
   }
 
   public discard(path: string): void {
     this.discardRequests.next(path);
   }
 
-  public askToRestore(record: IPublishRecord): void {
-    this.restoring.set(record.id);
+  public askToGoBack(record: IPublishRecord): void {
+    this.goingBack.set(record.id);
   }
 
-  public restore(record: IPublishRecord): void {
-    this.restoreRequests.next(record);
+  public goBack(record: IPublishRecord): void {
+    this.goBackRequests.next(record);
+  }
+
+  public downloadBackup(): void {
+    this.backupRequests.next();
   }
 
   protected override attachViewHandler(): Observable<unknown> {
-    return this.reloads.pipe(
+    // A restored backup changes the drafts from the backups card; the layout says so.
+    return merge(this.reloads, this.layout.changes$).pipe(
       startWith(undefined),
       // switchMap: a newer reload replaces one still in flight.
       switchMap(() =>
@@ -112,7 +126,11 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
       this.publishRequests.pipe(
         exhaustMap(() =>
           this.run(
-            this.publishes.publish(this.data()?.drafts ?? new Map()),
+            this.publishes.publish(this.data()?.drafts ?? new Map()).pipe(
+              tap(() => {
+                this.justPublished.set(true);
+              }),
+            ),
             PUBLISH_MESSAGES.published,
             PUBLISH_MESSAGES.publishFailed,
           ),
@@ -122,9 +140,37 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
       this.discardRequests.pipe(
         concatMap((path) => this.run(this.drafts.discard([path]), PUBLISH_MESSAGES.discarded)),
       ),
-      this.restoreRequests.pipe(
-        exhaustMap((record) => this.run(this.publishes.restore(record), PUBLISH_MESSAGES.restored)),
+      this.goBackRequests.pipe(exhaustMap((record) => this.runGoBack(record))),
+      this.backupStreams(),
+    );
+  }
+
+  private backupStreams(): Observable<unknown> {
+    return merge(
+      // A backup made anywhere covers the publish: the card stops suggesting one.
+      this.backups.made$.pipe(
+        tap(() => {
+          this.justPublished.set(false);
+        }),
       ),
+      // exhaustMap: a second click while the backup is being made is ignored.
+      this.backupRequests.pipe(
+        exhaustMap(() => this.withBusy(downloadBackup(this.backups, this.toasts))),
+      ),
+    );
+  }
+
+  private runGoBack(record: IPublishRecord): Observable<unknown> {
+    const history = this.data()?.history.map((entry) => entry.record) ?? [];
+    return this.run(this.publishes.goBack(record, history), PUBLISH_MESSAGES.restored);
+  }
+
+  private withBusy(action: Observable<unknown>): Observable<unknown> {
+    this.busy.set(true);
+    return action.pipe(
+      finalize(() => {
+        this.busy.set(false);
+      }),
     );
   }
 

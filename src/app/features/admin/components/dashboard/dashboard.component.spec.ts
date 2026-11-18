@@ -28,8 +28,26 @@ describe('DashboardComponent', () => {
       '/admin/offer',
       '/admin/visibility',
       '/admin/publish',
+      '/admin/publish#backups',
+      '/admin/releases',
     ]);
     expect(element.textContent).toContain('Nothing left to fill in');
+  });
+
+  it('should remind the owner to make a backup, and show the newest release in brief', () => {
+    const element = render({});
+
+    expect(element.querySelector('#db-backup')?.textContent).toContain('Due');
+    expect(element.textContent).toContain('No backup yet.');
+    expect(element.querySelector('#db-release')).not.toBeNull();
+    expect(element.querySelectorAll('.db-notes li').length).toBeGreaterThan(0);
+  });
+
+  it('should say when the last backup was, without a reminder, when it is recent', () => {
+    const element = render({ 'adminState/backups': { lastAt: '2026-10-30T10:00:00.000Z' } });
+
+    expect(element.querySelector('#db-backup')?.textContent).not.toContain('Due');
+    expect(element.textContent).toContain('Last backup: 30 Oct 2026, 3:30 pm.');
   });
 
   it('should group the text still to fill in by section, each item with a Fix link', () => {
@@ -37,7 +55,7 @@ describe('DashboardComponent', () => {
     const group = element.querySelector('.db-group')!;
     const first = group.querySelector('.db-todos li')!;
 
-    expect(element.querySelector('.db-count')!.textContent).toMatch(/^\d+$/);
+    expect(element.querySelector('#db-warnings .db-count')!.textContent).toMatch(/^\d+$/);
     expect(group.querySelector('summary b')!.textContent).toBe('Offer');
     expect(first.querySelector('b')!.textContent).toBe('Offer card 1 → Duration and price');
     expect(first.querySelector('small')!.textContent).toContain('replace it with your own words');

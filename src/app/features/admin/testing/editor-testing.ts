@@ -6,8 +6,12 @@ import {
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { Subject, of } from 'rxjs';
+import { FakeFileService } from '@core/backends/fake/fake-file.service';
 import { IAuthService } from '@core/interfaces/i-auth-service';
 import { type DocumentFields, IDocumentStore } from '@core/interfaces/i-document-store';
+import { IFileService } from '@core/interfaces/i-file-service';
+import { BackupService } from '../services/backup.service';
+import { DeviceStoreService } from '../services/device-store.service';
 import { LoggerService } from '@core/services/logger.service';
 import { CLOCK } from '@core/tokens/clock.token';
 import { provideFakeContent, provideSiteConfig } from '@shared/testing/fixtures';
@@ -25,18 +29,24 @@ export const EDITOR_ADMIN = { uid: 'admin-uid', email: 'owner@example.com' };
 /**
  * @param seed Stored documents to start with, by path.
  * @returns Providers for editor specs (fake content, an in-memory store, a fixed clock, a
- *   signed-in admin) and the store, to inspect.
+ *   signed-in admin, fake files and browser storage) and the fakes, to inspect.
  */
 export function provideEditorTesting(seed: Readonly<Record<string, DocumentFields>> = {}): {
   providers: (Provider | EnvironmentProviders)[];
   store: MemoryDocumentStore;
   signOut: ReturnType<typeof vi.fn>;
+  files: FakeFileService;
+  localStore: IMemoryLocalStore;
 } {
   const store = new MemoryDocumentStore(seed);
   const signOut = vi.fn(() => of(undefined));
+  const files = new FakeFileService();
+  const localStore = memoryLocalStore();
   return {
     store,
     signOut,
+    files,
+    localStore,
     providers: [
       provideRouter([]),
       provideFakeContent().provider,
@@ -45,6 +55,9 @@ export function provideEditorTesting(seed: Readonly<Record<string, DocumentField
       { provide: IDocumentStore, useValue: store },
       { provide: CLOCK, useValue: { now: () => EDITOR_NOW } },
       { provide: IAuthService, useValue: { user$: of(EDITOR_ADMIN), signOut } },
+      { provide: IFileService, useValue: files },
+      BackupService,
+      { provide: DeviceStoreService, useValue: localStore },
     ],
   };
 }
@@ -63,6 +76,7 @@ export interface ILayoutStub {
   readonly status: WritableSignal<SaveStatus>;
   readonly retry: ReturnType<typeof vi.fn>;
   readonly resetContent: ReturnType<typeof vi.fn>;
+  readonly markReleasesSeen: ReturnType<typeof vi.fn>;
 }
 
 /** @returns A fresh layout stand-in. */
@@ -80,6 +94,7 @@ export function layoutStub(): ILayoutStub {
     status: signal(SaveStatus.Idle),
     retry: vi.fn(),
     resetContent: vi.fn(),
+    markReleasesSeen: vi.fn(),
   };
 }
 
@@ -89,4 +104,28 @@ export function layoutStub(): ILayoutStub {
  */
 export function provideLayout(stub: ILayoutStub): Provider {
   return [{ provide: EditorLayoutViewModel, useValue: stub }, EditorNavService];
+}
+
+/** A stand-in for `DeviceStoreService` that keeps values in memory. */
+export interface IMemoryLocalStore {
+  readonly values: Map<string, string>;
+  get(key: string): string | null;
+  set(key: string, value: string): boolean;
+  remove(key: string): void;
+}
+
+/**
+ * @param seed Values to start with, by key.
+ * @returns A `DeviceStoreService` stand-in, so specs never touch the real browser storage.
+ */
+export function memoryLocalStore(seed: Readonly<Record<string, string>> = {}): IMemoryLocalStore {
+  const values = new Map(Object.entries(seed));
+  return {
+    values,
+    get: (key) => values.get(key) ?? null,
+    set: (key, value) => values.set(key, value).has(key),
+    remove: (key) => {
+      values.delete(key);
+    },
+  };
 }

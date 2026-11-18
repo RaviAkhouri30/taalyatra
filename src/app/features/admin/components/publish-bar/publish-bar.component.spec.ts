@@ -6,6 +6,7 @@ import { ToastService } from '@shared/services/toast.service';
 import { SaveStatus } from '../../models/save-status.enum';
 import { MediaLibraryService } from '../../services/media-library.service';
 import { layoutStub, provideEditorTesting, provideLayout } from '../../testing/editor-testing';
+import { BACKUP_MESSAGES } from '../../view-models/backup-download';
 import { PUBLISH_BAR_MESSAGES } from '../../view-models/publish-bar.view-model';
 import { PublishBarComponent } from './publish-bar.component';
 
@@ -40,7 +41,7 @@ describe('PublishBarComponent', () => {
         (candidate) => candidate.textContent.trim() === name,
       );
     const status = () => element.querySelector('[role="status"]')?.textContent;
-    return { fixture, element, button, status, layout, show, store: testing.store };
+    return { fixture, element, button, status, layout, show, store: testing.store, testing };
   }
 
   it('should say everything is published, with nothing to press', () => {
@@ -77,6 +78,32 @@ describe('PublishBarComponent', () => {
     expect(store.documents.has('drafts/home__hero')).toBe(false);
     expect(show).toHaveBeenCalledWith(PUBLISH_BAR_MESSAGES.published);
     expect(layout.refreshChanges).toHaveBeenCalled();
+  });
+
+  it('should offer a backup once published, and download it when asked', async () => {
+    const { fixture, button, show, testing } = render({ 'drafts/home__hero': heroDraft });
+    button('Publish')?.click();
+    await fixture.whenStable();
+
+    button('Download a backup')?.click();
+    await fixture.whenStable();
+
+    expect(testing.files.downloads).toHaveLength(1);
+    expect(show).toHaveBeenLastCalledWith(BACKUP_MESSAGES.kept);
+    expect(button('Download a backup')).toBeUndefined();
+  });
+
+  it('should drop the backup offer once there are new changes', async () => {
+    const { fixture, button, layout, store } = render({ 'drafts/home__hero': heroDraft });
+    button('Publish')?.click();
+    await fixture.whenStable();
+    expect(button('Download a backup')).toBeDefined();
+
+    store.documents.set('drafts/home__hero', heroDraft);
+    layout.changes$.next();
+    await fixture.whenStable();
+
+    expect(button('Download a backup')).toBeUndefined();
   });
 
   it('should say so when publishing fails', async () => {

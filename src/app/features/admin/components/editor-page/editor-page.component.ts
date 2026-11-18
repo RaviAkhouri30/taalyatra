@@ -22,6 +22,8 @@ import { type IEditorPage, EditorPageViewModel } from '../../view-models/editor-
 import { PreviewFrameComponent } from '../preview-frame/preview-frame.component';
 import { PublishBarComponent } from '../publish-bar/publish-bar.component';
 import { SchemaFieldsComponent } from '../schema-fields/schema-fields.component';
+import { ButtonDirective } from '@shared/directives/button.directive';
+import { ButtonSize, ButtonVariant } from '@shared/enums/button-variant.enum';
 
 /**
  * One editor tab: a card per section, built from its schema, beside the live preview. Changes
@@ -29,7 +31,13 @@ import { SchemaFieldsComponent } from '../schema-fields/schema-fields.component'
  */
 @Component({
   selector: 'app-editor-page',
-  imports: [InViewDirective, PreviewFrameComponent, PublishBarComponent, SchemaFieldsComponent],
+  imports: [
+    ButtonDirective,
+    InViewDirective,
+    PreviewFrameComponent,
+    PublishBarComponent,
+    SchemaFieldsComponent,
+  ],
   templateUrl: './editor-page.component.html',
   styleUrl: './editor-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,6 +52,8 @@ export default class EditorPageComponent
 
   protected readonly nav = inject(EditorNavService);
   protected readonly pickable = PICKABLE_SECTIONS;
+  protected readonly ghost = ButtonVariant.Ghost;
+  protected readonly compact = ButtonSize.Compact;
 
   private readonly injector = inject(Injector);
   private readonly fragment = inject(ActivatedRoute).snapshot.fragment;

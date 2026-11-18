@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { BaseComponent } from '@shared/base/base-component';
 import { AppRoute } from '@shared/enums/app-route.enum';
 import { type DashboardModel } from '../../models/dashboard.model';
-import { PUBLISH_PATH } from '../../models/editor-nav.constants';
+import { PUBLISH_PATH, RELEASES_PATH } from '../../models/editor-nav.constants';
 import { EditorTab } from '../../models/editor-tab.enum';
 import { issueLink } from '../../schemas/editor-tabs';
 import { DashboardViewModel } from '../../view-models/dashboard.view-model';
@@ -36,6 +36,7 @@ export default class DashboardComponent extends BaseComponent<DashboardModel> {
     publish: `${AppRoute.Admin}/${PUBLISH_PATH}`,
     offer: `${AppRoute.Admin}/${EditorTab.Offer}`,
     visibility: `${AppRoute.Admin}/${EditorTab.Visibility}`,
+    releases: `${AppRoute.Admin}/${RELEASES_PATH}`,
   };
   /** Text still to fill in, each linked to its card. */
   protected readonly todos = computed<readonly ITodo[]>(() =>

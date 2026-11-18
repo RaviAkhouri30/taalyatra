@@ -191,8 +191,9 @@ export class ApiServiceProviderFactory {
 - Every adapter honours the same `HttpResponse<T>` contract (Liskov). `RestHttpBackend` wraps
   `HttpClient` with `observe: 'response'`, so it matches the contract exactly.
 - The same pattern applies to `IAuthService` (ADR-0012), `IDocumentStore` (the editor's fresh
-  reads and atomic commits, ADR-0013), `IEmailService`, `IClipboardService` and `IMediaService`
-  (provided on the admin routes only, so public pages never load it, ADR-0017).
+  reads and atomic commits, ADR-0013), `IEmailService`, `IClipboardService`, and `IMediaService`
+  and `IFileService` (backups, 0016), both provided on the admin routes only, so public pages
+  never load them (ADR-0017).
   Each has a Fake implementation for unit tests and e2e.
 - `ApiBaseService` sends every call through `HttpsErrorHandler` (loader, timeout, status check,
   notification) and unwraps `body`.

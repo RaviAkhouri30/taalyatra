@@ -1,11 +1,11 @@
 # Deployment & Environments
 
-| Environment / build | Backend                                        | Purpose                                   |
-| ------------------- | ---------------------------------------------- | ----------------------------------------- |
-| `development`       | Fake (`fake-db.json`)                          | Local work                                |
-| `emulator`          | Firebase, local emulator (`demo-taal-yatra`)   | Firebase smoke suite (`npm run e2e:firebase`) |
-| e2e (main suite)    | Fake                                           | Deterministic Playwright runs             |
-| `production`        | Firebase, project `taal-yatra`                 | Live site                                 |
+| Environment / build | Backend                                      | Purpose                                       |
+| ------------------- | -------------------------------------------- | --------------------------------------------- |
+| `development`       | Fake (`fake-db.json`)                        | Local work                                    |
+| `emulator`          | Firebase, local emulator (`demo-taal-yatra`) | Firebase smoke suite (`npm run e2e:firebase`) |
+| e2e (main suite)    | Fake                                         | Deterministic Playwright runs                 |
+| `production`        | Firebase, project `taal-yatra`               | Live site                                     |
 
 **Firestore:** Native mode, project `taal-yatra`, location `asia-south2` (Delhi). The location
 can't be changed.
@@ -31,6 +31,7 @@ delivery. Preview sites don't have these settings, so uploads fail there with a 
 
 **Runtime config:** the Firebase web config is public by design (it's protected by
 `firestore.rules`) but kept out of git (CLAUDE.md §10).
+
 - `public/runtime-config.js` is git-ignored. Copy it from `public/runtime-config.example.js`
   for local production builds.
 - In CI, `scripts/write-runtime-config.mjs` writes it into the build output from the GitHub
@@ -43,6 +44,7 @@ delivery. Preview sites don't have these settings, so uploads fail there with a 
   so a missing asset still returns 404.
 
 **Build output (`postbuild`):** `npm run build` runs `scripts/postbuild.mjs` afterwards. It
+
 - replaces `%SITE_URL%` in `index.html` (canonical and Open Graph URLs) with `SITE_URL`, else
   `siteUrl` from `src/environments/environment.ts`;
 - adds `<link rel="modulepreload">` for the chunk holding the Firestore client, so it downloads
@@ -57,6 +59,7 @@ because it has no loader. Rolling back means restoring content from a backup too
 
 **Rules and data (manual, from a developer machine):** merging to `main` deploys the app, so when
 a release adds rules for new writes, do steps 1–3 **before** the merge, and add any Azure settings before it too.
+
 1. `npx firebase login`
 2. `npm run export:firestore -- <key.json>`: a dated backup in `backups/` (git-ignored)
 3. `npm run deploy:rules`

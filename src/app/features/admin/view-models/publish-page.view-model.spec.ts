@@ -6,6 +6,7 @@ import { ToastService } from '@shared/services/toast.service';
 import { MediaLibraryService } from '../services/media-library.service';
 import { PublishService } from '../services/publish.service';
 import { layoutStub, provideEditorTesting, provideLayout } from '../testing/editor-testing';
+import { BACKUP_MESSAGES } from './backup-download';
 import { PUBLISH_MESSAGES, PublishPageViewModel } from './publish-page.view-model';
 
 describe('PublishPageViewModel', () => {
@@ -32,7 +33,7 @@ describe('PublishPageViewModel', () => {
     });
     const model = TestBed.inject(PublishPageViewModel);
     model.init().subscribe();
-    return { model, layout, show, store: testing.store };
+    return { model, layout, show, files: testing.files, store: testing.store };
   }
 
   it('should load the drafts with their checks', () => {
@@ -90,18 +91,48 @@ describe('PublishPageViewModel', () => {
     expect(show).toHaveBeenCalledWith(PUBLISH_MESSAGES.discarded);
   });
 
-  it('should restore an earlier version into the draft after confirmation', () => {
+  it('should go back to before a publish, into the draft, after confirmation', () => {
     const { model, show, store } = setUp();
     model.publish();
     const record = model.data()!.history[0]!.record;
 
-    model.askToRestore(record);
-    expect(model.restoring()).toBe(record.id);
-    model.restore(record);
+    model.askToGoBack(record);
+    expect(model.goingBack()).toBe(record.id);
+    model.goBack(record);
 
     expect(store.documents.get('drafts/home__hero')).toMatchObject({ content: fakeDb.home.hero });
     expect(show).toHaveBeenLastCalledWith(PUBLISH_MESSAGES.restored);
-    expect(model.restoring()).toBeNull();
+    expect(model.goingBack()).toBeNull();
+  });
+
+  it('should offer a backup once a publish is done', () => {
+    const { model } = setUp();
+    expect(model.justPublished()).toBe(false);
+
+    model.publish();
+
+    expect(model.justPublished()).toBe(true);
+  });
+
+  it('should download a backup, saying so, and stop suggesting one', () => {
+    const { model, show, files } = setUp();
+    model.publish();
+
+    model.downloadBackup();
+
+    expect(files.downloads).toHaveLength(1);
+    expect(show).toHaveBeenLastCalledWith(BACKUP_MESSAGES.kept);
+    expect(model.busy()).toBe(false);
+    expect(model.justPublished()).toBe(false);
+  });
+
+  it('should reload when the drafts change elsewhere, such as a restored backup', () => {
+    const { model, layout, store } = setUp();
+    store.documents.delete('drafts/home__hero');
+
+    layout.changes$.next();
+
+    expect(model.data()?.changes).toEqual([]);
   });
 
   it('should close a confirmation on cancel', () => {

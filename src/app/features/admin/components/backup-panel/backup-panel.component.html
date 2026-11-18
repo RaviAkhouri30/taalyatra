@@ -1,0 +1,68 @@
+<section class="bk" id="backups" aria-labelledby="bk-title">
+  <h2 id="bk-title">Backups</h2>
+  @if (model.data(); as panel) {
+    @if (justPublished()) {
+      <p class="bk-due">Published. Download a backup to keep a copy of the website as it is now.</p>
+    } @else {
+      <p [class.bk-due]="panel.status.due">{{ panel.status.text }}</p>
+    }
+    <p class="bk-note">
+      A backup is one file with the website’s words, settings and photo descriptions. The photos
+      themselves stay in the photo library. Restoring one puts it in your draft first, so you can
+      check it before anything changes on the website.
+    </p>
+    @if (model.pending(); as pending) {
+      <div class="bk-confirm" role="group" aria-labelledby="bk-confirm-text">
+        <p id="bk-confirm-text">
+          Put the backup from <b>{{ pending.when }}</b> into your draft? It replaces your
+          unpublished changes to the same sections. Nothing changes on the website until you
+          publish.
+        </p>
+        <div class="bk-actions">
+          <button
+            appButton
+            type="button"
+            [disabled]="model.busy()"
+            (click)="model.confirmRestore()"
+          >
+            Yes, restore it
+          </button>
+          <button appButton type="button" [variant]="ghost" (click)="model.cancelRestore()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    } @else {
+      <div class="bk-actions">
+        <button appButton type="button" [disabled]="model.busy()" (click)="model.download()">
+          {{ model.busy() ? 'Working…' : 'Download a backup' }}
+        </button>
+        <label class="btn btn--ghost bk-file">
+          <input
+            #picker
+            type="file"
+            accept=".json,application/json"
+            data-testid="backup-file"
+            [disabled]="model.busy()"
+            (change)="choose(picker)"
+          />
+          Restore from a file
+        </label>
+        @if (panel.browserCopyWhen; as when) {
+          <button
+            appButton
+            type="button"
+            [variant]="ghost"
+            [disabled]="model.busy()"
+            (click)="model.useBrowserCopy()"
+          >
+            Restore this browser’s copy ({{ when }})
+          </button>
+        }
+      </div>
+    }
+    @if (model.problem(); as problem) {
+      <p class="bk-problem" role="alert">{{ problem }}</p>
+    }
+  }
+</section>

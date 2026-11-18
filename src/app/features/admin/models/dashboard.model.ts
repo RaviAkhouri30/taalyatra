@@ -7,6 +7,7 @@ import { type IPromotionDto } from '@shared/interfaces/i-site-config';
 import { PromotionSchedule } from '@shared/models/promotion-schedule.model';
 import { SiteVisibility } from '@shared/models/site-visibility.model';
 import { fieldOf } from '../forms/json-node';
+import { BackupStatus } from './backup-status.model';
 import { formatDay, formatMoment } from './editor-dates';
 import { type IPublishIssue } from './i-publish-issue';
 import { type IPublishRecord } from './i-publish-record';
@@ -18,6 +19,8 @@ export interface IDashboardSource {
   readonly siteConfig: DocumentFields | null;
   readonly visibility: DocumentFields | null;
   readonly warnings: readonly IPublishIssue[];
+  /** When the last backup was made, or `null` for never (0016 V13). */
+  readonly lastBackupAt: string | null;
   readonly now: Date;
 }
 
@@ -34,6 +37,7 @@ export class DashboardModel {
   public readonly hidden: string;
   public readonly lastPublished: string;
   public readonly warnings: readonly IPublishIssue[];
+  public readonly backup: BackupStatus;
 
   /** @param source What the dashboard is built from. */
   public constructor(source: IDashboardSource) {
@@ -52,6 +56,7 @@ export class DashboardModel {
       ? `Last published ${formatMoment(source.lastPublish.publishedAt)}.`
       : 'Nothing published from the editor yet.';
     this.warnings = source.warnings;
+    this.backup = new BackupStatus(source.lastBackupAt, source.now);
   }
 
   private static offerText(status: PromotionStatus, promotion: IPromotionDto | undefined): string {

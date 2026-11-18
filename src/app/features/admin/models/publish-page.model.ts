@@ -17,6 +17,8 @@ export interface IHistoryEntry {
   readonly record: IPublishRecord;
   readonly when: string;
   readonly title: string;
+  /** The latest publish: going back to before it replaces nothing published since (0016 V3). */
+  readonly newest: boolean;
 }
 
 /** The review & publish page: what will change, what the checks found, and the history. */
@@ -43,10 +45,11 @@ export class PublishPageModel {
       title: this.titleOf(draft.path),
       savedAt: formatMoment(draft.savedAt),
     }));
-    this.history = history.map((record) => ({
+    this.history = history.map((record, index) => ({
       record,
       when: formatMoment(record.publishedAt),
       title: record.changed.map((path) => this.titleOf(path)).join('; '),
+      newest: index === 0,
     }));
     const count = drafts.size;
     this.confirmText = `Publish ${String(count)} changed ${count === 1 ? 'document' : 'documents'}? Visitors see the changes on their next visit.`;

@@ -25,7 +25,9 @@ import { SAVE_STATUS_TEXT } from '../models/editor-nav.constants';
 import { ALL_SECTIONS } from '../schemas/editor-tabs';
 import { DraftService } from '../services/draft.service';
 import { MediaLibraryService } from '../services/media-library.service';
+import { BackupService } from '../services/backup.service';
 import { PublishService } from '../services/publish.service';
+import { downloadBackup } from './backup-download';
 import { EditorLayoutViewModel } from './editor-layout.view-model';
 
 /** What the bar knows about the owner's drafts. */
@@ -37,7 +39,7 @@ export interface IPublishBarState {
 
 /** What the owner is told after each action. */
 export const PUBLISH_BAR_MESSAGES = {
-  published: 'Published. You can undo it from Review & publish.',
+  published: 'Published. You can go back to before it from Review & publish.',
   publishFailed: 'Couldn’t publish. Nothing changed on the site; please try again.',
   discarded: 'Your unpublished changes are gone.',
   discardFailed: 'Couldn’t discard your changes. Please try again.',
@@ -55,6 +57,8 @@ export class PublishBarViewModel extends ViewModel<IPublishBarState> {
   public readonly problems = computed(() => this.data()?.problems ?? 0);
   /** A publish or discard is running. */
   public readonly busy = signal(false);
+  /** A publish just finished: the bar offers a backup of what's live now (0016 V13). */
+  public readonly offerBackup = signal(false);
   /** Asking the owner to confirm throwing their changes away. */
   public readonly confirmingDiscard = signal(false);
   /** Whether a save failed, so it can be retried. */
@@ -93,10 +97,12 @@ export class PublishBarViewModel extends ViewModel<IPublishBarState> {
   private readonly draftService = inject(DraftService);
   private readonly publishes = inject(PublishService);
   private readonly library = inject(MediaLibraryService);
+  private readonly backups = inject(BackupService);
   private readonly toasts = inject(ToastService);
   private readonly clock = inject(CLOCK);
   private readonly publishRequests = new Subject<void>();
   private readonly discardRequests = new Subject<void>();
+  private readonly backupRequests = new Subject<void>();
 
   public publish(): void {
     this.publishRequests.next();
@@ -114,6 +120,10 @@ export class PublishBarViewModel extends ViewModel<IPublishBarState> {
     this.discardRequests.next();
   }
 
+  public downloadBackup(): void {
+    this.backupRequests.next();
+  }
+
   public retry(): void {
     this.layout.retry();
   }
@@ -125,6 +135,10 @@ export class PublishBarViewModel extends ViewModel<IPublishBarState> {
       switchMap(() => this.readState()),
       tap((state) => {
         this.setData(state);
+        // New changes since the publish: the offer was about what's live, so it goes.
+        if (state.drafts.size > 0) {
+          this.offerBackup.set(false);
+        }
       }),
     );
   }
@@ -134,6 +148,15 @@ export class PublishBarViewModel extends ViewModel<IPublishBarState> {
     return merge(
       this.publishRequests.pipe(exhaustMap(() => this.runPublish())),
       this.discardRequests.pipe(exhaustMap(() => this.runDiscard())),
+      this.backupRequests.pipe(
+        exhaustMap(() =>
+          downloadBackup(this.backups, this.toasts).pipe(
+            tap(() => {
+              this.offerBackup.set(false);
+            }),
+          ),
+        ),
+      ),
     );
   }
 
@@ -159,6 +182,7 @@ export class PublishBarViewModel extends ViewModel<IPublishBarState> {
     return this.publishes.publish(this.data()?.drafts ?? new Map<string, IDraft>()).pipe(
       tap(() => {
         this.toasts.show(PUBLISH_BAR_MESSAGES.published);
+        this.offerBackup.set(true);
         this.layout.refreshChanges();
       }),
       catchError(() => {

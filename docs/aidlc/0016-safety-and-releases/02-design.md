@@ -27,7 +27,7 @@ One JSON file, `taal-yatra-backup-2026-11-18.json`:
 - **Included:** every document the editor can change (`ContentPath`: site settings, home sections, the four collections'
   items), and the media library's index (`media/*`), so photos' descriptions and crops come back with it.
 - **Not included:** drafts, publish history and speed reports (they rebuild themselves), and **leads**: the rules don't let
-  the editor read proposals yet. The Leads page (1.12.0) adds that, and with it a "Include leads" tick box (programme D6).
+  the editor read proposals yet. The Leads page (1.13.0) adds that, and with it a "Include leads" tick box (programme D6).
 - **Photos themselves** stay in Cloudinary; the backup holds their addresses. Deleting a photo from the library still
   removes it for good, as the library already warns.
 
@@ -96,7 +96,7 @@ tests, provided on the admin routes like `IMediaService`.
 | 3   | Reminder after              | 14 days                                                                          |
 | 4   | Browser copy                | The latest backup only                                                           |
 | 5   | Restore goes to             | The drafts, then Review & publish, never straight to the site                    |
-| 6   | Leads in backups            | Not yet: they come with the Leads page (1.12.0) and its tick box                 |
+| 6   | Leads in backups            | Not yet: they come with the Leads page (1.13.0) and its tick box                 |
 
 ---
 

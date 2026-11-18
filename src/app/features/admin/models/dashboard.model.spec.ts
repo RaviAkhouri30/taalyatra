@@ -12,6 +12,7 @@ describe('DashboardModel', () => {
     siteConfig: config,
     visibility: fakeDb.site.visibility,
     warnings: [],
+    lastBackupAt: null,
     now,
     ...change,
   });
@@ -28,6 +29,7 @@ describe('DashboardModel', () => {
     expect(dashboard.offer).toBe('Live, with no end date.');
     expect(dashboard.hidden).toBe('Everything is showing: every section, page and button.');
     expect(dashboard.lastPublished).toBe('Nothing published from the editor yet.');
+    expect(dashboard.backup.due).toBe(true);
   });
 
   it('should count drafts and name the last publish', () => {

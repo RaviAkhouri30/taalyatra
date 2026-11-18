@@ -17,7 +17,7 @@ describe('PublishPageComponent', () => {
         (candidate) =>
           (candidate.getAttribute('aria-label') ?? candidate.textContent.trim()) === name,
       );
-    return { fixture, element, button };
+    return { fixture, element, button, testing };
   }
 
   it('should say everything is published when there are no drafts', () => {
@@ -65,19 +65,70 @@ describe('PublishPageComponent', () => {
     expect(button('Publish changes')?.disabled).toBe(true);
   });
 
-  it('should confirm before undoing a publish', () => {
-    const { fixture, element, button } = render({
-      'publishes/2026-10-30T10-00-00-000Z': {
-        publishedAt: '2026-10-30T10:00:00.000Z',
-        changed: ['home/hero'],
-        before: { 'home/hero': fakeDb.home.hero },
-      },
-    });
+  const publishes = {
+    'publishes/2026-10-30T10-00-00-000Z': {
+      publishedAt: '2026-10-30T10:00:00.000Z',
+      changed: ['home/hero'],
+      before: { 'home/hero': fakeDb.home.hero },
+    },
+    'publishes/2026-10-31T09-00-00-000Z': {
+      publishedAt: '2026-10-31T09:00:00.000Z',
+      changed: ['home/hero'],
+      before: { 'home/hero': { ...fakeDb.home.hero, title: 'Between' } },
+    },
+  };
 
-    button('Undo the publish of 30 Oct 2026, 3:30 pm')?.click();
+  it('should warn that later publishes are replaced too, and offer a backup first', () => {
+    const { fixture, element, button } = render(publishes);
+
+    button('Go back to before the publish of 30 Oct 2026, 3:30 pm')?.click();
     fixture.detectChanges();
 
-    expect(element.textContent).toContain('Replace your draft of these');
-    expect(button('Restore')).toBeDefined();
+    expect(element.textContent).toContain('Anything published after it will be replaced too');
+    expect(button('Download a backup first')).toBeDefined();
+    expect(button('Go back')).toBeDefined();
+  });
+
+  it('should leave out the later-publishes warning for the newest publish', () => {
+    const { fixture, element, button } = render(publishes);
+
+    button('Go back to before the publish of 31 Oct 2026, 2:30 pm')?.click();
+    fixture.detectChanges();
+
+    expect(element.textContent).toContain('Going back replaces what’s on the website');
+    expect(element.textContent).not.toContain('Anything published after it');
+  });
+
+  it('should go back, and close the question, when confirmed', () => {
+    const { fixture, element, button, testing } = render(publishes);
+    button('Go back to before the publish of 30 Oct 2026, 3:30 pm')?.click();
+    fixture.detectChanges();
+
+    button('Go back')?.click();
+    fixture.detectChanges();
+
+    expect(testing.store.documents.get('drafts/home__hero')).toMatchObject({
+      content: fakeDb.home.hero,
+    });
+    expect(element.textContent).not.toContain('Going back replaces');
+  });
+
+  it('should make a backup from the question, or cancel it', () => {
+    const { fixture, element, button, testing } = render(publishes);
+    button('Go back to before the publish of 30 Oct 2026, 3:30 pm')?.click();
+    fixture.detectChanges();
+
+    button('Download a backup first')?.click();
+    button('Cancel')?.click();
+    fixture.detectChanges();
+
+    expect(testing.files.downloads).toHaveLength(1);
+    expect(element.textContent).not.toContain('Going back replaces');
+  });
+
+  it('should show the backups card', () => {
+    const { element } = render();
+
+    expect(element.querySelector('#backups')?.textContent).toContain('No backup yet');
   });
 });
