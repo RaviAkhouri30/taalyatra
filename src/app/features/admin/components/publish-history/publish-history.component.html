@@ -1,0 +1,72 @@
+<section class="ph" aria-labelledby="ph-title">
+  <h2 id="ph-title">Publish history</h2>
+  @if (entries().length === 0) {
+    <p>Nothing published from the editor yet.</p>
+  } @else {
+    <p>The last 20 publishes. You can go back to how the website was before any of them.</p>
+    <ol class="ph-list">
+      @for (entry of entries(); track entry.record.id) {
+        <li>
+          <span class="ph-entry"
+            ><b>{{ entry.when }}</b> <small>{{ entry.title }}</small></span
+          >
+          @if (confirming() === entry.record.id) {
+            <div class="ph-confirm" role="group" [attr.aria-labelledby]="'ph-warn-' + $index">
+              <p [id]="'ph-warn-' + $index">
+                Going back replaces what’s on the website with the version from before this publish.
+                @if (!entry.newest) {
+                  <b
+                    >Anything published after it will be replaced too, and is hard to get back
+                    unless you have a backup on this device.</b
+                  >
+                }
+                It goes into your draft first, so you can check it, then publish.
+              </p>
+              <div class="ph-actions">
+                <button
+                  appButton
+                  type="button"
+                  [variant]="ghost"
+                  [size]="compact"
+                  [disabled]="busy()"
+                  (click)="backupRequested.emit()"
+                >
+                  Download a backup first
+                </button>
+                <button
+                  appButton
+                  type="button"
+                  [size]="compact"
+                  [disabled]="busy()"
+                  (click)="confirmed.emit(entry.record)"
+                >
+                  Go back
+                </button>
+                <button
+                  appButton
+                  type="button"
+                  [variant]="ghost"
+                  [size]="compact"
+                  (click)="cancelled.emit()"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          } @else {
+            <button
+              appButton
+              type="button"
+              [variant]="ghost"
+              [size]="compact"
+              [attr.aria-label]="'Go back to before the publish of ' + entry.when"
+              (click)="asked.emit(entry.record)"
+            >
+              Go back to before this publish
+            </button>
+          }
+        </li>
+      }
+    </ol>
+  }
+</section>

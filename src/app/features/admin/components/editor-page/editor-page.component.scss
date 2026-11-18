@@ -71,6 +71,27 @@
   color: t.$color-muted-strong;
 }
 
+// Changes kept on this device, offered back (0016 V2): noticeable, above the cards.
+.ep-unsaved {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px;
+  border-left: 3px solid t.$color-amber;
+  border-radius: 10px;
+  background: t.$color-surface;
+
+  p {
+    margin: 0;
+    color: t.$color-cream;
+  }
+}
+
+.ep-unsaved-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .ep-toggle {
   display: none;
   min-height: 40px;

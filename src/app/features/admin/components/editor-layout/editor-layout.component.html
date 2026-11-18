@@ -77,6 +77,9 @@
                         >{{ model.changeCount() }}<span class="sr"> unpublished</span></span
                       >
                     }
+                    @if (link.showsNew && model.hasNews()) {
+                      <span class="count">New</span>
+                    }
                   </a>
                 </li>
               }

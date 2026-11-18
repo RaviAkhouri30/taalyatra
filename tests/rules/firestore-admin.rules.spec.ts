@@ -335,4 +335,31 @@ describe('firestore.rules · admin editor', () => {
       },
     );
   });
+
+  describe('admin state (0016: last backup)', () => {
+    const lastBackup = { lastAt: '2026-11-18T10:42:00.000Z' };
+
+    it('should let the admin record and read when the last backup was made', async () => {
+      await setDoc(doc(admin, 'adminState/backups'), lastBackup);
+
+      await expect(getDoc(doc(admin, 'adminState/backups'))).resolves.toBeDefined();
+    });
+
+    it('should stop anyone else reading or writing it', async () => {
+      await expect(setDoc(doc(member, 'adminState/backups'), lastBackup)).rejects.toMatchObject(
+        DENIED,
+      );
+      await expect(getDoc(doc(visitor, 'adminState/backups'))).rejects.toMatchObject(DENIED);
+    });
+
+    it.each([
+      ['an unknown document', 'adminState/other', lastBackup],
+      ['an unknown field', 'adminState/backups', { ...lastBackup, extra: 'x' }],
+      ['a date that is not text', 'adminState/backups', { lastAt: 20261118 }],
+      ['a missing date', 'adminState/backups', {}],
+      ['a date that is too long', 'adminState/backups', { lastAt: 'x'.repeat(41) }],
+    ])('should refuse %s', async (_case, path, data) => {
+      await expect(setDoc(doc(admin, path), data)).rejects.toMatchObject(DENIED);
+    });
+  });
 });

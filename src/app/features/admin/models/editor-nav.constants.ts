@@ -13,6 +13,12 @@ export const PUBLISH_PATH = 'publish';
 /** The media library's path under `/admin`. */
 export const MEDIA_PATH = 'media';
 
+/** What's new's path under `/admin` (0016 V1). */
+export const RELEASES_PATH = 'releases';
+
+/** What's new's name in the menu and its title. */
+export const RELEASES_LABEL = 'What’s new';
+
 /** The media library's name in the menu and its title (0017 U4: plain words). */
 export const MEDIA_LABEL = 'Photo library';
 
@@ -25,6 +31,8 @@ export interface IEditorNavLink {
   readonly exact: boolean;
   /** Shows how many documents have unpublished changes. */
   readonly showsCount: boolean;
+  /** Shows "New" until the owner has seen the current release's notes (0016 V1). */
+  readonly showsNew: boolean;
 }
 
 /** A group of links in the side panel. */
@@ -35,7 +43,14 @@ export interface IEditorNavGroup {
 }
 
 function pageLink(label: string, path: string, icon: IconName): IEditorNavLink {
-  return { label, url: `${AppRoute.Admin}/${path}`, icon, exact: false, showsCount: false };
+  return {
+    label,
+    url: `${AppRoute.Admin}/${path}`,
+    icon,
+    exact: false,
+    showsCount: false,
+    showsNew: false,
+  };
 }
 
 function tabLink(tab: EditorTab, icon: IconName): IEditorNavLink {
@@ -53,6 +68,7 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
         icon: IconName.Home,
         exact: true,
         showsCount: false,
+        showsNew: false,
       },
       // Right under Dashboard, so it's never below the fold of a long menu (0017 walkthrough).
       { ...pageLink('Review & publish', PUBLISH_PATH, IconName.Send), showsCount: true },
@@ -83,6 +99,11 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
       tabLink(EditorTab.Visibility, IconName.Toggle),
       pageLink(MEDIA_LABEL, MEDIA_PATH, IconName.Folder),
     ],
+  },
+  {
+    // At the bottom: news about the editor, not part of editing (0016 V1).
+    label: '',
+    links: [{ ...pageLink(RELEASES_LABEL, RELEASES_PATH, IconName.Clock), showsNew: true }],
   },
 ];
 

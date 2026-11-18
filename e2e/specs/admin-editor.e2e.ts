@@ -133,8 +133,8 @@ test.describe('Admin editor', () => {
     await editor.waitForSave();
     await editor.publish();
 
-    await page.getByRole('button', { name: /^Undo the publish of/ }).click();
-    await page.getByRole('button', { name: 'Restore' }).click();
+    await page.getByRole('button', { name: /^Go back to before the publish of/ }).click();
+    await page.getByRole('button', { name: 'Go back', exact: true }).click();
     await expect(page.getByText('That version is back in your draft.')).toBeVisible();
     await editor.openTab('Videos');
 

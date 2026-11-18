@@ -1,0 +1,38 @@
+<div class="rl">
+  <h1 class="d">What’s new</h1>
+  <p class="rl-lead">What changed in each update of the website and this editor, newest first.</p>
+  @if (model.data(); as page) {
+    @if (page.entries.length === 0) {
+      <p>No release notes yet.</p>
+    }
+    @for (entry of page.entries; track entry.release.version; let first = $first) {
+      <details class="rl-release" [open]="first">
+        <summary>
+          <b>Version {{ entry.release.version }}</b> <span>{{ entry.when }}</span>
+          @if (first) {
+            <span class="rl-current">This version</span>
+          }
+        </summary>
+        @for (group of entry.release.groups; track group.heading) {
+          <h2>{{ group.heading }}</h2>
+          <ul>
+            @for (item of group.items; track $index) {
+              <li>
+                <!-- Each run in its own element: bare text would pick up spaces from this layout. -->
+                @for (part of item; track $index) {
+                  @if (part.strong) {
+                    <b>{{ part.text }}</b>
+                  } @else if (part.code) {
+                    <code>{{ part.text }}</code>
+                  } @else {
+                    <span>{{ part.text }}</span>
+                  }
+                }
+              </li>
+            }
+          </ul>
+        }
+      </details>
+    }
+  }
+</div>

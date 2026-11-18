@@ -100,22 +100,62 @@ describe('PublishService', () => {
 
   it('should put the versions from before a publish back into drafts', async () => {
     const { service, store } = setUp();
+    const record = {
+      id: 'r',
+      publishedAt: 'x',
+      changed: ['home/hero', 'site/visibility'],
+      before: { 'home/hero': { title: 'Old' }, 'site/visibility': null },
+    };
 
-    await firstValueFrom(
-      service.restore({
-        id: 'r',
-        publishedAt: 'x',
-        changed: ['home/hero', 'site/visibility'],
-        before: { 'home/hero': { title: 'Old' }, 'site/visibility': null },
-      }),
-      { defaultValue: undefined },
-    );
+    await firstValueFrom(service.goBack(record, [record]), { defaultValue: undefined });
 
     expect(store.documents.get('drafts/home__hero')).toMatchObject({
       path: 'home/hero',
       content: { title: 'Old' },
     });
     expect(store.documents.has('drafts/site__visibility')).toBe(false);
+  });
+
+  describe('going back past later publishes', () => {
+    const older = {
+      id: '2026-10-01',
+      publishedAt: 'x',
+      changed: ['home/hero'],
+      before: { 'home/hero': { title: 'Before both' } },
+    };
+    const newer = {
+      id: '2026-10-02',
+      publishedAt: 'x',
+      changed: ['home/hero', 'home/offer'],
+      before: {
+        'home/hero': { title: 'After the older' },
+        'home/offer': { title: 'Offer before' },
+      },
+    };
+
+    it('should undo the later publishes too, each document as it was before the earliest', async () => {
+      const { service, store } = setUp();
+
+      await firstValueFrom(service.goBack(older, [newer, older]));
+
+      expect(store.documents.get('drafts/home__hero')).toMatchObject({
+        content: { title: 'Before both' },
+      });
+      expect(store.documents.get('drafts/home__offer')).toMatchObject({
+        content: { title: 'Offer before' },
+      });
+    });
+
+    it('should go back to the record alone when the history no longer has it', async () => {
+      const { service, store } = setUp();
+
+      await firstValueFrom(service.goBack(older, [newer]));
+
+      expect(store.documents.get('drafts/home__hero')).toMatchObject({
+        content: { title: 'Before both' },
+      });
+      expect(store.documents.has('drafts/home__offer')).toBe(false);
+    });
   });
 
   describe('collections', () => {
@@ -168,7 +208,7 @@ describe('PublishService', () => {
       const { service, store } = setUp(seed);
       const record = await firstValueFrom(service.publish(new Map([['videos', draft([])]])));
 
-      await firstValueFrom(service.restore(record!));
+      await firstValueFrom(service.goBack(record!, [record!]));
 
       expect(store.documents.get('drafts/videos')).toMatchObject({
         path: 'videos',

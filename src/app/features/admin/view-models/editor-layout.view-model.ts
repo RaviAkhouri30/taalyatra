@@ -19,6 +19,7 @@ import { AppRoute } from '@shared/enums/app-route.enum';
 import { SAVE_STATUS_TEXT } from '../models/editor-nav.constants';
 import { SaveStatus } from '../models/save-status.enum';
 import { DraftService } from '../services/draft.service';
+import { ReleaseNotesService } from '../services/release-notes.service';
 import { AdminPageViewModel } from './admin-page.view-model';
 
 /**
@@ -34,6 +35,8 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
   /** How many documents have a draft. */
   public readonly changeCount = signal(0);
   public readonly signingOut = signal(false);
+  /** A release the owner hasn't opened What's new for yet (0016 V1). */
+  public readonly hasNews: Signal<boolean>;
   public readonly email: Signal<string>;
   /** Emits when the owner asks to retry a failed save. */
   public readonly retries$: Observable<void>;
@@ -45,6 +48,8 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
   private readonly auth = inject(IAuthService);
   private readonly router = inject(Router);
   private readonly drafts = inject(DraftService);
+  private readonly releaseNotes = inject(ReleaseNotesService);
+  private readonly news = signal(false);
   private readonly signOuts = new Subject<void>();
   private readonly refreshes = new Subject<void>();
   private readonly retryRequests = new Subject<void>();
@@ -59,6 +64,14 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
     this.retries$ = this.retryRequests.asObservable();
     this.changes$ = this.refreshes.asObservable();
     this.contentResets$ = this.contentResets.asObservable();
+    this.news.set(this.releaseNotes.hasUnseen());
+    this.hasNews = this.news.asReadonly();
+  }
+
+  /** The owner has opened What's new: the New marker goes. */
+  public markReleasesSeen(): void {
+    this.releaseNotes.markSeen();
+    this.news.set(false);
   }
 
   public reportSaving(): void {

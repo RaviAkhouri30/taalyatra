@@ -1,4 +1,5 @@
 import { type Routes } from '@angular/router';
+import { provideFiles } from '@core/config/provide-files';
 import { provideMedia } from '@core/config/provide-media';
 import { adminGuard } from './guards/admin.guard';
 import { signedOutGuard } from './guards/signed-out.guard';
@@ -8,9 +9,12 @@ import {
   MEDIA_LABEL,
   MEDIA_PATH,
   PUBLISH_PATH,
+  RELEASES_LABEL,
+  RELEASES_PATH,
 } from './models/editor-nav.constants';
 import { EditorTab } from './models/editor-tab.enum';
 import { EDITOR_TABS } from './schemas/editor-tabs';
+import { BackupService } from './services/backup.service';
 
 /** Every admin page is on the bare layout, without the site's chrome. */
 const ADMIN_TITLE_SUFFIX = 'Admin — Taal Yatra';
@@ -22,8 +26,9 @@ const ADMIN_TITLE_SUFFIX = 'Admin — Taal Yatra';
 const adminRoutes: Routes = [
   {
     path: '',
-    // Here and not with the other ports: public pages must never download the upload code (D9).
-    providers: provideMedia(),
+    // Here and not with the other ports: public pages must never download the upload or backup
+    // code (D9, 0016 V13).
+    providers: [...provideMedia(), provideFiles(), BackupService],
     loadComponent: () => import('./components/admin-shell/admin-shell.component'),
     children: [
       {
@@ -65,6 +70,11 @@ const adminRoutes: Routes = [
             path: PUBLISH_PATH,
             title: `Review & publish — ${ADMIN_TITLE_SUFFIX}`,
             loadComponent: () => import('./components/publish-page/publish-page.component'),
+          },
+          {
+            path: RELEASES_PATH,
+            title: `${RELEASES_LABEL} — ${ADMIN_TITLE_SUFFIX}`,
+            loadComponent: () => import('./components/releases/releases.component'),
           },
         ],
       },

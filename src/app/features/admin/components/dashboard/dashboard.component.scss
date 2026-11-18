@@ -164,3 +164,18 @@
     padding: 0 10px 10px;
   }
 }
+
+// The newest release's first notes (0016 V1).
+.db-notes {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+  color: t.$color-muted-strong;
+  font-size: 14px;
+  line-height: 1.45;
+
+  b {
+    color: t.$color-cream;
+  }
+}

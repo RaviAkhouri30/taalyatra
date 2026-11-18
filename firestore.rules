@@ -66,6 +66,15 @@ service cloud.firestore {
     match /publishes/{id} {
       allow read, write: if isAdmin();
     }
+    // The editor's own notes (0016 V13): when the last backup was made, so every device agrees.
+    // Only known documents, each with only its known field.
+    match /adminState/{document} {
+      allow read: if isAdmin();
+      allow create, update: if isAdmin()
+        && document == 'backups'
+        && request.resource.data.keys().hasOnly(['lastAt'])
+        && isText(request.resource.data.lastAt, 20, 40);
+    }
 
     // Proposal requests. Visitors may create a well-formed one; no client may read, change or
     // delete them (they are read in the Firebase console).

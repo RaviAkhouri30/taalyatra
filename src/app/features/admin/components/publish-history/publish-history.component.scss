@@ -1,0 +1,73 @@
+@use 'tokens' as t;
+
+:host {
+  display: block;
+}
+
+.ph {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid t.$color-line;
+  border-radius: 18px;
+  background: t.$color-surface-raised;
+
+  h2 {
+    margin: 0;
+    font-size: 19px;
+  }
+
+  > p {
+    margin: 0;
+    color: t.$color-muted-strong;
+  }
+}
+
+.ph-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: t.$color-surface;
+  }
+
+  small {
+    display: block;
+    color: t.$color-muted-strong;
+  }
+}
+
+.ph-confirm {
+  display: grid;
+  flex-basis: 100%;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid t.$color-amber;
+  border-radius: 12px;
+
+  p {
+    margin: 0;
+    color: t.$color-cream;
+    line-height: 1.5;
+  }
+
+  b {
+    color: t.$color-amber-soft;
+  }
+}
+
+.ph-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

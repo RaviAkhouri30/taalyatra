@@ -29,7 +29,7 @@ flowchart TB
     B[ApiBaseService<br/>+ HttpsErrorHandler]
   end
   subgraph Ports
-    P{{IHttpBackend · IAuthService (1.4.0)<br/>IDocumentStore (1.6.0) · IEmailService<br/>IMediaService · IClipboardService}}
+    P{{IHttpBackend · IAuthService (1.4.0)<br/>IDocumentStore (1.6.0) · IEmailService<br/>IMediaService · IClipboardService<br/>IFileService (1.12.0, admin only)}}
   end
   subgraph Adapters [core/backends]
     F[Firebase*]

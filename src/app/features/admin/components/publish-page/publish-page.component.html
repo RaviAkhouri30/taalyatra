@@ -93,55 +93,15 @@
         }
       }
     </section>
-    <section class="pp-card" aria-labelledby="pp-history">
-      <h2 id="pp-history">Publish history</h2>
-      @if (page.history.length === 0) {
-        <p>Nothing published from the editor yet.</p>
-      } @else {
-        <ol class="pp-list">
-          @for (entry of page.history; track entry.record.id) {
-            <li>
-              <span
-                ><b>{{ entry.when }}</b> <small>{{ entry.title }}</small></span
-              >
-              @if (model.restoring() === entry.record.id) {
-                <span class="pp-actions" role="group" aria-label="Confirm restore">
-                  <span>Replace your draft of these with the version from before?</span>
-                  <button
-                    appButton
-                    type="button"
-                    [size]="compact"
-                    [disabled]="model.busy()"
-                    (click)="model.restore(entry.record)"
-                  >
-                    Restore
-                  </button>
-                  <button
-                    appButton
-                    type="button"
-                    [variant]="ghost"
-                    [size]="compact"
-                    (click)="model.cancel()"
-                  >
-                    Cancel
-                  </button>
-                </span>
-              } @else {
-                <button
-                  appButton
-                  type="button"
-                  [variant]="ghost"
-                  [size]="compact"
-                  [attr.aria-label]="'Undo the publish of ' + entry.when"
-                  (click)="model.askToRestore(entry.record)"
-                >
-                  Undo this publish
-                </button>
-              }
-            </li>
-          }
-        </ol>
-      }
-    </section>
+    <app-backup-panel [justPublished]="model.justPublished()" />
+    <app-publish-history
+      [entries]="page.history"
+      [confirming]="model.goingBack()"
+      [busy]="model.busy()"
+      (asked)="model.askToGoBack($event)"
+      (confirmed)="model.goBack($event)"
+      (cancelled)="model.cancel()"
+      (backupRequested)="model.downloadBackup()"
+    />
   }
 </div>

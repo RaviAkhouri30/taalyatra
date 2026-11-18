@@ -33,7 +33,7 @@ function toRecord(id: string, fields: DocumentFields): IPublishRecord | null {
 }
 
 /**
- * Publishes the owner's drafts and keeps a history to undo from (ADR-0013). A publish is one
+ * Publishes the owner's drafts and keeps a history to go back to (ADR-0013, 0016 V3). A publish is one
  * atomic commit: live documents, the history record, removing the drafts and trimming history.
  */
 @Service()
@@ -84,19 +84,31 @@ export class PublishService {
   }
 
   /**
-   * Puts the versions from before a publish back into drafts, for the owner to review and
-   * publish. Documents that didn't exist before are left as they are.
+   * Goes back to how the site was before a publish (0016 V3): every document it, or any later
+   * publish, changed gets its version from just before the earliest of them. Into drafts, for the
+   * owner to review and publish. Documents that didn't exist then are left as they are.
    *
-   * @param record The publish to undo.
+   * @param record The publish to go back to before.
+   * @param history The publish history, newest first.
    * @returns Completes once the drafts are saved.
    */
-  public restore(record: IPublishRecord): Observable<void> {
-    const contents = new Map(
-      Object.entries(record.before).flatMap(([path, content]) =>
-        content === null ? [] : [[path, content] as const],
+  public goBack(record: IPublishRecord, history: readonly IPublishRecord[]): Observable<void> {
+    const index = history.findIndex((entry) => entry.id === record.id);
+    // Newest first, so each older publish overwrites: the oldest one's "before" wins.
+    const range = index < 0 ? [record] : history.slice(0, index + 1);
+    const before = new Map<string, DocumentFields | null>();
+    for (const entry of range) {
+      for (const [path, content] of Object.entries(entry.before)) {
+        before.set(path, content);
+      }
+    }
+    return this.drafts.saveAll(
+      new Map(
+        [...before].flatMap(([path, content]) =>
+          content === null ? [] : [[path, content] as const],
+        ),
       ),
     );
-    return this.drafts.saveAll(contents);
   }
 
   /** @returns A collection's stored ids; any other document has none to clean up. */

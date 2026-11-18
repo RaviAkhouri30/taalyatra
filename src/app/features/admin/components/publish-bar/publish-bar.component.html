@@ -2,6 +2,10 @@
   <span role="status">{{ model.statusText() }}</span>
   @if (model.failed()) {
     <button type="button" class="pb-link" (click)="model.retry()">Retry</button>
+  } @else if (model.offerBackup()) {
+    <button type="button" class="pb-link" (click)="model.downloadBackup()">
+      Download a backup
+    </button>
   } @else if (model.problems() > 0) {
     <a class="pb-link" [routerLink]="reviewUrl">{{ model.problems() }} to fix before publishing</a>
   }

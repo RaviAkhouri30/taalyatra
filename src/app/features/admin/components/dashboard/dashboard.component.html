@@ -27,6 +27,30 @@
         <p>{{ dash.lastPublished }}</p>
         <a [routerLink]="links.publish">See the publish history</a>
       </section>
+      <section class="db-card" aria-labelledby="db-backup">
+        <h2 id="db-backup">
+          Backups
+          @if (dash.backup.due) {
+            <span class="db-count">Due</span>
+          }
+        </h2>
+        <p>{{ dash.backup.text }}</p>
+        <a [routerLink]="links.publish" fragment="backups">Make or restore a backup</a>
+      </section>
+      @if (model.release; as release) {
+        <section class="db-card" aria-labelledby="db-release">
+          <h2 id="db-release">What’s new</h2>
+          <p>
+            <b>Version {{ release.version }}</b> · {{ release.when }}
+          </p>
+          <ul class="db-notes">
+            @for (note of release.notes; track $index) {
+              <li>{{ note }}</li>
+            }
+          </ul>
+          <a [routerLink]="links.releases">See everything that’s new</a>
+        </section>
+      }
       <section class="db-card db-card--wide" aria-labelledby="db-warnings">
         <h2 id="db-warnings">
           Still to fill in

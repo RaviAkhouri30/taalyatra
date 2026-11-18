@@ -8,6 +8,7 @@ import {
   catchError,
   concatMap,
   debounceTime,
+  exhaustMap,
   forkJoin,
   from,
   map,
@@ -18,10 +19,13 @@ import {
 } from 'rxjs';
 import { type DocumentFields } from '@core/interfaces/i-document-store';
 import { ViewModel } from '@shared/base/view-model';
+import { ToastTone } from '@shared/enums/toast-tone.enum';
+import { ToastService } from '@shared/services/toast.service';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { buildFormGroup } from '../forms/schema-control.factory';
 import { sectionContent, writeSection } from '../forms/schema-value';
 import { type ContentPath } from '../models/content-path.enum';
+import { formatMoment } from '../models/editor-dates';
 import {
   AUTOSAVE_DEBOUNCE_MS,
   EDITOR_TAB_ROUTE_KEY,
@@ -31,6 +35,7 @@ import { EditorTab } from '../models/editor-tab.enum';
 import { type IEditorSection } from '../models/i-editor-section';
 import { type IEditorTabSchema, tabSchema } from '../schemas/editor-tabs';
 import { DraftService } from '../services/draft.service';
+import { type ISafetyCopy, SafetyCopyService } from '../services/safety-copy.service';
 import { EditorLayoutViewModel } from './editor-layout.view-model';
 
 /** One card on an editor page: its schema and its form. */
@@ -42,6 +47,19 @@ export interface IEditorSectionForm {
   /** Prefix for the ids of the card's fields (kept apart from heading ids). */
   readonly fieldPrefix: string;
 }
+
+/** Changes kept on this device that never reached the draft (0016 V2). */
+export interface IUnsavedOffer {
+  /** When the newest of them was made, e.g. "18 Nov 2026, 10:42 am". */
+  readonly when: string;
+  readonly copies: readonly ISafetyCopy[];
+}
+
+/** What the owner is told about changes kept on this device. */
+export const SAFETY_COPY_MESSAGES = {
+  restored: 'Your changes are back, and saved in your draft.',
+  failed: 'Couldn’t bring them back. Check your connection and try again.',
+} as const;
 
 /** An editor page: the tab and its cards. */
 export interface IEditorPage {
@@ -61,10 +79,15 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
   public readonly previewVersion = signal(0);
   /** Phones show the form or the preview; this switches between them. */
   public readonly previewOpen = signal(false);
+  /** Changes made on this device that weren't saved, offered back (0016 V2). */
+  public readonly unsaved = signal<IUnsavedOffer | null>(null);
 
   private readonly route = inject(ActivatedRoute);
   private readonly drafts = inject(DraftService);
   private readonly layout = inject(EditorLayoutViewModel);
+  private readonly safety = inject(SafetyCopyService);
+  private readonly toasts = inject(ToastService);
+  private readonly restoreRequests = new Subject<IUnsavedOffer>();
   /** The documents as last loaded or saved, by path; edits are merged into them. */
   private readonly documents = new Map<string, DocumentFields>();
   /** A change is waiting for its debounce or its save. */
@@ -88,18 +111,38 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
     this.previewOpen.update((open) => !open);
   }
 
+  /** Puts the changes kept on this device back into the draft, and the page reloads with them. */
+  public restoreUnsaved(): void {
+    const offer = this.unsaved();
+    if (offer) {
+      this.restoreRequests.next(offer);
+    }
+  }
+
+  /** Throws away the changes kept on this device. */
+  public discardUnsaved(): void {
+    for (const copy of this.unsaved()?.copies ?? []) {
+      this.safety.clear(copy.path);
+    }
+    this.unsaved.set(null);
+  }
+
   /** @returns Whether leaving now could lose a change (still saving, or the save failed). */
   public hasUnsavedChanges(): boolean {
     return this.pending() || this.layout.failed();
   }
 
   protected override attachCommandHandler(): Observable<unknown> {
-    // debounceTime: a quick scroll past several cards moves the preview once, to where it stops.
-    return this.scrolledTo.pipe(
-      debounceTime(PREVIEW_FOLLOW_DEBOUNCE_MS),
-      tap((anchor) => {
-        this.activeAnchor.set(anchor);
-      }),
+    return merge(
+      // debounceTime: a quick scroll past several cards moves the preview once, to where it stops.
+      this.scrolledTo.pipe(
+        debounceTime(PREVIEW_FOLLOW_DEBOUNCE_MS),
+        tap((anchor) => {
+          this.activeAnchor.set(anchor);
+        }),
+      ),
+      // exhaustMap: a second press while the copies are being saved is ignored.
+      this.restoreRequests.pipe(exhaustMap((offer) => this.restoreCopies(offer))),
     );
   }
 
@@ -121,6 +164,7 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
     return forkJoin(paths.map((path) => this.drafts.document(path))).pipe(
       map((documents) => {
         paths.forEach((path, index) => this.documents.set(path, documents.at(index) ?? {}));
+        this.unsaved.set(this.findUnsaved(paths));
         return this.buildPage(tab);
       }),
       tap((page) => {
@@ -162,6 +206,8 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
         tap(() => {
           this.changeCount += 1;
           this.pending.set(true);
+          // On this device first: if the save never happens, the change can be offered back.
+          this.safety.keep(section.path, this.contentOf(page, section.path));
           // At once, not after the debounce: "Saved" would be untrue while a change waits.
           this.layout.reportSaving();
         }),
@@ -175,18 +221,54 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
     return merge(...changes, retries).pipe(concatMap((path) => this.save(page, path)));
   }
 
-  private save(page: IEditorPage, path: ContentPath): Observable<unknown> {
-    const content = page.sections
+  /** @returns The whole document as the page's forms have it now. */
+  private contentOf(page: IEditorPage, path: ContentPath): DocumentFields {
+    return page.sections
       .filter(({ section }) => section.path === path)
       .reduce<DocumentFields>(
         (document, { section, form }) => writeSection(section, document, form.getRawValue()),
         this.documents.get(path) ?? {},
       );
+  }
+
+  private findUnsaved(paths: readonly ContentPath[]): IUnsavedOffer | null {
+    const copies = this.safety.unsaved(paths, this.documents);
+    const newest = copies
+      .map((copy) => copy.savedAt)
+      .sort((first, second) => first.localeCompare(second))
+      .at(-1);
+    return newest === undefined ? null : { when: formatMoment(newest), copies };
+  }
+
+  private restoreCopies(offer: IUnsavedOffer): Observable<unknown> {
+    const contents = new Map(offer.copies.map((copy) => [copy.path, copy.content] as const));
+    return this.drafts.saveAll(contents).pipe(
+      tap(() => {
+        offer.copies.forEach((copy) => {
+          this.safety.clear(copy.path);
+        });
+        this.unsaved.set(null);
+        this.toasts.show(SAFETY_COPY_MESSAGES.restored);
+        // Reloads the page from the drafts, now holding the copies, and recounts them.
+        this.layout.refreshChanges();
+        this.layout.resetContent();
+      }),
+      // Long-lived: the copies stay on the device, and the owner can try again.
+      catchError(() => {
+        this.toasts.show(SAFETY_COPY_MESSAGES.failed, ToastTone.Error);
+        return EMPTY;
+      }),
+    );
+  }
+
+  private save(page: IEditorPage, path: ContentPath): Observable<unknown> {
+    const content = this.contentOf(page, path);
     this.layout.reportSaving();
     const savedThrough = this.changeCount;
     return this.drafts.save(path, content).pipe(
       tap(() => {
         this.documents.set(path, content);
+        this.safety.clearIfSaved(path, content);
         // A change made during this save isn't in it: saying "Saved" would let the owner leave
         // and lose it. Its own save reports when it's done.
         if (savedThrough === this.changeCount) {

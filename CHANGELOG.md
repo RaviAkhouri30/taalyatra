@@ -6,6 +6,22 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+### Added
+
+- **What’s new** in the editor’s menu: every update’s notes, newest first, with a **New** marker until you’ve read them.
+  The dashboard shows the latest update in brief.
+- **Backups:** download one file with the website’s words, settings and photo descriptions, from Review & publish or right
+  after publishing. A copy is also kept in this browser. The dashboard reminds you when the last one is over 14 days old.
+- **Restore a backup** from a file or this browser’s copy. It goes into your draft first, so you can check every change in
+  Review & publish before anything goes live. A file that isn’t a backup is refused, and nothing changes.
+- **Changes are never lost:** each change is kept on this device the moment you make it. If it couldn’t be saved (offline,
+  or the tab closed too soon), the page offers it back next time: **Restore them** or **Throw them away**.
+
+### Changed
+
+- **Go back to before any publish** (was “Undo this publish”): going back past later publishes undoes them too, after a
+  warning that offers a backup first.
+
 ## [1.11.0] - 2026-11-18
 
 ### Added

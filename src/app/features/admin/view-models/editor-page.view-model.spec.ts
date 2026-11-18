@@ -12,14 +12,17 @@ import {
 } from '../models/editor-nav.constants';
 import { EditorTab } from '../models/editor-tab.enum';
 import { DraftService } from '../services/draft.service';
+import { SAFETY_COPY_KEY_PREFIX, SafetyCopyService } from '../services/safety-copy.service';
+import { ToastTone } from '@shared/enums/toast-tone.enum';
+import { ToastService } from '@shared/services/toast.service';
 import { layoutStub, provideEditorTesting, provideLayout } from '../testing/editor-testing';
 import { TEAM_HEADING, VIDEOS_HEADING } from '../schemas/content.sections';
-import { EditorPageViewModel } from './editor-page.view-model';
+import { EditorPageViewModel, SAFETY_COPY_MESSAGES } from './editor-page.view-model';
 
 describe('EditorPageViewModel', () => {
   let subscription: Subscription;
 
-  function setUp(tab: unknown = EditorTab.Hero) {
+  function setUp(tab: unknown = EditorTab.Hero, copies: Readonly<Record<string, object>> = {}) {
     const testing = provideEditorTesting({
       'home/hero': fakeDb.home.hero,
       'home/videos': fakeDb.home.videos,
@@ -29,6 +32,12 @@ describe('EditorPageViewModel', () => {
         savedAt: 'x',
       },
     });
+    for (const [path, content] of Object.entries(copies)) {
+      testing.localStore.values.set(
+        SAFETY_COPY_KEY_PREFIX + path,
+        JSON.stringify({ content, savedAt: '2026-10-31T09:00:00.000Z' }),
+      );
+    }
     const layout = layoutStub();
     TestBed.configureTestingModule({
       providers: [
@@ -44,7 +53,7 @@ describe('EditorPageViewModel', () => {
     const model = TestBed.inject(EditorPageViewModel);
     subscription = model.init().subscribe();
     const section = (id: string) => model.data()?.sections.find((entry) => entry.section.id === id);
-    return { model, layout, section, store: testing.store };
+    return { model, layout, section, store: testing.store, localStore: testing.localStore };
   }
 
   beforeEach(() => {
@@ -207,5 +216,84 @@ describe('EditorPageViewModel', () => {
     const { section } = setUp(EditorTab.Visibility);
 
     expect(section('visibility')?.form.get('sections')?.get('gallery')?.value).toBe(true);
+  });
+
+  describe('safety copy (0016 V2)', () => {
+    const typed = { ...fakeDb.home.hero, title: 'Typed offline' };
+
+    it('should keep a change on this device at once, and drop it once saved', () => {
+      const { section } = setUp();
+      const safety = TestBed.inject(SafetyCopyService);
+
+      section('hero')?.form.get('title')?.setValue('Typed');
+      expect(safety.find('home/hero')?.content).toMatchObject({ title: 'Typed' });
+      vi.advanceTimersByTime(AUTOSAVE_DEBOUNCE_MS);
+
+      expect(safety.find('home/hero')).toBeNull();
+    });
+
+    it('should keep the change on this device when the save fails', () => {
+      const { section } = setUp();
+      vi.spyOn(TestBed.inject(DraftService), 'save').mockReturnValue(
+        throwError(() => new Error('offline')),
+      );
+
+      section('hero')?.form.get('title')?.setValue('Typed offline');
+      vi.advanceTimersByTime(AUTOSAVE_DEBOUNCE_MS);
+
+      expect(TestBed.inject(SafetyCopyService).find('home/hero')).not.toBeNull();
+    });
+
+    it('should offer back changes that never reached the draft, saying when', () => {
+      const { model } = setUp(EditorTab.Hero, { 'home/hero': typed });
+
+      expect(model.unsaved()?.when).toBe('31 Oct 2026, 2:30 pm');
+      expect(model.unsaved()?.copies.map((copy) => copy.path)).toEqual(['home/hero']);
+    });
+
+    it('should not offer a copy that matches what is stored', () => {
+      const { model, localStore } = setUp(EditorTab.Hero, { 'home/hero': fakeDb.home.hero });
+
+      expect(model.unsaved()).toBeNull();
+      expect(localStore.values.size).toBe(0);
+    });
+
+    it('should put the changes into the draft and reload the page', () => {
+      const { model, store, layout, localStore } = setUp(EditorTab.Hero, { 'home/hero': typed });
+      const show = vi.spyOn(TestBed.inject(ToastService), 'show');
+
+      model.restoreUnsaved();
+
+      expect(store.documents.get('drafts/home__hero')).toMatchObject({ content: typed });
+      expect(model.unsaved()).toBeNull();
+      expect(localStore.values.size).toBe(0);
+      expect(show).toHaveBeenCalledWith(SAFETY_COPY_MESSAGES.restored);
+      expect(layout.resetContent).toHaveBeenCalled();
+    });
+
+    it('should keep the changes on this device when restoring fails', () => {
+      const { model, localStore } = setUp(EditorTab.Hero, { 'home/hero': typed });
+      vi.spyOn(TestBed.inject(DraftService), 'saveAll').mockReturnValue(
+        throwError(() => new Error('offline')),
+      );
+      const show = vi.spyOn(TestBed.inject(ToastService), 'show');
+
+      model.restoreUnsaved();
+
+      expect(show).toHaveBeenCalledWith(SAFETY_COPY_MESSAGES.failed, ToastTone.Error);
+      expect(localStore.values.size).toBe(1);
+      expect(model.unsaved()).not.toBeNull();
+    });
+
+    it('should throw the changes away when asked, and do nothing more after', () => {
+      const { model, store, localStore } = setUp(EditorTab.Hero, { 'home/hero': typed });
+
+      model.discardUnsaved();
+      model.restoreUnsaved();
+
+      expect(model.unsaved()).toBeNull();
+      expect(localStore.values.size).toBe(0);
+      expect(store.documents.has('drafts/home__hero')).toBe(false);
+    });
   });
 });
