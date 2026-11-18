@@ -2,6 +2,7 @@ import fakeDb from '@core/backends/fake/fake-db.json';
 import { PromotionStatus } from '@shared/enums/promotion-status.enum';
 import { DashboardModel, type IDashboardSource } from './dashboard.model';
 import { IssueSeverity } from './issue-severity.enum';
+import { Lead } from './lead.model';
 
 describe('DashboardModel', () => {
   const now = new Date('2026-11-05T06:00:00Z');
@@ -13,6 +14,8 @@ describe('DashboardModel', () => {
     visibility: fakeDb.site.visibility,
     warnings: [],
     lastBackupAt: null,
+    visits: null,
+    leads: null,
     now,
     ...change,
   });
@@ -83,5 +86,49 @@ describe('DashboardModel', () => {
     };
 
     expect(new DashboardModel(source({ warnings: [warning] })).warnings).toEqual([warning]);
+  });
+
+  it('should say how many leads are new, and who sent the latest', () => {
+    const leads = [
+      new Lead('b', { name: 'Asha', createdAt: { seconds: 1_793_000_000 } }),
+      new Lead('a', { name: 'Ravi', status: 'won' }),
+    ];
+
+    const dashboard = new DashboardModel(source({ leads }));
+
+    expect(dashboard.newLeads).toBe(1);
+    expect(dashboard.leads).toMatch(/^1 lead is new\. The latest is from Asha, /);
+  });
+
+  it('should say when every lead is followed up', () => {
+    const dashboard = new DashboardModel(
+      source({ leads: [new Lead('a', { name: 'Ravi', status: 'lost' })] }),
+    );
+
+    expect(dashboard.leads).toMatch(/^Every lead is followed up\./);
+  });
+
+  it('should say when there are no proposals yet', () => {
+    expect(new DashboardModel(source({ leads: [] })).leads).toBe('No proposals yet.');
+  });
+
+  it('should say when the leads and visits could not be read', () => {
+    const dashboard = new DashboardModel(source());
+
+    expect(dashboard.leads).toBe('Couldn’t read the leads just now.');
+    expect(dashboard.visits).toBe('Couldn’t read the visits just now.');
+  });
+
+  it('should sum up the last week of visits', () => {
+    const dashboard = new DashboardModel(
+      source({
+        visits: {
+          days: [{ day: '2026-11-04', total: 5, pages: {}, devices: {} }],
+          today: '2026-11-05',
+        },
+      }),
+    );
+
+    expect(dashboard.visits).toBe('5 visits in the last 7 days.');
   });
 });

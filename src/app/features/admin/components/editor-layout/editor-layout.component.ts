@@ -18,7 +18,7 @@ import { BaseComponent } from '@shared/base/base-component';
 import { IconComponent } from '@shared/components/icon/icon.component';
 import { IconName } from '@shared/enums/icon-name.enum';
 import { type AdminPageModel } from '../../models/admin-page.model';
-import { EDITOR_NAV_GROUPS } from '../../models/editor-nav.constants';
+import { EDITOR_NAV_GROUPS, NavBadge } from '../../models/editor-nav.constants';
 import { EditorNavService } from '../../services/editor-nav.service';
 import { EditorLayoutViewModel } from '../../view-models/editor-layout.view-model';
 import { EditorTopBarComponent } from '../editor-top-bar/editor-top-bar.component';
@@ -56,6 +56,7 @@ export default class EditorLayoutComponent extends BaseComponent<AdminPageModel>
   protected override readonly model = inject(EditorLayoutViewModel);
   protected readonly nav = inject(EditorNavService);
   protected readonly icons = IconName;
+  protected readonly badges = NavBadge;
   protected readonly groups = EDITOR_NAV_GROUPS.map((group, index) => ({
     ...group,
     id: `ed-group-${String(index)}`,

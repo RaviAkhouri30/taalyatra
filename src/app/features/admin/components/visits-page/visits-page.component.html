@@ -1,0 +1,72 @@
+<div class="vp">
+  <h1 class="d">Visits</h1>
+  <p class="vp-lead">
+    How many people come to the website, and how many ask for a proposal. Visits are counted
+    anonymously: no cookies, nothing that identifies anyone, and not your own visits from this
+    browser.
+  </p>
+  <div class="vp-periods" role="group" aria-label="Show the graphs">
+    @for (choice of periods; track choice.period) {
+      <button
+        type="button"
+        class="vp-period"
+        [attr.aria-pressed]="model.period() === choice.period"
+        (click)="model.show(choice.period)"
+      >
+        {{ choice.label }}
+      </button>
+    }
+  </div>
+  @if (model.failed()) {
+    <p class="vp-problem" role="alert">Couldn’t load the numbers. Please reload the page.</p>
+  }
+  @if (model.data(); as page) {
+    <p class="vp-since">
+      @if (page.countedSince; as since) {
+        Visits are counted from {{ since }}.
+      } @else {
+        No visits counted yet. Counting began with this version of the website.
+      }
+    </p>
+    @if (model.visits(); as visits) {
+      <section class="vp-card">
+        <app-bar-chart [chart]="visits" caption="Visits" headingId="vp-visits" />
+      </section>
+    }
+    @if (model.proposals(); as proposals) {
+      <section class="vp-card">
+        <app-bar-chart [chart]="proposals" caption="Proposals" headingId="vp-proposals" />
+      </section>
+    }
+    <div class="vp-split">
+      <section class="vp-card" aria-labelledby="vp-pages">
+        <h2 id="vp-pages">Where visitors arrive</h2>
+        @if (model.pages().length === 0) {
+          <p>No visits in this period.</p>
+        } @else {
+          <ul class="vp-rows">
+            @for (row of model.pages(); track row.name) {
+              <li>
+                <span>{{ row.name }}</span> <b>{{ row.count }}</b> <small>{{ row.share }} %</small>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+      <section class="vp-card" aria-labelledby="vp-devices">
+        <h2 id="vp-devices">Phone or computer</h2>
+        @if (model.devices().length === 0) {
+          <p>No visits in this period.</p>
+        } @else {
+          <ul class="vp-rows">
+            @for (row of model.devices(); track row.name) {
+              <li>
+                <span>{{ row.name }}</span> <b>{{ row.count }}</b> <small>{{ row.share }} %</small>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+  }
+</div>

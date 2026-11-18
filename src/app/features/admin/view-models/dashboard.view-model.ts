@@ -9,9 +9,15 @@ import { type IReleaseSummary, summarizeRelease } from '../models/releases-page.
 import { ALL_SECTIONS } from '../schemas/editor-tabs';
 import { BackupService } from '../services/backup.service';
 import { DraftService } from '../services/draft.service';
+import { LeadsService } from '../services/leads.service';
 import { PublishService } from '../services/publish.service';
 import { ReleaseNotesService } from '../services/release-notes.service';
+import { type IVisitHistory, VisitsService } from '../services/visits.service';
+import { type Lead } from '../models/lead.model';
 import { EditorLayoutViewModel } from './editor-layout.view-model';
+
+/** Every document the editor's sections live in, once each. */
+const SECTION_PATHS = [...new Set(ALL_SECTIONS.map((section) => section.path))];
 
 /**
  * The editor's dashboard: drafts, offer, visibility, last publish, backups, what's new and
@@ -28,6 +34,8 @@ export class DashboardViewModel extends ViewModel<DashboardModel> {
   private readonly drafts = inject(DraftService);
   private readonly publishes = inject(PublishService);
   private readonly backups = inject(BackupService);
+  private readonly visits = inject(VisitsService);
+  private readonly leads = inject(LeadsService);
   private readonly clock = inject(CLOCK);
 
   public constructor() {
@@ -37,18 +45,16 @@ export class DashboardViewModel extends ViewModel<DashboardModel> {
   }
 
   protected override attachViewHandler(): Observable<unknown> {
-    const paths = [...new Set(ALL_SECTIONS.map((section) => section.path))];
     const now = this.clock.now();
     // forkJoin: independent reads, all needed before the dashboard can be built.
     return forkJoin([
       this.drafts.drafts(),
       this.publishes.history(),
-      forkJoin(paths.map((path) => this.drafts.document(path))),
-      // A failed read means "not known": the card then suggests a backup, which is harmless.
-      this.backups.lastMade().pipe(catchError(() => of(null))),
+      forkJoin(SECTION_PATHS.map((path) => this.drafts.document(path))),
+      ...this.extras(),
     ]).pipe(
-      map(([drafts, history, documents, lastBackupAt]) => {
-        const byPath = new Map(paths.map((path, index) => [path, documents.at(index) ?? null]));
+      map(([drafts, history, documents, lastBackupAt, visits, leads]) => {
+        const byPath = new Map(SECTION_PATHS.map((path, index) => [path, documents.at(index)]));
         const placeholders = new PlaceholderRule();
         return new DashboardModel({
           changeCount: drafts.size,
@@ -59,6 +65,8 @@ export class DashboardViewModel extends ViewModel<DashboardModel> {
             placeholders.check(section, byPath.get(section.path) ?? {}),
           ),
           lastBackupAt,
+          visits,
+          leads,
           now,
         });
       }),
@@ -66,5 +74,19 @@ export class DashboardViewModel extends ViewModel<DashboardModel> {
         this.setData(dashboard);
       }),
     );
+  }
+
+  /** Reads whose failure only means "not known": each card then says so, nothing breaks. */
+  private extras(): readonly [
+    Observable<string | null>,
+    Observable<IVisitHistory | null>,
+    Observable<Lead[] | null>,
+  ] {
+    return [
+      // A failed read means "not known": the card then suggests a backup, which is harmless.
+      this.backups.lastMade().pipe(catchError(() => of(null))),
+      this.visits.load().pipe(catchError(() => of(null))),
+      this.leads.leads().pipe(catchError(() => of(null))),
+    ] as const;
   }
 }

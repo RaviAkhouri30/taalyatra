@@ -65,10 +65,36 @@ describe('BackupService', () => {
 
       const made = await firstValueFrom(service.make());
 
-      expect(made).toEqual({ createdAt: NOW.toISOString(), keptInBrowser: true });
+      expect(made).toEqual({ createdAt: NOW.toISOString(), keptInBrowser: true, withLeads: false });
       expect(service.browserCopy()?.documents['home/hero']).toEqual({ title: 'Live' });
       expect(store.documents.get('adminState/backups')).toEqual({ lastAt: NOW.toISOString() });
       await expect(firstValueFrom(service.lastMade())).resolves.toBe(NOW.toISOString());
+    });
+
+    it('should leave the leads out unless asked', async () => {
+      const { service, files } = setUp({ 'proposals/a': { name: 'Asha' } });
+
+      await firstValueFrom(service.make());
+
+      expect(files.downloads[0]?.text).not.toContain('Asha');
+    });
+
+    it('should add the leads when asked, readable, and only download that file', async () => {
+      const { service, files, kept } = setUp({
+        'proposals/a': { name: 'Asha', createdAt: { seconds: 1_793_000_000 } },
+      });
+
+      const made = await firstValueFrom(service.make(true));
+
+      const backup = JSON.parse(files.downloads[0]?.text ?? '{}') as {
+        documents: Record<string, unknown>;
+      };
+      expect(made).toMatchObject({ keptInBrowser: false, withLeads: true });
+      expect(backup.documents['proposals/a']).toEqual({
+        name: 'Asha',
+        createdAt: new Date(1_793_000_000_000).toISOString(),
+      });
+      expect(kept.size).toBe(0);
     });
 
     it('should only download a backup too big for the browser, dropping the older copy', async () => {

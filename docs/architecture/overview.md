@@ -64,6 +64,15 @@ Once the page has loaded and the browser is idle, the site shell loads a small c
 own `PerformanceObserver`, and stores one anonymous report in `vitals/*`. It sends nothing from the admin area or previews, or when
 the browser asks not to be tracked, and failures are silent. The owner reads the results on the dashboard.
 
+## Visits and leads (0018)
+
+The same after-load chunk (`BrowserAfterLoad`) also counts the visit: one anonymous `{ page, device }` in `visits/*`, once
+per tab (a `sessionStorage` yes, never an id), not from robots, test browsers, previews, browsers that ask not to be
+tracked, or a browser where the admin area has been opened. The admin area adds each finished day (India time) up into one
+create-only `visitDays/{date}` document and removes that day's single visits (`VisitsService`); the Visits page draws visits
+and proposals by day, week, month or year with its own SVG bars. The Leads page reads `proposals`, changes only a lead's
+`status` and `statusAt`, exports CSV through `IFileService`, and deletes a lead on request.
+
 ## Dependency rules
 
 1. `features → shared → core/interfaces`. Arrows never point back up.

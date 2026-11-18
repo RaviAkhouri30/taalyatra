@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { BaseComponent } from '@shared/base/base-component';
 import { ButtonDirective } from '@shared/directives/button.directive';
 import { ButtonVariant } from '@shared/enums/button-variant.enum';
@@ -7,7 +8,7 @@ import { BackupPanelViewModel, type IBackupPanel } from '../../view-models/backu
 /** The backups card on Review & publish (0016 V13). */
 @Component({
   selector: 'app-backup-panel',
-  imports: [ButtonDirective],
+  imports: [ButtonDirective, ReactiveFormsModule],
   templateUrl: './backup-panel.component.html',
   styleUrl: './backup-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

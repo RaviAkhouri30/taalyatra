@@ -1,0 +1,43 @@
+<form class="lf" [formGroup]="form()" role="search" aria-label="Filter the leads">
+  <label>
+    Search
+    <input type="search" formControlName="search" placeholder="Name, phone or email" />
+  </label>
+  <label>
+    Status
+    <select formControlName="status">
+      <option value="">Any</option>
+      @for (choice of statuses; track choice.status) {
+        <option [value]="choice.status">{{ choice.label }}</option>
+      }
+    </select>
+  </label>
+  <label>
+    Event
+    <select formControlName="eventType">
+      <option value="">Any</option>
+      @for (choice of options().eventTypes; track choice.value) {
+        <option [value]="choice.value">{{ choice.label }}</option>
+      }
+    </select>
+  </label>
+  <label>
+    Group size
+    <select formControlName="groupSize">
+      <option value="">Any</option>
+      @for (choice of options().groupSizes; track choice.value) {
+        <option [value]="choice.value">{{ choice.label }}</option>
+      }
+    </select>
+  </label>
+  <label>
+    Month received
+    <select formControlName="month">
+      <option value="">Any</option>
+      @for (choice of options().months; track choice.value) {
+        <option [value]="choice.value">{{ choice.label }}</option>
+      }
+    </select>
+  </label>
+  <button appButton type="button" [variant]="ghost" (click)="cleared.emit()">Show all</button>
+</form>

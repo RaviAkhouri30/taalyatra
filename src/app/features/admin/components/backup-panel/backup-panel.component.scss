@@ -88,3 +88,18 @@
     color: t.$color-danger-text;
   }
 }
+
+.bk-leads {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: fit-content;
+  color: t.$color-cream;
+  cursor: pointer;
+
+  input {
+    width: 18px;
+    height: 18px;
+    accent-color: t.$color-amber;
+  }
+}

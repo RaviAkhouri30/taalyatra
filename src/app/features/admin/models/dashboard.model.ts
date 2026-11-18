@@ -11,6 +11,9 @@ import { BackupStatus } from './backup-status.model';
 import { formatDay, formatMoment } from './editor-dates';
 import { type IPublishIssue } from './i-publish-issue';
 import { type IPublishRecord } from './i-publish-record';
+import { type Lead, LeadStatus } from './lead.model';
+import { type IVisitDay } from './visit-days';
+import { recentVisitsText } from './visits-page.model';
 
 /** What the dashboard is built from. */
 export interface IDashboardSource {
@@ -21,6 +24,10 @@ export interface IDashboardSource {
   readonly warnings: readonly IPublishIssue[];
   /** When the last backup was made, or `null` for never (0016 V13). */
   readonly lastBackupAt: string | null;
+  /** Every day's visits and today, or `null` when they couldn't be read (0018). */
+  readonly visits: { readonly days: readonly IVisitDay[]; readonly today: string } | null;
+  /** Every lead, newest first, or `null` when they couldn't be read (0018). */
+  readonly leads: readonly Lead[] | null;
   readonly now: Date;
 }
 
@@ -38,6 +45,12 @@ export class DashboardModel {
   public readonly lastPublished: string;
   public readonly warnings: readonly IPublishIssue[];
   public readonly backup: BackupStatus;
+  /** Visits in the last week, in words. */
+  public readonly visits: string;
+  /** How many leads are still new. */
+  public readonly newLeads: number;
+  /** The leads in words: how many are new, and the newest. */
+  public readonly leads: string;
 
   /** @param source What the dashboard is built from. */
   public constructor(source: IDashboardSource) {
@@ -57,6 +70,24 @@ export class DashboardModel {
       : 'Nothing published from the editor yet.';
     this.warnings = source.warnings;
     this.backup = new BackupStatus(source.lastBackupAt, source.now);
+    this.visits = source.visits
+      ? recentVisitsText(source.visits.days, source.visits.today)
+      : 'Couldn’t read the visits just now.';
+    this.newLeads = source.leads?.filter((lead) => lead.status === LeadStatus.New).length ?? 0;
+    this.leads = DashboardModel.leadsText(source.leads, this.newLeads);
+  }
+
+  private static leadsText(leads: readonly Lead[] | null, fresh: number): string {
+    if (leads === null) {
+      return 'Couldn’t read the leads just now.';
+    }
+    const newest = leads[0];
+    if (newest === undefined) {
+      return 'No proposals yet.';
+    }
+    const waiting =
+      fresh === 0 ? 'Every lead is followed up.' : `${plural(fresh, 'lead is', 'leads are')} new.`;
+    return `${waiting} The latest is from ${newest.name}, ${newest.received}.`;
   }
 
   private static offerText(status: PromotionStatus, promotion: IPromotionDto | undefined): string {

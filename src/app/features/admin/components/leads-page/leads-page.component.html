@@ -1,0 +1,43 @@
+<div class="lp">
+  <div class="lp-head">
+    <div>
+      <h1 class="d">Leads</h1>
+      <p class="lp-lead">
+        Every proposal sent from the website, newest first. Mark each one as you follow it up.
+      </p>
+    </div>
+    <button appButton type="button" [variant]="ghost" (click)="model.exportCsv()">
+      Export CSV
+    </button>
+  </div>
+  @if (model.failed()) {
+    <p class="lp-problem" role="alert">Couldn’t load the leads. Please reload the page.</p>
+  }
+  @if (model.data(); as leads) {
+    @if (leads.length === 0) {
+      <p class="lp-empty">No proposals yet. They appear here as soon as someone sends one.</p>
+    } @else {
+      <app-lead-filters
+        [form]="model.filters"
+        [options]="model.options()"
+        (cleared)="model.clearFilters()"
+      />
+      <p class="lp-count" role="status">{{ model.count() }}</p>
+      <ul class="lp-list">
+        @for (lead of model.shown(); track lead.id) {
+          <li>
+            <app-lead-card
+              [lead]="lead"
+              [confirming]="model.confirming() === lead.id"
+              [busy]="model.removing()"
+              (statusChanged)="model.setStatus(lead, $event)"
+              (removeAsked)="model.askToRemove(lead)"
+              (removeConfirmed)="model.remove(lead)"
+              (removeCancelled)="model.cancelRemove()"
+            />
+          </li>
+        }
+      </ul>
+    }
+  }
+</div>

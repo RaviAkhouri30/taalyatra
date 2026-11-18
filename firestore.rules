@@ -76,10 +76,31 @@ service cloud.firestore {
         && isText(request.resource.data.lastAt, 20, 40);
     }
 
-    // Proposal requests. Visitors may create a well-formed one; no client may read, change or
-    // delete them (they are read in the Firebase console).
+    // Proposal requests. Visitors may create a well-formed one and nothing else. The admin reads
+    // them on the Leads page (0018), deletes one on request, and changes only its status.
     match /proposals/{proposal} {
       allow create: if isValidProposal(request.resource.data);
+      allow read, delete: if isAdmin();
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'statusAt'])
+        && request.resource.data.status in ['new', 'contacted', 'won', 'lost']
+        && isText(request.resource.data.statusAt, 20, 40);
+    }
+
+    // Anonymous visit counts (0018). A visitor adds one visit: the page arrived on, the kind of
+    // device and the server's time, nothing that identifies anyone. The admin area adds each
+    // finished day up into `visitDays` and removes that day's single visits.
+    match /visits/{visit} {
+      allow create: if isValidVisit(request.resource.data);
+      allow read, delete: if isAdmin();
+    }
+    // Created once per day and never changed, so a second device adding the same day up can't
+    // overwrite the first with a different total.
+    match /visitDays/{day} {
+      allow read: if isAdmin();
+      allow create: if isAdmin()
+        && day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && isValidVisitDay(request.resource.data);
     }
 
     // Anonymous speed reports from real visits (0012). Visitors may create a well-formed one and
@@ -126,6 +147,27 @@ service cloud.firestore {
         && data.cls is number && data.cls >= 0 && data.cls <= 10
         // Stamped by the adapter with serverTimestamp(): a client can't backdate a report.
         && data.createdAt == request.time;
+    }
+
+    // The pages and devices mirror VISIT_PAGES and VISIT_DEVICES (visit.constants.ts).
+    function isValidVisit(data) {
+      return data.keys().hasAll(['page', 'device', 'createdAt'])
+        && data.keys().hasOnly(['page', 'device', 'createdAt'])
+        && data.page in ['/', '/shows', '/videos', '/team', '/achievements']
+        && data.device in ['phone', 'tablet', 'desktop']
+        // Stamped by the adapter with serverTimestamp(): a client can't backdate a visit.
+        && data.createdAt == request.time;
+    }
+
+    // Totals only: the rules can't add up the maps' numbers, so they check their shape.
+    function isValidVisitDay(data) {
+      return data.keys().hasAll(['total', 'pages', 'devices'])
+        && data.keys().hasOnly(['total', 'pages', 'devices'])
+        && data.total is int && data.total >= 0
+        && data.pages is map
+        && data.pages.keys().hasOnly(['/', '/shows', '/videos', '/team', '/achievements'])
+        && data.devices is map
+        && data.devices.keys().hasOnly(['phone', 'tablet', 'desktop']);
     }
 
     function isMsOrNull(value) {

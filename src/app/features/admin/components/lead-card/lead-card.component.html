@@ -1,0 +1,83 @@
+<article class="lc" [attr.aria-labelledby]="'lc-' + lead().id" [attr.data-status]="lead().status">
+  <header class="lc-head">
+    <h2 [id]="'lc-' + lead().id">{{ lead().name }}</h2>
+    <span class="lc-when">{{ lead().received }}</span>
+  </header>
+  <div class="lc-contact">
+    @if (lead().callLink; as call) {
+      <a [href]="call">{{ lead().phone }}</a>
+    }
+    @if (lead().whatsAppLink; as chat) {
+      <a [href]="chat" target="_blank" rel="noopener">WhatsApp</a>
+    }
+    @if (lead().mailLink; as mail) {
+      <a [href]="mail">{{ lead().email }}</a>
+    }
+  </div>
+  <dl class="lc-details">
+    @if (lead().need) {
+      <div>
+        <dt>Looking for</dt>
+        <dd>{{ lead().need }}</dd>
+      </div>
+    }
+    @if (lead().eventType) {
+      <div>
+        <dt>Event</dt>
+        <dd>{{ lead().eventType }}</dd>
+      </div>
+    }
+    @if (lead().experience) {
+      <div>
+        <dt>Experience</dt>
+        <dd>{{ lead().experience }}</dd>
+      </div>
+    }
+    @if (lead().groupSize) {
+      <div>
+        <dt>Group size</dt>
+        <dd>{{ lead().groupSize }}</dd>
+      </div>
+    }
+    @if (lead().date) {
+      <div>
+        <dt>Date wanted</dt>
+        <dd>{{ lead().date }}</dd>
+      </div>
+    }
+  </dl>
+  @if (lead().message) {
+    <p class="lc-message">{{ lead().message }}</p>
+  }
+  <footer class="lc-foot">
+    <label class="lc-status">
+      Status
+      <select #status (change)="changeStatus(status)">
+        @for (choice of statuses; track choice.status) {
+          <option [value]="choice.status" [selected]="choice.status === lead().status">
+            {{ choice.label }}
+          </option>
+        }
+      </select>
+    </label>
+    @if (!confirming()) {
+      <button appButton type="button" [variant]="ghost" (click)="removeAsked.emit()">Remove</button>
+    }
+  </footer>
+  @if (confirming()) {
+    <div class="lc-confirm" role="group" [attr.aria-labelledby]="'lc-confirm-' + lead().id">
+      <p [id]="'lc-confirm-' + lead().id">
+        This removes {{ lead().name }}’s details for good. Do it when a customer asks to be
+        forgotten; a backup with leads, or a CSV export, is the only way back.
+      </p>
+      <div class="lc-actions">
+        <button appButton type="button" [disabled]="busy()" (click)="removeConfirmed.emit()">
+          {{ busy() ? 'Removing…' : 'Yes, remove' }}
+        </button>
+        <button appButton type="button" [variant]="ghost" (click)="removeCancelled.emit()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  }
+</article>

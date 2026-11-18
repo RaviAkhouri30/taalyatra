@@ -43,7 +43,12 @@ describe('backup files', () => {
     ['another site’s file', text({ site: 'other' }), BACKUP_PROBLEMS.notOurs],
     ['a file without a format', text({ format: '1' }), BACKUP_PROBLEMS.notOurs],
     ['a newer format', text({ format: 2 }), BACKUP_PROBLEMS.newer],
-    ['an unknown path', text({ documents: { 'proposals/x': {} } }), BACKUP_PROBLEMS.damaged],
+    ['an unknown path', text({ documents: { 'secrets/x': {} } }), BACKUP_PROBLEMS.damaged],
+    [
+      'a lead with a made-up path',
+      text({ documents: { 'proposals/../x': {} } }),
+      BACKUP_PROBLEMS.damaged,
+    ],
     [
       'a document that is not an object',
       text({ documents: { 'home/hero': 'x' } }),

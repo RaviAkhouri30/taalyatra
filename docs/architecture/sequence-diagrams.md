@@ -308,23 +308,27 @@ sequenceDiagram
   VM-->>O: "Replaced in N places as a draft"
 ```
 
-## 11. Real-phone speed report (0012)
+## 11. Real-phone speed report (0012) and the visit counter (0018)
 
 ```mermaid
 sequenceDiagram
   autonumber
   participant S as SiteShellViewModel
   participant R as BrowserVitalsReporter
-  participant M as BrowserVitalsSource (own chunk)
+  participant M as BrowserAfterLoad (own chunk)
   participant F as IHttpBackend → Firestore
-  participant D as SpeedReportService (admin)
+  participant D as SpeedReportService / VisitsService (admin)
 
   S->>R: report(), when the shell starts
-  R->>R: public page, not a preview, no opt-out signal?
-  R->>R: wait for page load, then browser idle
-  R->>M: load the chunk, measure()
+  R->>R: not a preview?
+  R->>R: wait for page load, then 3 s
+  R->>M: load the chunk, reports()
+  M->>M: visit: listed page, a person, no opt-out, not the owner's browser, tab not counted yet?
+  M-->>R: the visit at once
+  R->>F: post to visits, failures ignored
   M->>M: PerformanceObserver (buffered)
-  M-->>R: 5 s after the main content settles, or when the page is hidden
+  M-->>R: speed report, 5 s after the main content settles, or when the page is hidden
   R->>F: post to vitals, failures ignored
-  D->>F: on request: read, delete reports over 30 days
+  D->>F: on request: read speed reports, delete those over 30 days
+  D->>F: Visits or dashboard: each finished day → create visitDays/{day}, then delete its visits (500 per commit)
 ```

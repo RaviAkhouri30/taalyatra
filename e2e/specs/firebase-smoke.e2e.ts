@@ -6,6 +6,18 @@ import { expect, test } from '../fixtures/test';
 const PROPOSALS_URL =
   'http://127.0.0.1:8080/v1/projects/demo-taal-yatra/databases/(default)/documents/proposals';
 
+/** Emulator REST root; "owner" bypasses the rules, standing in for data already stored. */
+const DOCUMENTS_URL =
+  'http://127.0.0.1:8080/v1/projects/demo-taal-yatra/databases/(default)/documents';
+const OWNER = { Authorization: 'Bearer owner' };
+
+/** A day in Pune, `offsetDays` from today, as the admin area counts days. */
+function siteDay(offsetDays: number): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(
+    new Date(Date.now() + offsetDays * 86_400_000),
+  );
+}
+
 /** Shape of the emulator's REST answer, as far as this spec reads it. */
 interface IProposalsListing {
   readonly documents?: readonly { readonly fields: { readonly name: { stringValue: string } } }[];
@@ -145,8 +157,12 @@ test.describe('Firebase smoke (emulator)', () => {
     });
     await page.goto('/');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    // The visit is counted too (0018): wait for the speed report itself.
     const stored = page.waitForResponse(
-      (response) => response.url().includes(':commit') && response.status() === 200,
+      (response) =>
+        response.url().includes(':commit') &&
+        response.status() === 200 &&
+        (response.request().postData() ?? '').includes('/documents/vitals/'),
       { timeout: 20_000 },
     );
     // Hiding the page sends it at once, as when a visitor switches away.
@@ -216,5 +232,82 @@ test.describe('Firebase smoke (emulator)', () => {
     await page.reload();
 
     await expect(page.getByText(name, { exact: true })).toBeVisible();
+  });
+
+  test('should count a person’s visit through the rules, and add finished days up', async ({
+    editor,
+    page,
+    request,
+  }) => {
+    // Yesterday's visit, already stored: opening Visits adds it up into one document per day.
+    const yesterday = siteDay(-1);
+    await request.post(`${DOCUMENTS_URL}/visits`, {
+      headers: OWNER,
+      data: {
+        fields: {
+          page: { stringValue: '/shows' },
+          device: { stringValue: 'phone' },
+          createdAt: { timestampValue: `${yesterday}T06:30:00Z` },
+        },
+      },
+    });
+    // Today's, from a "person" (see the speed report test for why webdriver is hidden).
+    await page.addInitScript(() => {
+      Object.defineProperty(Navigator.prototype, 'webdriver', { get: () => false });
+    });
+    const counted = page.waitForResponse(
+      (response) =>
+        response.url().includes(':commit') &&
+        response.status() === 200 &&
+        (response.request().postData() ?? '').includes('/documents/visits/'),
+      { timeout: 20_000 },
+    );
+    await page.goto('/');
+    await counted;
+
+    await editor.signIn({ email: 'admin@taalyatra.test', password: 'emulator-admin-password' });
+    await editor.openTab('Visits');
+
+    await expect(page.getByRole('figure', { name: 'Visits' })).toContainText('in the last 30 days');
+    await expect(page.getByRole('region', { name: 'Where visitors arrive' })).toContainText(
+      'Shows',
+    );
+    const day = await request.get(`${DOCUMENTS_URL}/visitDays/${yesterday}`, { headers: OWNER });
+    expect(day.status()).toBe(200);
+  });
+
+  test('should let the admin read a lead and change its status through the rules', async ({
+    editor,
+    page,
+    request,
+  }) => {
+    const name = `Lead ${String(Date.now())}`;
+    await request.post(`${PROPOSALS_URL}?documentId=smoke-${randomUUID().slice(0, 8)}`, {
+      headers: OWNER,
+      data: {
+        fields: {
+          name: { stringValue: name },
+          phone: { stringValue: '98765 43210' },
+          email: { stringValue: 'lead@example.com' },
+          createdAt: { timestampValue: new Date().toISOString() },
+        },
+      },
+    });
+
+    await editor.signIn({ email: 'admin@taalyatra.test', password: 'emulator-admin-password' });
+    await editor.openTab('Leads');
+    const lead = page.getByRole('article', { name });
+    await lead.getByLabel('Status').selectOption('won');
+
+    // Read back as stored: the whole document was written back, and the rules let only the
+    // status change.
+    await expect(async () => {
+      const response = await request.get(PROPOSALS_URL, { headers: OWNER });
+      const listing = (await response.json()) as {
+        documents?: { fields: Record<string, { stringValue?: string }> }[];
+      };
+      const stored = listing.documents?.find((entry) => entry.fields['name']?.stringValue === name);
+      expect(stored?.fields['status']?.stringValue).toBe('won');
+    }).toPass({ timeout: 10_000 });
   });
 });

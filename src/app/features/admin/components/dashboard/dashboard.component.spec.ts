@@ -29,6 +29,8 @@ describe('DashboardComponent', () => {
       '/admin/visibility',
       '/admin/publish',
       '/admin/publish#backups',
+      '/admin/leads',
+      '/admin/visits',
       '/admin/releases',
     ]);
     expect(element.textContent).toContain('Nothing left to fill in');

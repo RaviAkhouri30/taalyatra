@@ -35,8 +35,19 @@ import {
   BROWSER_BACKUP_MAX_CHARS,
 } from '../models/editor-storage.constants';
 import { MEDIA_COLLECTION } from '../models/i-media-asset';
+import { LEADS_COLLECTION } from '../models/lead.model';
+import { reportTime } from '../models/speed-report.model';
 import { DraftService } from './draft.service';
 import { ReleaseNotesService } from './release-notes.service';
+
+/**
+ * A lead with its arrival time as a readable date: Firestore's timestamp would otherwise be saved
+ * as seconds, which nobody can read.
+ */
+function readable(fields: DocumentFields): DocumentFields {
+  const time = reportTime(fields);
+  return time === null ? fields : { ...fields, createdAt: new Date(time).toISOString() };
+}
 
 /** Spaces per level in the file, so the owner can open and read it. */
 const JSON_INDENT = 2;
@@ -46,6 +57,8 @@ export interface IBackupMade {
   readonly createdAt: string;
   /** Whether this browser kept a copy too; a very large backup is only downloaded. */
   readonly keptInBrowser: boolean;
+  /** Whether it holds the leads (0018 D6). */
+  readonly withLeads: boolean;
 }
 
 /**
@@ -89,19 +102,21 @@ export class BackupService {
 
   /**
    * Reads everything, downloads it as a file, keeps a copy in this browser and records the date.
+   * @param withLeads Whether to add the leads (0018 D6). Such a file is only downloaded: customers'
+   *   details shouldn't sit in the browser's storage.
    * @returns The backup made.
    */
-  public make(): Observable<IBackupMade> {
-    return this.build().pipe(
+  public make(withLeads = false): Observable<IBackupMade> {
+    return this.build(withLeads).pipe(
       map((backup) => ({ backup, text: JSON.stringify(backup, null, JSON_INDENT) })),
       tap(({ backup, text }) => {
         this.files.download(backupFileName(backup.createdAt), text, BACKUP_MEDIA_TYPE);
       }),
       // switchMap: one record per backup, written once the file is saved.
       switchMap(({ backup, text }) => {
-        const keptInBrowser = this.keep(text);
+        const keptInBrowser = !withLeads && this.keep(text);
         return this.record(backup.createdAt).pipe(
-          map(() => ({ createdAt: backup.createdAt, keptInBrowser })),
+          map(() => ({ createdAt: backup.createdAt, keptInBrowser, withLeads })),
         );
       }),
       tap((made) => {
@@ -123,14 +138,16 @@ export class BackupService {
     return this.drafts.saveAll(content).pipe(concatMap(() => this.restoreLibrary(library)));
   }
 
-  private build(): Observable<IBackup> {
+  private build(withLeads: boolean): Observable<IBackup> {
     const paths = Object.values(ContentPath);
-    // forkJoin: every document and the library are independent reads, all needed for one file.
+    // forkJoin: every document, the library and the leads are independent reads, all needed for
+    // one file.
     return forkJoin([
       forkJoin(paths.map((path) => this.drafts.live(path))),
       this.store.readAll(MEDIA_COLLECTION),
+      withLeads ? this.store.readAll(LEADS_COLLECTION) : of(new Map<string, DocumentFields>()),
     ]).pipe(
-      map(([content, library]) => ({
+      map(([content, library, leads]) => ({
         format: BACKUP_FORMAT,
         site: BACKUP_SITE,
         version: this.releaseNotes.current()?.version ?? '',
@@ -141,6 +158,9 @@ export class BackupService {
             return fields ? [[path, fields] as const] : [];
           }),
           ...[...library].map(([id, fields]) => [`${MEDIA_COLLECTION}/${id}`, fields] as const),
+          ...[...leads].map(
+            ([id, fields]) => [`${LEADS_COLLECTION}/${id}`, readable(fields)] as const,
+          ),
         ]),
       })),
     );

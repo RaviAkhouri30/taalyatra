@@ -37,6 +37,21 @@
         <p>{{ dash.backup.text }}</p>
         <a [routerLink]="links.publish" fragment="backups">Make or restore a backup</a>
       </section>
+      <section class="db-card" aria-labelledby="db-leads">
+        <h2 id="db-leads">
+          Leads
+          @if (dash.newLeads > 0) {
+            <span class="db-count">{{ dash.newLeads }} new</span>
+          }
+        </h2>
+        <p>{{ dash.leads }}</p>
+        <a [routerLink]="links.leads">See the leads</a>
+      </section>
+      <section class="db-card" aria-labelledby="db-visits">
+        <h2 id="db-visits">Visits</h2>
+        <p>{{ dash.visits }}</p>
+        <a [routerLink]="links.visits">See the graphs</a>
+      </section>
       @if (model.release; as release) {
         <section class="db-card" aria-labelledby="db-release">
           <h2 id="db-release">What’s new</h2>

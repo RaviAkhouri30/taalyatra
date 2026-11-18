@@ -1,4 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { FormControl } from '@angular/forms';
 import {
   EMPTY,
   type Observable,
@@ -57,6 +59,10 @@ export class BackupPanelViewModel extends ViewModel<IBackupPanel> {
   public readonly pending = signal<IPendingRestore | null>(null);
   /** Why the chosen file can't be restored. */
   public readonly problem = signal<string | null>(null);
+  /** "Include leads" (0018 D6): off unless the owner ticks it. */
+  public readonly withLeads = new FormControl(false, { nonNullable: true });
+  /** Whether it's ticked, so the warning about personal details shows at once. */
+  public readonly leadsTicked = toSignal(this.withLeads.valueChanges, { initialValue: false });
 
   private readonly backups = inject(BackupService);
   private readonly files = inject(IFileService);
@@ -121,7 +127,9 @@ export class BackupPanelViewModel extends ViewModel<IBackupPanel> {
     return merge(
       // exhaustMap: a second click while a backup is being made is ignored.
       this.downloads.pipe(
-        exhaustMap(() => this.running(downloadBackup(this.backups, this.toasts))),
+        exhaustMap(() =>
+          this.running(downloadBackup(this.backups, this.toasts, this.withLeads.value)),
+        ),
       ),
       // switchMap: a newly chosen file replaces one still being read.
       this.chosenFiles.pipe(switchMap((file) => this.readFile(file))),
