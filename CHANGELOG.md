@@ -6,6 +6,8 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [1.11.0] - 2026-11-18
+
 ### Added
 
 - **Click a section in the preview to edit it.** Hovering a section outlines it and says which tab edits it; clicking opens
