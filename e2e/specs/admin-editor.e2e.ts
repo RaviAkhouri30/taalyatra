@@ -339,9 +339,13 @@ test.describe('Admin editor', () => {
 
   test('should match the approved look of the dashboard', async ({ editor, page }) => {
     await page.evaluate(async () => document.fonts.ready);
+    // The What's new card shows the newest release's notes, which change with every release; its
+    // own specs check them. Hiding the list and masking the version keeps this about the look.
+    await page.addStyleTag({ content: '.db-notes { display: none; }' });
 
     await expect(page.locator('app-dashboard')).toHaveScreenshot('dashboard.png', {
       stylePath: 'e2e/support/visual.css',
+      mask: [page.locator('section[aria-labelledby="db-release"] p')],
     });
     await expect(editor.heading).toHaveText('Welcome back');
   });
