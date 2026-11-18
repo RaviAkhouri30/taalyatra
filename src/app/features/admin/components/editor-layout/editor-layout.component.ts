@@ -5,6 +5,7 @@ import {
   type ElementRef,
   Injector,
   afterNextRender,
+  computed,
   inject,
   viewChild,
 } from '@angular/core';
@@ -18,7 +19,7 @@ import { BaseComponent } from '@shared/base/base-component';
 import { IconComponent } from '@shared/components/icon/icon.component';
 import { IconName } from '@shared/enums/icon-name.enum';
 import { type AdminPageModel } from '../../models/admin-page.model';
-import { EDITOR_NAV_GROUPS, NavBadge } from '../../models/editor-nav.constants';
+import { NavBadge } from '../../models/editor-nav.constants';
 import { EditorNavService } from '../../services/editor-nav.service';
 import { EditorLayoutViewModel } from '../../view-models/editor-layout.view-model';
 import { EditorTopBarComponent } from '../editor-top-bar/editor-top-bar.component';
@@ -57,11 +58,14 @@ export default class EditorLayoutComponent extends BaseComponent<AdminPageModel>
   protected readonly nav = inject(EditorNavService);
   protected readonly icons = IconName;
   protected readonly badges = NavBadge;
-  protected readonly groups = EDITOR_NAV_GROUPS.map((group, index) => ({
-    ...group,
-    id: `ed-group-${String(index)}`,
-    links: group.links.map((link) => ({ ...link, match: link.exact ? EXACT : PREFIX })),
-  }));
+  /** The side panel this account sees (0019: a manager's has no hidden or owner's pages). */
+  protected readonly groups = computed(() =>
+    this.model.groups().map((group, index) => ({
+      ...group,
+      id: `ed-group-${String(index)}`,
+      links: group.links.map((link) => ({ ...link, match: link.exact ? EXACT : PREFIX })),
+    })),
+  );
 
   private readonly injector = inject(Injector);
   private readonly document = inject(DOCUMENT);

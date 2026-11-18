@@ -8,6 +8,7 @@ import { CHANGELOG_TEXT } from '@core/tokens/changelog.token';
 import { CLOCK } from '@core/tokens/clock.token';
 import { type IBackup } from '../models/backup-file';
 import { BROWSER_BACKUP_KEY, BROWSER_BACKUP_MAX_CHARS } from '../models/editor-storage.constants';
+import { provideSignedIn } from '../testing/editor-testing';
 import { MemoryDocumentStore } from '../testing/memory-document-store';
 import { BackupService } from './backup.service';
 
@@ -28,6 +29,7 @@ describe('BackupService', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: IDocumentStore, useValue: store },
+        ...provideSignedIn(),
         { provide: IFileService, useValue: files },
         { provide: DeviceStoreService, useValue: localStore },
         BackupService,

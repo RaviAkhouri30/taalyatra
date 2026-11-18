@@ -13,7 +13,9 @@ import { IFileService } from '@core/interfaces/i-file-service';
 import { BackupService } from '../services/backup.service';
 import { DeviceStoreService } from '../services/device-store.service';
 import { LoggerService } from '@core/services/logger.service';
+import { APP_ENVIRONMENT } from '@core/tokens/app-environment.token';
 import { CLOCK } from '@core/tokens/clock.token';
+import { environment } from '@env/environment';
 import { provideFakeContent, provideSiteConfig } from '@shared/testing/fixtures';
 import { SaveStatus } from '../models/save-status.enum';
 import { EditorNavService } from '../services/editor-nav.service';
@@ -23,8 +25,19 @@ import { MemoryDocumentStore } from './memory-document-store';
 /** The moment editor specs run at: 31 Oct 2026, 3:30 pm in Pune. */
 export const EDITOR_NOW = new Date('2026-10-31T10:00:00.000Z');
 
-/** The signed-in admin in editor specs. */
+/** The signed-in owner in editor specs (the environment's owner id is theirs). */
 export const EDITOR_ADMIN = { uid: 'admin-uid', email: 'owner@example.com' };
+
+/**
+ * @param user The signed-in account; the owner unless a spec signs in a manager.
+ * @returns Providers for a signed-in account, with the environment's owner id the owner's.
+ */
+export function provideSignedIn(user: { uid: string; email: string } = EDITOR_ADMIN): Provider[] {
+  return [
+    { provide: IAuthService, useValue: { user$: of(user), signOut: vi.fn(() => of(undefined)) } },
+    { provide: APP_ENVIRONMENT, useValue: { ...environment, adminUid: EDITOR_ADMIN.uid } },
+  ];
+}
 
 /**
  * @param seed Stored documents to start with, by path.
@@ -55,6 +68,7 @@ export function provideEditorTesting(seed: Readonly<Record<string, DocumentField
       { provide: IDocumentStore, useValue: store },
       { provide: CLOCK, useValue: { now: () => EDITOR_NOW } },
       { provide: IAuthService, useValue: { user$: of(EDITOR_ADMIN), signOut } },
+      { provide: APP_ENVIRONMENT, useValue: { ...environment, adminUid: EDITOR_ADMIN.uid } },
       { provide: IFileService, useValue: files },
       BackupService,
       { provide: DeviceStoreService, useValue: localStore },

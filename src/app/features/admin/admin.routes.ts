@@ -1,7 +1,9 @@
 import { type Routes } from '@angular/router';
 import { provideFiles } from '@core/config/provide-files';
 import { provideMedia } from '@core/config/provide-media';
-import { adminGuard } from './guards/admin.guard';
+import { editorGuard } from './guards/editor.guard';
+import { editorTabGuard } from './guards/editor-tab.guard';
+import { ownerGuard } from './guards/owner.guard';
 import { signedOutGuard } from './guards/signed-out.guard';
 import { unsavedChangesGuard } from './guards/unsaved-changes.guard';
 import {
@@ -24,8 +26,9 @@ import { BackupService } from './services/backup.service';
 const ADMIN_TITLE_SUFFIX = 'Admin — Taal Yatra';
 
 /**
- * Admin area (0006, 0008): sign-in pages, and the editor behind `adminGuard`. Each editor tab
- * is the same page component, told its tab through route data.
+ * Admin area (0006, 0008): sign-in pages, and the editor behind `editorGuard`, for the owner and
+ * the managers they added (0019). Each editor tab is the same page component, told its tab through
+ * route data; a manager only opens the tabs they can see, and never the owner's own pages.
  */
 const adminRoutes: Routes = [
   {
@@ -48,7 +51,7 @@ const adminRoutes: Routes = [
       },
       {
         path: '',
-        canActivate: [adminGuard],
+        canActivate: [editorGuard],
         loadComponent: () => import('./components/editor-layout/editor-layout.component'),
         children: [
           {
@@ -62,6 +65,7 @@ const adminRoutes: Routes = [
             path: entry.tab,
             title: `${entry.label} — ${ADMIN_TITLE_SUFFIX}`,
             data: { [EDITOR_TAB_ROUTE_KEY]: entry.tab },
+            canActivate: [editorTabGuard],
             canDeactivate: [unsavedChangesGuard],
             loadComponent: () => import('./components/editor-page/editor-page.component'),
           })),
@@ -77,11 +81,13 @@ const adminRoutes: Routes = [
           },
           {
             path: VISITS_PATH,
+            canActivate: [ownerGuard],
             title: `${VISITS_LABEL} — ${ADMIN_TITLE_SUFFIX}`,
             loadComponent: () => import('./components/visits-page/visits-page.component'),
           },
           {
             path: LEADS_PATH,
+            canActivate: [ownerGuard],
             title: `${LEADS_LABEL} — ${ADMIN_TITLE_SUFFIX}`,
             loadComponent: () => import('./components/leads-page/leads-page.component'),
           },

@@ -2,10 +2,20 @@ import { AppRoute } from '@shared/enums/app-route.enum';
 import { IconName } from '@shared/enums/icon-name.enum';
 import { tabSchema } from '../schemas/editor-tabs';
 import { EditorTab } from './editor-tab.enum';
+import { type Permissions } from './permissions.model';
 import { SaveStatus } from './save-status.enum';
 
 /** The route data key that tells an editor page which tab it shows. */
 export const EDITOR_TAB_ROUTE_KEY = 'editorTab';
+
+/**
+ * @param data A route's data.
+ * @returns The editor tab it names; Hero when it names none.
+ */
+export function routeTab(data: Readonly<Record<string, unknown>>): EditorTab {
+  const value = new Map(Object.entries(data)).get(EDITOR_TAB_ROUTE_KEY);
+  return Object.values(EditorTab).find((tab) => tab === value) ?? EditorTab.Hero;
+}
 
 /** The publish page's path under `/admin`. */
 export const PUBLISH_PATH = 'publish';
@@ -22,6 +32,9 @@ export const VISITS_PATH = 'visits';
 /** The Leads page's path under `/admin` (0018 V12). */
 export const LEADS_PATH = 'leads';
 
+/** Team access's path under `/admin` (0019). */
+export const TEAM_ACCESS_PATH = 'team-access';
+
 /** What's new's name in the menu and its title. */
 export const RELEASES_LABEL = 'What’s new';
 
@@ -33,6 +46,9 @@ export const VISITS_LABEL = 'Visits';
 
 /** The Leads page's name in the menu and its title. */
 export const LEADS_LABEL = 'Leads';
+
+/** Team access's name in the menu and its title. */
+export const TEAM_ACCESS_LABEL = 'Team access';
 
 /** The marker a menu link can carry. */
 export enum NavBadge {
@@ -54,6 +70,10 @@ export interface IEditorNavLink {
   readonly exact: boolean;
   /** The marker beside it, if any. */
   readonly badge: NavBadge;
+  /** The editor page it opens, which a manager may have hidden (0019); `null` for other pages. */
+  readonly tab: EditorTab | null;
+  /** Only the owner sees it (0019 decision 6). */
+  readonly ownerOnly: boolean;
 }
 
 /** A group of links in the side panel. */
@@ -70,11 +90,17 @@ function pageLink(label: string, path: string, icon: IconName): IEditorNavLink {
     icon,
     exact: false,
     badge: NavBadge.None,
+    tab: null,
+    ownerOnly: false,
   };
 }
 
+function ownerLink(label: string, path: string, icon: IconName): IEditorNavLink {
+  return { ...pageLink(label, path, icon), ownerOnly: true };
+}
+
 function tabLink(tab: EditorTab, icon: IconName): IEditorNavLink {
-  return pageLink(tabSchema(tab)?.label ?? tab, tab, icon);
+  return { ...pageLink(tabSchema(tab)?.label ?? tab, tab, icon), tab };
 }
 
 /** The editor's side panel, in order. */
@@ -88,6 +114,8 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
         icon: IconName.Home,
         exact: true,
         badge: NavBadge.None,
+        tab: null,
+        ownerOnly: false,
       },
       // Right under Dashboard, so it's never below the fold of a long menu (0017 walkthrough).
       { ...pageLink('Review & publish', PUBLISH_PATH, IconName.Send), badge: NavBadge.Changes },
@@ -117,6 +145,7 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
       tabLink(EditorTab.Contact, IconName.Phone),
       tabLink(EditorTab.Visibility, IconName.Toggle),
       pageLink(MEDIA_LABEL, MEDIA_PATH, IconName.Folder),
+      ownerLink(TEAM_ACCESS_LABEL, TEAM_ACCESS_PATH, IconName.Lock),
     ],
   },
   {
@@ -124,8 +153,8 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
     // Settings already has "Business details".
     label: 'Visitors',
     links: [
-      pageLink(VISITS_LABEL, VISITS_PATH, IconName.ArrowUpRight),
-      { ...pageLink(LEADS_LABEL, LEADS_PATH, IconName.Briefcase), badge: NavBadge.NewLeads },
+      ownerLink(VISITS_LABEL, VISITS_PATH, IconName.ArrowUpRight),
+      { ...ownerLink(LEADS_LABEL, LEADS_PATH, IconName.Briefcase), badge: NavBadge.NewLeads },
     ],
   },
   {
@@ -134,6 +163,21 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
     links: [{ ...pageLink(RELEASES_LABEL, RELEASES_PATH, IconName.Clock), badge: NavBadge.News }],
   },
 ];
+
+/**
+ * @param permissions What the signed-in account may do.
+ * @returns The side panel it sees: no hidden pages, no owner's pages for a manager, no empty group.
+ */
+export function navGroupsFor(permissions: Permissions): readonly IEditorNavGroup[] {
+  return EDITOR_NAV_GROUPS.map((group) => ({
+    ...group,
+    links: group.links.filter(
+      (link) =>
+        (permissions.isOwner || !link.ownerOnly) &&
+        (link.tab === null || permissions.canSee(link.tab)),
+    ),
+  })).filter((group) => group.links.length > 0);
+}
 
 /** What the status line says for each autosave state. */
 export const SAVE_STATUS_TEXT: Readonly<Record<SaveStatus, string>> = {

@@ -172,6 +172,7 @@ export default defineConfig(
       '**/*.spec.ts',
       'src/app/**/testing/**/*.ts',
       'api/src/testing/**/*.ts',
+      'tests/rules/testing/**/*.ts',
       'e2e/**/*.ts',
       'playwright.config.ts',
       'playwright.firebase.config.ts',

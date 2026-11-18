@@ -4,12 +4,10 @@ import { type IFindEntry, buildFindIndex, findIn } from '../../models/find-index
 import { EDITOR_TABS } from '../../schemas/editor-tabs';
 import { EditorJumpService } from '../../services/editor-jump.service';
 import { EditorNavService } from '../../services/editor-nav.service';
+import { EditorLayoutViewModel } from '../../view-models/editor-layout.view-model';
 
 /** The Find box's element id, for the side panel's folded Find button. */
 export const FIND_INPUT_ID = 'editor-find';
-
-/** Everything in the editor, indexed once: the schemas don't change while it runs. */
-const INDEX = buildFindIndex(EDITOR_TABS, (tab) => `${AppRoute.Admin}/${tab}`);
 
 /**
  * The side panel's Find box (0017 U2): type "phone", "about" or "Diwali" and go straight to the
@@ -23,10 +21,19 @@ const INDEX = buildFindIndex(EDITOR_TABS, (tab) => `${AppRoute.Admin}/${tab}`);
 })
 export class EditorFindComponent {
   protected readonly query = signal('');
-  protected readonly results = computed(() => findIn(INDEX, this.query()));
+  protected readonly results = computed(() => findIn(this.index(), this.query()));
 
   private readonly jumper = inject(EditorJumpService);
   private readonly nav = inject(EditorNavService);
+  private readonly layout = inject(EditorLayoutViewModel);
+  /** Everything this account can open, indexed once per sign-in: no page a manager can't see. */
+  private readonly index = computed(() => {
+    const permissions = this.layout.permissions();
+    return buildFindIndex(
+      EDITOR_TABS.filter((entry) => permissions.canSee(entry.tab)),
+      (tab) => `${AppRoute.Admin}/${tab}`,
+    );
+  });
 
   /** @param value What the owner typed. */
   protected search(value: string): void {
