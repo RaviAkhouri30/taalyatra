@@ -3,6 +3,7 @@ import { firstValueFrom } from 'rxjs';
 import { IDocumentStore } from '@core/interfaces/i-document-store';
 import { CLOCK } from '@core/tokens/clock.token';
 import { MediaAsset } from '../models/media-asset.model';
+import { provideSignedIn } from '../testing/editor-testing';
 import { MemoryDocumentStore } from '../testing/memory-document-store';
 import { MediaUsageService } from './media-usage.service';
 
@@ -31,6 +32,7 @@ describe('MediaUsageService', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: IDocumentStore, useValue: store },
+        ...provideSignedIn(),
         { provide: CLOCK, useValue: { now: () => new Date('2026-11-04T00:00:00Z') } },
       ],
     });

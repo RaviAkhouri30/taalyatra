@@ -54,7 +54,7 @@
         </button>
       }
       <nav #sideNav class="ed-nav" aria-label="Editor">
-        @for (group of groups; track group.id) {
+        @for (group of groups(); track group.id) {
           <div class="ed-group">
             @if (group.label) {
               <p class="ed-group-label" [id]="group.id">{{ group.label }}</p>
@@ -74,7 +74,13 @@
                     <span class="ed-label">{{ link.label }}</span>
                     @switch (link.badge) {
                       @case (badges.Changes) {
-                        @if (model.changeCount() > 0) {
+                        @if (model.approvalsToSee() > 0) {
+                          <!-- Folded to icons, the word stays for screen readers (0019). -->
+                          <span class="count"
+                            >{{ model.approvalsToSee()
+                            }}<span class="count-word"> {{ model.approvalsWord() }}</span></span
+                          >
+                        } @else if (model.changeCount() > 0) {
                           <span class="count"
                             >{{ model.changeCount() }}<span class="sr"> unpublished</span></span
                           >

@@ -1,6 +1,7 @@
 import { Service, inject } from '@angular/core';
-import { type Observable, forkJoin, map } from 'rxjs';
+import { type Observable, forkJoin, map, switchMap, take } from 'rxjs';
 import { DocumentWriteKind } from '@core/enums/document-write-kind.enum';
+import { IAuthService } from '@core/interfaces/i-auth-service';
 import { type DocumentFields, IDocumentStore } from '@core/interfaces/i-document-store';
 import { CLOCK } from '@core/tokens/clock.token';
 import {
@@ -13,13 +14,15 @@ import {
 import { collapseCollection, isCollection } from '../models/collection-expander';
 
 /**
- * The owner's unpublished changes (ADR-0013): one draft per changed document, holding the whole
- * document as it will be published. Visitors never read drafts.
+ * Unpublished changes (ADR-0013): one draft per changed document, holding the whole document as
+ * it will be published, shared by the owner and the managers, each draft signed by whoever saved
+ * it last (0019). Visitors never read drafts.
  */
 @Service()
 export class DraftService {
   private readonly store = inject(IDocumentStore);
   private readonly clock = inject(CLOCK);
+  private readonly auth = inject(IAuthService);
 
   /** @returns Every draft, by the path of the document it changes. */
   public drafts(): Observable<ReadonlyMap<string, IDraft>> {
@@ -53,16 +56,21 @@ export class DraftService {
    * @returns The saved draft.
    */
   public save(path: string, content: DocumentFields): Observable<IDraft> {
-    const draft: IDraft = { path, content, savedAt: this.clock.now().toISOString() };
-    return this.store
-      .commit([
-        {
-          kind: DocumentWriteKind.Set,
-          path: `${DRAFTS_COLLECTION}/${draftId(path)}`,
-          fields: { ...draft },
-        },
-      ])
-      .pipe(map(() => draft));
+    // switchMap: the draft is signed with whoever is signed in when it's saved.
+    return this.savedBy().pipe(
+      switchMap((savedBy) => {
+        const draft: IDraft = { path, content, savedAt: this.clock.now().toISOString(), savedBy };
+        return this.store
+          .commit([
+            {
+              kind: DocumentWriteKind.Set,
+              path: `${DRAFTS_COLLECTION}/${draftId(path)}`,
+              fields: { ...draft },
+            },
+          ])
+          .pipe(map(() => draft));
+      }),
+    );
   }
 
   /**
@@ -71,12 +79,17 @@ export class DraftService {
    */
   public saveAll(contents: ReadonlyMap<string, DocumentFields>): Observable<void> {
     const savedAt = this.clock.now().toISOString();
-    return this.store.commit(
-      [...contents].map(([path, content]) => ({
-        kind: DocumentWriteKind.Set,
-        path: `${DRAFTS_COLLECTION}/${draftId(path)}`,
-        fields: { path, content, savedAt },
-      })),
+    // switchMap: one commit, signed with whoever is signed in.
+    return this.savedBy().pipe(
+      switchMap((savedBy) =>
+        this.store.commit(
+          [...contents].map(([path, content]) => ({
+            kind: DocumentWriteKind.Set,
+            path: `${DRAFTS_COLLECTION}/${draftId(path)}`,
+            fields: { path, content, savedAt, savedBy },
+          })),
+        ),
+      ),
     );
   }
 
@@ -90,6 +103,14 @@ export class DraftService {
         kind: DocumentWriteKind.Delete,
         path: `${DRAFTS_COLLECTION}/${draftId(path)}`,
       })),
+    );
+  }
+
+  /** @returns The signed-in account's id, once (the editor is only open when signed in). */
+  private savedBy(): Observable<string> {
+    return this.auth.user$.pipe(
+      take(1),
+      map((user) => user?.uid ?? ''),
     );
   }
 }

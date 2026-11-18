@@ -7,6 +7,7 @@ import {
   Subject,
   catchError,
   exhaustMap,
+  filter,
   finalize,
   map,
   merge,
@@ -17,9 +18,13 @@ import {
 import { IAuthService } from '@core/interfaces/i-auth-service';
 import { ADMIN_DEVICE_KEY } from '@shared/constants/visit.constants';
 import { AppRoute } from '@shared/enums/app-route.enum';
-import { SAVE_STATUS_TEXT } from '../models/editor-nav.constants';
+import { ApprovalStatus } from '../models/approval.model';
+import { SAVE_STATUS_TEXT, navGroupsFor } from '../models/editor-nav.constants';
 import { LeadStatus } from '../models/lead.model';
+import { Permissions } from '../models/permissions.model';
 import { SaveStatus } from '../models/save-status.enum';
+import { AccessService } from '../services/access.service';
+import { ApprovalService } from '../services/approval.service';
 import { DeviceStoreService } from '../services/device-store.service';
 import { DraftService } from '../services/draft.service';
 import { LeadsService } from '../services/leads.service';
@@ -27,9 +32,9 @@ import { ReleaseNotesService } from '../services/release-notes.service';
 import { AdminPageViewModel } from './admin-page.view-model';
 
 /**
- * The editor's frame: the signed-in account, sign-out, the autosave status every tab reports to,
- * and how many documents have unpublished changes. Provided by the editor layout, so the pages
- * inside it share one instance.
+ * The editor's frame: the signed-in account and what it may do (0019), sign-out, the autosave
+ * status every tab reports to, and how many documents have unpublished changes. Provided by the
+ * editor layout, so the pages inside it share one instance.
  */
 @Injectable()
 export class EditorLayoutViewModel extends AdminPageViewModel {
@@ -41,6 +46,16 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
   public readonly signingOut = signal(false);
   /** How many leads are still new (0018 V12). */
   public readonly newLeads = signal(0);
+  /** For the owner, requests waiting for approval; for a manager, their requests sent back (0019). */
+  public readonly approvalsToSee = signal(0);
+  /** What the count beside Review & publish means. */
+  public readonly approvalsWord = computed(() =>
+    this.permissions().isOwner ? 'waiting' : 'sent back',
+  );
+  /** What the signed-in account may do; the guard has read it before the layout opens. */
+  public readonly permissions: Signal<Permissions>;
+  /** The side panel this account sees. */
+  public readonly groups = computed(() => navGroupsFor(this.permissions()));
   /** A release the owner hasn't opened What's new for yet (0016 V1). */
   public readonly hasNews: Signal<boolean>;
   public readonly email: Signal<string>;
@@ -56,6 +71,8 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
   private readonly drafts = inject(DraftService);
   private readonly releaseNotes = inject(ReleaseNotesService);
   private readonly leads = inject(LeadsService);
+  private readonly access = inject(AccessService);
+  private readonly approvals = inject(ApprovalService);
   private readonly news = signal(false);
   private readonly signOuts = new Subject<void>();
   private readonly refreshes = new Subject<void>();
@@ -68,6 +85,7 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
     this.email = toSignal(this.auth.user$.pipe(map((user) => user?.email ?? '')), {
       initialValue: '',
     });
+    this.permissions = toSignal(this.access.permissions$, { initialValue: Permissions.none() });
     this.retries$ = this.retryRequests.asObservable();
     this.changes$ = this.refreshes.asObservable();
     this.contentResets$ = this.contentResets.asObservable();
@@ -116,12 +134,19 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
   }
 
   protected override attachCommandHandler(): Observable<unknown> {
-    return merge(this.countChanges(), this.countNewLeads(), this.signOutFlow());
+    return merge(
+      this.countChanges(),
+      this.countNewLeads(),
+      this.countApprovals(),
+      this.signOutFlow(),
+    );
   }
 
   private countNewLeads(): Observable<unknown> {
     return this.leads.changed$.pipe(
       startWith(undefined),
+      // Leads are the owner's only (0019 decision 6): nothing is read for a manager.
+      filter(() => this.permissions().isOwner),
       // switchMap: only the latest count matters. A failed read leaves the count as it was.
       switchMap(() => this.leads.leads().pipe(catchError(() => EMPTY))),
       tap((leads) => {
@@ -131,12 +156,33 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
   }
 
   private countChanges(): Observable<unknown> {
-    return this.refreshes.pipe(
+    return merge(this.refreshes, this.approvals.changed$).pipe(
       startWith(undefined),
       // switchMap: only the latest count matters; an older read in flight is dropped.
       switchMap(() => this.drafts.drafts().pipe(catchError(() => EMPTY))),
       tap((drafts) => {
-        this.changeCount.set(drafts.size);
+        const permissions = this.permissions();
+        this.changeCount.set(
+          [...drafts.keys()].filter((path) => permissions.canSeePath(path)).length,
+        );
+      }),
+    );
+  }
+
+  private countApprovals(): Observable<unknown> {
+    return merge(this.refreshes, this.approvals.changed$).pipe(
+      startWith(undefined),
+      // switchMap: only the latest count matters. A failed read leaves the count as it was.
+      switchMap(() => this.approvals.requests().pipe(catchError(() => EMPTY))),
+      tap((requests) => {
+        const permissions = this.permissions();
+        const counted = permissions.isOwner
+          ? requests.filter((request) => request.status === ApprovalStatus.Waiting)
+          : requests.filter(
+              (request) =>
+                request.by === permissions.uid && request.status === ApprovalStatus.SentBack,
+            );
+        this.approvalsToSee.set(counted.length);
       }),
     );
   }

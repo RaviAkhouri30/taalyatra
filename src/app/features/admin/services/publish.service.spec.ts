@@ -3,6 +3,7 @@ import { firstValueFrom } from 'rxjs';
 import { IDocumentStore } from '@core/interfaces/i-document-store';
 import { CLOCK } from '@core/tokens/clock.token';
 import { type IDraft } from '@core/interfaces/i-draft';
+import { provideSignedIn } from '../testing/editor-testing';
 import { MemoryDocumentStore } from '../testing/memory-document-store';
 import { PublishService } from './publish.service';
 
@@ -15,6 +16,7 @@ describe('PublishService', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: IDocumentStore, useValue: store },
+        ...provideSignedIn(),
         { provide: CLOCK, useValue: { now: () => now } },
       ],
     });
@@ -37,11 +39,15 @@ describe('PublishService', () => {
       publishedAt: '2026-10-31T10:00:00.000Z',
       changed: ['home/hero'],
       before: { 'home/hero': { title: 'Old' } },
+      by: 'admin-uid',
+      byEmail: 'owner@example.com',
     });
     expect(store.documents.get('publishes/2026-10-31T10-00-00-000Z')).toEqual({
       publishedAt: record?.publishedAt,
       changed: record?.changed,
       before: record?.before,
+      by: 'admin-uid',
+      byEmail: 'owner@example.com',
     });
   });
 

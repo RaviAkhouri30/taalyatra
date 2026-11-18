@@ -210,7 +210,8 @@ $rail-width: 64px;
 @include bp.up(bp.$tablet + 1) {
   .ed--collapsed {
     .ed-label,
-    .ed-group-label {
+    .ed-group-label,
+    .count-word {
       position: absolute;
       width: 1px;
       height: 1px;

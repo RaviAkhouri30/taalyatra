@@ -54,7 +54,7 @@ export class SignInViewModel extends AdminPageViewModel {
       this.submitting.set(true);
       return this.auth.signIn(email.trim(), password).pipe(
         tap(() => {
-          // The navigation's result isn't needed: adminGuard decides what renders.
+          // The navigation's result isn't needed: editorGuard decides what renders.
           void this.router.navigateByUrl(AppRoute.Admin);
         }),
         // A failure is shown, and the stream stays alive for the next attempt.

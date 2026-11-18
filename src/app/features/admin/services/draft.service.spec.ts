@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
 import { IDocumentStore } from '@core/interfaces/i-document-store';
 import { CLOCK } from '@core/tokens/clock.token';
+import { provideSignedIn } from '../testing/editor-testing';
 import { MemoryDocumentStore } from '../testing/memory-document-store';
 import { DraftService } from './draft.service';
 
@@ -13,6 +14,7 @@ describe('DraftService', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: IDocumentStore, useValue: store },
+        ...provideSignedIn(),
         { provide: CLOCK, useValue: { now: () => now } },
       ],
     });
@@ -28,6 +30,7 @@ describe('DraftService', () => {
       path: 'home/hero',
       content: { title: 'New' },
       savedAt: '2026-10-31T10:00:00.000Z',
+      savedBy: 'admin-uid',
     });
     expect(store.documents.get('drafts/home__hero')).toEqual(draft);
   });

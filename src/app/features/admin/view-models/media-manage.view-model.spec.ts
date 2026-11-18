@@ -9,7 +9,7 @@ import { CLOCK } from '@core/tokens/clock.token';
 import { MediaAsset } from '../models/media-asset.model';
 import { MEDIA_ERROR_TEXT, MEDIA_WRONG_TYPE_TEXT } from '../models/media-upload.constants';
 import { MediaUsageService } from '../services/media-usage.service';
-import { layoutStub, provideLayout } from '../testing/editor-testing';
+import { layoutStub, provideLayout, provideSignedIn } from '../testing/editor-testing';
 import { MemoryDocumentStore } from '../testing/memory-document-store';
 import { MEDIA_MANAGE_TEXT, MediaManageViewModel } from './media-manage.view-model';
 
@@ -52,6 +52,7 @@ describe('MediaManageViewModel', () => {
         MediaManageViewModel,
         provideLayout(layout),
         { provide: IDocumentStore, useValue: store },
+        ...provideSignedIn(),
         { provide: IMediaService, useValue: { upload, remove } },
         { provide: CLOCK, useValue: { now: () => new Date('2026-11-04T00:00:00Z') } },
         { provide: LoggerService, useValue: { error: vi.fn() } },

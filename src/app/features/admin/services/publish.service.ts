@@ -1,5 +1,5 @@
 import { Service, inject } from '@angular/core';
-import { type Observable, forkJoin, map, of, switchMap } from 'rxjs';
+import { type Observable, forkJoin, map, of, switchMap, take } from 'rxjs';
 import { DocumentWriteKind } from '@core/enums/document-write-kind.enum';
 import {
   type DocumentFields,
@@ -11,6 +11,8 @@ import { DRAFTS_COLLECTION, type IDraft, draftId } from '@core/interfaces/i-draf
 import { expandCollection, isCollection } from '../models/collection-expander';
 import { PUBLISHES_COLLECTION, PUBLISH_HISTORY_LIMIT } from '../models/editor-storage.constants';
 import { type IPublishRecord } from '../models/i-publish-record';
+import { type Permissions } from '../models/permissions.model';
+import { AccessService } from './access.service';
 import { DraftService } from './draft.service';
 
 /** A stored history record, or `null` when the stored data isn't one. */
@@ -28,42 +30,72 @@ function toRecord(id: string, fields: DocumentFields): IPublishRecord | null {
         publishedAt,
         changed: changed.filter((path): path is string => typeof path === 'string'),
         before: before as IPublishRecord['before'],
+        ...optionalText(entries, 'by'),
+        ...optionalText(entries, 'byEmail'),
+        ...optionalText(entries, 'approvedFrom'),
       }
     : null;
 }
 
+/** `{ key: value }` when the stored value is text, else nothing (exact optional properties). */
+function optionalText(
+  entries: ReadonlyMap<string, unknown>,
+  key: 'by' | 'byEmail' | 'approvedFrom',
+): Partial<Pick<IPublishRecord, typeof key>> {
+  const value = entries.get(key);
+  return typeof value === 'string' ? { [key]: value } : {};
+}
+
+/** What else a publish does, besides putting the drafts live. */
+export interface IPublishExtras {
+  /** For an approved change, the email of the manager who sent it. */
+  readonly approvedFrom?: string;
+  /** More writes for the same commit, e.g. answering the request (0019). */
+  readonly writes?: readonly DocumentWrite[];
+}
+
 /**
- * Publishes the owner's drafts and keeps a history to go back to (ADR-0013, 0016 V3). A publish is one
- * atomic commit: live documents, the history record, removing the drafts and trimming history.
+ * Publishes drafts and keeps a history to go back to (ADR-0013, 0016 V3). A publish is one atomic
+ * commit: live documents, the history record (with who published), removing the drafts and, for
+ * the owner, trimming history; the rules never let a manager delete history (0019).
  */
 @Service()
 export class PublishService {
   private readonly store = inject(IDocumentStore);
   private readonly drafts = inject(DraftService);
   private readonly clock = inject(CLOCK);
+  private readonly access = inject(AccessService);
 
   /**
    * @param drafts The drafts to publish, by document path.
+   * @param extras What else the same commit does.
    * @returns The new history record, or `null` when there was nothing to publish.
    */
-  public publish(drafts: ReadonlyMap<string, IDraft>): Observable<IPublishRecord | null> {
+  public publish(
+    drafts: ReadonlyMap<string, IDraft>,
+    extras: IPublishExtras = {},
+  ): Observable<IPublishRecord | null> {
     const paths = [...drafts.keys()];
     if (paths.length === 0) {
       return of(null);
     }
-    // forkJoin: the live versions (kept for undo), the numbered ids of any collection being
-    // published (so its unused numbers can be deleted) and the history are independent reads.
+    // forkJoin: who is publishing, the live versions (kept for undo), the numbered ids of any
+    // collection being published (so its unused numbers can be deleted) and the history are
+    // independent reads.
     return forkJoin([
+      this.access.permissions$.pipe(take(1)),
       forkJoin(paths.map((path) => this.drafts.live(path))),
       forkJoin(paths.map((path) => this.storedIds(path))),
       this.history(),
     ]).pipe(
       // switchMap: one commit per publish, built from what was just read.
-      switchMap(([live, ids, history]) => {
-        const record = this.record(paths, live);
+      switchMap(([permissions, live, ids, history]) => {
+        const record = this.record(paths, live, permissions, extras);
         const existing = new Map(paths.map((path, index) => [path, ids.at(index) ?? []]));
+        // Only the owner trims: the rules never let a manager delete history.
+        const trimmed = permissions.isOwner ? history : [];
         return this.store
-          .commit(this.writes(drafts, existing, record, history))
+          .commit([...this.writes(drafts, existing, record, trimmed), ...(extras.writes ?? [])])
           .pipe(map(() => record));
       }),
     );
@@ -121,6 +153,8 @@ export class PublishService {
   private record(
     paths: readonly string[],
     live: readonly (DocumentFields | null)[],
+    permissions: Permissions,
+    extras: IPublishExtras,
   ): IPublishRecord {
     const now = this.clock.now().toISOString();
     return {
@@ -129,6 +163,9 @@ export class PublishService {
       publishedAt: now,
       changed: paths,
       before: Object.fromEntries(paths.map((path, index) => [path, live.at(index) ?? null])),
+      by: permissions.uid,
+      byEmail: permissions.email,
+      ...(extras.approvedFrom === undefined ? {} : { approvedFrom: extras.approvedFrom }),
     };
   }
 

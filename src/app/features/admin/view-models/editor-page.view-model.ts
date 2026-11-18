@@ -28,10 +28,10 @@ import { type ContentPath } from '../models/content-path.enum';
 import { formatMoment } from '../models/editor-dates';
 import {
   AUTOSAVE_DEBOUNCE_MS,
-  EDITOR_TAB_ROUTE_KEY,
+  routeTab,
   PREVIEW_FOLLOW_DEBOUNCE_MS,
 } from '../models/editor-nav.constants';
-import { EditorTab } from '../models/editor-tab.enum';
+import { type EditorTab } from '../models/editor-tab.enum';
 import { type IEditorSection } from '../models/i-editor-section';
 import { type IEditorTabSchema, tabSchema } from '../schemas/editor-tabs';
 import { DraftService } from '../services/draft.service';
@@ -178,10 +178,7 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
   }
 
   private routeTab(): EditorTab {
-    const value: unknown = new Map(Object.entries(this.route.snapshot.data)).get(
-      EDITOR_TAB_ROUTE_KEY,
-    );
-    return Object.values(EditorTab).find((tab) => tab === value) ?? EditorTab.Hero;
+    return routeTab(this.route.snapshot.data);
   }
 
   private buildPage(tab: IEditorTabSchema): IEditorPage {

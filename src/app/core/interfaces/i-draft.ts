@@ -14,6 +14,8 @@ export interface IDraft {
   readonly content: DocumentFields;
   /** When it was last saved (ISO 8601). */
   readonly savedAt: string;
+  /** The account that last saved it (0019); drafts from before 2.0.0 have none: the owner's. */
+  readonly savedBy?: string;
 }
 
 /**
@@ -40,9 +42,13 @@ export function toDraft(fields: DocumentFields | null): IDraft | null {
   const path = entries.get('path');
   const content = entries.get('content');
   const savedAt = entries.get('savedAt');
-  return typeof path === 'string' && isFields(content) && typeof savedAt === 'string'
-    ? { path, content, savedAt }
-    : null;
+  const savedBy = entries.get('savedBy');
+  if (typeof path !== 'string' || !isFields(content) || typeof savedAt !== 'string') {
+    return null;
+  }
+  return typeof savedBy === 'string'
+    ? { path, content, savedAt, savedBy }
+    : { path, content, savedAt };
 }
 
 /**

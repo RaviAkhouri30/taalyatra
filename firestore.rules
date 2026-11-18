@@ -5,72 +5,129 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Public site content. Anyone may read it. Only the admin may change the documents the editor
-    // covers, and only with the shape the site renders (0008). The seed script uses the Admin SDK,
-    // which bypasses these rules.
+    // Public site content. Anyone may read it. The owner, and a manager on the pages they may
+    // publish (0019), change the documents the editor covers, only with the shape the site renders
+    // (0008). The seed script uses the Admin SDK, which bypasses these rules.
     match /home/{section} {
       allow read: if true;
-      allow update: if isAdmin()
-        && section in ['hero', 'offer', 'audiences', 'experiences', 'rhythmGame', 'videos', 'team',
-                       'contact', 'gallery', 'shows', 'drumCircle']
+      allow update: if section in homePages()
+        && canPublish(homePages()[section])
         && isValidHomeSection(request.resource.data, resource.data);
     }
     match /site/{document} {
       allow read: if true;
-      allow create, update: if isAdmin()
-        && ((document == 'config' && isValidSiteConfig(request.resource.data))
-            || (document == 'visibility' && isValidVisibility(request.resource.data)));
+      allow create: if isOwner() && isValidSiteDocument(document, request.resource.data);
+      allow update: if isValidSiteDocument(document, request.resource.data)
+        && (isOwner()
+            || (document == 'visibility' && canPublish('visibility'))
+            // Offer, Business details and Contact & social links share this document: a manager
+            // changes only the parts of the pages they may publish.
+            || (document == 'config' && isManager()
+                && request.resource.data.diff(resource.data).affectedKeys()
+                  .hasOnly(publishableConfigKeys())));
     }
     match /pages/{page} {
       allow read: if true;
     }
-    // Collections: the admin's publish writes them as numbered documents and deletes the numbers
-    // it no longer uses (0009). The highest number allowed is the collection's item limit, which
+    // Collections: a publish writes them as numbered documents and deletes the numbers it no
+    // longer uses (0009). The highest number allowed is the collection's item limit, which
     // mirrors COLLECTION_MAX_ITEMS (content-limits.constants.ts).
     match /showFormats/{item} {
       allow read: if true;
-      allow create, update: if isAdmin() && isItemId(item, 20)
+      allow create, update: if canPublish('shows') && isItemId(item, 20)
         && isValidShowFormat(request.resource.data);
-      allow delete: if isAdmin();
+      allow delete: if canPublish('shows');
     }
     match /videos/{item} {
       allow read: if true;
-      allow create, update: if isAdmin() && isItemId(item, 60)
+      allow create, update: if canPublish('videos') && isItemId(item, 60)
         && isValidVideo(request.resource.data);
-      allow delete: if isAdmin();
+      allow delete: if canPublish('videos');
     }
     match /gallery/{item} {
       allow read: if true;
-      allow create, update: if isAdmin() && isItemId(item, 60)
+      allow create, update: if canPublish('gallery') && isItemId(item, 60)
         && isValidGalleryItem(request.resource.data);
-      allow delete: if isAdmin();
+      allow delete: if canPublish('gallery');
     }
     match /team/{item} {
       allow read: if true;
-      allow create, update: if isAdmin() && isItemId(item, 24)
+      allow create, update: if canPublish('team') && isItemId(item, 24)
         && isValidTeamMember(request.resource.data);
-      allow delete: if isAdmin();
+      allow delete: if canPublish('team');
     }
 
-    // The uploaded-image library: private to the admin. Visitors only ever get an image through a
-    // published document that uses it (0009, D11).
+    // The uploaded-image library. Visitors only ever get an image through a published document
+    // that uses it (0009, D11). A manager picks from it, and adds to it when uploads are on; only
+    // the owner deletes, since a deleted photo disappears from the live site (0019).
     match /media/{id} {
-      allow read, delete: if isAdmin();
-      allow create, update: if isAdmin() && isValidMedia(id, request.resource.data);
+      allow read: if isOwner() || isManager();
+      allow delete: if isOwner();
+      allow create, update: if (isOwner() || (isManager() && role().uploads == true))
+        && isValidMedia(id, request.resource.data);
     }
 
-    // The editor's drafts and publish history: the admin's working space, private to the admin.
+    // The editor's drafts: one shared working copy (0019 decision 4). Managers read them all, as
+    // the preview does; they write only drafts of pages they can see, signed with their own id,
+    // and never one waiting for approval (`locks`).
     match /drafts/{key} {
-      allow read, write: if isAdmin();
+      allow read: if isOwner() || isManager();
+      allow write: if isOwner();
+      allow create, update: if isManager()
+        && isValidManagerDraft(key, request.resource.data)
+        && !exists(/databases/$(database)/documents/locks/$(key));
+      allow delete: if isManager()
+        && canDraft(resource.data.path)
+        && !exists(/databases/$(database)/documents/locks/$(key));
     }
+    // Publish history. A manager's publish adds a record naming only pages they may publish, and
+    // never deletes one; the owner's publishes trim the history to its limit.
     match /publishes/{id} {
-      allow read, write: if isAdmin();
+      allow read: if isOwner() || isManager();
+      allow write: if isOwner();
+      allow create: if isManager()
+        && request.resource.data.by == request.auth.uid
+        && request.resource.data.changed is list
+        && request.resource.data.changed.hasOnly(publishablePaths());
+    }
+
+    // Who may do what (0019). Only the owner adds, changes or removes a manager; a manager reads
+    // only their own record. The owner never has one: they are fixed below (decision 1).
+    match /roles/{uid} {
+      allow read: if isOwner() || (request.auth != null && request.auth.uid == uid);
+      allow delete: if isOwner();
+      allow create, update: if isOwner() && uid != ownerUid() && isValidRole(request.resource.data);
+    }
+    // Changes sent for approval. A manager sends and withdraws their own; the owner approves or
+    // sends back, changing only the answer.
+    match /approvals/{id} {
+      allow read: if isOwner() || isManager();
+      allow create: if isManager() && isValidApproval(request.resource.data);
+      allow delete: if isOwner()
+        || (isManager() && resource.data.by == request.auth.uid);
+      allow update: if isOwner()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['status', 'answer', 'answeredAt'])
+        && request.resource.data.status in ['approved', 'sent-back']
+        && isText(request.resource.data.get('answer', ''), 0, 500);
+    }
+    // One per draft waiting for approval, so the manager can't change it after sending (decision
+    // 5). Created with its waiting request, and removed when the request is answered or withdrawn.
+    match /locks/{key} {
+      allow read: if isOwner() || isManager();
+      allow write: if isOwner();
+      allow create: if isManager()
+        && request.resource.data.keys().hasOnly(['approval'])
+        && request.resource.data.approval is string
+        && isOwnWaitingApproval(request.resource.data.approval);
+      allow delete: if isManager()
+        && !existsAfter(/databases/$(database)/documents/approvals/$(resource.data.approval));
     }
     // The editor's own notes (0016 V13): when the last backup was made, so every device agrees.
     // Only known documents, each with only its known field.
     match /adminState/{document} {
-      allow read: if isAdmin();
-      allow create, update: if isAdmin()
+      allow read: if isOwner();
+      allow create, update: if isOwner()
         && document == 'backups'
         && request.resource.data.keys().hasOnly(['lastAt'])
         && isText(request.resource.data.lastAt, 20, 40);
@@ -80,8 +137,8 @@ service cloud.firestore {
     // them on the Leads page (0018), deletes one on request, and changes only its status.
     match /proposals/{proposal} {
       allow create: if isValidProposal(request.resource.data);
-      allow read, delete: if isAdmin();
-      allow update: if isAdmin()
+      allow read, delete: if isOwner();
+      allow update: if isOwner()
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'statusAt'])
         && request.resource.data.status in ['new', 'contacted', 'won', 'lost']
         && isText(request.resource.data.statusAt, 20, 40);
@@ -92,13 +149,13 @@ service cloud.firestore {
     // finished day up into `visitDays` and removes that day's single visits.
     match /visits/{visit} {
       allow create: if isValidVisit(request.resource.data);
-      allow read, delete: if isAdmin();
+      allow read, delete: if isOwner();
     }
     // Created once per day and never changed, so a second device adding the same day up can't
     // overwrite the first with a different total.
     match /visitDays/{day} {
-      allow read: if isAdmin();
-      allow create: if isAdmin()
+      allow read: if isOwner();
+      allow create: if isOwner()
         && day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
         && isValidVisitDay(request.resource.data);
     }
@@ -107,7 +164,7 @@ service cloud.firestore {
     // nothing else; only the admin reads or deletes them. Nothing in them identifies anyone.
     match /vitals/{report} {
       allow create: if isValidVitals(request.resource.data);
-      allow read, delete: if isAdmin();
+      allow read, delete: if isOwner();
     }
 
     // The limits mirror PROPOSAL_MAX_LENGTH (proposal-limits.constants.ts); the rules tests build
@@ -174,10 +231,153 @@ service cloud.firestore {
       return value == null || (value is int && value >= 0 && value <= 120000);
     }
 
-    // The single admin account (0006, ADR-0012). A UID is an identifier, not a secret. The emulator
-    // build seeds a user with the same UID, so the rules tests and smoke suite exercise this check.
-    function isAdmin() {
-      return request.auth != null && request.auth.uid == '5zsz2DlUaja2Ss7wbFTrpiMMROk2';
+    // The owner's account (0006, ADR-0012): fixed here, so nothing on Team access can lock them
+    // out (0019 decision 1). A UID is an identifier, not a secret. The emulator build seeds a user
+    // with the same UID, so the rules tests and smoke suite exercise this check.
+    function ownerUid() {
+      return '5zsz2DlUaja2Ss7wbFTrpiMMROk2';
+    }
+
+    function isOwner() {
+      return request.auth != null && request.auth.uid == ownerUid();
+    }
+
+    function rolePath() {
+      return /databases/$(database)/documents/roles/$(request.auth.uid);
+    }
+
+    // Someone the owner added on Team access (0019). Read on every request, so removing a manager
+    // or changing a setting takes effect at once.
+    function isManager() {
+      return request.auth != null && !isOwner() && exists(rolePath());
+    }
+
+    function role() {
+      return get(rolePath()).data;
+    }
+
+    // A page's setting for the signed-in manager. Keys mirror the EditorTab enum; a page missing
+    // from the record needs approval, the default (decision 3).
+    function pageSetting(page) {
+      return role().pages.get(page, 'approval');
+    }
+
+    function canSee(page) {
+      return isOwner() || (isManager() && pageSetting(page) != 'hidden');
+    }
+
+    function canPublish(page) {
+      return isOwner() || (isManager() && pageSetting(page) == 'publish');
+    }
+
+    // The editor page each home section belongs to.
+    function homePages() {
+      return {
+        'hero': 'hero', 'offer': 'offer', 'audiences': 'audiences', 'experiences': 'experiences',
+        'shows': 'shows', 'drumCircle': 'drum-circle', 'rhythmGame': 'rhythm-game',
+        'videos': 'videos', 'gallery': 'gallery', 'team': 'team', 'contact': 'proposal-form'
+      };
+    }
+
+    // The editor page each drafted document belongs to, but `site/config`, which three share.
+    // Paths mirror ContentPath (content-path.enum.ts).
+    function draftPages() {
+      return {
+        'home/hero': 'hero', 'home/offer': 'offer', 'home/audiences': 'audiences',
+        'home/experiences': 'experiences', 'home/shows': 'shows', 'showFormats': 'shows',
+        'home/drumCircle': 'drum-circle', 'home/rhythmGame': 'rhythm-game',
+        'home/videos': 'videos', 'videos': 'videos', 'home/gallery': 'gallery',
+        'gallery': 'gallery', 'home/team': 'team', 'team': 'team',
+        'home/contact': 'proposal-form', 'site/visibility': 'visibility'
+      };
+    }
+
+    function canDraft(path) {
+      return path is string
+        && ((path == 'site/config' && (canSee('offer') || canSee('business') || canSee('contact')))
+            || (path in draftPages() && canSee(draftPages()[path])));
+    }
+
+    // The parts of `site/config` a manager may change: those of the pages they may publish. Called
+    // for managers only, with their settings read once (a rule may only look up so many documents).
+    function publishableConfigKeys() {
+      let pages = role().pages;
+      return pathsIf(pages, 'business', ['brand'])
+        .concat(pathsIf(pages, 'offer', ['promotion']))
+        .concat(pathsIf(pages, 'contact', ['contact', 'socials', 'copyrightYear']));
+    }
+
+    // `paths` when the manager may publish `page`, else nothing.
+    function pathsIf(pages, page, paths) {
+      return pages.get(page, 'approval') == 'publish' ? paths : [];
+    }
+
+    // The documents a manager may name in a publish record. Called for managers only.
+    function publishablePaths() {
+      let pages = role().pages;
+      return pathsIf(pages, 'hero', ['home/hero'])
+        .concat(pathsIf(pages, 'offer', ['home/offer', 'site/config']))
+        .concat(pathsIf(pages, 'audiences', ['home/audiences']))
+        .concat(pathsIf(pages, 'experiences', ['home/experiences']))
+        .concat(pathsIf(pages, 'shows', ['home/shows', 'showFormats']))
+        .concat(pathsIf(pages, 'drum-circle', ['home/drumCircle']))
+        .concat(pathsIf(pages, 'rhythm-game', ['home/rhythmGame']))
+        .concat(pathsIf(pages, 'videos', ['home/videos', 'videos']))
+        .concat(pathsIf(pages, 'gallery', ['home/gallery', 'gallery']))
+        .concat(pathsIf(pages, 'team', ['home/team', 'team']))
+        .concat(pathsIf(pages, 'proposal-form', ['home/contact']))
+        .concat(pathsIf(pages, 'business', ['site/config']))
+        .concat(pathsIf(pages, 'contact', ['site/config']))
+        .concat(pathsIf(pages, 'visibility', ['site/visibility']));
+    }
+
+    // A draft id is its path with `/` as `__` (draftId in i-draft.ts).
+    function isValidManagerDraft(key, data) {
+      let fields = ['path', 'content', 'savedAt', 'savedBy'];
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields)
+        && canDraft(data.path)
+        && key == data.path.replace('/', '__')
+        && data.content is map
+        && isText(data.savedAt, 20, 40)
+        && data.savedBy == request.auth.uid;
+    }
+
+    // Keys mirror the EditorTab enum, and values PageAccess.
+    function isValidRole(data) {
+      let fields = ['email', 'pages', 'uploads', 'addedAt'];
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields)
+        && isText(data.email, 3, 254)
+        && data.pages is map
+        && data.pages.keys().hasOnly(['hero', 'offer', 'audiences', 'experiences', 'shows',
+                                      'drum-circle', 'rhythm-game', 'videos', 'gallery', 'team',
+                                      'proposal-form', 'business', 'contact', 'visibility'])
+        && data.pages.values().hasOnly(['hidden', 'approval', 'publish'])
+        && data.uploads is bool
+        && isText(data.addedAt, 20, 40);
+    }
+
+    function isValidApproval(data) {
+      let fields = ['by', 'email', 'paths', 'note', 'sentAt', 'status'];
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields)
+        && data.by == request.auth.uid
+        && isText(data.email, 0, 254)
+        && data.paths is list && data.paths.size() >= 1 && data.paths.size() <= 20
+        && isText(data.note, 0, 500)
+        && isText(data.sentAt, 20, 40)
+        && data.status == 'waiting';
+    }
+
+    // Checked against the state after the commit: the request is sent in the same commit.
+    function isOwnWaitingApproval(id) {
+      let path = /databases/$(database)/documents/approvals/$(id);
+      return existsAfter(path)
+        && getAfter(path).data.by == request.auth.uid
+        && getAfter(path).data.status == 'waiting';
+    }
+
+    function isValidSiteDocument(document, data) {
+      return (document == 'config' && isValidSiteConfig(data))
+        || (document == 'visibility' && isValidVisibility(data));
     }
 
     // The limits mirror CONTENT_MAX_LENGTH (content-limits.constants.ts); the rules tests read it.
