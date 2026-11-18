@@ -29,6 +29,36 @@ export interface IVitalsSource {
   measure(): Observable<IVitalsMeasurement>;
 }
 
+/** One anonymous visit (0018): where it arrived and on what kind of device, nothing more. */
+export interface IVisit {
+  /** The page arrived on, with no query string. */
+  readonly page: string;
+  /** Phone, tablet or desktop, from the screen width. */
+  readonly device: string;
+}
+
+/** Decides whether this page load is a visit to count. Lives in the after-load chunk. */
+export interface IVisitSource {
+  /** @returns Emits the visit once, then completes; completes empty when it isn't counted. */
+  count(): Observable<IVisit>;
+}
+
+/** Something to send once the page has loaded: where to, and what. */
+export interface IAfterLoadReport {
+  /** The collection it goes to. */
+  readonly endpoint: string;
+  readonly body: IVitalsMeasurement | IVisit;
+}
+
+/**
+ * Everything sent after the page has loaded: the speed report (0012) and the visit (0018). Its
+ * own chunk, so visitors download it only once the page is idle.
+ */
+export interface IAfterLoadSource {
+  /** @returns Each report as it's ready; completes once all are sent or skipped. */
+  reports(): Observable<IAfterLoadReport>;
+}
+
 /**
  * Port for reporting how fast the site really was (ADR-0016, 0012). Also the DI token;
  * `vitalsReporterFactory` picks the adapter. Nothing here may affect the visit: it never errors.

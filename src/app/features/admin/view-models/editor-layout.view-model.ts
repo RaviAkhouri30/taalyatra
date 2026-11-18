@@ -15,10 +15,14 @@ import {
   tap,
 } from 'rxjs';
 import { IAuthService } from '@core/interfaces/i-auth-service';
+import { ADMIN_DEVICE_KEY } from '@shared/constants/visit.constants';
 import { AppRoute } from '@shared/enums/app-route.enum';
 import { SAVE_STATUS_TEXT } from '../models/editor-nav.constants';
+import { LeadStatus } from '../models/lead.model';
 import { SaveStatus } from '../models/save-status.enum';
+import { DeviceStoreService } from '../services/device-store.service';
 import { DraftService } from '../services/draft.service';
+import { LeadsService } from '../services/leads.service';
 import { ReleaseNotesService } from '../services/release-notes.service';
 import { AdminPageViewModel } from './admin-page.view-model';
 
@@ -35,6 +39,8 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
   /** How many documents have a draft. */
   public readonly changeCount = signal(0);
   public readonly signingOut = signal(false);
+  /** How many leads are still new (0018 V12). */
+  public readonly newLeads = signal(0);
   /** A release the owner hasn't opened What's new for yet (0016 V1). */
   public readonly hasNews: Signal<boolean>;
   public readonly email: Signal<string>;
@@ -49,6 +55,7 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
   private readonly router = inject(Router);
   private readonly drafts = inject(DraftService);
   private readonly releaseNotes = inject(ReleaseNotesService);
+  private readonly leads = inject(LeadsService);
   private readonly news = signal(false);
   private readonly signOuts = new Subject<void>();
   private readonly refreshes = new Subject<void>();
@@ -66,6 +73,8 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
     this.contentResets$ = this.contentResets.asObservable();
     this.news.set(this.releaseNotes.hasUnseen());
     this.hasNews = this.news.asReadonly();
+    // The owner's own visits to the site aren't counted from this browser (0018 decision 3).
+    inject(DeviceStoreService).set(ADMIN_DEVICE_KEY, '1');
   }
 
   /** The owner has opened What's new: the New marker goes. */
@@ -107,7 +116,18 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
   }
 
   protected override attachCommandHandler(): Observable<unknown> {
-    return merge(this.countChanges(), this.signOutFlow());
+    return merge(this.countChanges(), this.countNewLeads(), this.signOutFlow());
+  }
+
+  private countNewLeads(): Observable<unknown> {
+    return this.leads.changed$.pipe(
+      startWith(undefined),
+      // switchMap: only the latest count matters. A failed read leaves the count as it was.
+      switchMap(() => this.leads.leads().pipe(catchError(() => EMPTY))),
+      tap((leads) => {
+        this.newLeads.set(leads.filter((lead) => lead.status === LeadStatus.New).length);
+      }),
+    );
   }
 
   private countChanges(): Observable<unknown> {

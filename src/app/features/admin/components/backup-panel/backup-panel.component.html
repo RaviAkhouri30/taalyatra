@@ -33,6 +33,16 @@
         </div>
       </div>
     } @else {
+      <label class="bk-leads">
+        <input type="checkbox" [formControl]="model.withLeads" />
+        Include leads
+      </label>
+      @if (model.leadsTicked()) {
+        <p class="bk-due">
+          This file has customers’ names, phone numbers and emails. Keep it somewhere safe. It’s
+          only downloaded, not kept in this browser.
+        </p>
+      }
       <div class="bk-actions">
         <button appButton type="button" [disabled]="model.busy()" (click)="model.download()">
           {{ model.busy() ? 'Working…' : 'Download a backup' }}

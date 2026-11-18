@@ -13,11 +13,13 @@ flowchart TD
   RO -->|"achievements"| A["AchievementsPageComponent<br/>page-hero · stats · milestones · recognition · press · performances · page-cta"]
   RO -->|"videos · team · shows · achievements: pageEnabledGuard (canMatch)"| V
   RO -->|"admin (lazy, layout: Bare)"| AD["AdminShellComponent (noindex)<br/>sign-in · signedOutGuard → SignIn · reset-password → ResetPassword (app-auth-card)"]
-  AD -->|"'' · adminGuard"| EL["EditorLayoutComponent<br/>account bar · side panel (What’s new marker) · save status (EditorLayoutViewModel)<br/>route providers: IMediaService · IFileService · BackupService"]
+  AD -->|"'' · adminGuard"| EL["EditorLayoutComponent<br/>account bar · side panel (What’s new and new-leads markers) · save status (EditorLayoutViewModel)<br/>route providers: IMediaService · IFileService · BackupService"]
   EL --> DB["'' → DashboardComponent"]
   EL --> EP["one tab per site section (hero · offer · audiences · experiences · shows · drum-circle · rhythm-game · videos · gallery · team · proposal-form) and settings (business · contact · visibility) → EditorPageComponent<br/>(unsavedChangesGuard) · unsaved-changes bar (safety copy, 0016) · cards with appInView · schema-fields · schema-field · preview-frame (PreviewScroller)"]
   EL --> ML["media → MediaLibraryComponent (MediaManageViewModel)<br/>MediaUploadComponent · MediaCardComponent"]
   EL --> PP["publish → PublishPageComponent<br/>BackupPanelComponent (BackupPanelViewModel, 0016) · PublishHistoryComponent (go back, 0016)"]
+  EL --> VS["visits → VisitsPageComponent (VisitsPageViewModel, 0018)<br/>period switch · BarChartComponent × 2 (visits, proposals) · where visitors arrive · devices"]
+  EL --> LD["leads → LeadsPageComponent (LeadsPageViewModel, 0018)<br/>LeadFiltersComponent · LeadCardComponent × n (status, remove) · Export CSV"]
   EL --> RL["releases → ReleasesComponent (What’s new, 0016)<br/>notes from the bundled CHANGELOG; opening it clears the New marker"]
   RO -->|"** → ''"| Home
   Home --> Eager["intro · hero · marquee · trust<br/>(each optional section only when switched on)"]

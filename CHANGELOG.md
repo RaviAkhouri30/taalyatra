@@ -8,6 +8,16 @@ See [docs/versioning.md](docs/versioning.md).
 
 ### Added
 
+- **Visits** in the editor’s menu: graphs of visits and proposals by day, week, month or year, which pages visitors arrive
+  on, and phone or computer. Visits are counted anonymously from this version on: no cookies and nothing that identifies
+  anyone. Search robots, browsers that ask not to be tracked, and your own visits from a browser where you’ve opened the
+  editor aren’t counted.
+- **Leads** in the editor’s menu: every proposal from the website, newest first, with buttons to call, WhatsApp or email.
+  Mark each one New, Contacted, Won or Lost, filter and search them, export what you see as a spreadsheet (CSV), or remove
+  one for good when a customer asks. The menu and the dashboard show how many are new.
+- **Include leads** in a backup when you tick the box. That file holds customers’ details, so it’s only downloaded, never
+  kept in the browser.
+
 - **What’s new** in the editor’s menu: every update’s notes, newest first, with a **New** marker until you’ve read them.
   The dashboard shows the latest update in brief.
 - **Backups:** download one file with the website’s words, settings and photo descriptions, from Review & publish or right

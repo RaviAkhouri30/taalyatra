@@ -3,10 +3,10 @@ import { HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { EMPTY, Subject, of, throwError } from 'rxjs';
 import { IHttpBackend } from '@core/interfaces/i-http-backend';
-import { type IVitalsMeasurement } from '@core/interfaces/i-vitals-reporter';
+import { type IAfterLoadReport, type IVitalsMeasurement } from '@core/interfaces/i-vitals-reporter';
 import { APP_PREVIEW } from '@core/tokens/app-preview.token';
 import { BrowserVitalsReporter } from './browser-vitals-reporter';
-import { VITALS_SOURCE_LOADER } from './vitals-source-loader.token';
+import { AFTER_LOAD_LOADER } from './after-load-loader.token';
 
 describe('BrowserVitalsReporter', () => {
   const measured: IVitalsMeasurement = {
@@ -19,6 +19,8 @@ describe('BrowserVitalsReporter', () => {
     ready: 900,
     cls: 0,
   };
+  const speed: IAfterLoadReport = { endpoint: 'vitals', body: measured };
+  const visit: IAfterLoadReport = { endpoint: 'visits', body: { page: '/shows', device: 'phone' } };
 
   interface IOptions {
     readonly preview?: boolean;
@@ -27,7 +29,7 @@ describe('BrowserVitalsReporter', () => {
 
   function setUp(options: IOptions = {}) {
     const post = vi.fn(() => of(new HttpResponse({ status: 201 })));
-    const load = vi.fn(() => of({ measure: () => of(measured) }));
+    const load = vi.fn(() => of({ reports: () => of<IAfterLoadReport>(speed) }));
     const mark = vi.fn();
     const events = new EventTarget();
     const clearTimeout = vi.fn();
@@ -54,7 +56,7 @@ describe('BrowserVitalsReporter', () => {
         },
         { provide: IHttpBackend, useValue: { post } },
         { provide: APP_PREVIEW, useValue: options.preview ?? false },
-        { provide: VITALS_SOURCE_LOADER, useValue: load },
+        { provide: AFTER_LOAD_LOADER, useValue: load },
       ],
     });
     const reporter = TestBed.runInInjectionContext(() => new BrowserVitalsReporter());
@@ -68,6 +70,30 @@ describe('BrowserVitalsReporter', () => {
 
     expect(post).toHaveBeenCalledTimes(1);
     expect(post).toHaveBeenCalledWith('vitals', measured);
+  });
+
+  it('should send the visit and the speed report each to its own place', () => {
+    const { reporter, post, load } = setUp();
+    load.mockReturnValue(of({ reports: () => of(visit, speed) }));
+
+    reporter.report().subscribe();
+
+    expect(post.mock.calls).toEqual([
+      ['visits', visit.body],
+      ['vitals', measured],
+    ]);
+  });
+
+  it('should still send the speed report when the visit fails to send', () => {
+    const { reporter, post, load } = setUp();
+    load.mockReturnValue(of({ reports: () => of(visit, speed) }));
+    post.mockReturnValueOnce(throwError(() => new Error('offline')));
+    const complete = vi.fn();
+
+    reporter.report().subscribe({ complete });
+
+    expect(post).toHaveBeenLastCalledWith('vitals', measured);
+    expect(complete).toHaveBeenCalled();
   });
 
   it('should note when the site data arrives', () => {
@@ -89,7 +115,7 @@ describe('BrowserVitalsReporter', () => {
 
   it('should send nothing when the measuring code finds it should not report', () => {
     const { reporter, post, load } = setUp();
-    load.mockReturnValue(of({ measure: () => EMPTY }));
+    load.mockReturnValue(of({ reports: () => EMPTY }));
 
     reporter.report().subscribe();
 
@@ -132,13 +158,13 @@ describe('BrowserVitalsReporter', () => {
 
   it('should keep waiting while the measurement is not ready', () => {
     const context = setUp();
-    const measurement = new Subject<IVitalsMeasurement>();
-    context.load.mockReturnValue(of({ measure: () => measurement }));
+    const reports = new Subject<IAfterLoadReport>();
+    context.load.mockReturnValue(of({ reports: () => reports }));
 
     context.reporter.report().subscribe();
     expect(context.post).not.toHaveBeenCalled();
 
-    measurement.next(measured);
+    reports.next(speed);
 
     expect(context.post).toHaveBeenCalledTimes(1);
   });

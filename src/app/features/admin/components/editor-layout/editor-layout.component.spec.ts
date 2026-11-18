@@ -9,6 +9,8 @@ describe('EditorLayoutComponent', () => {
   function render() {
     const testing = provideEditorTesting({
       'drafts/home__hero': { path: 'home/hero', content: {}, savedAt: 'x' },
+      'proposals/a': { name: 'Asha' },
+      'proposals/b': { name: 'Ravi', status: 'won' },
     });
     TestBed.configureTestingModule({ providers: testing.providers });
     const fixture = TestBed.createComponent(EditorLayoutComponent);
@@ -41,9 +43,23 @@ describe('EditorLayoutComponent', () => {
       '/admin/contact',
       '/admin/visibility',
       '/admin/media',
+      '/admin/visits',
+      '/admin/leads',
       '/admin/releases',
     ]);
     expect(element.querySelector('.count')?.textContent).toBe('1 unpublished');
+  });
+
+  it('should count the leads still new beside Leads', () => {
+    const { element } = render();
+
+    expect(element.querySelector('a[href="/admin/leads"] .count')?.textContent).toBe('1 new');
+  });
+
+  it('should mark this browser as the owner’s, so their visits are not counted', () => {
+    const { testing } = render();
+
+    expect(testing.localStore.values.get('taal-yatra.admin.device')).toBe('1');
   });
 
   it('should mark What’s new as New until the owner opens it', async () => {
@@ -63,7 +79,7 @@ describe('EditorLayoutComponent', () => {
 
     expect(
       Array.from(element.querySelectorAll('.ed-group-label')).map((label) => label.textContent),
-    ).toEqual(['Home page', 'Settings']);
+    ).toEqual(['Home page', 'Settings', 'Visitors']);
     expect(element.querySelector('nav a app-icon')).not.toBeNull();
   });
 

@@ -72,13 +72,26 @@
                   >
                     <app-icon [name]="link.icon" [size]="19" />
                     <span class="ed-label">{{ link.label }}</span>
-                    @if (link.showsCount && model.changeCount() > 0) {
-                      <span class="count"
-                        >{{ model.changeCount() }}<span class="sr"> unpublished</span></span
-                      >
-                    }
-                    @if (link.showsNew && model.hasNews()) {
-                      <span class="count">New</span>
+                    @switch (link.badge) {
+                      @case (badges.Changes) {
+                        @if (model.changeCount() > 0) {
+                          <span class="count"
+                            >{{ model.changeCount() }}<span class="sr"> unpublished</span></span
+                          >
+                        }
+                      }
+                      @case (badges.News) {
+                        @if (model.hasNews()) {
+                          <span class="count">New</span>
+                        }
+                      }
+                      @case (badges.NewLeads) {
+                        @if (model.newLeads() > 0) {
+                          <span class="count"
+                            >{{ model.newLeads() }}<span class="sr"> new</span></span
+                          >
+                        }
+                      }
                     }
                   </a>
                 </li>

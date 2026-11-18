@@ -6,11 +6,15 @@ import { signedOutGuard } from './guards/signed-out.guard';
 import { unsavedChangesGuard } from './guards/unsaved-changes.guard';
 import {
   EDITOR_TAB_ROUTE_KEY,
+  LEADS_LABEL,
+  LEADS_PATH,
   MEDIA_LABEL,
   MEDIA_PATH,
   PUBLISH_PATH,
   RELEASES_LABEL,
   RELEASES_PATH,
+  VISITS_LABEL,
+  VISITS_PATH,
 } from './models/editor-nav.constants';
 import { EditorTab } from './models/editor-tab.enum';
 import { EDITOR_TABS } from './schemas/editor-tabs';
@@ -70,6 +74,16 @@ const adminRoutes: Routes = [
             path: PUBLISH_PATH,
             title: `Review & publish — ${ADMIN_TITLE_SUFFIX}`,
             loadComponent: () => import('./components/publish-page/publish-page.component'),
+          },
+          {
+            path: VISITS_PATH,
+            title: `${VISITS_LABEL} — ${ADMIN_TITLE_SUFFIX}`,
+            loadComponent: () => import('./components/visits-page/visits-page.component'),
+          },
+          {
+            path: LEADS_PATH,
+            title: `${LEADS_LABEL} — ${ADMIN_TITLE_SUFFIX}`,
+            loadComponent: () => import('./components/leads-page/leads-page.component'),
           },
           {
             path: RELEASES_PATH,

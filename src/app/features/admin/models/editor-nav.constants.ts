@@ -16,11 +16,34 @@ export const MEDIA_PATH = 'media';
 /** What's new's path under `/admin` (0016 V1). */
 export const RELEASES_PATH = 'releases';
 
+/** The Visits page's path under `/admin` (0018 V11). */
+export const VISITS_PATH = 'visits';
+
+/** The Leads page's path under `/admin` (0018 V12). */
+export const LEADS_PATH = 'leads';
+
 /** What's new's name in the menu and its title. */
 export const RELEASES_LABEL = 'What’s new';
 
 /** The media library's name in the menu and its title (0017 U4: plain words). */
 export const MEDIA_LABEL = 'Photo library';
+
+/** The Visits page's name in the menu and its title. */
+export const VISITS_LABEL = 'Visits';
+
+/** The Leads page's name in the menu and its title. */
+export const LEADS_LABEL = 'Leads';
+
+/** The marker a menu link can carry. */
+export enum NavBadge {
+  None = 'none',
+  /** How many documents have unpublished changes. */
+  Changes = 'changes',
+  /** "New" until the owner has seen the current release's notes (0016 V1). */
+  News = 'news',
+  /** How many leads are still new (0018 V12). */
+  NewLeads = 'new-leads',
+}
 
 /** One link in the editor's side panel. */
 export interface IEditorNavLink {
@@ -29,10 +52,8 @@ export interface IEditorNavLink {
   readonly icon: IconName;
   /** Only the dashboard needs an exact match: every editor URL starts with `/admin`. */
   readonly exact: boolean;
-  /** Shows how many documents have unpublished changes. */
-  readonly showsCount: boolean;
-  /** Shows "New" until the owner has seen the current release's notes (0016 V1). */
-  readonly showsNew: boolean;
+  /** The marker beside it, if any. */
+  readonly badge: NavBadge;
 }
 
 /** A group of links in the side panel. */
@@ -48,8 +69,7 @@ function pageLink(label: string, path: string, icon: IconName): IEditorNavLink {
     url: `${AppRoute.Admin}/${path}`,
     icon,
     exact: false,
-    showsCount: false,
-    showsNew: false,
+    badge: NavBadge.None,
   };
 }
 
@@ -67,11 +87,10 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
         url: AppRoute.Admin,
         icon: IconName.Home,
         exact: true,
-        showsCount: false,
-        showsNew: false,
+        badge: NavBadge.None,
       },
       // Right under Dashboard, so it's never below the fold of a long menu (0017 walkthrough).
-      { ...pageLink('Review & publish', PUBLISH_PATH, IconName.Send), showsCount: true },
+      { ...pageLink('Review & publish', PUBLISH_PATH, IconName.Send), badge: NavBadge.Changes },
     ],
   },
   {
@@ -101,9 +120,18 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
     ],
   },
   {
+    // Who comes to the site and who asks for a proposal (0018). "Visitors", not "Business":
+    // Settings already has "Business details".
+    label: 'Visitors',
+    links: [
+      pageLink(VISITS_LABEL, VISITS_PATH, IconName.ArrowUpRight),
+      { ...pageLink(LEADS_LABEL, LEADS_PATH, IconName.Briefcase), badge: NavBadge.NewLeads },
+    ],
+  },
+  {
     // At the bottom: news about the editor, not part of editing (0016 V1).
     label: '',
-    links: [{ ...pageLink(RELEASES_LABEL, RELEASES_PATH, IconName.Clock), showsNew: true }],
+    links: [{ ...pageLink(RELEASES_LABEL, RELEASES_PATH, IconName.Clock), badge: NavBadge.News }],
   },
 ];
 

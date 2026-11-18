@@ -1,0 +1,49 @@
+<figure class="bc" [attr.aria-labelledby]="headingId()">
+  <figcaption>
+    <h2 [id]="headingId()">{{ caption() }}</h2>
+    <p>{{ chart().summary }}</p>
+  </figcaption>
+  <!-- For sight only: the table below has the same numbers for everyone else. -->
+  <svg class="bc-plot" [attr.viewBox]="viewBox()" preserveAspectRatio="none" aria-hidden="true">
+    @for (shape of shapes(); track shape.key) {
+      @if (shape.counted) {
+        <rect
+          [attr.x]="shape.x"
+          [attr.y]="shape.y"
+          [attr.width]="barWidth"
+          [attr.height]="shape.height"
+        >
+          <title>{{ shape.tip }}</title>
+        </rect>
+      } @else {
+        <rect class="bc-none" [attr.x]="shape.x" y="98" [attr.width]="barWidth" height="2">
+          <title>{{ shape.tip }}</title>
+        </rect>
+      }
+    }
+  </svg>
+  <div class="bc-labels" aria-hidden="true">
+    @for (shape of shapes(); track shape.key) {
+      <span>{{ shape.label }}</span>
+    }
+  </div>
+  <details class="bc-table">
+    <summary>See the numbers</summary>
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">When</th>
+          <th scope="col">{{ caption() }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (shape of shapes(); track shape.key) {
+          <tr>
+            <th scope="row">{{ shape.title }}</th>
+            <td>{{ shape.shown }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </details>
+</figure>

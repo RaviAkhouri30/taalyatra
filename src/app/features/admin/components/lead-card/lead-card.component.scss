@@ -1,0 +1,120 @@
+@use 'tokens' as t;
+
+:host {
+  display: block;
+}
+
+.lc {
+  display: grid;
+  gap: 12px;
+  padding: 18px 20px;
+  border: 1px solid t.$color-line;
+  border-left: 3px solid t.$color-line;
+  border-radius: 16px;
+  background: t.$color-surface-raised;
+
+  // New leads stand out; handled ones step back.
+  &[data-status='new'] {
+    border-left-color: t.$color-amber;
+  }
+}
+
+.lc-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: baseline;
+  justify-content: space-between;
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+  }
+}
+
+.lc-when {
+  color: t.$color-muted-strong;
+  font-size: 14px;
+}
+
+.lc-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+
+  a {
+    color: t.$color-cream;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+}
+
+.lc-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 0;
+
+  dt {
+    color: t.$color-muted-strong;
+    font-size: 13px;
+  }
+
+  dd {
+    margin: 0;
+    color: t.$color-cream;
+  }
+}
+
+.lc-message {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: t.$color-surface;
+  color: t.$color-muted;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.lc-foot,
+.lc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lc-actions {
+  justify-content: flex-start;
+}
+
+.lc-status {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: t.$color-muted-strong;
+
+  select {
+    padding: 8px 10px;
+    border: 1px solid t.$color-field-border;
+    border-radius: 10px;
+    background: t.$color-surface;
+    color: t.$color-cream;
+    font: inherit;
+  }
+}
+
+.lc-confirm {
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px;
+  border-left: 3px solid t.$color-danger-line;
+  border-radius: 8px;
+  background: t.$color-danger-tint;
+
+  p {
+    margin: 0;
+    color: t.$color-danger-text;
+  }
+}

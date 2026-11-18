@@ -1,0 +1,86 @@
+@use 'tokens' as t;
+
+:host {
+  display: block;
+}
+
+.bc {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+
+  h2 {
+    margin: 0;
+    font-size: 17px;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: t.$color-muted-strong;
+  }
+}
+
+.bc-plot {
+  width: 100%;
+  height: 160px;
+  border-bottom: 1px solid t.$color-line;
+
+  rect {
+    fill: t.$color-amber;
+  }
+
+  .bc-none {
+    fill: t.$color-line;
+  }
+}
+
+.bc-labels {
+  display: flex;
+  margin-top: -4px;
+  color: t.$color-muted-strong;
+  font-size: 12px;
+
+  // Each label sits under its bar; the first and last lean inwards so none runs off the card.
+  span {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  span:first-child {
+    justify-content: flex-start;
+  }
+
+  span:last-child {
+    justify-content: flex-end;
+  }
+}
+
+.bc-table {
+  summary {
+    color: t.$color-cream;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  table {
+    width: 100%;
+    max-width: 420px;
+    margin-top: 8px;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: 4px 8px;
+    border-bottom: 1px solid t.$color-line;
+    color: t.$color-muted-strong;
+    text-align: left;
+  }
+
+  td {
+    text-align: right;
+  }
+}

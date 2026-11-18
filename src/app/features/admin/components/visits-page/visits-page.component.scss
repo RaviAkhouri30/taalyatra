@@ -1,0 +1,114 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.vp {
+  display: grid;
+  gap: 16px;
+  max-width: 1000px;
+  padding: 24px;
+
+  @include bp.down(bp.$phone) {
+    padding: 16px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+  }
+}
+
+.vp-lead,
+.vp-since {
+  margin: 0;
+  color: t.$color-muted-strong;
+}
+
+.vp-periods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vp-period {
+  padding: 8px 14px;
+  border: 1px solid t.$color-bronze;
+  border-radius: t.$radius-pill;
+  background: transparent;
+  color: t.$color-cream;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &[aria-pressed='true'] {
+    border-color: t.$color-amber;
+    background: t.$color-amber;
+    color: t.$color-ink-deep;
+  }
+}
+
+.vp-problem {
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid t.$color-danger-line;
+  border-radius: 8px;
+  background: t.$color-danger-tint;
+  color: t.$color-danger-text;
+}
+
+.vp-card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid t.$color-line;
+  border-radius: 18px;
+  background: t.$color-surface-raised;
+
+  h2 {
+    margin: 0;
+    font-size: 17px;
+  }
+
+  p {
+    margin: 0;
+    color: t.$color-muted-strong;
+  }
+}
+
+.vp-split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.vp-rows {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    color: t.$color-muted-strong;
+  }
+
+  span {
+    flex: 1;
+  }
+
+  b {
+    color: t.$color-cream;
+  }
+
+  small {
+    min-width: 44px;
+    text-align: right;
+  }
+}

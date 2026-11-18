@@ -12,7 +12,9 @@ describe('downloadBackup', () => {
   }
 
   it('should say the backup was downloaded and kept in this browser', async () => {
-    const { show, result } = run(() => of({ createdAt: 'x', keptInBrowser: true }));
+    const { show, result } = run(() =>
+      of({ createdAt: 'x', keptInBrowser: true, withLeads: false }),
+    );
 
     await firstValueFrom(result);
 
@@ -20,11 +22,29 @@ describe('downloadBackup', () => {
   });
 
   it('should say when it was too big to keep in this browser', async () => {
-    const { show, result } = run(() => of({ createdAt: 'x', keptInBrowser: false }));
+    const { show, result } = run(() =>
+      of({ createdAt: 'x', keptInBrowser: false, withLeads: false }),
+    );
 
     await firstValueFrom(result);
 
     expect(show).toHaveBeenCalledWith(BACKUP_MESSAGES.notKept);
+  });
+
+  it('should ask the owner to keep a backup with leads safe', async () => {
+    const make = vi.fn(() => of({ createdAt: 'x', keptInBrowser: false, withLeads: true }));
+    const show = vi.fn();
+
+    await firstValueFrom(
+      downloadBackup(
+        { make } as unknown as BackupService,
+        { show } as unknown as ToastService,
+        true,
+      ),
+    );
+
+    expect(make).toHaveBeenCalledWith(true);
+    expect(show).toHaveBeenCalledWith(BACKUP_MESSAGES.withLeads);
   });
 
   it('should say when it failed, and finish quietly so the stream lives on', async () => {

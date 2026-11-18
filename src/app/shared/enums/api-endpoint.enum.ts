@@ -42,4 +42,6 @@ export enum ApiEndpoint {
   Proposals = 'proposals',
   /** Anonymous speed reports from real visits (0012). */
   Vitals = 'vitals',
+  /** Anonymous visits, one per opening of the site in a tab (0018). */
+  Visits = 'visits',
 }

@@ -1,33 +1,10 @@
 import { EMPTY, Observable, debounceTime, finalize, map, merge, take, timer } from 'rxjs';
 import { type IVitalsMeasurement, type IVitalsSource } from '@core/interfaces/i-vitals-reporter';
-import { AppRoute } from '@shared/enums/app-route.enum';
 import { SITE_READY_MARK } from './vitals.constants';
-
-/** The pages reported on, which `firestore.rules` lists too. Anything else isn't reported. */
-const REPORTED_PAGES: ReadonlySet<string> = new Set<string>([
-  AppRoute.Home,
-  AppRoute.Shows,
-  AppRoute.Videos,
-  AppRoute.Team,
-  AppRoute.Achievements,
-]);
-
-/** Signals a browser can send to ask not to be tracked. */
-type PrivacyNavigator = Navigator & { readonly globalPrivacyControl?: boolean };
-
-/**
- * Visitors that aren't people, by what they call themselves: search crawlers (`Googlebot/2.1`,
- * `bingbot/2.0`), speed tools (Lighthouse and PageSpeed send `Chrome-Lighthouse`, WebPageTest
- * `PTST`) and headless browsers. `bot/` and not `bot`, so phone makers such as Cubot still count.
- */
-const AUTOMATED_AGENT = /bot\/|crawler|spider|slurp|lighthouse|headless|pagespeed|ptst/i;
+import { deviceFor, mayReport } from './visitor';
 
 /** How long after the main content settles to send: late enough to be its final value. */
 const SEND_AFTER_LCP_MS = 5000;
-
-/** Mirrors `_breakpoints.scss`, so "phone" means what it does in the site's layout. */
-const PHONE_MAX_WIDTH = 620;
-const TABLET_MAX_WIDTH = 1000;
 
 /** `firestore.rules` accepts up to these, so an extreme visit is capped rather than lost. */
 const MAX_MS = 120_000;
@@ -60,7 +37,7 @@ export class BrowserVitalsSource implements IVitalsSource {
   public constructor(private readonly view: Window) {}
 
   public measure(): Observable<IVitalsMeasurement> {
-    if (!this.mayReport()) {
+    if (!mayReport(this.view)) {
       return EMPTY;
     }
     const supported = PerformanceObserver.supportedEntryTypes;
@@ -74,18 +51,6 @@ export class BrowserVitalsSource implements IVitalsSource {
           observer.disconnect();
         });
       }),
-    );
-  }
-
-  private mayReport(): boolean {
-    const navigator = this.view.navigator as PrivacyNavigator;
-    return (
-      REPORTED_PAGES.has(this.view.location.pathname) &&
-      navigator.globalPrivacyControl !== true &&
-      navigator.doNotTrack !== '1' &&
-      // A browser driven by a script (Playwright, Selenium, Puppeteer) says so here.
-      !navigator.webdriver &&
-      !AUTOMATED_AGENT.test(navigator.userAgent)
     );
   }
 
@@ -144,7 +109,7 @@ export class BrowserVitalsSource implements IVitalsSource {
       .connection;
     return {
       page: this.view.location.pathname,
-      device: this.deviceFor(innerWidth),
+      device: deviceFor(innerWidth),
       connection: connection?.effectiveType ?? '',
       lcp: toMs(this.lcp),
       fcp: toMs(performance.getEntriesByName('first-contentful-paint').at(0)?.startTime),
@@ -152,12 +117,5 @@ export class BrowserVitalsSource implements IVitalsSource {
       ready: toMs(performance.getEntriesByName(SITE_READY_MARK).at(0)?.startTime),
       cls: Math.min(MAX_CLS, Math.round(this.cls * CLS_PRECISION) / CLS_PRECISION),
     };
-  }
-
-  private deviceFor(width: number): string {
-    if (width <= PHONE_MAX_WIDTH) {
-      return 'phone';
-    }
-    return width <= TABLET_MAX_WIDTH ? 'tablet' : 'desktop';
   }
 }

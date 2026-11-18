@@ -141,4 +141,15 @@ describe('BackupPanelViewModel', () => {
     expect(model.pending()).toBeNull();
     expect(store.commits).toEqual([]);
   });
+
+  it('should add the leads when ticked, and say to keep the file safe', () => {
+    const { model, show, files } = setUp({ 'proposals/a': { name: 'Asha' } });
+
+    model.withLeads.setValue(true);
+    model.download();
+
+    expect(model.leadsTicked()).toBe(true);
+    expect(files.downloads[0]?.text).toContain('Asha');
+    expect(show).toHaveBeenCalledWith(BACKUP_MESSAGES.withLeads);
+  });
 });

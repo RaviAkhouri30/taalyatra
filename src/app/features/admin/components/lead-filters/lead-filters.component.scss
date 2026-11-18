@@ -1,0 +1,40 @@
+@use 'tokens' as t;
+
+:host {
+  display: block;
+}
+
+.lf {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  align-items: end;
+
+  label {
+    display: grid;
+    gap: 4px;
+    color: t.$color-muted-strong;
+    font-size: 14px;
+  }
+
+  // The same height for the search box and the lists, so their labels line up.
+  input,
+  select {
+    box-sizing: border-box;
+    min-height: 44px;
+    padding: 9px 10px;
+    border: 1px solid t.$color-field-border;
+    border-radius: 10px;
+    background: t.$color-surface;
+    color: t.$color-cream;
+    font: inherit;
+  }
+
+  button {
+    justify-self: start;
+  }
+
+  input::placeholder {
+    color: t.$color-placeholder;
+  }
+}
