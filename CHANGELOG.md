@@ -6,6 +6,8 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [1.13.0] - 2026-11-18
+
 ### Added
 
 - **Visits** in the editor’s menu: graphs of visits and proposals by day, week, month or year, which pages visitors arrive
@@ -17,6 +19,12 @@ See [docs/versioning.md](docs/versioning.md).
   one for good when a customer asks. The menu and the dashboard show how many are new.
 - **Include leads** in a backup when you tick the box. That file holds customers’ details, so it’s only downloaded, never
   kept in the browser.
+
+## [1.12.0] - 2026-11-18
+
+Released together with 1.13.0: the two went live in the same update.
+
+### Added
 
 - **What’s new** in the editor’s menu: every update’s notes, newest first, with a **New** marker until you’ve read them.
   The dashboard shows the latest update in brief.

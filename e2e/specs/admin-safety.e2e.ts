@@ -37,7 +37,7 @@ test.describe('Admin safety and what’s new', () => {
     await link.click();
 
     await expect(editor.heading).toHaveText('What’s new');
-    await expect(page.getByText('This version')).toBeVisible();
+    await expect(page.getByText('This version', { exact: true })).toBeVisible();
     if (await editor.menu.isVisible()) {
       await editor.menu.click();
     }
