@@ -29,7 +29,7 @@ describe('EditorPageComponent', () => {
     const { element } = render();
     const cards = Array.from(element.querySelectorAll('section.ep-card'));
 
-    expect(element.querySelector('h1')?.textContent).toBe('Offer & theme');
+    expect(element.querySelector('h1')?.textContent).toBe('Offer');
     expect(cards.map((card) => card.querySelector('h2')?.textContent)).toEqual([
       'Offer switch and dates',
       'Offer section',

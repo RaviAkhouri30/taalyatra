@@ -26,7 +26,7 @@ describe('DashboardModel', () => {
     expect(dashboard.changes).toBe('Everything is published.');
     expect(dashboard.offerStatus).toBe(PromotionStatus.Live);
     expect(dashboard.offer).toBe('Live, with no end date.');
-    expect(dashboard.hidden).toBe('Every section, page and widget is on.');
+    expect(dashboard.hidden).toBe('Everything is showing: every section, page and button.');
     expect(dashboard.lastPublished).toBe('Nothing published from the editor yet.');
   });
 
@@ -65,8 +65,10 @@ describe('DashboardModel', () => {
       source({ visibility: { sections: { gallery: false, faq: false }, pages: { team: false } } }),
     );
 
-    expect(dashboard.hidden).toBe('Hidden: 2 sections, 1 page, 0 widgets.');
-    expect(new DashboardModel(source({ visibility: null })).hidden).toContain('Every section');
+    expect(dashboard.hidden).toBe('Hidden: 2 sections, 1 page, 0 buttons or bars.');
+    expect(new DashboardModel(source({ visibility: null })).hidden).toContain(
+      'Everything is showing',
+    );
   });
 
   it('should keep the placeholder warnings it was given', () => {

@@ -28,7 +28,7 @@ describe('SpeedReportComponent', () => {
     const { button } = render(store);
 
     expect(readAll).not.toHaveBeenCalled();
-    expect(button.textContent.trim()).toBe('Load speed report');
+    expect(button.textContent.trim()).toBe('Show the speed report');
   });
 
   it('should show the table and the answer when loaded', async () => {

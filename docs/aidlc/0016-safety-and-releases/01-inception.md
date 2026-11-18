@@ -1,4 +1,4 @@
-# 01 · Inception — Nothing lost, and what's new (1.11.0)
+# 01 · Inception — Nothing lost, and what's new (1.12.0)
 
 The second release of the [version 2 programme](../0014-version-2/01-inception.md), which holds the problem, user stories and
 acceptance criteria. This file only records what 1.11.0 takes from it.

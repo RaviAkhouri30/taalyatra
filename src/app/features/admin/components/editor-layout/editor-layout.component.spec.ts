@@ -24,18 +24,22 @@ describe('EditorLayoutComponent', () => {
     expect(element.querySelector('.who')?.textContent).toContain('owner@example.com');
     expect(tabs).toEqual([
       '/admin',
-      '/admin/content',
+      '/admin/publish',
+      '/admin/hero',
       '/admin/offer',
+      '/admin/audiences',
       '/admin/experiences',
+      '/admin/shows',
       '/admin/drum-circle',
+      '/admin/rhythm-game',
+      '/admin/videos',
       '/admin/gallery',
       '/admin/team',
-      '/admin/shows',
-      '/admin/videos',
+      '/admin/proposal-form',
+      '/admin/business',
       '/admin/contact',
       '/admin/visibility',
       '/admin/media',
-      '/admin/publish',
     ]);
     expect(element.querySelector('.count')?.textContent).toBe('1 unpublished');
   });
@@ -45,7 +49,7 @@ describe('EditorLayoutComponent', () => {
 
     expect(
       Array.from(element.querySelectorAll('.ed-group-label')).map((label) => label.textContent),
-    ).toEqual(['Content', 'Site', 'Publish']);
+    ).toEqual(['Home page', 'Settings']);
     expect(element.querySelector('nav a app-icon')).not.toBeNull();
   });
 

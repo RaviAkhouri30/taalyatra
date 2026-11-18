@@ -6,17 +6,11 @@ test.describe('Admin preview', () => {
     await editor.signIn();
   });
 
-  test('should move the preview to the card the owner is working in', async ({ editor, page }) => {
-    await editor.openTab('Page content');
-    const card = editor.card('Plan your session');
-
-    await card.evaluate((element) => {
-      element.scrollIntoView({ block: 'start' });
-    });
-    // Phones and tablets keep the preview behind a switch; there it shows the last card worked in.
+  test('should show the section the open tab edits', async ({ editor, page }) => {
+    await editor.openTab('Proposal form');
+    // Phones and tablets keep the preview behind a switch.
     const showPreview = page.getByRole('button', { name: 'Show preview' });
     if (await showPreview.isVisible()) {
-      await card.getByRole('textbox').first().click();
       await showPreview.click();
     }
 
@@ -26,7 +20,7 @@ test.describe('Admin preview', () => {
   test('should keep the visitor-only floating buttons and badge out of the preview', async ({
     editor,
   }) => {
-    await editor.openTab('Page content');
+    await editor.openTab('Hero');
 
     // Attached, not visible: phones keep the preview behind a switch, but it still loads.
     await expect(editor.preview.locator('app-home-hero')).toBeAttached();
@@ -47,7 +41,7 @@ test.describe('Admin preview', () => {
     editor,
     page,
   }) => {
-    await editor.openTab('Page content');
+    await editor.openTab('Hero');
     const showPreview = page.getByRole('button', { name: 'Show preview' });
     if (await showPreview.isVisible()) {
       await showPreview.click();

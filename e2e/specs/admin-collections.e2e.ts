@@ -123,11 +123,11 @@ test.describe('Admin collections', () => {
     const shows = editor.card('Show formats');
     const first = shows.getByRole('group', { name: 'Show 1', exact: true });
     const second = shows.getByRole('group', { name: 'Show 2', exact: true });
-    await expect(first.getByRole('group', { name: 'Spotlight text' })).toBeVisible();
-    await expect(second.getByRole('group', { name: 'Spotlight text' })).toHaveCount(0);
+    await expect(first.getByRole('group', { name: 'Featured box' })).toBeVisible();
+    await expect(second.getByRole('group', { name: 'Featured box' })).toHaveCount(0);
 
     await second.getByRole('switch', { name: 'Featured' }).check();
-    await expect(second.getByRole('group', { name: 'Spotlight text' })).toBeVisible();
+    await expect(second.getByRole('group', { name: 'Featured box' })).toBeVisible();
     await expect(second.getByLabel('Button to the proposal form')).toHaveValue('Book a concert');
     await expect(second.getByLabel('Button to the Videos page')).toHaveValue('Watch a recital');
     await second.getByLabel('Title', { exact: true }).last().fill('A second spotlight');

@@ -1,0 +1,30 @@
+<div class="ef" role="search">
+  <label class="sr" for="editor-find">Find anything in the editor</label>
+  <input
+    #box
+    id="editor-find"
+    class="ef-box"
+    type="search"
+    autocomplete="off"
+    placeholder="Find… e.g. phone, Diwali"
+    [attr.aria-controls]="query().trim() ? 'editor-find-results' : null"
+    [value]="query()"
+    (input)="search(box.value)"
+    (keydown.escape)="clear()"
+  />
+  @if (query().trim()) {
+    <p class="sr" aria-live="polite">{{ results().length }} found</p>
+    <ul id="editor-find-results" class="ef-results">
+      @for (result of results(); track $index) {
+        <li>
+          <button type="button" (click)="open(result)">
+            <b>{{ result.label }}</b>
+            <small>{{ result.context }}</small>
+          </button>
+        </li>
+      } @empty {
+        <li class="ef-none">Nothing matches “{{ query() }}”. Try another word.</li>
+      }
+    </ul>
+  }
+</div>

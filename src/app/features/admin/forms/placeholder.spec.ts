@@ -3,7 +3,7 @@ import { placeholderMessage } from './placeholder';
 describe('placeholderMessage', () => {
   it('should quote the unfinished copy', () => {
     expect(placeholderMessage('From [Add price] per person')).toBe(
-      'Still has a placeholder: “[Add price]”.',
+      'Still says “[Add price]”: replace it with your own words.',
     );
   });
 

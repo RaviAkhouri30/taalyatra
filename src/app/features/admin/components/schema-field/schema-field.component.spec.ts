@@ -26,6 +26,21 @@ describe('SchemaFieldComponent', () => {
     return { fixture, control, element: fixture.nativeElement as HTMLElement };
   }
 
+  it('should show the counter only near the limit', () => {
+    const { fixture, element } = render(
+      { key: 'title', label: 'Title', kind: FieldKind.Text, maxLength: 40, recommended: 20 },
+      'Hello',
+    );
+
+    // As typed: an input event, which is what refreshes the field.
+    const input = element.querySelector('input')!;
+    input.value = 'x'.repeat(16);
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(element.querySelector('#f-count')?.textContent.trim()).toBe('16 / 20 characters');
+  });
+
   it('should label a text field and tie its hint, counter and error to it', () => {
     const { element } = render(
       {
@@ -42,7 +57,8 @@ describe('SchemaFieldComponent', () => {
 
     expect(element.querySelector('label')?.getAttribute('for')).toBe('f');
     expect(input.getAttribute('aria-describedby')).toBe('f-hint f-count f-note f-error');
-    expect(element.querySelector('#f-count')?.textContent.trim()).toBe('5 / 20 characters');
+    // 5 of 20: far from the limit, so the counter stays quiet (0017 U5).
+    expect(element.querySelector('#f-count')?.textContent.trim()).toBe('');
   });
 
   it('should show an image field with its error tied to it', () => {

@@ -58,12 +58,15 @@
       <p class="fd-hint" [id]="hintId()">{{ item.hint }}</p>
     }
     @if (limit()) {
+      <!-- Always present for aria-describedby; it only says something near the limit (0017 U5). -->
       <p
         class="fd-count"
         [id]="countId()"
         [class.fd-count--over]="(control.value | textLength) > limit()"
       >
-        {{ control.value | textLength }} / {{ limit() }} characters
+        @if ((control.value | textLength) >= countFrom()) {
+          {{ control.value | textLength }} / {{ limit() }} characters
+        }
       </p>
     }
     <!-- Always present, so aria-describedby never points at a missing element. -->

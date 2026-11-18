@@ -1,5 +1,5 @@
 import { type IDraft } from '@core/interfaces/i-draft';
-import { ALL_SECTIONS } from '../schemas/editor-tabs';
+import { ALL_SECTIONS, SECTIONS_WITH_TABS } from '../schemas/editor-tabs';
 import { PublishPageModel } from './publish-page.model';
 import { PublishReport } from './publish-report.model';
 
@@ -44,12 +44,13 @@ describe('PublishPageModel', () => {
           before: {},
         },
       ],
-      ALL_SECTIONS,
+      SECTIONS_WITH_TABS,
       PublishReport.check(drafts, ALL_SECTIONS, now),
     );
 
     expect(page.report.canPublish).toBe(false);
-    expect(page.history[0]?.title).toBe('Hero; Team');
+    // Named by tab and card: the Team tab's heading card is called "Section heading".
+    expect(page.history[0]?.title).toBe('Hero; Team · Section heading');
     expect(page.confirmText).toContain('Publish 1 changed document?');
   });
 });

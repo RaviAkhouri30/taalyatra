@@ -1,4 +1,4 @@
-# 02 · Design — Nothing lost, and what's new (1.11.0)
+# 02 · Design — Nothing lost, and what's new (1.12.0)
 
 Everything here is in the admin area, which is lazy-loaded: the public site's download doesn't change.
 

@@ -1,4 +1,3 @@
-import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,12 +10,13 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { BaseComponent } from '@shared/base/base-component';
 import { type IUnsavedChanges } from '../../guards/unsaved-changes.guard';
 import { InViewDirective } from '../../directives/in-view.directive';
 import { PICKABLE_SECTIONS, cardForAnchor } from '../../schemas/editor-tabs';
 import { type IEditorSection } from '../../models/i-editor-section';
+import { EditorJumpService } from '../../services/editor-jump.service';
 import { EditorNavService } from '../../services/editor-nav.service';
 import { type IEditorPage, EditorPageViewModel } from '../../view-models/editor-page.view-model';
 import { PreviewFrameComponent } from '../preview-frame/preview-frame.component';
@@ -45,10 +45,9 @@ export default class EditorPageComponent
   protected readonly nav = inject(EditorNavService);
   protected readonly pickable = PICKABLE_SECTIONS;
 
-  private readonly document = inject(DOCUMENT);
   private readonly injector = inject(Injector);
   private readonly fragment = inject(ActivatedRoute).snapshot.fragment;
-  private readonly router = inject(Router);
+  private readonly jumper = inject(EditorJumpService);
   private readonly previewColumn = viewChild.required<ElementRef<HTMLElement>>('previewColumn');
   private arrived = false;
 
@@ -67,7 +66,8 @@ export default class EditorPageComponent
         afterNextRender(
           () => {
             if (this.fragment) {
-              this.document.getElementById(this.fragment)?.scrollIntoView();
+              // Scrolls there and, for a field from Find, puts the cursor in it.
+              this.jumper.reveal(this.fragment);
             }
           },
           { injector: this.injector },
@@ -105,11 +105,7 @@ export default class EditorPageComponent
     if (this.model.previewOpen()) {
       this.model.togglePreview();
     }
-    if (this.router.url.split('#')[0] !== card.url) {
-      void this.router.navigate([card.url], { fragment: card.fragment });
-      return;
-    }
-    this.document.getElementById(card.fragment)?.scrollIntoView({ block: 'start' });
+    this.jumper.jump(card.url, card.fragment);
   }
 
   /** Asks the browser to confirm closing the tab while a change could be lost. */

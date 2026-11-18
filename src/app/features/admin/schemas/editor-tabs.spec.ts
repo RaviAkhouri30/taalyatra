@@ -43,7 +43,7 @@ function has(document: unknown, path: string): boolean {
 describe('editor schemas', () => {
   it('should have one schema per tab, in menu order', () => {
     expect(EDITOR_TABS.map((entry) => entry.tab)).toEqual(Object.values(EditorTab));
-    expect(tabSchema(EditorTab.Contact)?.label).toBe('Contact & links');
+    expect(tabSchema(EditorTab.Contact)?.label).toBe('Contact & social links');
   });
 
   it('should give every section a unique id', () => {

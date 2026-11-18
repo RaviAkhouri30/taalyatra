@@ -29,12 +29,29 @@ describe('DashboardComponent', () => {
       '/admin/visibility',
       '/admin/publish',
     ]);
-    expect(element.textContent).toContain('No placeholder text left');
+    expect(element.textContent).toContain('Nothing left to fill in');
   });
 
-  it('should list placeholders still in the content', () => {
+  it('should group the text still to fill in by section, each item with a Fix link', () => {
     const element = render({ 'home/offer': fakeDb.home.offer });
+    const group = element.querySelector('.db-group')!;
+    const first = group.querySelector('.db-todos li')!;
 
-    expect(element.querySelectorAll('.db-card--wide li').length).toBeGreaterThan(0);
+    expect(element.querySelector('.db-count')!.textContent).toMatch(/^\d+$/);
+    expect(group.querySelector('summary b')!.textContent).toBe('Offer');
+    expect(first.querySelector('b')!.textContent).toBe('Offer card 1 → Duration and price');
+    expect(first.querySelector('small')!.textContent).toContain('replace it with your own words');
+    expect(first.querySelector('a')!.getAttribute('href')).toBe('/admin/offer#card-offer');
+  });
+
+  it('should show one group per section, in menu order', () => {
+    const team = Object.fromEntries(
+      fakeDb.team.map((member, index) => [`team/${String(index + 1).padStart(3, '0')}`, member]),
+    );
+    const element = render({ 'home/offer': fakeDb.home.offer, ...team });
+
+    expect(
+      Array.from(element.querySelectorAll('.db-group summary b'), (label) => label.textContent),
+    ).toEqual(['Offer', 'Team']);
   });
 });

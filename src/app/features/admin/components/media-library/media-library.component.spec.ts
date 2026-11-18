@@ -44,7 +44,7 @@ describe('MediaLibraryComponent', () => {
   it('should invite the first upload when the library is empty', () => {
     const { element } = render({});
 
-    expect(element.querySelector('h1')?.textContent).toBe('Media library');
+    expect(element.querySelector('h1')?.textContent).toBe('Photo library');
     expect(element.querySelector('.ml-empty')?.textContent).toContain('No photos yet');
   });
 

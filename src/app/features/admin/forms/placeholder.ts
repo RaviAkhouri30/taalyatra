@@ -8,5 +8,5 @@ const PLACEHOLDER = /\[[^\]\n]{1,80}\]/;
  */
 export function placeholderMessage(value: unknown): string | null {
   const found = typeof value === 'string' ? PLACEHOLDER.exec(value) : null;
-  return found === null ? null : `Still has a placeholder: “${found[0]}”.`;
+  return found === null ? null : `Still says “${found[0]}”: replace it with your own words.`;
 }

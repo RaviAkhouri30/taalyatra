@@ -13,12 +13,13 @@ import {
 import { EditorTab } from '../models/editor-tab.enum';
 import { DraftService } from '../services/draft.service';
 import { layoutStub, provideEditorTesting, provideLayout } from '../testing/editor-testing';
+import { TEAM_HEADING, VIDEOS_HEADING } from '../schemas/content.sections';
 import { EditorPageViewModel } from './editor-page.view-model';
 
 describe('EditorPageViewModel', () => {
   let subscription: Subscription;
 
-  function setUp(tab: unknown = EditorTab.Content) {
+  function setUp(tab: unknown = EditorTab.Hero) {
     const testing = provideEditorTesting({
       'home/hero': fakeDb.home.hero,
       'home/videos': fakeDb.home.videos,
@@ -56,13 +57,22 @@ describe('EditorPageViewModel', () => {
   });
 
   it('should build a card per section, filled from the draft where there is one', () => {
-    const { model, section } = setUp();
+    const { model, section } = setUp(EditorTab.Team);
 
-    expect(model.data()?.tab.label).toBe('Page content');
-    expect(section('hero')?.form.get('title')?.value).toBe('Find your rhythm.');
+    expect(model.data()?.tab.label).toBe('Team');
+    expect(model.data()?.sections.map((entry) => entry.section.id)).toEqual([
+      'team',
+      'team-members',
+    ]);
     expect(section('team')?.form.get('title')?.value).toBe('Drafted title');
-    expect(section('hero')?.titleId).toBe('card-hero');
-    expect(model.activeAnchor()).toBe(PageAnchor.Top);
+    expect(section('team')?.titleId).toBe('card-team');
+    expect(model.activeAnchor()).toBe(PageAnchor.Team);
+  });
+
+  it('should fill a card from the live document when there is no draft', () => {
+    const { section } = setUp();
+
+    expect(section('hero')?.form.get('title')?.value).toBe('Find your rhythm.');
   });
 
   it('should save a change to the draft after the pause, keeping the fields it does not edit', () => {
@@ -129,7 +139,7 @@ describe('EditorPageViewModel', () => {
   });
 
   it('should report a failed save and keep the change for a retry', () => {
-    const { model, layout, section } = setUp();
+    const { model, layout, section } = setUp(EditorTab.Videos);
     const save = vi
       .spyOn(TestBed.inject(DraftService), 'save')
       .mockReturnValueOnce(throwError(() => new Error('offline')));
@@ -150,9 +160,9 @@ describe('EditorPageViewModel', () => {
   });
 
   it('should follow the section being edited and switch the preview on phones', () => {
-    const { model, section } = setUp();
+    const { model } = setUp();
 
-    model.focus(section('videos')!.section);
+    model.focus(VIDEOS_HEADING);
     model.togglePreview();
 
     expect(model.activeAnchor()).toBe(PageAnchor.Watch);
@@ -160,9 +170,9 @@ describe('EditorPageViewModel', () => {
   });
 
   it('should move the preview to the card scrolled to once scrolling pauses', () => {
-    const { model, section } = setUp();
+    const { model } = setUp();
 
-    model.follow(section('videos')!.section);
+    model.follow(VIDEOS_HEADING);
     expect(model.activeAnchor()).toBe(PageAnchor.Top);
     vi.advanceTimersByTime(PREVIEW_FOLLOW_DEBOUNCE_MS);
 
@@ -170,7 +180,7 @@ describe('EditorPageViewModel', () => {
   });
 
   it('should move the preview once, to the last card, after a quick scroll past several', () => {
-    const { model, section } = setUp();
+    const { model } = setUp();
     const moves: PageAnchor[] = [];
     TestBed.runInInjectionContext(() => {
       effect(() => {
@@ -178,8 +188,8 @@ describe('EditorPageViewModel', () => {
       });
     });
 
-    model.follow(section('videos')!.section);
-    model.follow(section('team')!.section);
+    model.follow(VIDEOS_HEADING);
+    model.follow(TEAM_HEADING);
     vi.advanceTimersByTime(PREVIEW_FOLLOW_DEBOUNCE_MS);
     TestBed.tick();
 
@@ -187,10 +197,10 @@ describe('EditorPageViewModel', () => {
     expect(moves).not.toContain(PageAnchor.Watch);
   });
 
-  it('should open the offer tab for an unknown tab in the route', () => {
+  it('should open the first tab, Hero, for an unknown tab in the route', () => {
     const { model } = setUp('somewhere');
 
-    expect(model.data()?.tab.label).toBe('Offer & theme');
+    expect(model.data()?.tab.label).toBe('Hero');
   });
 
   it('should start from an empty document when one is not stored yet', () => {

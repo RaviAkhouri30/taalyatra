@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -21,6 +22,7 @@ import { EDITOR_NAV_GROUPS } from '../../models/editor-nav.constants';
 import { EditorNavService } from '../../services/editor-nav.service';
 import { EditorLayoutViewModel } from '../../view-models/editor-layout.view-model';
 import { EditorTopBarComponent } from '../editor-top-bar/editor-top-bar.component';
+import { EditorFindComponent, FIND_INPUT_ID } from '../editor-find/editor-find.component';
 
 const EXACT: IsActiveMatchOptions = {
   paths: 'exact',
@@ -36,7 +38,14 @@ const PREFIX: IsActiveMatchOptions = { ...EXACT, paths: 'subset' };
  */
 @Component({
   selector: 'app-editor-layout',
-  imports: [EditorTopBarComponent, IconComponent, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [
+    EditorFindComponent,
+    EditorTopBarComponent,
+    IconComponent,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+  ],
   templateUrl: './editor-layout.component.html',
   styleUrl: './editor-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,6 +63,7 @@ export default class EditorLayoutComponent extends BaseComponent<AdminPageModel>
   }));
 
   private readonly injector = inject(Injector);
+  private readonly document = inject(DOCUMENT);
   private readonly topBar = viewChild.required(EditorTopBarComponent);
   private readonly sideNav = viewChild.required<ElementRef<HTMLElement>>('sideNav');
 
@@ -68,6 +78,17 @@ export default class EditorLayoutComponent extends BaseComponent<AdminPageModel>
         { injector: this.injector },
       );
     }
+  }
+
+  /** Unfolds the panel and puts the cursor in Find. */
+  protected openFind(): void {
+    this.nav.toggleCollapsed();
+    afterNextRender(
+      () => {
+        this.document.getElementById(FIND_INPUT_ID)?.focus();
+      },
+      { injector: this.injector },
+    );
   }
 
   /** Closes the slide-in menu, giving focus back so it isn't lost with the hidden panel. */

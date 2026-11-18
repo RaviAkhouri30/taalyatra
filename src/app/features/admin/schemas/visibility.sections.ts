@@ -20,14 +20,14 @@ const SECTION_LABELS: readonly (readonly [HomeSection, string])[] = [
   [HomeSection.RhythmGame, 'Rhythm game'],
   [HomeSection.Videos, 'Videos'],
   [HomeSection.Gallery, 'Gallery'],
-  [HomeSection.Philosophy, 'Our story'],
-  [HomeSection.MidCta, 'Mid-page call to action'],
-  [HomeSection.Cities, 'Cities'],
+  [HomeSection.Philosophy, 'Our philosophy'],
+  [HomeSection.MidCta, 'Ready when you are (mid-page button)'],
+  [HomeSection.Cities, 'Where we play'],
   [HomeSection.How, 'How it works'],
   [HomeSection.Team, 'Team'],
-  [HomeSection.Instagram, 'Instagram'],
-  [HomeSection.Proof, 'Testimonials and clients'],
-  [HomeSection.Faq, 'FAQ'],
+  [HomeSection.Instagram, 'From our circles (Instagram)'],
+  [HomeSection.Proof, 'Proof in the room (reviews and clients)'],
+  [HomeSection.Faq, 'Good to know (questions)'],
 ];
 
 const PAGE_LABELS: readonly (readonly [SitePage, string])[] = [
@@ -80,7 +80,7 @@ function toggle(key: string, label: string, hint?: string): IToggleFieldSchema {
 export const VISIBILITY_SECTIONS: readonly IEditorSection[] = [
   {
     id: 'visibility',
-    title: 'Sections and pages',
+    title: 'What visitors see',
     path: ContentPath.SiteVisibility,
     anchor: PageAnchor.Top,
     tip: 'A hidden section disappears with its menu links, and loads nothing. The hero and the proposal form are always on: every “Request proposal” button leads to them. The offer follows its own switch and dates.',
@@ -99,7 +99,7 @@ export const VISIBILITY_SECTIONS: readonly IEditorSection[] = [
       },
       {
         key: 'widgets',
-        label: 'Site-wide',
+        label: 'Buttons and bars on every page',
         kind: FieldKind.Group,
         fields: WIDGET_LABELS.map(([key, label, hint]) => toggle(key, label, hint)),
       },

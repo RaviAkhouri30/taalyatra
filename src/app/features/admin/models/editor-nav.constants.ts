@@ -13,6 +13,9 @@ export const PUBLISH_PATH = 'publish';
 /** The media library's path under `/admin`. */
 export const MEDIA_PATH = 'media';
 
+/** The media library's name in the menu and its title (0017 U4: plain words). */
+export const MEDIA_LABEL = 'Photo library';
+
 /** One link in the editor's side panel. */
 export interface IEditorNavLink {
   readonly label: string;
@@ -51,32 +54,35 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
         exact: true,
         showsCount: false,
       },
+      // Right under Dashboard, so it's never below the fold of a long menu (0017 walkthrough).
+      { ...pageLink('Review & publish', PUBLISH_PATH, IconName.Send), showsCount: true },
     ],
   },
   {
-    label: 'Content',
+    // In the order the sections appear on the home page (0017 U1).
+    label: 'Home page',
     links: [
-      tabLink(EditorTab.Content, IconName.Document),
+      tabLink(EditorTab.Hero, IconName.Monitor),
       tabLink(EditorTab.Offer, IconName.Sparkle),
+      tabLink(EditorTab.Audiences, IconName.Building),
       tabLink(EditorTab.Experiences, IconName.Star),
+      tabLink(EditorTab.Shows, IconName.Mic),
       tabLink(EditorTab.DrumCircle, IconName.Djembe),
+      tabLink(EditorTab.RhythmGame, IconName.Pulse),
+      tabLink(EditorTab.Videos, IconName.Video),
       tabLink(EditorTab.Gallery, IconName.Image),
       tabLink(EditorTab.Team, IconName.Group),
-      tabLink(EditorTab.Shows, IconName.Mic),
-      tabLink(EditorTab.Videos, IconName.Video),
-      tabLink(EditorTab.Contact, IconName.Phone),
+      tabLink(EditorTab.ProposalForm, IconName.Mail),
     ],
   },
   {
-    label: 'Site',
+    label: 'Settings',
     links: [
+      tabLink(EditorTab.Business, IconName.Document),
+      tabLink(EditorTab.Contact, IconName.Phone),
       tabLink(EditorTab.Visibility, IconName.Toggle),
-      pageLink('Media library', MEDIA_PATH, IconName.Folder),
+      pageLink(MEDIA_LABEL, MEDIA_PATH, IconName.Folder),
     ],
-  },
-  {
-    label: 'Publish',
-    links: [{ ...pageLink('Review & publish', PUBLISH_PATH, IconName.Send), showsCount: true }],
   },
 ];
 

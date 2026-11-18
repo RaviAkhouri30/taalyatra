@@ -36,7 +36,7 @@ describe('PublishPageComponent', () => {
       },
     });
 
-    expect(element.querySelector('.pp-list b')?.textContent).toBe('Offer section');
+    expect(element.querySelector('.pp-list b')?.textContent).toBe('Offer · Offer section');
     expect(element.querySelector('.pp-issues h3')?.textContent).toMatch(/^Worth a look \(\d+\)$/u);
     expect(element.querySelector('.pp-issues a')?.getAttribute('href')).toMatch(
       /^\/admin\/offer#card-/u,
