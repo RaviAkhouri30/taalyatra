@@ -1,13 +1,17 @@
-/** The editor's tabs, which are also the route paths under `/admin`. */
+/** The editor's tabs, which are also the route paths under `/admin` (0017 U1: one per site section). */
 export enum EditorTab {
+  Hero = 'hero',
   Offer = 'offer',
-  Content = 'content',
+  Audiences = 'audiences',
   Experiences = 'experiences',
+  Shows = 'shows',
   DrumCircle = 'drum-circle',
+  RhythmGame = 'rhythm-game',
+  Videos = 'videos',
   Gallery = 'gallery',
   Team = 'team',
-  Shows = 'shows',
-  Videos = 'videos',
-  Visibility = 'visibility',
+  ProposalForm = 'proposal-form',
+  Business = 'business',
   Contact = 'contact',
+  Visibility = 'visibility',
 }

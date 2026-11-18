@@ -3,7 +3,15 @@ import { type IEditorSection } from '../models/i-editor-section';
 import { ContentPath } from '../models/content-path.enum';
 import { EditorTab } from '../models/editor-tab.enum';
 import { CONTACT_SECTIONS } from './contact.sections';
-import { CONTENT_SECTIONS } from './content.sections';
+import {
+  AUDIENCES_HEADING,
+  BRAND_SECTION,
+  HERO_SECTION,
+  PROPOSAL_FORM_HEADING,
+  RHYTHM_GAME_HEADING,
+  TEAM_HEADING,
+  VIDEOS_HEADING,
+} from './content.sections';
 import {
   EXPERIENCES_SECTIONS,
   GALLERY_SECTIONS,
@@ -30,16 +38,22 @@ export interface IEditorTabSchema {
  */
 export const EDITOR_TABS: readonly IEditorTabSchema[] = [
   {
+    tab: EditorTab.Hero,
+    label: 'Hero',
+    description: 'The top of the home page: the headline, the buttons and the audience tags.',
+    sections: [HERO_SECTION],
+  },
+  {
     tab: EditorTab.Offer,
-    label: 'Offer & theme',
-    description: 'The festival offer, its dates and what it says.',
+    label: 'Offer',
+    description: 'The festival offer: when it shows, and what it says.',
     sections: OFFER_SECTIONS,
   },
   {
-    tab: EditorTab.Content,
-    label: 'Page content',
-    description: 'Your business details, the hero and the main section headings.',
-    sections: CONTENT_SECTIONS,
+    tab: EditorTab.Audiences,
+    label: 'Who it’s for',
+    description: 'The heading of the section about who the sessions are for.',
+    sections: [AUDIENCES_HEADING],
   },
   {
     tab: EditorTab.Experiences,
@@ -48,11 +62,29 @@ export const EDITOR_TABS: readonly IEditorTabSchema[] = [
     sections: EXPERIENCES_SECTIONS,
   },
   {
+    tab: EditorTab.Shows,
+    label: 'Shows',
+    description: 'The show formats: their pictures, details and which one is featured.',
+    sections: SHOWS_SECTIONS,
+  },
+  {
     tab: EditorTab.DrumCircle,
     label: 'Drum circle',
     description:
       'The drum circle section on the home page: its About text and picture, facts, objectives and session flow.',
     sections: DRUM_CIRCLE_SECTIONS,
+  },
+  {
+    tab: EditorTab.RhythmGame,
+    label: 'Rhythm game',
+    description: 'The heading above the rhythm game.',
+    sections: [RHYTHM_GAME_HEADING],
+  },
+  {
+    tab: EditorTab.Videos,
+    label: 'Videos',
+    description: 'The videos: their YouTube links, titles and order, and the section heading.',
+    sections: [VIDEOS_HEADING, ...VIDEOS_SECTIONS],
   },
   {
     tab: EditorTab.Gallery,
@@ -63,37 +95,48 @@ export const EDITOR_TABS: readonly IEditorTabSchema[] = [
   {
     tab: EditorTab.Team,
     label: 'Team',
-    description: 'The people on the Team page. The first four also appear on the home page.',
-    sections: TEAM_SECTIONS,
+    description: 'The team members, their photos and details, and the section heading.',
+    sections: [TEAM_HEADING, ...TEAM_SECTIONS],
   },
   {
-    tab: EditorTab.Shows,
-    label: 'Shows',
-    description: 'Your show formats, their images and which one is featured.',
-    sections: SHOWS_SECTIONS,
+    tab: EditorTab.ProposalForm,
+    label: 'Proposal form',
+    description: 'The heading above the proposal form at the bottom of the home page.',
+    sections: [PROPOSAL_FORM_HEADING],
   },
   {
-    tab: EditorTab.Videos,
-    label: 'Videos',
-    description: 'Your videos, in the order they appear. The first is featured.',
-    sections: VIDEOS_SECTIONS,
-  },
-  {
-    tab: EditorTab.Visibility,
-    label: 'Sections & pages',
-    description: 'Switch home sections, pages and site-wide widgets on or off.',
-    sections: VISIBILITY_SECTIONS,
+    tab: EditorTab.Business,
+    label: 'Business details',
+    description: 'Your business name, the tagline under the logo, and the one-line description.',
+    sections: [BRAND_SECTION],
   },
   {
     tab: EditorTab.Contact,
-    label: 'Contact & links',
-    description: 'Your phone number, email, address and social links.',
+    label: 'Contact & social links',
+    description: 'Your phone number, email, address and social profiles, shown across the site.',
     sections: CONTACT_SECTIONS,
+  },
+  {
+    tab: EditorTab.Visibility,
+    label: 'Show or hide sections',
+    description: 'Switch home sections, pages and the buttons on every page on or off.',
+    sections: VISIBILITY_SECTIONS,
   },
 ];
 
 /** Every section in the editor, for checks that look across tabs. */
 export const ALL_SECTIONS: readonly IEditorSection[] = EDITOR_TABS.flatMap((tab) => tab.sections);
+
+/**
+ * Every section, titled with its tab too ("Team · Section heading"), for lists that name cards
+ * away from their tab, such as Review & publish (0017).
+ */
+export const SECTIONS_WITH_TABS: readonly IEditorSection[] = EDITOR_TABS.flatMap((tab) =>
+  tab.sections.map((section) => ({
+    ...section,
+    title: section.title === tab.label ? section.title : `${tab.label} · ${section.title}`,
+  })),
+);
 
 const TABS_BY_ID: ReadonlyMap<EditorTab, IEditorTabSchema> = new Map(
   EDITOR_TABS.map((entry) => [entry.tab, entry]),

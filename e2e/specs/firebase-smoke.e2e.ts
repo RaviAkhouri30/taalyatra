@@ -80,7 +80,8 @@ test.describe('Firebase smoke (emulator)', () => {
     await admin.signIn('admin@taalyatra.test', 'emulator-admin-password');
 
     await expect(admin.heading).toHaveText('Welcome back');
-    await expect(admin.page.getByText('admin@taalyatra.test')).toBeVisible();
+    // Shown in the top bar, or in the Menu drawer on phones (0017 U6).
+    await expect(admin.page.getByText('admin@taalyatra.test')).not.toHaveCount(0);
   });
 
   test('should let the admin edit, preview and publish through the Firestore rules', async ({
@@ -90,9 +91,9 @@ test.describe('Firebase smoke (emulator)', () => {
     // Unique per viewport: the projects share one emulator database, one after another.
     const title = `Watch us play (${info.project.name})`;
     await editor.signIn({ email: 'admin@taalyatra.test', password: 'emulator-admin-password' });
-    await editor.openTab('Page content');
+    await editor.openTab('Videos');
 
-    await editor.card('Videos').getByLabel('Title', { exact: true }).fill(title);
+    await editor.card('Section heading').getByLabel('Title', { exact: true }).fill(title);
     await editor.waitForSave();
     await expect(editor.preview.locator('#watch h2')).toHaveText(title, { timeout: 15_000 });
     await editor.publish();
@@ -156,7 +157,7 @@ test.describe('Firebase smoke (emulator)', () => {
     await stored;
 
     await editor.signIn({ email: 'admin@taalyatra.test', password: 'emulator-admin-password' });
-    await page.getByRole('button', { name: 'Load speed report' }).click();
+    await page.getByRole('button', { name: 'Show the speed report' }).click();
 
     await expect(page.getByRole('caption')).toContainText('3 in 4 visits');
   });
@@ -198,7 +199,7 @@ test.describe('Firebase smoke (emulator)', () => {
       route.fulfill({ path: SAMPLE_PHOTO }),
     );
     await editor.signIn({ email: 'admin@taalyatra.test', password: 'emulator-admin-password' });
-    await editor.openTab('Media library');
+    await editor.openTab('Photo library');
 
     await editor.uploadPhotos({
       name,

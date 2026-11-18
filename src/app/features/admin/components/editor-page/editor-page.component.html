@@ -8,15 +8,6 @@
       <div class="ep-form">
         <div class="ep-head">
           <h1 class="d">{{ page.tab.label }}</h1>
-          <button
-            type="button"
-            class="ep-toggle"
-            aria-controls="editor-preview"
-            [attr.aria-expanded]="model.previewOpen()"
-            (click)="model.togglePreview()"
-          >
-            {{ model.previewOpen() ? 'Back to editing' : 'Show preview' }}
-          </button>
         </div>
         <p class="ep-lead">{{ page.tab.description }}</p>
         @for (entry of page.sections; track entry.section.id) {
@@ -39,7 +30,17 @@
           </section>
         }
       </div>
-      <app-publish-bar />
+      <app-publish-bar>
+        <button
+          type="button"
+          class="ep-toggle"
+          aria-controls="editor-preview"
+          [attr.aria-expanded]="model.previewOpen()"
+          (click)="model.togglePreview()"
+        >
+          {{ model.previewOpen() ? 'Back to editing' : 'Show preview' }}
+        </button>
+      </app-publish-bar>
     </div>
     <aside #previewColumn id="editor-preview" class="ep-preview" aria-label="Preview">
       <app-preview-frame

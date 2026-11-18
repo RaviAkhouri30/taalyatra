@@ -22,6 +22,9 @@ const INPUT_TYPES: ReadonlyMap<FieldKind, string> = new Map([
  * One labelled editor field (text, link, phone, email, date, number, switch, choice or image), with its
  * hint, error and character counter tied to it for screen readers (WCAG 2.2 AA).
  */
+/** Share of a field's limit from which its character counter shows. */
+const COUNTER_SHOWS_FROM = 0.8;
+
 @Component({
   selector: 'app-schema-field',
   imports: [
@@ -65,6 +68,8 @@ export class SchemaFieldComponent {
       ? (field.recommended ?? field.maxLength ?? 0)
       : 0;
   });
+  /** The length from which the counter shows: near the limit only, to keep forms quiet (0017 U5). */
+  protected readonly countFrom = computed(() => Math.floor(this.limit() * COUNTER_SHOWS_FROM));
   protected readonly options = computed(() => {
     const field = this.field();
     return field.kind === FieldKind.Choice ? field.options : [];

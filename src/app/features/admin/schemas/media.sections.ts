@@ -100,7 +100,7 @@ export const EXPERIENCES_SECTIONS: readonly IEditorSection[] = [
           },
           {
             key: 'spotlight',
-            label: 'Featured card',
+            label: 'Featured box',
             kind: FieldKind.Group,
             onlyWhen: 'featured',
             fields: [buttonLabel('cta', 'Button on the card', FEATURED_CTA_DEFAULT)],
@@ -115,7 +115,7 @@ export const EXPERIENCES_SECTIONS: readonly IEditorSection[] = [
 export const GALLERY_SECTIONS: readonly IEditorSection[] = [
   {
     id: 'gallery-heading',
-    title: 'Gallery heading',
+    title: 'Section heading',
     path: ContentPath.HomeGallery,
     anchor: PageAnchor.Gallery,
     fields: [
@@ -181,7 +181,7 @@ export const TEAM_SECTIONS: readonly IEditorSection[] = [
 export const SHOWS_SECTIONS: readonly IEditorSection[] = [
   {
     id: 'shows-heading',
-    title: 'Shows heading',
+    title: 'Section heading',
     path: ContentPath.HomeShows,
     anchor: PageAnchor.Shows,
     fields: [eyebrow, title, lead, buttonLabel('cta', 'Link to the Shows page')],
@@ -220,7 +220,7 @@ export const SHOWS_SECTIONS: readonly IEditorSection[] = [
           { key: 'featured', label: 'Featured', kind: FieldKind.Toggle, offByDefault: true },
           {
             key: 'spotlight',
-            label: 'Spotlight text',
+            label: 'Featured box',
             kind: FieldKind.Group,
             onlyWhen: 'featured',
             fields: [

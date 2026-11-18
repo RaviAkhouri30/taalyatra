@@ -48,7 +48,7 @@ describe('PublishBarComponent', () => {
 
     expect(status()).toBe('All changes published.');
     expect(button('Publish')?.disabled).toBe(true);
-    expect(button('Discard')?.disabled).toBe(true);
+    expect(button('Undo changes')?.disabled).toBe(true);
   });
 
   it('should count unpublished changes and allow publishing them', () => {
@@ -170,23 +170,23 @@ describe('PublishBarComponent', () => {
     it('should ask first, and keep everything when told to', async () => {
       const { fixture, button, store } = render({ 'drafts/home__hero': heroDraft });
 
-      button('Discard')?.click();
+      button('Undo changes')?.click();
       await fixture.whenStable();
       expect(store.documents.has('drafts/home__hero')).toBe(true);
 
-      button('Keep')?.click();
+      button('Keep them')?.click();
       await fixture.whenStable();
 
-      expect(button('Discard')).toBeDefined();
+      expect(button('Undo changes')).toBeDefined();
       expect(store.documents.has('drafts/home__hero')).toBe(true);
     });
 
     it('should throw the drafts away and tell the page to reload', async () => {
       const { fixture, button, store, layout, show } = render({ 'drafts/home__hero': heroDraft });
-      button('Discard')?.click();
+      button('Undo changes')?.click();
       await fixture.whenStable();
 
-      button('Yes, discard')?.click();
+      button('Yes, undo them')?.click();
       await fixture.whenStable();
 
       expect(store.documents.has('drafts/home__hero')).toBe(false);
@@ -199,10 +199,10 @@ describe('PublishBarComponent', () => {
       const commit = vi
         .spyOn(store, 'commit')
         .mockReturnValueOnce(throwError(() => new Error('offline')));
-      button('Discard')?.click();
+      button('Undo changes')?.click();
       await fixture.whenStable();
 
-      button('Yes, discard')?.click();
+      button('Yes, undo them')?.click();
       await fixture.whenStable();
 
       expect(show).toHaveBeenCalledWith(PUBLISH_BAR_MESSAGES.discardFailed, ToastTone.Error);

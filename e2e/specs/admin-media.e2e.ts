@@ -11,7 +11,7 @@ const photo = (name: string) => ({
 test.describe('Admin media library', () => {
   test.beforeEach(async ({ editor }) => {
     await editor.signIn();
-    await editor.openTab('Media library');
+    await editor.openTab('Photo library');
   });
 
   test('should upload photos, keep them after a reload and store a description', async ({
@@ -81,7 +81,7 @@ test.describe('Admin media library', () => {
     await added.getByRole('button', { name: 'Choose old.jpg' }).click();
     await added.getByLabel('Description').fill('The old photo');
     await editor.waitForSave();
-    await editor.openTab('Media library');
+    await editor.openTab('Photo library');
     const old = page.getByRole('listitem').filter({ hasText: 'old.jpg' });
     await expect(old.getByText(`Photos · Photo ${String(count + 1)}`)).toBeVisible();
 

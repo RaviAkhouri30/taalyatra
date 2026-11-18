@@ -23,8 +23,11 @@ function headings(
   return { id, title: heading, path, anchor, fields: [eyebrow, title, lead] };
 }
 
-/** The page content tab: site details, the hero and the main section headings. */
-export const CONTENT_SECTIONS: readonly IEditorSection[] = [
+/**
+ * Cards that each belong to one section of the site (0017 U1): site details, the hero and the
+ * headings of sections whose content is edited elsewhere or not at all. Each tab picks its own.
+ */
+const CARDS = [
   {
     id: 'brand',
     title: 'Site details',
@@ -83,12 +86,27 @@ export const CONTENT_SECTIONS: readonly IEditorSection[] = [
   headings('audiences', 'Who it’s for', ContentPath.HomeAudiences, PageAnchor.ForEveryone),
   headings('rhythmGame', 'Rhythm game', ContentPath.HomeRhythmGame, PageAnchor.Play),
   {
-    ...headings('videos', 'Videos', ContentPath.HomeVideos, PageAnchor.Watch),
+    ...headings('videos', 'Section heading', ContentPath.HomeVideos, PageAnchor.Watch),
     fields: [eyebrow, title, buttonLabel('cta', 'Link to the Videos page')],
   },
   {
-    ...headings('team', 'Team', ContentPath.HomeTeam, PageAnchor.Team),
+    ...headings('team', 'Section heading', ContentPath.HomeTeam, PageAnchor.Team),
     fields: [eyebrow, title, lead, buttonLabel('cta', 'Link to the Team page')],
   },
   headings('contact', 'Plan your session', ContentPath.HomeContact, PageAnchor.Contact),
-];
+] as const satisfies readonly IEditorSection[];
+
+/**
+ * Each card on its own, for the tab it belongs to: the business details (Settings), the hero (with
+ * the audience tags and the rhythm game link), and the headings of "Who it's for", the rhythm game,
+ * videos, team and the proposal form ("Plan your session").
+ */
+export const [
+  BRAND_SECTION,
+  HERO_SECTION,
+  AUDIENCES_HEADING,
+  RHYTHM_GAME_HEADING,
+  VIDEOS_HEADING,
+  TEAM_HEADING,
+  PROPOSAL_FORM_HEADING,
+] = CARDS;

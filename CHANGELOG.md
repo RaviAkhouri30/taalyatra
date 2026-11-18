@@ -13,6 +13,13 @@ See [docs/versioning.md](docs/versioning.md).
 
 ### Changed
 
+- **The admin menu now follows the website**: Hero, Offer, Who it's for, Experiences, Shows, Drum circle, Rhythm game,
+  Videos, Gallery, Team and Proposal form, in page order, then Settings. Each section's heading, text and pictures are on
+  one page. Old "Page content" links open Hero.
+- **Find** at the top of the menu: type "phone", "about" or "Diwali" to go straight to the field.
+- **The dashboard's to-do list** says what's still sample text in plain words, grouped by section, each with a Fix link.
+- **Plain words** throughout ("Undo changes", "Show or hide sections", "Photo library"), quieter forms (character counts
+  only near the limit), and on phones a one-row top bar with the preview switch in the bottom bar.
 - **The drum circle has its own entry in the side panel**, so its About text and picture are one click away, and
   "Music & creativity" is now called "Experiences", as on the website.
 

@@ -99,3 +99,68 @@
     color: t.$color-ink-deep;
   }
 }
+
+// The to-do list (0017 U3): one row per item, its Fix link on the right.
+.db-count {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 9px;
+  border-radius: t.$radius-pill;
+  background: t.$color-amber;
+  color: t.$color-ink;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.db-todos {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 10px 12px;
+    border: 1px solid t.$color-line;
+    border-radius: 10px;
+  }
+}
+
+.db-todo {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+
+  small {
+    color: t.$color-muted;
+  }
+}
+
+.db-fix {
+  flex: none;
+}
+
+.db-group {
+  margin-top: 10px;
+  border: 1px solid t.$color-line;
+  border-radius: 10px;
+
+  summary {
+    padding: 12px 14px;
+    cursor: pointer;
+
+    span {
+      margin-left: 6px;
+      color: t.$color-muted;
+    }
+  }
+
+  .db-todos {
+    margin: 0;
+    padding: 0 10px 10px;
+  }
+}

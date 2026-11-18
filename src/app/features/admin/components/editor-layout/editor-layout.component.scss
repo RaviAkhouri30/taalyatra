@@ -263,3 +263,46 @@ $rail-width: 64px;
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+// The account in the drawer: phones only, where the top bar has no room for it (0017 U6).
+.ed-side-account {
+  display: none;
+  gap: 10px;
+  margin-top: auto;
+  padding: 16px;
+  border-top: 1px solid t.$color-line;
+  font-size: 13px;
+  color: t.$color-muted-strong;
+
+  @include bp.down(bp.$phone) {
+    display: grid;
+  }
+
+  p {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  button {
+    justify-self: start;
+    padding: 8px 16px;
+    border: 1px solid t.$color-line;
+    border-radius: t.$radius-pill;
+    background: transparent;
+    color: t.$color-cream;
+    font: inherit;
+    font-weight: 600;
+  }
+}
+
+.ed-find-open {
+  display: flex;
+  justify-content: center;
+  margin: 0 10px 8px;
+  padding: 9px;
+  border: 1px solid t.$color-line;
+  border-radius: 10px;
+  background: transparent;
+  color: t.$color-muted-strong;
+  cursor: pointer;
+}

@@ -22,7 +22,7 @@ import { ToastService } from '@shared/services/toast.service';
 import { type IPublishRecord } from '../models/i-publish-record';
 import { PublishPageModel } from '../models/publish-page.model';
 import { PublishReport } from '../models/publish-report.model';
-import { ALL_SECTIONS } from '../schemas/editor-tabs';
+import { ALL_SECTIONS, SECTIONS_WITH_TABS } from '../schemas/editor-tabs';
 import { DraftService } from '../services/draft.service';
 import { MediaLibraryService } from '../services/media-library.service';
 import { PublishService } from '../services/publish.service';
@@ -98,7 +98,7 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
       map(([drafts, history, assets]) => {
         const libraryIds = assets && new Set(assets.map((asset) => asset.id));
         const report = PublishReport.check(drafts, ALL_SECTIONS, this.clock.now(), libraryIds);
-        return new PublishPageModel(drafts, history, ALL_SECTIONS, report);
+        return new PublishPageModel(drafts, history, SECTIONS_WITH_TABS, report);
       }),
       tap((page) => {
         this.setData(page);

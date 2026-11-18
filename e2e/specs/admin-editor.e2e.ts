@@ -3,17 +3,21 @@ import { expect, test } from '../fixtures/test';
 /** Editor views, by tab-bar link and page heading. */
 const VIEWS = [
   'Dashboard',
-  'Offer & theme',
-  'Page content',
+  'Hero',
+  'Offer',
+  'Who it’s for',
   'Experiences',
+  'Shows',
   'Drum circle',
+  'Rhythm game',
+  'Videos',
   'Gallery',
   'Team',
-  'Shows',
-  'Videos',
-  'Sections & pages',
-  'Contact & links',
-  'Media library',
+  'Proposal form',
+  'Business details',
+  'Contact & social links',
+  'Show or hide sections',
+  'Photo library',
   'Review & publish',
 ];
 
@@ -26,7 +30,7 @@ test.describe('Admin editor', () => {
     editor,
     page,
   }) => {
-    await editor.openTab('Page content');
+    await editor.openTab('Hero');
     await editor.card('Hero').getByLabel('Headline, first line').fill('Drum with us.');
     await editor.waitForSave();
 
@@ -48,7 +52,7 @@ test.describe('Admin editor', () => {
     editor,
     page,
   }) => {
-    await editor.openTab('Sections & pages');
+    await editor.openTab('Show or hide sections');
     await page.getByRole('switch', { name: 'Gallery' }).uncheck();
     await editor.waitForSave();
     await editor.publish();
@@ -63,7 +67,7 @@ test.describe('Admin editor', () => {
   });
 
   test('should send visitors home from a switched-off page', async ({ editor, page }) => {
-    await editor.openTab('Sections & pages');
+    await editor.openTab('Show or hide sections');
     await page.getByRole('switch', { name: 'Team page' }).uncheck();
     await editor.waitForSave();
     await editor.publish();
@@ -80,7 +84,7 @@ test.describe('Admin editor', () => {
     editor,
     page,
   }) => {
-    await editor.openTab('Offer & theme');
+    await editor.openTab('Offer');
     await editor.card('Offer switch and dates').getByLabel('Ends on').fill('2020-01-02');
     await editor.waitForSave();
     await editor.openTab('Review & publish');
@@ -94,7 +98,7 @@ test.describe('Admin editor', () => {
   });
 
   test('should block publishing while a required field is empty', async ({ editor, page }) => {
-    await editor.openTab('Contact & links');
+    await editor.openTab('Contact & social links');
     const email = editor.card('Contact details').getByLabel('Email');
     await email.fill('');
 
@@ -107,12 +111,12 @@ test.describe('Admin editor', () => {
   });
 
   test('should throw a draft away', async ({ editor, page }) => {
-    await editor.openTab('Page content');
-    await editor.card('Team').getByLabel('Title', { exact: true }).fill('Our people.');
+    await editor.openTab('Team');
+    await editor.card('Section heading').getByLabel('Title', { exact: true }).fill('Our people.');
     await editor.waitForSave();
     await editor.openTab('Review & publish');
 
-    await page.getByRole('button', { name: 'Discard the draft of Team' }).click();
+    await page.getByRole('button', { name: 'Undo the changes to Team · Section heading' }).click();
 
     await expect(page.getByText('Everything is published.')).toBeVisible();
   });
@@ -121,41 +125,44 @@ test.describe('Admin editor', () => {
     editor,
     page,
   }) => {
-    await editor.openTab('Page content');
-    await editor.card('Videos').getByLabel('Title', { exact: true }).fill('Watch us play.');
+    await editor.openTab('Videos');
+    await editor
+      .card('Section heading')
+      .getByLabel('Title', { exact: true })
+      .fill('Watch us play.');
     await editor.waitForSave();
     await editor.publish();
 
     await page.getByRole('button', { name: /^Undo the publish of/ }).click();
     await page.getByRole('button', { name: 'Restore' }).click();
     await expect(page.getByText('That version is back in your draft.')).toBeVisible();
-    await editor.openTab('Page content');
+    await editor.openTab('Videos');
 
-    await expect(editor.card('Videos').getByLabel('Title', { exact: true })).toHaveValue(
+    await expect(editor.card('Section heading').getByLabel('Title', { exact: true })).toHaveValue(
       'See a circle in action.',
     );
   });
 
   test('should mark a required field and flag a placeholder where it is', async ({ editor }) => {
-    await editor.openTab('Page content');
+    await editor.openTab('Hero');
     const title = editor.card('Hero').getByLabel('Headline, first line');
     await expect(title).toHaveAttribute('aria-required', 'true');
 
     await title.fill('[Add a headline]');
 
-    await expect(editor.card('Hero').getByText('Still has a placeholder')).toBeVisible();
+    await expect(editor.card('Hero').getByText('Still says')).toBeVisible();
     await title.fill('');
     await expect(editor.card('Hero').getByText('Fill this in.').first()).toBeVisible();
   });
 
   test('should link from a problem on the review page to its card', async ({ editor, page }) => {
-    await editor.openTab('Contact & links');
+    await editor.openTab('Contact & social links');
     await editor.card('Contact details').getByLabel('Email').fill('');
     await editor.waitForSave();
     await editor.openTab('Review & publish');
     await expect(page.getByText('Publishing is off until these are fixed.')).toBeVisible();
 
-    await page.getByRole('link', { name: 'Fix in Contact & links' }).click();
+    await page.getByRole('link', { name: 'Fix in Contact & social links' }).click();
 
     await expect(page).toHaveURL(/\/admin\/contact#card-/u);
     await expect(editor.card('Contact details').getByRole('heading')).toBeInViewport();
@@ -166,7 +173,7 @@ test.describe('Admin editor', () => {
     page,
   }) => {
     const bar = page.locator('app-publish-bar');
-    await editor.openTab('Page content');
+    await editor.openTab('Hero');
     await expect(bar.getByText('All changes published.')).toBeVisible();
     await expect(bar.getByRole('button', { name: 'Publish' })).toBeDisabled();
 
@@ -184,14 +191,14 @@ test.describe('Admin editor', () => {
     page,
   }) => {
     const bar = page.locator('app-publish-bar');
-    await editor.openTab('Page content');
+    await editor.openTab('Hero');
     const headline = editor.card('Hero').getByLabel('Headline, first line');
     const published = await headline.inputValue();
     await headline.fill('Not this.');
     await editor.waitForSave();
 
-    await bar.getByRole('button', { name: 'Discard' }).click();
-    await bar.getByRole('button', { name: 'Yes, discard' }).click();
+    await bar.getByRole('button', { name: 'Undo changes' }).click();
+    await bar.getByRole('button', { name: 'Yes, undo them' }).click();
 
     await expect(editor.card('Hero').getByLabel('Headline, first line')).toHaveValue(published);
     await expect(bar.getByText('All changes published.')).toBeVisible();
@@ -202,7 +209,7 @@ test.describe('Admin editor', () => {
     page,
   }) => {
     const bar = page.locator('app-publish-bar');
-    await editor.openTab('Contact & links');
+    await editor.openTab('Contact & social links');
     await editor.card('Contact details').getByLabel('Email').fill('');
     await editor.waitForSave();
 
@@ -213,7 +220,7 @@ test.describe('Admin editor', () => {
   });
 
   test('should show the preview at desktop and phone width', async ({ editor, page }) => {
-    await editor.openTab('Page content');
+    await editor.openTab('Hero');
     if (await page.getByRole('button', { name: 'Show preview' }).isVisible()) {
       await page.getByRole('button', { name: 'Show preview' }).click();
     }
@@ -228,7 +235,7 @@ test.describe('Admin editor', () => {
   test('should load the speed report only when asked, and say there is nothing yet', async ({
     page,
   }) => {
-    const button = page.getByRole('button', { name: 'Load speed report' });
+    const button = page.getByRole('button', { name: 'Show the speed report' });
     await expect(page.getByRole('heading', { name: 'Real visitors’ speed' })).toBeVisible();
     await expect(page.getByText('No visits reported yet.')).toHaveCount(0);
 
@@ -246,14 +253,14 @@ test.describe('Admin editor', () => {
     }
     const preview = page.getByRole('button', { name: 'Preview', exact: true });
     await expect(preview).toHaveCount(0);
-    await editor.openTab('Page content');
+    await editor.openTab('Hero');
     const frame = page.locator('iframe[title="Preview of the site with your draft"]');
     await expect(frame).toBeVisible();
 
     await preview.click();
     await expect(frame).toBeHidden();
     await page.reload();
-    await expect(editor.heading).toHaveText('Page content');
+    await expect(editor.heading).toHaveText('Hero');
     await expect(frame).toBeHidden();
 
     await preview.click();
@@ -266,7 +273,7 @@ test.describe('Admin editor', () => {
       return;
     }
     const link = editor.tabs.getByRole('link', { name: 'Gallery' });
-    await expect(editor.tabs.getByText('Content', { exact: true })).toBeVisible();
+    await expect(editor.tabs.getByText('Home page', { exact: true })).toBeVisible();
 
     await page.getByRole('button', { name: 'Collapse menu' }).click();
 

@@ -3,7 +3,13 @@ import { provideMedia } from '@core/config/provide-media';
 import { adminGuard } from './guards/admin.guard';
 import { signedOutGuard } from './guards/signed-out.guard';
 import { unsavedChangesGuard } from './guards/unsaved-changes.guard';
-import { EDITOR_TAB_ROUTE_KEY, MEDIA_PATH, PUBLISH_PATH } from './models/editor-nav.constants';
+import {
+  EDITOR_TAB_ROUTE_KEY,
+  MEDIA_LABEL,
+  MEDIA_PATH,
+  PUBLISH_PATH,
+} from './models/editor-nav.constants';
+import { EditorTab } from './models/editor-tab.enum';
 import { EDITOR_TABS } from './schemas/editor-tabs';
 
 /** Every admin page is on the bare layout, without the site's chrome. */
@@ -41,6 +47,8 @@ const adminRoutes: Routes = [
             title: ADMIN_TITLE_SUFFIX,
             loadComponent: () => import('./components/dashboard/dashboard.component'),
           },
+          // "Page content" was split into one tab per section (0017 U1); old links still land.
+          { path: 'content', redirectTo: EditorTab.Hero, pathMatch: 'full' },
           ...EDITOR_TABS.map((entry) => ({
             path: entry.tab,
             title: `${entry.label} — ${ADMIN_TITLE_SUFFIX}`,
@@ -50,7 +58,7 @@ const adminRoutes: Routes = [
           })),
           {
             path: MEDIA_PATH,
-            title: `Media library — ${ADMIN_TITLE_SUFFIX}`,
+            title: `${MEDIA_LABEL} — ${ADMIN_TITLE_SUFFIX}`,
             loadComponent: () => import('./components/media-library/media-library.component'),
           },
           {

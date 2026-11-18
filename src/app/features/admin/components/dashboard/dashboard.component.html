@@ -6,7 +6,7 @@
   @if (model.data(); as dash) {
     <div class="db-grid">
       <section class="db-card" aria-labelledby="db-changes">
-        <h2 id="db-changes">Unpublished changes</h2>
+        <h2 id="db-changes">Changes not on the website yet</h2>
         <p class="db-big">{{ dash.changeCount }}</p>
         <p>{{ dash.changes }}</p>
         <a [routerLink]="links.publish">Review &amp; publish</a>
@@ -18,31 +18,60 @@
         <a [routerLink]="links.offer">Edit the offer</a>
       </section>
       <section class="db-card" aria-labelledby="db-visibility">
-        <h2 id="db-visibility">Sections &amp; pages</h2>
+        <h2 id="db-visibility">Shown sections</h2>
         <p>{{ dash.hidden }}</p>
-        <a [routerLink]="links.visibility">Change what’s shown</a>
+        <a [routerLink]="links.visibility">Show or hide sections</a>
       </section>
       <section class="db-card" aria-labelledby="db-history">
         <h2 id="db-history">History</h2>
         <p>{{ dash.lastPublished }}</p>
         <a [routerLink]="links.publish">See the publish history</a>
       </section>
+      <section class="db-card db-card--wide" aria-labelledby="db-warnings">
+        <h2 id="db-warnings">
+          Still to fill in
+          @if (todos().length > 0) {
+            <span class="db-count">{{ todos().length }}</span>
+          }
+        </h2>
+        @if (todos().length === 0) {
+          <p>Nothing left to fill in. Every piece of sample text has been replaced.</p>
+        } @else {
+          <p>
+            This sample text is on the website until you replace it. Open a section to see what's
+            left.
+          </p>
+          <!-- Grouped by section, so 50 items read as a handful of sections (0017 walkthrough). -->
+          @for (group of todoGroups(); track group.label) {
+            <details class="db-group">
+              <summary>
+                <b>{{ group.label }}</b> <span>{{ group.items.length }} to fill in</span>
+              </summary>
+              <ul class="db-todos">
+                @for (todo of group.items; track $index) {
+                  <li>
+                    <span class="db-todo">
+                      <b>{{ todo.where }}</b>
+                      <small>{{ todo.message }}</small>
+                    </span>
+                    @if (todo.url) {
+                      <a
+                        class="db-fix"
+                        [routerLink]="todo.url"
+                        [fragment]="todo.fragment"
+                        [attr.aria-label]="'Fix ' + group.label + ' → ' + todo.where"
+                        >Fix</a
+                      >
+                    }
+                  </li>
+                }
+              </ul>
+            </details>
+          }
+        }
+      </section>
       <section class="db-card db-card--wide" aria-labelledby="db-speed">
         <app-speed-report />
-      </section>
-      <section class="db-card db-card--wide" aria-labelledby="db-warnings">
-        <h2 id="db-warnings">Placeholders to replace</h2>
-        @if (dash.warnings.length === 0) {
-          <p>No placeholder text left in the content the editor covers.</p>
-        } @else {
-          <ul>
-            @for (warning of dash.warnings; track $index) {
-              <li>
-                <b>{{ warning.section }} · {{ warning.field }}:</b> {{ warning.message }}
-              </li>
-            }
-          </ul>
-        }
       </section>
     </div>
   }

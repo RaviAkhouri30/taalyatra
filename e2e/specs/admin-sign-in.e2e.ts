@@ -59,9 +59,14 @@ test.describe('Admin sign-in', () => {
 
     await expect(admin.heading).toHaveText('Welcome back');
     await expect(admin.page).toHaveTitle('Admin — Taal Yatra');
-    await expect(admin.page.getByText(FAKE_ADMIN_ACCOUNT.email)).toBeVisible();
+    // Phones show the account in the Menu drawer, so the top bar stays one row (0017 U6).
+    const signedInAs = admin.page.getByText(FAKE_ADMIN_ACCOUNT.email);
+    if (!(await signedInAs.first().isVisible())) {
+      await admin.page.getByRole('button', { name: 'Menu', exact: true }).click();
+    }
+    await expect(signedInAs.filter({ visible: true })).toBeVisible();
 
-    await admin.page.getByRole('button', { name: 'Sign out' }).click();
+    await admin.page.getByRole('button', { name: 'Sign out' }).filter({ visible: true }).click();
 
     await expect(admin.heading).toHaveText('Admin sign in');
   });

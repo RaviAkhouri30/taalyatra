@@ -43,5 +43,7 @@
   <p class="sr-verdict" role="alert">The speed report couldn’t be loaded. Try again.</p>
 }
 <button type="button" class="sr-load" [disabled]="model.loading()" (click)="model.load()">
-  {{ model.loading() ? 'Loading…' : model.data() ? 'Refresh speed report' : 'Load speed report' }}
+  {{
+    model.loading() ? 'Loading…' : model.data() ? 'Refresh speed report' : 'Show the speed report'
+  }}
 </button>

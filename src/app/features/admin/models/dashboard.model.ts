@@ -78,7 +78,7 @@ export class DashboardModel {
       (key) => !visibility.isWidgetVisible(key),
     ).length;
     return sections + pages + widgets === 0
-      ? 'Every section, page and widget is on.'
-      : `Hidden: ${plural(sections, 'section', 'sections')}, ${plural(pages, 'page', 'pages')}, ${plural(widgets, 'widget', 'widgets')}.`;
+      ? 'Everything is showing: every section, page and button.'
+      : `Hidden: ${plural(sections, 'section', 'sections')}, ${plural(pages, 'page', 'pages')}, ${plural(widgets, 'button or bar', 'buttons or bars')}.`;
   }
 }

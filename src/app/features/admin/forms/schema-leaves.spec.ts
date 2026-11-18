@@ -1,11 +1,11 @@
 import { FieldKind } from '../models/field-kind.enum';
-import { CONTENT_SECTIONS } from '../schemas/content.sections';
+import { HERO_SECTION } from '../schemas/content.sections';
 import { OFFER_SECTIONS } from '../schemas/offer.sections';
 import { schemaLeaves } from './schema-leaves';
 
 describe('schemaLeaves', () => {
   const [, offer] = OFFER_SECTIONS;
-  const hero = CONTENT_SECTIONS.find((section) => section.id === 'hero')!;
+  const hero = HERO_SECTION;
 
   it('should name list items by position, entering grouped items', () => {
     const leaves = schemaLeaves(offer!.fields, {

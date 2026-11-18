@@ -137,7 +137,7 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
     const value: unknown = new Map(Object.entries(this.route.snapshot.data)).get(
       EDITOR_TAB_ROUTE_KEY,
     );
-    return Object.values(EditorTab).find((tab) => tab === value) ?? EditorTab.Offer;
+    return Object.values(EditorTab).find((tab) => tab === value) ?? EditorTab.Hero;
   }
 
   private buildPage(tab: IEditorTabSchema): IEditorPage {

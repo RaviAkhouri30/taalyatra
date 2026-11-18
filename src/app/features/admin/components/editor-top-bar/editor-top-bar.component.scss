@@ -84,12 +84,9 @@
     color: t.$color-muted-strong;
     overflow-wrap: anywhere;
 
-    // Phones: on its own small line, so the buttons above it fit.
+    // Phones: in the Menu drawer instead, so the bar stays one row (0017 U6).
     @include bp.down(bp.$phone) {
-      flex: 1 0 100%;
-      order: 1;
-      margin: 0;
-      font-size: 12.5px;
+      display: none;
     }
   }
 }
@@ -123,6 +120,13 @@
 
   &[aria-pressed='false'] {
     color: t.$color-muted-strong;
+  }
+}
+
+// Phones: Sign out is in the Menu drawer (0017 U6).
+.ed-action--signout {
+  @include bp.down(bp.$phone) {
+    display: none;
   }
 }
 

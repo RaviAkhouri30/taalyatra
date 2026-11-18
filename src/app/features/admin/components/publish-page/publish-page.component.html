@@ -5,7 +5,7 @@
     <p class="pp-loading">Loading your changes…</p>
   } @else {
     <section class="pp-card" aria-labelledby="pp-changes">
-      <h2 id="pp-changes">Unpublished changes</h2>
+      <h2 id="pp-changes">Changes not on the website yet</h2>
       @if (page.changes.length === 0) {
         <p>Everything is published. Changes you make in the editor appear here.</p>
       } @else {
@@ -21,10 +21,10 @@
                 [variant]="ghost"
                 [size]="compact"
                 [disabled]="model.busy()"
-                [attr.aria-label]="'Discard the draft of ' + change.title"
+                [attr.aria-label]="'Undo the changes to ' + change.title"
                 (click)="model.discard(change.path)"
               >
-                Discard
+                Undo
               </button>
             </li>
           }

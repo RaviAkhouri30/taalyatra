@@ -15,7 +15,7 @@ flowchart TD
   RO -->|"admin (lazy, layout: Bare)"| AD["AdminShellComponent (noindex)<br/>sign-in · signedOutGuard → SignIn · reset-password → ResetPassword (app-auth-card)"]
   AD -->|"'' · adminGuard"| EL["EditorLayoutComponent<br/>account bar · side panel · save status (EditorLayoutViewModel)"]
   EL --> DB["'' → DashboardComponent"]
-  EL --> EP["offer · content · gallery · team · shows · videos · visibility · contact → EditorPageComponent<br/>(unsavedChangesGuard) · cards with appInView · schema-fields · schema-field · preview-frame (PreviewScroller)"]
+  EL --> EP["one tab per site section (hero · offer · audiences · experiences · shows · drum-circle · rhythm-game · videos · gallery · team · proposal-form) and settings (business · contact · visibility) → EditorPageComponent<br/>(unsavedChangesGuard) · cards with appInView · schema-fields · schema-field · preview-frame (PreviewScroller)"]
   EL --> ML["media → MediaLibraryComponent (MediaManageViewModel)<br/>MediaUploadComponent · MediaCardComponent"]
   EL --> PP["publish → PublishPageComponent"]
   RO -->|"** → ''"| Home
