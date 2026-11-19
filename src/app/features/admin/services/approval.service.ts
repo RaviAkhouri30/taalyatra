@@ -1,5 +1,15 @@
 import { Service, inject } from '@angular/core';
-import { type Observable, Subject, map, switchMap, take, tap } from 'rxjs';
+import {
+  type Observable,
+  Subject,
+  catchError,
+  forkJoin,
+  map,
+  of,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import { DocumentWriteKind } from '@core/enums/document-write-kind.enum';
 import { type DocumentWrite, IDocumentStore } from '@core/interfaces/i-document-store';
 import { type IDraft, draftId } from '@core/interfaces/i-draft';
@@ -14,6 +24,7 @@ import {
   toApproval,
 } from '../models/approval.model';
 import { type Permissions } from '../models/permissions.model';
+import { type IWaitingNotice, waitingNotice } from '../models/waiting-notice.model';
 import { AccessService } from './access.service';
 import { PublishService } from './publish.service';
 
@@ -49,6 +60,19 @@ export class ApprovalService {
           .sort((first, second) => second.sentAt.localeCompare(first.sentAt)),
       ),
     );
+  }
+
+  /**
+   * @param paths The documents an editor page edits.
+   * @returns What the page says about a change on it waiting for approval, or `null` for none.
+   */
+  public notice(paths: readonly string[]): Observable<IWaitingNotice | null> {
+    // forkJoin: who is asking, and the requests, read together.
+    return forkJoin([
+      this.access.permissions$.pipe(take(1)),
+      // Before the 2.0.0 rules are live they're refused: nothing waits, nothing is locked.
+      this.requests().pipe(catchError(() => of([]))),
+    ]).pipe(map(([permissions, requests]) => waitingNotice(requests, paths, permissions)));
   }
 
   /**

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, throwError } from 'rxjs';
 import { IDocumentStore } from '@core/interfaces/i-document-store';
 import { CLOCK } from '@core/tokens/clock.token';
 import { ApprovalStatus, type IApproval } from '../models/approval.model';
@@ -133,5 +133,21 @@ describe('ApprovalService', () => {
       by: 'admin-uid',
       approvedFrom: 'm@b.c',
     });
+  });
+
+  it('should tell an editor page what waits on it, locked for the manager', async () => {
+    const { service } = setUp({ 'approvals/r1': { ...WAITING } });
+
+    const notice = await firstValueFrom(service.notice(['home/offer']));
+
+    expect(notice).toMatchObject({ locked: true, note: 'New dates' });
+    await expect(firstValueFrom(service.notice(['home/hero']))).resolves.toBeNull();
+  });
+
+  it('should lock nothing when the requests can’t be read', async () => {
+    const { service, store } = setUp();
+    vi.spyOn(store, 'readAll').mockReturnValue(throwError(() => new Error('denied')));
+
+    await expect(firstValueFrom(service.notice(['home/offer']))).resolves.toBeNull();
   });
 });

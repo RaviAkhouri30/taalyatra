@@ -5,12 +5,13 @@ import {
   type ElementRef,
   Injector,
   afterNextRender,
+  computed,
   effect,
   inject,
   untracked,
   viewChild,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BaseComponent } from '@shared/base/base-component';
 import { type IUnsavedChanges } from '../../guards/unsaved-changes.guard';
 import { InViewDirective } from '../../directives/in-view.directive';
@@ -23,6 +24,8 @@ import { PreviewFrameComponent } from '../preview-frame/preview-frame.component'
 import { PublishBarComponent } from '../publish-bar/publish-bar.component';
 import { SchemaFieldsComponent } from '../schema-fields/schema-fields.component';
 import { ButtonDirective } from '@shared/directives/button.directive';
+import { AppRoute } from '@shared/enums/app-route.enum';
+import { PUBLISH_PATH } from '../../models/editor-nav.constants';
 import { ButtonSize, ButtonVariant } from '@shared/enums/button-variant.enum';
 
 /**
@@ -36,6 +39,7 @@ import { ButtonSize, ButtonVariant } from '@shared/enums/button-variant.enum';
     InViewDirective,
     PreviewFrameComponent,
     PublishBarComponent,
+    RouterLink,
     SchemaFieldsComponent,
   ],
   templateUrl: './editor-page.component.html',
@@ -54,6 +58,9 @@ export default class EditorPageComponent
   protected readonly pickable = PICKABLE_SECTIONS;
   protected readonly ghost = ButtonVariant.Ghost;
   protected readonly compact = ButtonSize.Compact;
+  protected readonly reviewUrl = `${AppRoute.Admin}/${PUBLISH_PATH}`;
+  /** A manager's page waiting for approval can't be changed (0019 decision 5). */
+  protected readonly locked = computed(() => this.model.waiting()?.locked === true);
 
   private readonly injector = inject(Injector);
   private readonly fragment = inject(ActivatedRoute).snapshot.fragment;

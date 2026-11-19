@@ -51,6 +51,36 @@ test.describe('Admin approvals', () => {
     }
   });
 
+  test('should show the manager their requests, not the owner’s cards, on the dashboard', async ({
+    page,
+  }) => {
+    await expect(page.getByRole('region', { name: 'Your requests' })).toContainText(
+      'Nothing waiting for the owner.',
+    );
+    for (const name of [/^Backups/, /^Leads/, /^Visits/]) {
+      await expect(page.getByRole('region', { name })).toHaveCount(0);
+    }
+  });
+
+  test('should lock a waiting page for the manager until they withdraw it', async ({
+    editor,
+    page,
+  }) => {
+    await sendHero(editor, page);
+
+    await editor.openTab('Hero');
+    await expect(page.getByRole('note')).toContainText('You sent changes on this page');
+    const headline = editor.card('Hero').getByLabel('Headline, first line');
+    await expect(headline).toBeDisabled();
+
+    await editor.openTab('Review & publish');
+    await page.getByRole('button', { name: 'Withdraw' }).click();
+    await expect(page.getByText('Withdrawn. You can edit those pages again.')).toBeVisible();
+    await editor.openTab('Hero');
+    await expect(page.getByRole('note')).toHaveCount(0);
+    await expect(headline).toBeEnabled();
+  });
+
   test('should send a change for approval, which the owner approves', async ({ editor, page }) => {
     await sendHero(editor, page);
     await editor.signOut();
@@ -60,6 +90,12 @@ test.describe('Admin approvals', () => {
     const queue = page.getByRole('region', { name: 'Waiting for your approval (1)' });
     await expect(queue).toContainText(FAKE_MANAGER_ACCOUNT.email);
     await expect(queue).toContainText('New headline');
+    await editor.openTab('Hero');
+    await expect(page.getByRole('note')).toContainText(
+      'sent changes on this page for your approval',
+    );
+    await expect(editor.card('Hero').getByLabel('Headline, first line')).toBeEnabled();
+    await editor.openTab('Review & publish');
     await queue.getByRole('button', { name: 'Approve and publish' }).click();
     await expect(page.getByText('Approved and published.')).toBeVisible();
     await expect(page.getByRole('region', { name: 'Publish history' })).toContainText(

@@ -3,6 +3,10 @@ import { PromotionStatus } from '@shared/enums/promotion-status.enum';
 import { DashboardModel, type IDashboardSource } from './dashboard.model';
 import { IssueSeverity } from './issue-severity.enum';
 import { Lead } from './lead.model';
+import { ApprovalStatus, type IApproval } from './approval.model';
+import { EditorTab } from './editor-tab.enum';
+import { Permissions } from './permissions.model';
+import { PageAccess } from './role.model';
 
 describe('DashboardModel', () => {
   const now = new Date('2026-11-05T06:00:00Z');
@@ -17,6 +21,8 @@ describe('DashboardModel', () => {
     visits: null,
     leads: null,
     now,
+    permissions: Permissions.owner({ uid: 'owner', email: 'o@b.co' }),
+    requests: [],
     ...change,
   });
   const withPromotion = (promotion: object) => ({
@@ -130,5 +136,67 @@ describe('DashboardModel', () => {
     );
 
     expect(dashboard.visits).toBe('5 visits in the last 7 days.');
+  });
+
+  describe('who is looking (0019)', () => {
+    const request = (by: string, status: ApprovalStatus): IApproval => ({
+      id: `${by}-${status}`,
+      by,
+      email: `${by}@b.co`,
+      paths: ['home/hero'],
+      note: '',
+      sentAt: 'x',
+      status,
+      answer: '',
+      answeredAt: '',
+    });
+    const requests = [
+      request('manager', ApprovalStatus.Waiting),
+      request('manager', ApprovalStatus.SentBack),
+      request('manager', ApprovalStatus.SentBack),
+      request('other', ApprovalStatus.Waiting),
+    ];
+    const manager = Permissions.manager(
+      { uid: 'manager', email: 'manager@b.co' },
+      {
+        email: 'manager@b.co',
+        pages: new Map([[EditorTab.Visibility, PageAccess.Hidden]]),
+        uploads: true,
+        addedAt: 'x',
+      },
+    );
+
+    it('should show the owner every card, and approvals only when something waits', () => {
+      expect(new DashboardModel(source()).access).toMatchObject({
+        owner: true,
+        canSeeOffer: true,
+        canSeeVisibility: true,
+        showApprovals: false,
+      });
+      expect(new DashboardModel(source({ requests })).access).toMatchObject({
+        showApprovals: true,
+        approvalsHeading: 'Waiting for approval',
+        approvals: '2 changes wait for your approval.',
+      });
+    });
+
+    it('should show a manager their own requests and pages only', () => {
+      const access = new DashboardModel(source({ permissions: manager, requests })).access;
+
+      expect(access).toMatchObject({
+        owner: false,
+        canSeeOffer: true,
+        canSeeVisibility: false,
+        showApprovals: true,
+        approvalsHeading: 'Your requests',
+        approvals: '1 change waits for the owner; 2 were sent back to you.',
+      });
+    });
+
+    it('should tell a manager with no requests where they are sent from', () => {
+      const access = new DashboardModel(source({ permissions: manager })).access;
+
+      expect(access.approvals).toContain('Nothing waiting for the owner.');
+    });
   });
 });

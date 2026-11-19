@@ -11,47 +11,60 @@
         <p>{{ dash.changes }}</p>
         <a [routerLink]="links.publish">Review &amp; publish</a>
       </section>
-      <section class="db-card" aria-labelledby="db-offer">
-        <h2 id="db-offer">Offer</h2>
-        <span class="db-pill" [attr.data-status]="dash.offerStatus">{{ dash.offerStatus }}</span>
-        <p>{{ dash.offer }}</p>
-        <a [routerLink]="links.offer">Edit the offer</a>
-      </section>
-      <section class="db-card" aria-labelledby="db-visibility">
-        <h2 id="db-visibility">Shown sections</h2>
-        <p>{{ dash.hidden }}</p>
-        <a [routerLink]="links.visibility">Show or hide sections</a>
-      </section>
+      @if (dash.access.showApprovals) {
+        <section class="db-card" aria-labelledby="db-approvals">
+          <h2 id="db-approvals">{{ dash.access.approvalsHeading }}</h2>
+          <p>{{ dash.access.approvals }}</p>
+          <a [routerLink]="links.publish">See them on Review &amp; publish</a>
+        </section>
+      }
+      @if (dash.access.canSeeOffer) {
+        <section class="db-card" aria-labelledby="db-offer">
+          <h2 id="db-offer">Offer</h2>
+          <span class="db-pill" [attr.data-status]="dash.offerStatus">{{ dash.offerStatus }}</span>
+          <p>{{ dash.offer }}</p>
+          <a [routerLink]="links.offer">Edit the offer</a>
+        </section>
+      }
+      @if (dash.access.canSeeVisibility) {
+        <section class="db-card" aria-labelledby="db-visibility">
+          <h2 id="db-visibility">Shown sections</h2>
+          <p>{{ dash.hidden }}</p>
+          <a [routerLink]="links.visibility">Show or hide sections</a>
+        </section>
+      }
       <section class="db-card" aria-labelledby="db-history">
         <h2 id="db-history">History</h2>
         <p>{{ dash.lastPublished }}</p>
         <a [routerLink]="links.publish">See the publish history</a>
       </section>
-      <section class="db-card" aria-labelledby="db-backup">
-        <h2 id="db-backup">
-          Backups
-          @if (dash.backup.due) {
-            <span class="db-count">Due</span>
-          }
-        </h2>
-        <p>{{ dash.backup.text }}</p>
-        <a [routerLink]="links.publish" fragment="backups">Make or restore a backup</a>
-      </section>
-      <section class="db-card" aria-labelledby="db-leads">
-        <h2 id="db-leads">
-          Leads
-          @if (dash.newLeads > 0) {
-            <span class="db-count">{{ dash.newLeads }} new</span>
-          }
-        </h2>
-        <p>{{ dash.leads }}</p>
-        <a [routerLink]="links.leads">See the leads</a>
-      </section>
-      <section class="db-card" aria-labelledby="db-visits">
-        <h2 id="db-visits">Visits</h2>
-        <p>{{ dash.visits }}</p>
-        <a [routerLink]="links.visits">See the graphs</a>
-      </section>
+      @if (dash.access.owner) {
+        <section class="db-card" aria-labelledby="db-backup">
+          <h2 id="db-backup">
+            Backups
+            @if (dash.backup.due) {
+              <span class="db-count">Due</span>
+            }
+          </h2>
+          <p>{{ dash.backup.text }}</p>
+          <a [routerLink]="links.publish" fragment="backups">Make or restore a backup</a>
+        </section>
+        <section class="db-card" aria-labelledby="db-leads">
+          <h2 id="db-leads">
+            Leads
+            @if (dash.newLeads > 0) {
+              <span class="db-count">{{ dash.newLeads }} new</span>
+            }
+          </h2>
+          <p>{{ dash.leads }}</p>
+          <a [routerLink]="links.leads">See the leads</a>
+        </section>
+        <section class="db-card" aria-labelledby="db-visits">
+          <h2 id="db-visits">Visits</h2>
+          <p>{{ dash.visits }}</p>
+          <a [routerLink]="links.visits">See the graphs</a>
+        </section>
+      }
       @if (model.release; as release) {
         <section class="db-card" aria-labelledby="db-release">
           <h2 id="db-release">What’s new</h2>
@@ -109,9 +122,11 @@
           }
         }
       </section>
-      <section class="db-card db-card--wide" aria-labelledby="db-speed">
-        <app-speed-report />
-      </section>
+      @if (dash.access.owner) {
+        <section class="db-card db-card--wide" aria-labelledby="db-speed">
+          <app-speed-report />
+        </section>
+      }
     </div>
   }
 </div>

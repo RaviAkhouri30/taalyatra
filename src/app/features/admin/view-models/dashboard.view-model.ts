@@ -1,12 +1,15 @@
 import { Injectable, computed, inject } from '@angular/core';
-import { type Observable, catchError, forkJoin, map, of, tap } from 'rxjs';
+import { type Observable, catchError, forkJoin, map, of, switchMap, take, tap } from 'rxjs';
 import { CLOCK } from '@core/tokens/clock.token';
 import { ViewModel } from '@shared/base/view-model';
 import { ContentPath } from '../models/content-path.enum';
 import { DashboardModel } from '../models/dashboard.model';
+import { type Permissions } from '../models/permissions.model';
 import { PlaceholderRule } from '../models/publish-rules';
 import { type IReleaseSummary, summarizeRelease } from '../models/releases-page.model';
 import { ALL_SECTIONS } from '../schemas/editor-tabs';
+import { AccessService } from '../services/access.service';
+import { ApprovalService } from '../services/approval.service';
 import { BackupService } from '../services/backup.service';
 import { DraftService } from '../services/draft.service';
 import { LeadsService } from '../services/leads.service';
@@ -31,6 +34,8 @@ export class DashboardViewModel extends ViewModel<DashboardModel> {
   public readonly release: IReleaseSummary | null;
 
   private readonly layout = inject(EditorLayoutViewModel);
+  private readonly access = inject(AccessService);
+  private readonly approvals = inject(ApprovalService);
   private readonly drafts = inject(DraftService);
   private readonly publishes = inject(PublishService);
   private readonly backups = inject(BackupService);
@@ -45,43 +50,63 @@ export class DashboardViewModel extends ViewModel<DashboardModel> {
   }
 
   protected override attachViewHandler(): Observable<unknown> {
-    const now = this.clock.now();
-    // forkJoin: independent reads, all needed before the dashboard can be built.
-    return forkJoin([
-      this.drafts.drafts(),
-      this.publishes.history(),
-      forkJoin(SECTION_PATHS.map((path) => this.drafts.document(path))),
-      ...this.extras(),
-    ]).pipe(
-      map(([drafts, history, documents, lastBackupAt, visits, leads]) => {
-        const byPath = new Map(SECTION_PATHS.map((path, index) => [path, documents.at(index)]));
-        const placeholders = new PlaceholderRule();
-        return new DashboardModel({
-          changeCount: drafts.size,
-          lastPublish: history[0] ?? null,
-          siteConfig: byPath.get(ContentPath.SiteConfig) ?? null,
-          visibility: byPath.get(ContentPath.SiteVisibility) ?? null,
-          warnings: ALL_SECTIONS.flatMap((section) =>
-            placeholders.check(section, byPath.get(section.path) ?? {}),
-          ),
-          lastBackupAt,
-          visits,
-          leads,
-          now,
-        });
-      }),
+    return this.access.permissions$.pipe(
+      take(1),
+      // switchMap: what's read depends on who is looking (0019).
+      switchMap((permissions) => this.read(permissions)),
       tap((dashboard) => {
         this.setData(dashboard);
       }),
     );
   }
 
-  /** Reads whose failure only means "not known": each card then says so, nothing breaks. */
-  private extras(): readonly [
+  private read(permissions: Permissions): Observable<DashboardModel> {
+    const now = this.clock.now();
+    // forkJoin: independent reads, all needed before the dashboard can be built.
+    return forkJoin([
+      this.drafts.drafts(),
+      this.publishes.history(),
+      forkJoin(SECTION_PATHS.map((path) => this.drafts.document(path))),
+      // Before the 2.0.0 rules are live they're refused: nothing waits.
+      this.approvals.requests().pipe(catchError(() => of([]))),
+      ...this.extras(permissions.isOwner),
+    ]).pipe(
+      map(([drafts, history, documents, requests, lastBackupAt, visits, leads]) => {
+        const byPath = new Map(SECTION_PATHS.map((path, index) => [path, documents.at(index)]));
+        const placeholders = new PlaceholderRule();
+        return new DashboardModel({
+          changeCount: [...drafts.keys()].filter((path) => permissions.canSeePath(path)).length,
+          lastPublish: history[0] ?? null,
+          siteConfig: byPath.get(ContentPath.SiteConfig) ?? null,
+          visibility: byPath.get(ContentPath.SiteVisibility) ?? null,
+          warnings: ALL_SECTIONS.filter((section) => permissions.canSeePath(section.path)).flatMap(
+            (section) => placeholders.check(section, byPath.get(section.path) ?? {}),
+          ),
+          lastBackupAt,
+          visits,
+          leads,
+          now,
+          permissions,
+          requests,
+        });
+      }),
+    );
+  }
+
+  /**
+   * The owner's reads (0019 decision 6), whose failure only means "not known": each card then
+   * says so, nothing breaks. A manager's are skipped: the rules refuse them, and the cards are hidden.
+   */
+  private extras(
+    owner: boolean,
+  ): readonly [
     Observable<string | null>,
     Observable<IVisitHistory | null>,
     Observable<Lead[] | null>,
   ] {
+    if (!owner) {
+      return [of(null), of(null), of(null)] as const;
+    }
     return [
       // A failed read means "not known": the card then suggests a backup, which is harmless.
       this.backups.lastMade().pipe(catchError(() => of(null))),
