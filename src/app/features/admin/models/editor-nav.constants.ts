@@ -32,9 +32,6 @@ export const VISITS_PATH = 'visits';
 /** The Leads page's path under `/admin` (0018 V12). */
 export const LEADS_PATH = 'leads';
 
-/** Team access's path under `/admin` (0019). */
-export const TEAM_ACCESS_PATH = 'team-access';
-
 /** What's new's name in the menu and its title. */
 export const RELEASES_LABEL = 'What’s new';
 
@@ -46,9 +43,6 @@ export const VISITS_LABEL = 'Visits';
 
 /** The Leads page's name in the menu and its title. */
 export const LEADS_LABEL = 'Leads';
-
-/** Team access's name in the menu and its title. */
-export const TEAM_ACCESS_LABEL = 'Team access';
 
 /** The marker a menu link can carry. */
 export enum NavBadge {
@@ -145,7 +139,6 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
       tabLink(EditorTab.Contact, IconName.Phone),
       tabLink(EditorTab.Visibility, IconName.Toggle),
       pageLink(MEDIA_LABEL, MEDIA_PATH, IconName.Folder),
-      ownerLink(TEAM_ACCESS_LABEL, TEAM_ACCESS_PATH, IconName.Lock),
     ],
   },
   {
