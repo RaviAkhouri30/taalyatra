@@ -1,5 +1,5 @@
 import { firstValueFrom } from 'rxjs';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import {
   type ITestKeys,
   NOW_SECONDS,
@@ -64,6 +64,19 @@ describe('signUpload', () => {
     const { fields } = await signedFields();
 
     expect(JSON.stringify(fields)).not.toContain(TEST_ENV.CLOUDINARY_API_SECRET);
+  });
+
+  it('should sign for a manager whose permissions allow uploads (0019)', async () => {
+    const token = await signToken(test.privateKey, { sub: 'manager-uid' });
+    const read = vi.fn(() =>
+      Promise.resolve(Response.json({ fields: { uploads: { booleanValue: true } } })),
+    );
+
+    const response = await firstValueFrom(
+      signUpload(fakeRequest(token), fakeDependencies(test.keys, { read })),
+    );
+
+    expect(response.status).toBe(HttpStatus.Ok);
   });
 
   it('should refuse before signing when the caller is another account', async () => {

@@ -70,6 +70,8 @@ export function fakeDependencies(
     now: () => NOW_MS,
     randomId: () => TEST_ID,
     send: vi.fn(() => Promise.resolve(Response.json({ result: 'ok' }))),
+    // No record unless a test gives one: a manager may not upload by default.
+    read: vi.fn(() => Promise.resolve(new Response('{}', { status: 404 }))),
     ...overrides,
   };
 }

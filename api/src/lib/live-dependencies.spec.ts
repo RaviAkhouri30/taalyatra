@@ -28,4 +28,15 @@ describe('LIVE_DEPENDENCIES', () => {
 
     expect(fetchStub).toHaveBeenCalledWith('https://example.test', { method: 'POST', body: form });
   });
+
+  it('should read as the caller, with their token as a bearer token', async () => {
+    const fetchStub = vi.fn(() => Promise.resolve(new Response('{}')));
+    vi.stubGlobal('fetch', fetchStub);
+
+    await LIVE_DEPENDENCIES.read('https://example.test/doc', 'id-token');
+
+    expect(fetchStub).toHaveBeenCalledWith('https://example.test/doc', {
+      headers: { authorization: 'Bearer id-token' },
+    });
+  });
 });

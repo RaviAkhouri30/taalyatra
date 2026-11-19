@@ -15,10 +15,12 @@ describe('MediaCardComponent', () => {
     uploadedAt: '2026-11-03T10:00:00.000Z',
   });
 
-  function render() {
+  function render(access: { canManage?: boolean; canDescribe?: boolean } = {}) {
     const fixture = TestBed.createComponent(MediaCardComponent);
     fixture.componentRef.setInput('asset', asset);
     fixture.componentRef.setInput('uses', []);
+    fixture.componentRef.setInput('canManage', access.canManage ?? true);
+    fixture.componentRef.setInput('canDescribe', access.canDescribe ?? true);
     const described: string[] = [];
     const replaced: File[] = [];
     const events: string[] = [];
@@ -123,5 +125,19 @@ describe('MediaCardComponent', () => {
     expect(element.querySelector<HTMLButtonElement>('.mc-actions button')?.disabled).toBe(true);
     expect(element.querySelector('.mc-replace')?.textContent).toContain('Working…');
     expect(element.querySelector('[role="status"]')?.textContent).toBe('Done.');
+  });
+
+  it('should offer no replace or delete, and no description change, without the right (0019)', () => {
+    const { element } = render({ canManage: false, canDescribe: false });
+
+    expect(element.querySelector('.mc-actions')).toBeNull();
+    expect(element.querySelector('textarea')?.disabled).toBe(true);
+  });
+
+  it('should let a manager with uploads describe a photo, but not replace or delete it', () => {
+    const { element } = render({ canManage: false, canDescribe: true });
+
+    expect(element.querySelector('.mc-actions')).toBeNull();
+    expect(element.querySelector('textarea')?.disabled).toBe(false);
   });
 });

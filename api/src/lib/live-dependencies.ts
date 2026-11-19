@@ -9,4 +9,5 @@ export const LIVE_DEPENDENCIES: IApiDependencies = {
   now: () => Date.now(),
   randomId: () => randomUUID(),
   send: (url, form) => fetch(url, { method: 'POST', body: form }),
+  read: (url, token) => fetch(url, { headers: { authorization: `Bearer ${token}` } }),
 };

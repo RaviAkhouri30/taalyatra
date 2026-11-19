@@ -5,6 +5,14 @@
   gap: 10px;
 }
 
+.mu-off {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px dashed t.$color-line;
+  border-radius: 12px;
+  color: t.$color-muted-strong;
+}
+
 .mu-zone {
   position: relative;
   display: grid;

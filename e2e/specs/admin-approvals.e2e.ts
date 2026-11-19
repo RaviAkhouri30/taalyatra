@@ -62,6 +62,17 @@ test.describe('Admin approvals', () => {
     }
   });
 
+  test('should let the manager upload photos but not replace or delete them', async ({
+    editor,
+    page,
+  }) => {
+    await editor.openTab('Photo library');
+
+    await expect(page.getByLabel('Choose photos')).toBeAttached();
+    await expect(page.getByRole('button', { name: /^Delete / })).toHaveCount(0);
+    await expect(page.getByLabel(/^Replace /)).toHaveCount(0);
+  });
+
   test('should lock a waiting page for the manager until they withdraw it', async ({
     editor,
     page,

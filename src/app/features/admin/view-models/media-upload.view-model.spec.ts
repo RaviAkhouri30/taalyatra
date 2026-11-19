@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { EDITOR_ADMIN, provideSignedIn } from '../testing/editor-testing';
 import { Subject, type Observable, of, throwError } from 'rxjs';
 import { MediaErrorKind } from '@core/enums/media-error-kind.enum';
 import { MediaUploadEventKind } from '@core/enums/media-upload-event-kind.enum';
@@ -30,12 +31,17 @@ describe('MediaUploadViewModel', () => {
   });
   const photo = (name = 'photo.jpg') => new File(['x'], name, { type: 'image/jpeg' });
 
-  function setUp(upload: (file: File) => Observable<MediaUploadEvent>) {
-    const store = new MemoryDocumentStore();
+  function setUp(
+    upload: (file: File) => Observable<MediaUploadEvent>,
+    seed: ConstructorParameters<typeof MemoryDocumentStore>[0] = {},
+    user = EDITOR_ADMIN,
+  ) {
+    const store = new MemoryDocumentStore(seed);
     const remove = vi.fn();
     TestBed.configureTestingModule({
       providers: [
         MediaUploadViewModel,
+        ...provideSignedIn(user),
         { provide: IMediaService, useValue: { upload: vi.fn(upload), remove } },
         { provide: IDocumentStore, useValue: store },
         { provide: CLOCK, useValue: { now: () => new Date('2026-11-03T10:00:00Z') } },
@@ -173,6 +179,21 @@ describe('MediaUploadViewModel', () => {
 
     model.retry(99);
 
+    expect(media.upload).not.toHaveBeenCalled();
+  });
+
+  it('should upload nothing for a manager whose uploads are off (0019)', () => {
+    const manager = { uid: 'manager', email: 'm@b.co' };
+    const { model, media } = setUp(
+      () => of(stored('a')),
+      { 'roles/manager': { email: manager.email, pages: {}, uploads: false, addedAt: 'x' } },
+      manager,
+    );
+
+    model.add([photo()]);
+
+    expect(model.canUpload()).toBe(false);
+    expect(model.items()).toEqual([]);
     expect(media.upload).not.toHaveBeenCalled();
   });
 });

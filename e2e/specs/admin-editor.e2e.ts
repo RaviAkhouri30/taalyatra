@@ -341,7 +341,8 @@ test.describe('Admin editor', () => {
     await page.evaluate(async () => document.fonts.ready);
     // The What's new card shows the newest release's notes, which change with every release; its
     // own specs check them. Hiding the list and masking the version keeps this about the look.
-    await page.addStyleTag({ content: '.db-notes { display: none; }' });
+    // !important: the component's scoped rule is more specific, and would otherwise win.
+    await page.addStyleTag({ content: '.db-notes { display: none !important; }' });
 
     await expect(page.locator('app-dashboard')).toHaveScreenshot('dashboard.png', {
       stylePath: 'e2e/support/visual.css',

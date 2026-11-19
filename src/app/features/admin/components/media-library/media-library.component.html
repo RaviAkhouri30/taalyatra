@@ -28,6 +28,8 @@
               [confirming]="model.confirmingDelete() === asset.id"
               [busy]="model.busyId() === asset.id"
               [notice]="model.notice()?.id === asset.id ? (model.notice()?.text ?? '') : ''"
+              [canManage]="model.canManage()"
+              [canDescribe]="model.canDescribe()"
               (described)="model.describe(asset, $event)"
               (replaced)="model.replace(asset, $event)"
               (deleteAsked)="model.askToDelete(asset)"

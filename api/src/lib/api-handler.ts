@@ -17,6 +17,8 @@ export interface IApiDependencies {
   now(): number;
   randomId(): string;
   send(url: string, form: URLSearchParams): Promise<Response>;
+  /** Reads a URL as the signed-in caller, with their ID token (0019). */
+  read(url: string, token: string): Promise<Response>;
 }
 
 const NO_STORE = { 'cache-control': 'no-store' };
