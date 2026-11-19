@@ -36,10 +36,28 @@ const AUTH_EMULATOR_HOST = '127.0.0.1:9099';
 // The admin uses the production admin UID (environment.ts, firestore.rules), so local runs
 // exercise the real admin rule (0008 D13). A UID is an identifier, not a secret.
 export const EMULATOR_USERS = [
-  { uid: '5zsz2DlUaja2Ss7wbFTrpiMMROk2', email: 'admin@taalyatra.test', password: 'emulator-admin-password' },
-  { uid: 'emulator-visitor-uid', email: 'visitor@taalyatra.test', password: 'emulator-visitor-password' },
+  {
+    uid: '5zsz2DlUaja2Ss7wbFTrpiMMROk2',
+    email: 'admin@taalyatra.test',
+    password: 'emulator-admin-password',
+  },
+  {
+    uid: 'emulator-visitor-uid',
+    email: 'visitor@taalyatra.test',
+    password: 'emulator-visitor-password',
+  },
   // A content manager (0019): no access until a test adds them on Team access, as in real life.
-  { uid: 'emulator-manager-uid', email: 'manager@taalyatra.test', password: 'emulator-manager-password' },
+  {
+    uid: 'emulator-manager-uid',
+    email: 'manager@taalyatra.test',
+    password: 'emulator-manager-password',
+  },
+  // A second manager, so each one's own permissions are tested side by side.
+  {
+    uid: 'emulator-manager-two-uid',
+    email: 'manager-two@taalyatra.test',
+    password: 'emulator-manager-two-password',
+  },
 ];
 
 /**
@@ -90,7 +108,11 @@ export function changes(writes, existing, overwrite) {
 
 async function commit(firestore, writes, deletes) {
   const operations = [
-    ...[...writes].map(([path, data]) => (batch) => batch.set(firestore.doc(path), data)),
+    ...[...writes].map(
+      ([path, data]) =>
+        (batch) =>
+          batch.set(firestore.doc(path), data),
+    ),
     ...deletes.map((path) => (batch) => batch.delete(firestore.doc(path))),
   ];
   for (let start = 0; start < operations.length; start += BATCH_LIMIT) {
@@ -147,7 +169,9 @@ async function main() {
   const overwrite = values.overwrite || values.emulator;
   const { writes, deletes } = changes(plan(db), existing, overwrite);
 
-  console.log(`Project ${project}: ${writes.size} documents to write, ${deletes.length} to delete.`);
+  console.log(
+    `Project ${project}: ${writes.size} documents to write, ${deletes.length} to delete.`,
+  );
   if (overwrite) {
     [...writes.keys()]
       .filter((path) => existing.has(path))

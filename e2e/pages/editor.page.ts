@@ -32,6 +32,8 @@ export class EditorPage extends BasePage {
 
   /** Signs out from the top bar (inside the Menu drawer on phones) and waits for the sign-in page. */
   public async signOut(): Promise<void> {
+    // The top bar is drawn with the page: only then can it be told whether Sign out is on screen.
+    await this.heading.waitFor();
     const signOut = this.page.getByRole('button', { name: 'Sign out' }).filter({ visible: true });
     if ((await signOut.count()) === 0) {
       await this.menu.click();
