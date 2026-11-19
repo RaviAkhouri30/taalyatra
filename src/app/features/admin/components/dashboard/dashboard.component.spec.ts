@@ -1,14 +1,28 @@
 import { TestBed } from '@angular/core/testing';
 import fakeDb from '@core/backends/fake/fake-db.json';
 import { AdminPageModel } from '../../models/admin-page.model';
-import { layoutStub, provideEditorTesting, provideLayout } from '../../testing/editor-testing';
+import {
+  layoutStub,
+  provideEditorTesting,
+  provideLayout,
+  provideSignedIn,
+} from '../../testing/editor-testing';
 import DashboardComponent from './dashboard.component';
 
 describe('DashboardComponent', () => {
-  function render(seed: Parameters<typeof provideEditorTesting>[0]) {
+  function render(
+    seed: Parameters<typeof provideEditorTesting>[0],
+    user?: { uid: string; email: string },
+  ) {
     const testing = provideEditorTesting(seed);
     const layout = layoutStub();
-    TestBed.configureTestingModule({ providers: [...testing.providers, provideLayout(layout)] });
+    TestBed.configureTestingModule({
+      providers: [
+        ...testing.providers,
+        ...(user ? provideSignedIn(user) : []),
+        provideLayout(layout),
+      ],
+    });
     layout.data.set(new AdminPageModel(fakeDb.pages.admin, fakeDb.site.config.brand));
     const fixture = TestBed.createComponent(DashboardComponent);
     fixture.detectChanges();
@@ -73,5 +87,30 @@ describe('DashboardComponent', () => {
     expect(
       Array.from(element.querySelectorAll('.db-group summary b'), (label) => label.textContent),
     ).toEqual(['Offer', 'Team']);
+  });
+
+  it('should show a manager their pages and requests, not the owner’s cards (0019)', () => {
+    const manager = { uid: 'manager', email: 'm@b.co' };
+    const element = render(
+      {
+        'roles/manager': {
+          email: manager.email,
+          pages: { offer: 'hidden' },
+          uploads: true,
+          addedAt: 'x',
+        },
+      },
+      manager,
+    );
+    const headings = Array.from(element.querySelectorAll('.db-card h2')).map((heading) =>
+      heading.textContent.trim(),
+    );
+
+    expect(headings).toContain('Your requests');
+    expect(headings).toContain('Shown sections');
+    for (const hidden of ['Offer', 'Backups', 'Leads', 'Visits']) {
+      expect(headings.some((heading) => heading.startsWith(hidden))).toBe(false);
+    }
+    expect(element.querySelector('app-speed-report')).toBeNull();
   });
 });

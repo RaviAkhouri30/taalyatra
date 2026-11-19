@@ -15,14 +15,23 @@ import { DraftService } from '../services/draft.service';
 import { SAFETY_COPY_KEY_PREFIX, SafetyCopyService } from '../services/safety-copy.service';
 import { ToastTone } from '@shared/enums/toast-tone.enum';
 import { ToastService } from '@shared/services/toast.service';
-import { layoutStub, provideEditorTesting, provideLayout } from '../testing/editor-testing';
+import {
+  layoutStub,
+  provideEditorTesting,
+  provideLayout,
+  provideSignedIn,
+} from '../testing/editor-testing';
 import { TEAM_HEADING, VIDEOS_HEADING } from '../schemas/content.sections';
 import { EditorPageViewModel, SAFETY_COPY_MESSAGES } from './editor-page.view-model';
 
 describe('EditorPageViewModel', () => {
   let subscription: Subscription;
 
-  function setUp(tab: unknown = EditorTab.Hero, copies: Readonly<Record<string, object>> = {}) {
+  function setUp(
+    tab: unknown = EditorTab.Hero,
+    copies: Readonly<Record<string, object>> = {},
+    options: { seed?: Record<string, object>; user?: { uid: string; email: string } } = {},
+  ) {
     const testing = provideEditorTesting({
       'home/hero': fakeDb.home.hero,
       'home/videos': fakeDb.home.videos,
@@ -31,6 +40,7 @@ describe('EditorPageViewModel', () => {
         content: { ...fakeDb.home.team, title: 'Drafted title' },
         savedAt: 'x',
       },
+      ...options.seed,
     });
     for (const [path, content] of Object.entries(copies)) {
       testing.localStore.values.set(
@@ -42,6 +52,7 @@ describe('EditorPageViewModel', () => {
     TestBed.configureTestingModule({
       providers: [
         ...testing.providers,
+        ...(options.user ? provideSignedIn(options.user) : []),
         provideLayout(layout),
         {
           provide: ActivatedRoute,
@@ -294,6 +305,42 @@ describe('EditorPageViewModel', () => {
       expect(model.unsaved()).toBeNull();
       expect(localStore.values.size).toBe(0);
       expect(store.documents.has('drafts/home__hero')).toBe(false);
+    });
+  });
+
+  describe('a change waiting for approval (0019)', () => {
+    const MANAGER = { uid: 'manager', email: 'm@b.co' };
+    const seed = {
+      'roles/manager': { email: MANAGER.email, pages: {}, uploads: true, addedAt: 'x' },
+      'approvals/r1': {
+        by: MANAGER.uid,
+        email: MANAGER.email,
+        paths: ['home/hero'],
+        note: 'New title',
+        sentAt: '2026-10-31T09:00:00.000Z',
+        status: 'waiting',
+      },
+    };
+
+    it('should lock the page for the manager, and save nothing', async () => {
+      const { model, section, store } = setUp(EditorTab.Hero, {}, { seed, user: MANAGER });
+      await vi.runAllTimersAsync();
+      const form = section('hero')!.form;
+
+      form.setValue({ ...form.getRawValue() });
+      await vi.advanceTimersByTimeAsync(AUTOSAVE_DEBOUNCE_MS);
+
+      expect(model.waiting()).toMatchObject({ locked: true, note: 'New title' });
+      expect(form.disabled).toBe(true);
+      expect(store.documents.has('drafts/home__hero')).toBe(false);
+    });
+
+    it('should tell the owner, who can still change the page', async () => {
+      const { model, section } = setUp(EditorTab.Hero, {}, { seed });
+      await vi.runAllTimersAsync();
+
+      expect(model.waiting()?.locked).toBe(false);
+      expect(section('hero')!.form.enabled).toBe(true);
     });
   });
 });

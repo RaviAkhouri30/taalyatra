@@ -34,6 +34,8 @@ import {
 import { type EditorTab } from '../models/editor-tab.enum';
 import { type IEditorSection } from '../models/i-editor-section';
 import { type IEditorTabSchema, tabSchema } from '../schemas/editor-tabs';
+import { type IWaitingNotice } from '../models/waiting-notice.model';
+import { ApprovalService } from '../services/approval.service';
 import { DraftService } from '../services/draft.service';
 import { type ISafetyCopy, SafetyCopyService } from '../services/safety-copy.service';
 import { EditorLayoutViewModel } from './editor-layout.view-model';
@@ -81,9 +83,12 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
   public readonly previewOpen = signal(false);
   /** Changes made on this device that weren't saved, offered back (0016 V2). */
   public readonly unsaved = signal<IUnsavedOffer | null>(null);
+  /** A change on this page waiting for approval; for a manager, the page is locked (0019). */
+  public readonly waiting = signal<IWaitingNotice | null>(null);
 
   private readonly route = inject(ActivatedRoute);
   private readonly drafts = inject(DraftService);
+  private readonly approvals = inject(ApprovalService);
   private readonly layout = inject(EditorLayoutViewModel);
   private readonly safety = inject(SafetyCopyService);
   private readonly toasts = inject(ToastService);
@@ -160,20 +165,26 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
   }
 
   private loadPage(tab: IEditorTabSchema, paths: readonly ContentPath[]): Observable<unknown> {
-    // forkJoin: every document the tab edits, read in parallel, before any form is built.
-    return forkJoin(paths.map((path) => this.drafts.document(path))).pipe(
-      map((documents) => {
+    // forkJoin: every document the tab edits, and whether a change on them waits for approval,
+    // read in parallel, before any form is built.
+    return forkJoin([
+      forkJoin(paths.map((path) => this.drafts.document(path))),
+      this.approvals.notice(paths),
+    ]).pipe(
+      map(([documents, waiting]) => {
         paths.forEach((path, index) => this.documents.set(path, documents.at(index) ?? {}));
         this.unsaved.set(this.findUnsaved(paths));
-        return this.buildPage(tab);
+        this.waiting.set(waiting);
+        return this.buildPage(tab, waiting?.locked ?? false);
       }),
       tap((page) => {
         this.pending.set(false);
         this.setData(page);
         this.activeAnchor.set(tab.sections[0]?.anchor ?? PageAnchor.Top);
       }),
-      // switchMap: the page is built once; from then on, follow its changes.
-      switchMap((page) => this.autosave(page, paths)),
+      // switchMap: the page is built once; from then on, follow its changes. A locked page has
+      // none to save: the rules would refuse them.
+      switchMap((page) => (this.waiting()?.locked ? EMPTY : this.autosave(page, paths))),
     );
   }
 
@@ -181,20 +192,29 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
     return routeTab(this.route.snapshot.data);
   }
 
-  private buildPage(tab: IEditorTabSchema): IEditorPage {
+  private buildPage(tab: IEditorTabSchema, locked: boolean): IEditorPage {
     return {
       tab,
       sections: tab.sections.map((section) => ({
         section,
-        form: buildFormGroup(
-          section.fields,
-          sectionContent(section, this.documents.get(section.path)),
-        ),
+        form: this.formFor(section, locked),
         // Separate namespaces: section "hero" + field "title" must not reuse the heading's id.
         titleId: `card-${section.id}`,
         fieldPrefix: `field-${section.id}`,
       })),
     };
+  }
+
+  private formFor(section: IEditorSection, locked: boolean): FormRecord<AbstractControl> {
+    const form = buildFormGroup(
+      section.fields,
+      sectionContent(section, this.documents.get(section.path)),
+    );
+    if (locked) {
+      // Read-only while it waits: the rules refuse the save anyway. No event, so no autosave.
+      form.disable({ emitEvent: false });
+    }
+    return form;
   }
 
   private autosave(page: IEditorPage, paths: readonly ContentPath[]): Observable<unknown> {

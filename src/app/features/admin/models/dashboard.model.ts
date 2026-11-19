@@ -7,11 +7,14 @@ import { type IPromotionDto } from '@shared/interfaces/i-site-config';
 import { PromotionSchedule } from '@shared/models/promotion-schedule.model';
 import { SiteVisibility } from '@shared/models/site-visibility.model';
 import { fieldOf } from '../forms/json-node';
+import { ApprovalStatus, type IApproval } from './approval.model';
 import { BackupStatus } from './backup-status.model';
 import { formatDay, formatMoment } from './editor-dates';
 import { type IPublishIssue } from './i-publish-issue';
 import { type IPublishRecord } from './i-publish-record';
+import { EditorTab } from './editor-tab.enum';
 import { type Lead, LeadStatus } from './lead.model';
+import { type Permissions } from './permissions.model';
 import { type IVisitDay } from './visit-days';
 import { recentVisitsText } from './visits-page.model';
 
@@ -29,6 +32,22 @@ export interface IDashboardSource {
   /** Every lead, newest first, or `null` when they couldn't be read (0018). */
   readonly leads: readonly Lead[] | null;
   readonly now: Date;
+  /** Who is looking (0019): a manager sees their own pages and requests only. */
+  readonly permissions: Permissions;
+  /** Every approval request (empty when they couldn't be read). */
+  readonly requests: readonly IApproval[];
+}
+
+/** Which cards the account sees, and its approvals in words (0019). */
+export interface IDashboardAccess {
+  /** The owner sees backups, leads, visits and speed (decision 6). */
+  readonly owner: boolean;
+  readonly canSeeOffer: boolean;
+  readonly canSeeVisibility: boolean;
+  /** The approvals card: always for a manager, for the owner only when something waits. */
+  readonly showApprovals: boolean;
+  readonly approvalsHeading: string;
+  readonly approvals: string;
 }
 
 function plural(count: number, one: string, many: string): string {
@@ -51,6 +70,8 @@ export class DashboardModel {
   public readonly newLeads: number;
   /** The leads in words: how many are new, and the newest. */
   public readonly leads: string;
+  /** Which cards the account sees, and its approvals (0019). */
+  public readonly access: IDashboardAccess;
 
   /** @param source What the dashboard is built from. */
   public constructor(source: IDashboardSource) {
@@ -75,6 +96,33 @@ export class DashboardModel {
       : 'Couldn’t read the visits just now.';
     this.newLeads = source.leads?.filter((lead) => lead.status === LeadStatus.New).length ?? 0;
     this.leads = DashboardModel.leadsText(source.leads, this.newLeads);
+    this.access = DashboardModel.accessOf(source);
+  }
+
+  private static accessOf(source: IDashboardSource): IDashboardAccess {
+    const { permissions } = source;
+    const owner = permissions.isOwner;
+    const waiting = source.requests.filter((request) => request.status === ApprovalStatus.Waiting);
+    return {
+      owner,
+      canSeeOffer: permissions.canSee(EditorTab.Offer),
+      canSeeVisibility: permissions.canSee(EditorTab.Visibility),
+      showApprovals: !owner || waiting.length > 0,
+      approvalsHeading: owner ? 'Waiting for approval' : 'Your requests',
+      approvals: owner
+        ? `${plural(waiting.length, 'change waits', 'changes wait')} for your approval.`
+        : DashboardModel.requestsText(source),
+    };
+  }
+
+  private static requestsText(source: IDashboardSource): string {
+    const own = source.requests.filter((request) => request.by === source.permissions.uid);
+    const waiting = own.filter((request) => request.status === ApprovalStatus.Waiting).length;
+    const sentBack = own.filter((request) => request.status === ApprovalStatus.SentBack).length;
+    if (waiting + sentBack === 0) {
+      return 'Nothing waiting for the owner. Changes on pages that need approval are sent from Review & publish.';
+    }
+    return `${plural(waiting, 'change waits', 'changes wait')} for the owner; ${plural(sentBack, 'was', 'were')} sent back to you.`;
   }
 
   private static leadsText(leads: readonly Lead[] | null, fresh: number): string {

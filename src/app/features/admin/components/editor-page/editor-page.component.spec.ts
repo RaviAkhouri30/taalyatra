@@ -2,17 +2,26 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { EDITOR_TAB_ROUTE_KEY } from '../../models/editor-nav.constants';
 import { EditorTab } from '../../models/editor-tab.enum';
-import { layoutStub, provideEditorTesting, provideLayout } from '../../testing/editor-testing';
+import {
+  layoutStub,
+  provideEditorTesting,
+  provideLayout,
+  provideSignedIn,
+} from '../../testing/editor-testing';
 import { EditorPageViewModel } from '../../view-models/editor-page.view-model';
 import EditorPageComponent from './editor-page.component';
 
 describe('EditorPageComponent', () => {
-  function render() {
-    const testing = provideEditorTesting();
+  function render(
+    seed: Parameters<typeof provideEditorTesting>[0] = {},
+    user?: { uid: string; email: string },
+  ) {
+    const testing = provideEditorTesting(seed);
     const layout = layoutStub();
     TestBed.configureTestingModule({
       providers: [
         ...testing.providers,
+        ...(user ? provideSignedIn(user) : []),
         provideLayout(layout),
         {
           provide: ActivatedRoute,
@@ -82,5 +91,37 @@ describe('EditorPageComponent', () => {
 
     expect(fixture.componentInstance.hasUnsavedChanges()).toBe(true);
     expect(leave()).toBe(true);
+  });
+
+  it('should show a manager their waiting change and keep the page from changing (0019)', () => {
+    const manager = { uid: 'manager', email: 'm@b.co' };
+    const { element } = render(
+      {
+        'roles/manager': { email: manager.email, pages: {}, uploads: true, addedAt: 'x' },
+        'approvals/r1': {
+          by: manager.uid,
+          email: manager.email,
+          paths: ['site/config'],
+          note: 'New dates',
+          sentAt: '2026-10-31T09:00:00.000Z',
+          status: 'waiting',
+        },
+      },
+      manager,
+    );
+    const banner = element.querySelector('.ep-waiting');
+
+    expect(banner?.getAttribute('data-locked')).toBe('true');
+    expect(banner?.textContent).toContain('You sent changes on this page for approval');
+    expect(element.querySelector('.ep-waiting-note')?.textContent).toBe('“New dates”');
+    expect(banner?.querySelector('a')?.getAttribute('href')).toBe('/admin/publish');
+    expect(element.querySelector<HTMLFieldSetElement>('fieldset.ep-cards')?.disabled).toBe(true);
+  });
+
+  it('should show no banner, and an open page, when nothing waits', () => {
+    const { element } = render();
+
+    expect(element.querySelector('.ep-waiting')).toBeNull();
+    expect(element.querySelector<HTMLFieldSetElement>('fieldset.ep-cards')?.disabled).toBe(false);
   });
 });
