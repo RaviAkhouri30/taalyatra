@@ -178,7 +178,7 @@ sequenceDiagram
   VP->>VS: getVideos()
   VS-->>VP: replayed, no request
   VP->>P: get('pages/videos') (the `pages` collection, read whole once)
-  VP->>VP: combineLatest → one render; chip click → computed filter, no I/O
+  VP->>VP: combineLatest → one render · chip click → computed filter, no I/O
 ```
 
 ## 7. Edit, autosave and preview (1.6.0)
@@ -222,7 +222,7 @@ sequenceDiagram
   PS->>S: commit([set live…, set publishes/{id} with before, delete drafts…, trim history to 20])
   S-->>P: done → toast, reload, recount drafts
   O->>P: Go back to before this publish → (Download a backup first) → Go back
-  Note right of PS: 0016 V3: the chosen publish and every later one;<br/>each document takes its "before" from the earliest of them
+  Note right of PS: 0016 V3: the chosen publish and every later one.<br/>Each document takes its "before" from the earliest of them
   PS->>S: commit([set drafts from the combined before])
 ```
 
@@ -253,7 +253,7 @@ sequenceDiagram
   V->>B: restore(backup)
   B->>D: saveAll(content → drafts)
   B->>S: commit([library entries that still exist])
-  V-->>O: Review & publish lists the changes; nothing is live until Publish
+  V-->>O: Review & publish lists the changes, and nothing is live until Publish
   Note over O,L: Safety copy (V2): each change is kept in DeviceStoreService at once and dropped once its draft saves.<br/>Opening a tab whose copy differs from what loaded offers "Restore them" (saveAll → reload) or "Throw them away".
 ```
 
@@ -331,4 +331,31 @@ sequenceDiagram
   R->>F: post to vitals, failures ignored
   D->>F: on request: read speed reports, delete those over 30 days
   D->>F: Visits or dashboard: each finished day → create visitDays/{day}, then delete its visits (500 per commit)
+```
+
+## 12. Send for approval, approve or send back (0019, 2.0.0)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor M as Manager
+  participant R as Review & publish
+  participant A as ApprovalService
+  participant F as Firestore (rules)
+  actor O as Owner
+
+  M->>R: tick changes, write a note, Send for approval
+  R->>A: send(paths, note)
+  A->>F: one commit: approvals/{id} waiting + locks/{draftKey} per draft
+  F-->>A: allowed: own request, pages they see, locks only with it
+  Note over M,F: the drafts are locked for managers, and the editor shows why
+  O->>R: Waiting for your approval (badge)
+  alt Approve and publish
+    R->>A: approve(request, drafts read now)
+    A->>F: one commit: live documents + history (approvedFrom) + answer + unlocks
+  else Send back with a reason
+    R->>A: sendBack(request, reason)
+    A->>F: one commit: answer + unlocks
+  end
+  F-->>M: Your requests shows the answer
 ```

@@ -52,3 +52,22 @@ flowchart TD
   MP --> UP["MediaUploadComponent (MediaUploadViewModel)<br/>queue · progress · retry"]
   IF -->|Crop| CR["ImageCropComponent<br/>drag · move buttons · arrow keys · zoom<br/>(CropBoxDirective, CropFrame)"]
 ```
+
+## Roles and approvals (2.0.0)
+
+New admin routes and components ([ADR-0018](adr/0018-roles-and-approvals.md)). Every editor route sits behind
+`editorGuard` (owner or manager); `editorTabGuard` keeps a manager off hidden pages, and `ownerGuard` keeps them off the
+owner's own pages.
+
+```mermaid
+flowchart TD
+  L["EditorLayoutComponent<br/>menu from navGroupsFor(permissions) · approvals badge"]
+  L -->|team-access · ownerGuard| TA["TeamAccessPageComponent (TeamAccessViewModel)"]
+  TA --> MC["ManagerCardComponent"]
+  TA --> MF["ManagerFormComponent<br/>UID · email · setting per page · uploads"]
+  L -->|publish| PP["PublishPageComponent (PublishPageViewModel)<br/>authors · ticks · publish or send · note"]
+  PP --> AP["ApprovalsPanelComponent (ApprovalsPanelViewModel)"]
+  AP --> AC["ApprovalCardComponent<br/>approve · send back · withdraw · clear"]
+  L -->|editor tabs · editorTabGuard| EP["EditorPageComponent<br/>waiting notice · locked fieldset for managers"]
+  L -->|visits, leads · ownerGuard| OW["Owner-only pages"]
+```

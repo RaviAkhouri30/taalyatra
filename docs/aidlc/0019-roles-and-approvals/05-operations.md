@@ -7,7 +7,9 @@
 - **2.0.1:** photo permissions: managers with **Can upload photos** upload; replace and delete stay the owner's. The upload
   function deploys with the site (`api_location: "api"`), so merging updates both; it needs no new Azure setting. Rollback:
   redeploy tag `v2.0.0` (managers then can't upload again; nothing stored changes).
-- **CHANGELOG entry:** ☑ `## [2.0.0] - 2026-11-19`, with what's still to come in 2.0.x; ☑ `## [2.0.1] - 2026-11-19`.
+- **2.0.2:** tests and records only (the emulator suite with a manager, ADR-0018, record 04); no deploy steps.
+- **CHANGELOG entry:** ☑ `## [2.0.0] - 2026-11-19`, with what's still to come in 2.0.x; ☑ `## [2.0.1] - 2026-11-19`;
+  ☑ `## [2.0.2] - 2026-11-20`.
 - **Deploy notes:**
   - **Backup first:** `npm run export:firestore -- <key.json>` (live content to `backups/`).
   - **Rules:** `npm run deploy:rules` adds `roles`, `approvals` and `locks`, per-page publishing for managers, and

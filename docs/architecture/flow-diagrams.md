@@ -31,7 +31,7 @@ flowchart LR
   D -->|approve| C[Construction<br/>code + tests]
   C --> V{npm run verify<br/>+ e2e green?}
   V -- no --> C
-  V -- yes -->|approve| O[Operations<br/>release:minor · CHANGELOG · deploy]
+  V -->|yes, approve| O[Operations<br/>release:minor · CHANGELOG · deploy]
 ```
 
 ## Email adapter selection (factory)
