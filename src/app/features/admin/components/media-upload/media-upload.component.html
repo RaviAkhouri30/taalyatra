@@ -1,14 +1,28 @@
-<label
-  class="mu-zone"
-  [class.mu-zone--over]="dragging()"
-  (dragover)="dragOver($event)"
-  (dragleave)="dragging.set(false)"
-  (drop)="drop($event)"
->
-  <input #files class="mu-input" type="file" multiple [accept]="accept" (change)="choose(files)" />
-  <span class="mu-title">Choose photos</span>
-  <span class="mu-hint">Or drop them here. JPG, PNG, WebP or HEIC, up to 15 MB each.</span>
-</label>
+@if (!model.canUpload()) {
+  <p class="mu-off">
+    Uploading photos is off for your account. You can still use any photo already in the library;
+    ask the owner to turn uploads on if you need to add new ones.
+  </p>
+} @else {
+  <label
+    class="mu-zone"
+    [class.mu-zone--over]="dragging()"
+    (dragover)="dragOver($event)"
+    (dragleave)="dragging.set(false)"
+    (drop)="drop($event)"
+  >
+    <input
+      #files
+      class="mu-input"
+      type="file"
+      multiple
+      [accept]="accept"
+      (change)="choose(files)"
+    />
+    <span class="mu-title">Choose photos</span>
+    <span class="mu-hint">Or drop them here. JPG, PNG, WebP or HEIC, up to 15 MB each.</span>
+  </label>
+}
 <p class="mu-summary" role="status">{{ model.summary() }}</p>
 @if (model.items().length > 0) {
   <ul class="mu-list">

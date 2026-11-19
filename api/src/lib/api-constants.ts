@@ -1,4 +1,4 @@
-/** The only account allowed to sign or delete. A UID isn't a secret (ADR-0012). */
+/** The owner: uploads and deletes; managers only upload, when allowed (0019). A UID isn't a secret (ADR-0012). */
 export const ADMIN_UID = '5zsz2DlUaja2Ss7wbFTrpiMMROk2';
 
 /** The Firebase project whose sign-ins are accepted. */
@@ -7,6 +7,15 @@ export const FIREBASE_PROJECT_ID = 'taal-yatra';
 /** Google's public keys for Firebase ID tokens. */
 export const FIREBASE_KEYS_URL =
   'https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com';
+
+/**
+ * Firestore's documents, read with the caller's own sign-in (0019 decision 8): the rules let each
+ * account read only its own Team access record, so this server holds no database credential.
+ */
+export const FIRESTORE_DOCUMENTS_URL = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents`;
+
+/** Where Team access keeps each manager's permissions, by account id. */
+export const ROLES_COLLECTION = 'roles';
 
 /** The header carrying the token. Not `Authorization`: users report the platform replacing it. */
 export const TOKEN_HEADER = 'x-firebase-token';

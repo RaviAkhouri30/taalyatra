@@ -2,7 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MediaUploadEventKind } from '@core/enums/media-upload-event-kind.enum';
 import { IMediaService } from '@core/interfaces/i-media-service';
-import { layoutStub, provideEditorTesting, provideLayout } from '../../testing/editor-testing';
+import {
+  layoutStub,
+  provideEditorTesting,
+  provideLayout,
+  provideSignedIn,
+} from '../../testing/editor-testing';
 import { MemoryDocumentStore } from '../../testing/memory-document-store';
 import { IDocumentStore } from '@core/interfaces/i-document-store';
 import MediaLibraryComponent from './media-library.component';
@@ -26,11 +31,16 @@ describe('MediaLibraryComponent', () => {
     }),
   );
 
-  function render(seed: Parameters<typeof provideEditorTesting>[0], store?: MemoryDocumentStore) {
+  function render(
+    seed: Parameters<typeof provideEditorTesting>[0],
+    store?: MemoryDocumentStore,
+    user?: { uid: string; email: string },
+  ) {
     const testing = provideEditorTesting(seed);
     TestBed.configureTestingModule({
       providers: [
         ...testing.providers,
+        ...(user ? provideSignedIn(user) : []),
         provideLayout(layoutStub()),
         { provide: IMediaService, useValue: { upload, remove: () => of(undefined) } },
         ...(store ? [{ provide: IDocumentStore, useValue: store }] : []),
@@ -143,5 +153,23 @@ describe('MediaLibraryComponent', () => {
     await fixture.whenStable();
 
     expect(element.querySelector('.ml-empty')).not.toBeNull();
+  });
+
+  it('should let a manager with uploads add and describe photos, but not replace or delete (0019)', () => {
+    const manager = { uid: 'manager', email: 'm@b.co' };
+    const { element } = render(
+      {
+        'media/abc': dto,
+        'roles/manager': { email: manager.email, pages: {}, uploads: true, addedAt: 'x' },
+      },
+      undefined,
+      manager,
+    );
+
+    expect(element.querySelector('app-media-upload input[type="file"]')).not.toBeNull();
+    expect(element.querySelector('app-media-card .mc-actions')).toBeNull();
+    expect(element.querySelector<HTMLTextAreaElement>('app-media-card textarea')?.disabled).toBe(
+      false,
+    );
   });
 });

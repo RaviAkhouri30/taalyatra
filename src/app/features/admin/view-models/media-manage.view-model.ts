@@ -1,4 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   type Observable,
   EMPTY,
@@ -7,6 +8,7 @@ import {
   concatMap,
   filter,
   finalize,
+  map,
   merge,
   switchMap,
   tap,
@@ -16,6 +18,7 @@ import { IMediaService, MediaError, type MediaUploadEvent } from '@core/interfac
 import { mediaFileRefusal } from '../models/media-file';
 import { type MediaAsset } from '../models/media-asset.model';
 import { MEDIA_ERROR_TEXT } from '../models/media-upload.constants';
+import { AccessService } from '../services/access.service';
 import { MediaUsageService } from '../services/media-usage.service';
 import { EditorLayoutViewModel } from './editor-layout.view-model';
 import { MediaLibraryViewModel } from './media-library.view-model';
@@ -57,6 +60,16 @@ export class MediaManageViewModel extends MediaLibraryViewModel {
   public readonly busyId = signal<string | null>(null);
   /** The latest message. */
   public readonly notice = signal<IMediaNotice | null>(null);
+  /** Replacing and deleting change the live site: the owner's only (0019 decision 6). */
+  public readonly canManage = toSignal(
+    inject(AccessService).permissions$.pipe(map((permissions) => permissions.isOwner)),
+    { initialValue: false },
+  );
+  /** Describing is a library change: the owner, or a manager with uploads on, as the rules allow. */
+  public readonly canDescribe = toSignal(
+    inject(AccessService).permissions$.pipe(map((permissions) => permissions.canUpload)),
+    { initialValue: false },
+  );
 
   private readonly media = inject(IMediaService);
   private readonly usage = inject(MediaUsageService);

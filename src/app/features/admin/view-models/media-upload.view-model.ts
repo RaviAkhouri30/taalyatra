@@ -1,4 +1,5 @@
 import { Injectable, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   type Observable,
   EMPTY,
@@ -26,6 +27,7 @@ import { type MediaAsset } from '../models/media-asset.model';
 import { mediaFileRefusal } from '../models/media-file';
 import { MediaUploadStatus } from '../models/media-upload-status.enum';
 import { MEDIA_ERROR_TEXT, MEDIA_UPLOAD_CONCURRENCY } from '../models/media-upload.constants';
+import { AccessService } from '../services/access.service';
 import { MediaLibraryService } from '../services/media-library.service';
 
 /**
@@ -47,6 +49,12 @@ export class MediaUploadViewModel extends ViewModel<readonly IMediaUploadItem[]>
   /** Each new library entry, once it's stored. */
   public readonly uploaded$: Observable<MediaAsset>;
 
+  /** The owner, or a manager with uploads on (0019); the upload function checks the same. */
+  public readonly canUpload = toSignal(
+    inject(AccessService).permissions$.pipe(map((permissions) => permissions.canUpload)),
+    { initialValue: false },
+  );
+
   private readonly media = inject(IMediaService);
   private readonly library = inject(MediaLibraryService);
   private readonly logger = inject(LoggerService);
@@ -65,6 +73,9 @@ export class MediaUploadViewModel extends ViewModel<readonly IMediaUploadItem[]>
 
   /** @param files The files the owner chose or dropped. */
   public add(files: readonly File[]): void {
+    if (!this.canUpload()) {
+      return;
+    }
     for (const file of files) {
       const message = mediaFileRefusal(file);
       const id = this.nextId;

@@ -1,6 +1,5 @@
 import { type HttpResponseInit } from '@azure/functions';
 import { type Observable, map } from 'rxjs';
-import { verifyAdmin } from './admin-token.js';
 import {
   ALLOWED_FORMATS,
   HttpStatus,
@@ -11,6 +10,7 @@ import {
 import { type IApiDependencies, type IApiRequest, jsonResponse } from './api-handler.js';
 import { readCloudinaryConfig } from './cloudinary-config.js';
 import { signParams } from './cloudinary-signature.js';
+import { verifyUploader } from './uploader-token.js';
 
 const MS_PER_SECOND = 1000;
 
@@ -26,13 +26,14 @@ export interface ISignedUpload {
  *
  * @param request The incoming request.
  * @param deps Settings, keys, clock and id generator.
- * @returns Emits the response once the caller is verified as the admin.
+ * @returns Emits the response once the caller is verified as the owner or a manager allowed to
+ *   upload (0019).
  */
 export function signUpload(
   request: IApiRequest,
   deps: IApiDependencies,
 ): Observable<HttpResponseInit> {
-  return verifyAdmin(request.headers.get(TOKEN_HEADER), deps.keys, deps.now()).pipe(
+  return verifyUploader(request.headers.get(TOKEN_HEADER), deps).pipe(
     map(() => {
       const { cloudName, apiKey, apiSecret } = readCloudinaryConfig(deps.env);
       const params = {

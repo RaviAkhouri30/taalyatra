@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { EDITOR_ADMIN, provideSignedIn } from '../../testing/editor-testing';
 import { Observable, of, throwError } from 'rxjs';
 import { MediaErrorKind } from '@core/enums/media-error-kind.enum';
 import { MediaUploadEventKind } from '@core/enums/media-upload-event-kind.enum';
@@ -24,11 +25,16 @@ describe('MediaUploadComponent', () => {
   };
   const photo = new File(['x'], 'photo.jpg', { type: 'image/jpeg' });
 
-  function render(upload = vi.fn(() => of(stored))) {
+  function render(
+    upload = vi.fn(() => of(stored)),
+    store = new MemoryDocumentStore(),
+    user = EDITOR_ADMIN,
+  ) {
     TestBed.configureTestingModule({
       providers: [
+        ...provideSignedIn(user),
         { provide: IMediaService, useValue: { upload, remove: vi.fn() } },
-        { provide: IDocumentStore, useValue: new MemoryDocumentStore() },
+        { provide: IDocumentStore, useValue: store },
         { provide: CLOCK, useValue: { now: () => new Date('2026-11-03T10:00:00Z') } },
         { provide: LoggerService, useValue: { error: vi.fn() } },
       ],
@@ -156,5 +162,19 @@ describe('MediaUploadComponent', () => {
 
     expect(element.querySelectorAll('progress')).toHaveLength(3);
     expect(element.querySelector('.mu-state')?.textContent).toBe('Waiting');
+  });
+
+  it('should explain, instead of the drop zone, when uploads are off (0019)', () => {
+    const manager = { uid: 'manager', email: 'm@b.co' };
+    const { element } = render(
+      undefined,
+      new MemoryDocumentStore({
+        'roles/manager': { email: manager.email, pages: {}, uploads: false, addedAt: 'x' },
+      }),
+      manager,
+    );
+
+    expect(element.querySelector('input[type="file"]')).toBeNull();
+    expect(element.querySelector('.mu-off')?.textContent).toContain('Uploading photos is off');
   });
 });

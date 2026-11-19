@@ -41,7 +41,7 @@
     </button>
     <button type="button" (click)="deleteCancelled.emit()">Cancel</button>
   </div>
-} @else {
+} @else if (canManage()) {
   <div class="mc-actions">
     <label class="mc-replace" [class.mc-replace--busy]="busy()">
       <input

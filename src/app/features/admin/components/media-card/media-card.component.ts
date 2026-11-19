@@ -4,6 +4,7 @@ import {
   Component,
   type OnInit,
   computed,
+  effect,
   input,
   output,
 } from '@angular/core';
@@ -32,6 +33,10 @@ export class MediaCardComponent implements OnInit {
   public readonly busy = input(false);
   /** A message about the last action; empty for none. */
   public readonly notice = input('');
+  /** Whether Replace and Delete are offered: the owner's only (0019). */
+  public readonly canManage = input(true);
+  /** Whether the description can be changed (0019: the owner, or a manager with uploads on). */
+  public readonly canDescribe = input(true);
 
   /** Emits the new description when the owner leaves the field having changed it. */
   public readonly described = output<string>();
@@ -51,6 +56,17 @@ export class MediaCardComponent implements OnInit {
     nonNullable: true,
     validators: [Validators.maxLength(CONTENT_MAX_LENGTH.imageAlt)],
   });
+
+  public constructor() {
+    // Follows the permission, which may arrive after the card is shown.
+    effect(() => {
+      if (this.canDescribe()) {
+        this.description.enable({ emitEvent: false });
+      } else {
+        this.description.disable({ emitEvent: false });
+      }
+    });
+  }
 
   public ngOnInit(): void {
     this.description.setValue(this.asset().dto.description);
