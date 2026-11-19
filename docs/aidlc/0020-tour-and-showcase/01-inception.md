@@ -70,4 +70,4 @@ find what the website does, where each thing is changed, and what their own acco
 
 ---
 
-**Approval:** ☐ Approved by \_\_\_\_ on \_\_\_\_
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-20, with D1–D4 as recommended.
