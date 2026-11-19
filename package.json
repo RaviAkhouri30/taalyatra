@@ -29,7 +29,8 @@
     "export:firestore": "node scripts/export-firestore.mjs",
     "deploy:rules": "firebase deploy --only firestore:rules,firestore:indexes --project taal-yatra",
     "sonar": "npm run lint:report && npx --yes @sonar/scan@5.0.2 -Dsonar.projectVersion=$npm_package_version",
-    "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test:coverage && npm run test:api && npm run build",
+    "check:diagrams": "node scripts/check-diagrams.mjs",
+    "verify": "npm run format:check && npm run lint && npm run check:diagrams && npm run typecheck && npm run test:coverage && npm run test:api && npm run build",
     "release:patch": "npm version patch -m \"chore(release): v%s\"",
     "release:minor": "npm version minor -m \"chore(release): v%s\"",
     "release:major": "npm version major -m \"chore(release): v%s\""
@@ -70,6 +71,7 @@
     "firebase-admin": "14.5.0",
     "firebase-tools": "15.34.1",
     "jsdom": "^28.0.0",
+    "mermaid": "12.3.0",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
     "typescript-eslint": "8.72.0",

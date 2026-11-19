@@ -16,30 +16,62 @@ const MANAGER = {
   email: 'manager@taalyatra.test',
   password: 'emulator-manager-password',
 };
+const MANAGER_TWO = {
+  uid: 'emulator-manager-two-uid',
+  email: 'manager-two@taalyatra.test',
+  password: 'emulator-manager-two-password',
+};
+
+type IManagerAccount = typeof MANAGER;
 
 /** Starts each run without the manager, so Team access adds them through the rules. */
 async function removeManager(request: APIRequestContext): Promise<void> {
   await request.delete(`${DOCUMENTS_URL}/roles/${MANAGER.uid}`, { headers: OWNER });
 }
 
-/** @returns The manager's ID token from the auth emulator. */
-async function managerToken(request: APIRequestContext): Promise<string> {
+/** @returns A manager's ID token from the auth emulator. */
+async function managerToken(
+  request: APIRequestContext,
+  account: IManagerAccount = MANAGER,
+): Promise<string> {
   const response = await request.post(SIGN_IN_URL, {
-    data: { email: MANAGER.email, password: MANAGER.password, returnSecureToken: true },
+    data: { email: account.email, password: account.password, returnSecureToken: true },
   });
   return ((await response.json()) as { idToken: string }).idToken;
 }
 
 /** A draft as a manager's browser saves it, in Firestore's REST shape. */
-function managerDraft(path: string): object {
+function managerDraft(path: string, account: IManagerAccount = MANAGER): object {
   return {
     fields: {
       path: { stringValue: path },
       content: { mapValue: { fields: { title: { stringValue: 'Crafted' } } } },
       savedAt: { stringValue: new Date().toISOString() },
-      savedBy: { stringValue: MANAGER.uid },
+      savedBy: { stringValue: account.uid },
     },
   };
+}
+
+/** Stores a manager's Team access record directly, as the owner would. */
+async function storeRole(
+  request: APIRequestContext,
+  account: IManagerAccount,
+  pages: Readonly<Record<string, string>>,
+): Promise<void> {
+  const fields = Object.fromEntries(
+    Object.entries(pages).map(([page, access]) => [page, { stringValue: access }]),
+  );
+  await request.patch(`${DOCUMENTS_URL}/roles/${account.uid}`, {
+    headers: OWNER,
+    data: {
+      fields: {
+        email: { stringValue: account.email },
+        pages: { mapValue: { fields } },
+        uploads: { booleanValue: true },
+        addedAt: { stringValue: new Date().toISOString() },
+      },
+    },
+  });
 }
 
 /** Roles and approvals (0019) through the real Firestore rules, on the emulator. */
@@ -121,5 +153,41 @@ test.describe('Firebase roles (emulator)', () => {
     expect(live.status()).toBe(403);
     expect(allowed.status()).toBe(200);
     await request.delete(`${DOCUMENTS_URL}/drafts/home__shows`, { headers: OWNER });
+  });
+
+  test('should give two managers each their own access', async ({ editor, page, request }) => {
+    await storeRole(request, MANAGER, { hero: 'hidden' });
+    await storeRole(request, MANAGER_TWO, { team: 'hidden' });
+    const one = { Authorization: `Bearer ${await managerToken(request, MANAGER)}` };
+    const two = { Authorization: `Bearer ${await managerToken(request, MANAGER_TWO)}` };
+    const draft = (path: string, account: IManagerAccount, headers: Record<string, string>) =>
+      request.patch(`${DOCUMENTS_URL}/drafts/${path.replace('/', '__')}`, {
+        headers,
+        data: managerDraft(path, account),
+      });
+
+    expect((await draft('home/hero', MANAGER, one)).status()).toBe(403);
+    expect((await draft('home/team', MANAGER, one)).status()).toBe(200);
+    expect((await draft('home/team', MANAGER_TWO, two)).status()).toBe(403);
+    expect((await draft('home/hero', MANAGER_TWO, two)).status()).toBe(200);
+    for (const path of ['home__hero', 'home__team']) {
+      await request.delete(`${DOCUMENTS_URL}/drafts/${path}`, { headers: OWNER });
+    }
+
+    // The menus follow the same settings.
+    for (const [account, shown, hidden] of [
+      [MANAGER, 'Team', 'Hero'],
+      [MANAGER_TWO, 'Hero', 'Team'],
+    ] as const) {
+      await editor.signIn(account);
+      if (await editor.menu.isVisible()) {
+        await editor.menu.click();
+      }
+      await expect(editor.tabs.getByRole('link', { name: shown, exact: true })).toHaveCount(1);
+      await expect(editor.tabs.getByRole('link', { name: hidden, exact: true })).toHaveCount(0);
+      // On tablets the open drawer covers the top bar's Sign out; a reload closes it.
+      await page.reload();
+      await editor.signOut();
+    }
   });
 });

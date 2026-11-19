@@ -52,7 +52,8 @@ npm run export:firestore -- <key.json>   # back up live content to backups/ (bef
 npm run deploy:rules   # deploy firestore.rules + indexes to project taal-yatra
 npm run prove:cloudinary -- [--dry-run | photo.heic]  # checks GPS removal on the real account (keys from your shell)
 npm run sonar          # SonarQube scan (needs SONAR_HOST_URL and SONAR_TOKEN env vars)
-npm run verify         # format:check + lint + typecheck + test:coverage + test:api + build
+npm run check:diagrams # render every Mermaid diagram in the Markdown, fail on a broken one
+npm run verify         # format:check + lint + check:diagrams + typecheck + test:coverage + test:api + build
 ```
 
 **Definition of done:** `npm run verify` ✔ · `npm run e2e` ✔ · `npm run test:rules` ✔ and
