@@ -6,6 +6,19 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-11-19
+
+### Added
+
+- **Photo uploads for managers:** a manager whose **Can upload photos** is on adds photos to the library, from the library
+  or while choosing a photo for a page, and can describe them. With it off, they see why instead of the upload area, and
+  the upload service refuses them too.
+
+### Changed
+
+- **Replacing and deleting photos are yours only:** a manager doesn’t see Replace or Delete, since either changes the live
+  site.
+
 ## [2.0.0] - 2026-11-19
 
 A second kind of account: content managers, who help with the website on the pages you allow, with your approval where
