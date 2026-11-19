@@ -6,6 +6,38 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-11-19
+
+A second kind of account: content managers, who help with the website on the pages you allow, with your approval where
+you want it. You stay the owner, with full access that nothing on the new pages can take away.
+
+### Added
+
+- **Team access** in the editor’s menu (Settings): add a manager by the User UID of the account you created for them in
+  Firebase, and their email. For each editor page choose **Hidden**, **Needs approval** (the default) or **Can publish**,
+  and whether they can upload photos. Change or remove a manager at any time; it applies from their next click.
+- **Send for approval:** on Review & publish, a manager’s changes on pages that need approval are sent to you with a note,
+  and those they may publish go live, from one button that says which is which.
+- **Waiting for your approval** on Review & publish, with a count in the menu and on the dashboard: check each change in
+  the preview, then **Approve and publish**, or **Send back** with a reason the manager sees.
+- **Who changed what:** Review & publish names the author of each change and has a tick box on each. Your own changes are
+  ticked; someone else’s start unticked, so nothing half-finished goes live by accident. The history says who published,
+  and whose change was approved.
+- **A waiting page is locked for managers** until you answer, so you approve exactly what you reviewed; the manager can
+  withdraw it to keep editing. You can still adjust it before approving.
+- **The manager’s own dashboard and menu:** only their pages and requests. Leads, Visits, backups, going back to an
+  earlier publish, the speed report and Team access stay yours.
+
+### Changed
+
+- **The publish bar publishes your own changes only.** A colleague’s are published from Review & publish.
+- **New database rules** decide who may change what, page by page. Deploy them with this version
+  (`npm run deploy:rules`); your own access is unchanged.
+
+### Coming in 2.0.x
+
+- Managers can’t upload photos yet, whatever their setting; deleting and replacing photos will stay yours.
+
 ## [1.13.0] - 2026-11-18
 
 ### Added
