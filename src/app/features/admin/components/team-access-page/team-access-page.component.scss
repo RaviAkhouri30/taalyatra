@@ -1,0 +1,58 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.ta {
+  display: grid;
+  gap: 16px;
+  max-width: 860px;
+  padding: 24px;
+
+  @include bp.down(bp.$phone) {
+    padding: 16px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+  }
+}
+
+.ta-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.ta-lead,
+.ta-count,
+.ta-empty {
+  margin: 0;
+  color: t.$color-muted-strong;
+}
+
+.ta-lead {
+  margin-top: 6px;
+}
+
+.ta-problem {
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid t.$color-danger-line;
+  border-radius: 8px;
+  background: t.$color-danger-tint;
+  color: t.$color-danger-text;
+}
+
+.ta-list {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

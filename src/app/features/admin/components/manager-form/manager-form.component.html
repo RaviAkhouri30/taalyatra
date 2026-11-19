@@ -1,0 +1,89 @@
+<form
+  class="mf"
+  [formGroup]="form()"
+  aria-labelledby="mf-heading"
+  novalidate
+  (ngSubmit)="submitted.emit()"
+>
+  <h2 id="mf-heading">{{ heading() }}</h2>
+  @if (adding()) {
+    <ol class="mf-steps">
+      <li>
+        In the Firebase console, open <strong>Authentication → Users → Add user</strong>, and give
+        them an email and a password. Tell them the password yourself; it never passes through this
+        site.
+      </li>
+      <li>Copy that user’s <strong>User UID</strong> from the same list.</li>
+      <li>Paste it below, choose what they can do, and save. They can sign in at once.</li>
+    </ol>
+  }
+  <div class="mf-account">
+    <label class="mf-field">
+      <span>User UID</span>
+      @let uidError = errorOf('uid');
+      <input
+        type="text"
+        formControlName="uid"
+        autocomplete="off"
+        spellcheck="false"
+        required
+        [attr.aria-invalid]="uidError !== null"
+        [attr.aria-describedby]="uidError ? 'mf-uid-error' : null"
+      />
+      @if (uidError) {
+        <small class="mf-error" id="mf-uid-error">{{ uidError }}</small>
+      }
+    </label>
+    <label class="mf-field">
+      <span>Their email</span>
+      @let emailError = errorOf('email');
+      <input
+        type="email"
+        inputmode="email"
+        formControlName="email"
+        autocomplete="off"
+        required
+        [attr.maxlength]="emailMax"
+        [attr.aria-invalid]="emailError !== null"
+        [attr.aria-describedby]="emailError ? 'mf-email-error' : 'mf-email-hint'"
+      />
+      @if (emailError) {
+        <small class="mf-error" id="mf-email-error">{{ emailError }}</small>
+      } @else {
+        <small class="mf-hint" id="mf-email-hint"
+          >Shown on their card, so you know who it is.</small
+        >
+      }
+    </label>
+  </div>
+  <fieldset class="mf-pages" formGroupName="pages">
+    <legend>What they can do on each page</legend>
+    <p class="mf-hint">
+      <strong>Needs approval</strong>: they edit and send it to you. <strong>Can publish</strong>:
+      it goes live without you. <strong>Hidden</strong>: not in their menu.
+    </p>
+    @for (row of rows; track row.tab) {
+      <label class="mf-row">
+        <span>{{ row.label }}</span>
+        <select [formControlName]="row.tab">
+          @for (choice of choices; track choice.access) {
+            <option [value]="choice.access">{{ choice.label }}</option>
+          }
+        </select>
+      </label>
+    }
+  </fieldset>
+  <label class="mf-check">
+    <input type="checkbox" formControlName="uploads" />
+    <span
+      >Can upload photos to the library. Deleting or replacing photos stays with you, since that
+      changes the live site.</span
+    >
+  </label>
+  <div class="mf-actions">
+    <button appButton type="submit" [disabled]="saving()">
+      {{ saving() ? 'Saving…' : 'Save' }}
+    </button>
+    <button appButton type="button" [variant]="ghost" (click)="cancelled.emit()">Cancel</button>
+  </div>
+</form>

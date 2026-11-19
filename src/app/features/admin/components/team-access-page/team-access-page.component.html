@@ -1,0 +1,49 @@
+<div class="ta">
+  <div class="ta-head">
+    <div>
+      <h1 class="d">Team access</h1>
+      <p class="ta-lead">
+        Managers help with the site, with only the pages you allow. You always keep full access:
+        your own account isn’t on this list and can’t be changed here.
+      </p>
+    </div>
+    @if (!formOpen()) {
+      <button appButton type="button" (click)="model.add()">Add a manager</button>
+    }
+  </div>
+  @if (formOpen()) {
+    <app-manager-form
+      [form]="model.form"
+      [mode]="model.mode()"
+      [heading]="model.formHeading()"
+      [saving]="model.saving()"
+      (submitted)="model.save()"
+      (cancelled)="model.closeForm()"
+    />
+  }
+  @if (model.failed()) {
+    <p class="ta-problem" role="alert">Couldn’t load the managers. Please reload the page.</p>
+  }
+  @if (model.data(); as managers) {
+    @if (managers.length === 0) {
+      <p class="ta-empty">No managers yet. Only you can sign in to the admin.</p>
+    } @else {
+      <p class="ta-count" role="status">{{ model.count() }}</p>
+      <ul class="ta-list">
+        @for (manager of managers; track manager.uid) {
+          <li>
+            <app-manager-card
+              [manager]="manager"
+              [confirming]="model.confirming() === manager.uid"
+              [busy]="model.removing()"
+              (editAsked)="model.edit(manager)"
+              (removeAsked)="model.askToRemove(manager)"
+              (removeConfirmed)="model.remove(manager)"
+              (removeCancelled)="model.cancelRemove()"
+            />
+          </li>
+        }
+      </ul>
+    }
+  }
+</div>

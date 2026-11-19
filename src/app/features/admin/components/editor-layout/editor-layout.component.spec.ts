@@ -43,6 +43,7 @@ describe('EditorLayoutComponent', () => {
       '/admin/contact',
       '/admin/visibility',
       '/admin/media',
+      '/admin/team-access',
       '/admin/visits',
       '/admin/leads',
       '/admin/releases',
