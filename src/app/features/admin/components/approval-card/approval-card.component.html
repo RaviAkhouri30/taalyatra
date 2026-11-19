@@ -1,0 +1,103 @@
+@let request = view().approval;
+<article class="ap" [attr.aria-labelledby]="headingId()" [attr.data-status]="request.status">
+  <header class="ap-head">
+    <h3 [id]="headingId()">{{ view().title }}</h3>
+    <span class="ap-when">
+      @if (owner()) {
+        From {{ request.email }},
+      }
+      sent {{ view().sentAt }}
+    </span>
+  </header>
+  @if (request.note) {
+    <p class="ap-note">“{{ request.note }}”</p>
+  }
+  @if (owner()) {
+    @if (view().problems > 0) {
+      <p class="ap-problems">{{ problemsText() }}</p>
+    }
+    @if (askingReason()) {
+      <div class="ap-reason" role="group" [attr.aria-labelledby]="headingId() + '-reason'">
+        <label [id]="headingId() + '-reason'" [for]="headingId() + '-reason-field'"
+          >Why are you sending it back? The manager sees this.</label
+        >
+        <textarea
+          rows="2"
+          [id]="headingId() + '-reason-field'"
+          [formControl]="reason"
+          [attr.maxlength]="reasonMax"
+          [attr.aria-invalid]="reason.invalid && reason.touched"
+        ></textarea>
+        @if (reason.invalid && reason.touched) {
+          <small class="ap-error">Write a reason, so they know what to change.</small>
+        }
+        <div class="ap-actions">
+          <button appButton type="button" [size]="compact" [disabled]="busy()" (click)="sendBack()">
+            Send back
+          </button>
+          <button
+            appButton
+            type="button"
+            [variant]="ghost"
+            [size]="compact"
+            (click)="cancelReason()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    } @else {
+      <div class="ap-actions">
+        <button
+          appButton
+          type="button"
+          [size]="compact"
+          [disabled]="busy() || view().problems > 0"
+          (click)="approved.emit()"
+        >
+          Approve and publish
+        </button>
+        <button
+          appButton
+          type="button"
+          [variant]="ghost"
+          [size]="compact"
+          [disabled]="busy()"
+          (click)="askReason()"
+        >
+          Send back
+        </button>
+      </div>
+    }
+  } @else {
+    <p class="ap-status">{{ statusText() }}</p>
+    @if (request.answer) {
+      <p class="ap-answer">“{{ request.answer }}”</p>
+    }
+    <div class="ap-actions">
+      @if (waiting()) {
+        <button
+          appButton
+          type="button"
+          [variant]="ghost"
+          [size]="compact"
+          [disabled]="busy()"
+          (click)="withdrawn.emit()"
+        >
+          Withdraw
+        </button>
+      } @else {
+        <button
+          appButton
+          type="button"
+          [variant]="ghost"
+          [size]="compact"
+          [disabled]="busy()"
+          (click)="dismissed.emit()"
+        >
+          Clear
+        </button>
+      }
+    </div>
+  }
+</article>

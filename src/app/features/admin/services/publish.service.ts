@@ -77,7 +77,10 @@ export class PublishService {
   ): Observable<IPublishRecord | null> {
     const paths = [...drafts.keys()];
     if (paths.length === 0) {
-      return of(null);
+      // Nothing to put live, but the extra writes still apply: an approved request whose drafts
+      // are gone is still answered and unlocked.
+      const writes = extras.writes ?? [];
+      return writes.length === 0 ? of(null) : this.store.commit(writes).pipe(map(() => null));
     }
     // forkJoin: who is publishing, the live versions (kept for undo), the numbered ids of any
     // collection being published (so its unused numbers can be deleted) and the history are

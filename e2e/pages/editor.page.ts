@@ -30,6 +30,16 @@ export class EditorPage extends BasePage {
     await this.heading.filter({ hasText: 'Welcome back' }).waitFor();
   }
 
+  /** Signs out from the top bar (inside the Menu drawer on phones) and waits for the sign-in page. */
+  public async signOut(): Promise<void> {
+    const signOut = this.page.getByRole('button', { name: 'Sign out' }).filter({ visible: true });
+    if ((await signOut.count()) === 0) {
+      await this.menu.click();
+    }
+    await signOut.click();
+    await this.heading.filter({ hasText: 'Admin sign in' }).waitFor();
+  }
+
   /** Opens a page from the side panel and waits until it is the current page with its content. */
   public async openTab(name: string): Promise<void> {
     // The site hides the page until its data arrives, so the menu can't be judged before that.

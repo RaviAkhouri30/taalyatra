@@ -1,4 +1,5 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import {
   EMPTY,
   type Observable,
@@ -19,32 +20,46 @@ import { CLOCK } from '@core/tokens/clock.token';
 import { ViewModel } from '@shared/base/view-model';
 import { ToastTone } from '@shared/enums/toast-tone.enum';
 import { ToastService } from '@shared/services/toast.service';
+import { APPROVAL_NOTE_MAX } from '../models/approval.model';
 import { type IPublishRecord } from '../models/i-publish-record';
 import { PublishPageModel } from '../models/publish-page.model';
-import { PublishReport } from '../models/publish-report.model';
-import { ALL_SECTIONS, SECTIONS_WITH_TABS } from '../schemas/editor-tabs';
+import { type IPublishPlan, planButtonText, planConfirmText } from '../models/review.model';
+import { SECTIONS_WITH_TABS } from '../schemas/editor-tabs';
+import { ApprovalService } from '../services/approval.service';
+import { BackupService } from '../services/backup.service';
 import { DraftService } from '../services/draft.service';
 import { MediaLibraryService } from '../services/media-library.service';
-import { BackupService } from '../services/backup.service';
 import { PublishService } from '../services/publish.service';
+import { ReviewService } from '../services/review.service';
 import { downloadBackup } from './backup-download';
 import { EditorLayoutViewModel } from './editor-layout.view-model';
 
-/** What the owner is told after each action. */
+/** What the account is told after each action. */
 export const PUBLISH_MESSAGES = {
   published: 'Published. Visitors see the changes on their next visit.',
+  sent: 'Sent for approval. You’ll see the answer here and on your dashboard.',
+  publishedAndSent: 'Published, and the rest sent for approval.',
   publishFailed: 'Couldn’t publish. Nothing changed on the site; please try again.',
   discarded: 'Draft thrown away.',
   restored: 'That version is back in your draft. Review it, then publish.',
   failed: 'Something went wrong. Please try again.',
 } as const;
 
+const NOTHING: IPublishPlan = { publish: [], send: [] };
+
 /**
- * Review & publish (0008 D4, D5, D18; 0016 V3): drafts, checks, publish with confirmation, and
- * the history to go back to.
+ * Review & publish (0008 D4, D5, D18; 0016 V3; 0019): the changes with who made them, ticked to
+ * choose what goes; checks; publishing, or sending for approval; and the history to go back to.
  */
 @Injectable()
 export class PublishPageViewModel extends ViewModel<PublishPageModel> {
+  /** The ticked changes; the account's own to start with (decision 4). */
+  public readonly selected = signal<ReadonlySet<string>>(new Set());
+  /** The manager's note for the owner, sent with changes that need approval. */
+  public readonly note = new FormControl('', {
+    nonNullable: true,
+    validators: [Validators.maxLength(APPROVAL_NOTE_MAX)],
+  });
   /** The publish confirmation is showing. */
   public readonly confirming = signal(false);
   /** The history record whose go-back is being confirmed. */
@@ -53,9 +68,28 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
   public readonly busy = signal(false);
   /** A publish just finished: the backups card offers to keep a copy of it (0016 V13). */
   public readonly justPublished = signal(false);
+  public readonly isOwner = computed(() => this.data()?.review.permissions.isOwner ?? false);
+  /** What a click does with the ticked changes. */
+  public readonly plan = computed(() => this.data()?.review.planFor(this.selected()) ?? NOTHING);
+  /** What the checks find in the ticked changes. */
+  public readonly report = computed(() =>
+    this.data()?.reportFor(this.selected(), this.clock.now()),
+  );
+  public readonly buttonText = computed(() => planButtonText(this.plan()));
+  public readonly confirmText = computed(() => planConfirmText(this.plan()));
+  public readonly confirmButtonText = computed(() =>
+    this.plan().publish.length > 0 ? 'Yes, publish' : 'Yes, send',
+  );
+  public readonly canPublish = computed(() => {
+    const plan = this.plan();
+    const chosen = plan.publish.length + plan.send.length > 0;
+    return chosen && this.report()?.canPublish === true && !this.busy();
+  });
 
+  private readonly reviews = inject(ReviewService);
   private readonly drafts = inject(DraftService);
   private readonly publishes = inject(PublishService);
+  private readonly approvals = inject(ApprovalService);
   private readonly library = inject(MediaLibraryService);
   private readonly backups = inject(BackupService);
   private readonly layout = inject(EditorLayoutViewModel);
@@ -66,6 +100,21 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
   private readonly discardRequests = new Subject<string>();
   private readonly goBackRequests = new Subject<IPublishRecord>();
   private readonly backupRequests = new Subject<void>();
+
+  /**
+   * @param path A change's document.
+   * @param ticked Whether it goes with the next publish.
+   */
+  public toggle(path: string, ticked: boolean): void {
+    const selected = new Set(this.selected());
+    if (ticked) {
+      selected.add(path);
+    } else {
+      selected.delete(path);
+    }
+    this.selected.set(selected);
+    this.confirming.set(false);
+  }
 
   public askToPublish(): void {
     this.confirming.set(true);
@@ -97,25 +146,26 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
   }
 
   protected override attachViewHandler(): Observable<unknown> {
-    // A restored backup changes the drafts from the backups card; the layout says so.
-    return merge(this.reloads, this.layout.changes$).pipe(
+    // A restored backup changes the drafts from the backups card; the layout says so. An
+    // answered request changes which drafts are waiting.
+    return merge(this.reloads, this.layout.changes$, this.approvals.changed$).pipe(
       startWith(undefined),
       // switchMap: a newer reload replaces one still in flight.
       switchMap(() =>
         forkJoin([
-          this.drafts.drafts(),
+          this.reviews.review(),
           this.publishes.history(),
           // A failed read means "not known": that skips one check, and mustn't stop all publishing.
           this.library.assets().pipe(catchError(() => of(null))),
         ]),
       ),
-      map(([drafts, history, assets]) => {
+      map(([review, history, assets]) => {
         const libraryIds = assets && new Set(assets.map((asset) => asset.id));
-        const report = PublishReport.check(drafts, ALL_SECTIONS, this.clock.now(), libraryIds);
-        return new PublishPageModel(drafts, history, SECTIONS_WITH_TABS, report);
+        return new PublishPageModel(review, history, SECTIONS_WITH_TABS, libraryIds);
       }),
       tap((page) => {
         this.setData(page);
+        this.selected.set(page.review.mine());
       }),
     );
   }
@@ -123,19 +173,7 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
   protected override attachCommandHandler(): Observable<unknown> {
     return merge(
       // exhaustMap: a second click while publishing is ignored.
-      this.publishRequests.pipe(
-        exhaustMap(() =>
-          this.run(
-            this.publishes.publish(this.data()?.drafts ?? new Map()).pipe(
-              tap(() => {
-                this.justPublished.set(true);
-              }),
-            ),
-            PUBLISH_MESSAGES.published,
-            PUBLISH_MESSAGES.publishFailed,
-          ),
-        ),
-      ),
+      this.publishRequests.pipe(exhaustMap(() => this.runPlan(this.plan()))),
       // concatMap: discards apply one after another, each fully.
       this.discardRequests.pipe(
         concatMap((path) => this.run(this.drafts.discard([path]), PUBLISH_MESSAGES.discarded)),
@@ -143,6 +181,35 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
       this.goBackRequests.pipe(exhaustMap((record) => this.runGoBack(record))),
       this.backupStreams(),
     );
+  }
+
+  /** Publishes what may go live, then sends the rest for approval. */
+  private runPlan(plan: IPublishPlan): Observable<unknown> {
+    const review = this.data()?.review;
+    const published =
+      review && plan.publish.length > 0
+        ? this.publishes.publish(review.draftsOf(plan.publish))
+        : of(null);
+    const action = published.pipe(
+      tap(() => {
+        this.justPublished.set(plan.publish.length > 0);
+      }),
+      // switchMap: sent only once the publish is stored, so a refused publish sends nothing.
+      switchMap(() =>
+        plan.send.length > 0 ? this.approvals.send(plan.send, this.note.value) : of(undefined),
+      ),
+      tap(() => {
+        this.note.reset();
+      }),
+    );
+    return this.run(action, this.successOf(plan), PUBLISH_MESSAGES.publishFailed);
+  }
+
+  private successOf(plan: IPublishPlan): string {
+    if (plan.send.length === 0) {
+      return PUBLISH_MESSAGES.published;
+    }
+    return plan.publish.length === 0 ? PUBLISH_MESSAGES.sent : PUBLISH_MESSAGES.publishedAndSent;
   }
 
   private backupStreams(): Observable<unknown> {
@@ -174,7 +241,7 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
     );
   }
 
-  /** Runs an action, then reloads the page, recounts drafts and tells the owner how it went. */
+  /** Runs an action, then reloads the page, recounts drafts and tells the account how it went. */
   private run(
     action: Observable<unknown>,
     success: string,

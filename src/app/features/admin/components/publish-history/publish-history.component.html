@@ -3,12 +3,16 @@
   @if (entries().length === 0) {
     <p>Nothing published from the editor yet.</p>
   } @else {
-    <p>The last 20 publishes. You can go back to how the website was before any of them.</p>
+    @if (canGoBack()) {
+      <p>The last 20 publishes. You can go back to how the website was before any of them.</p>
+    } @else {
+      <p>The latest publishes, and who made them. Only the owner can go back to an earlier one.</p>
+    }
     <ol class="ph-list">
       @for (entry of entries(); track entry.record.id) {
         <li>
           <span class="ph-entry"
-            ><b>{{ entry.when }}</b> <small>{{ entry.title }}</small></span
+            ><b>{{ entry.when }}</b> <small>{{ entry.title }} · {{ entry.who }}</small></span
           >
           @if (confirming() === entry.record.id) {
             <div class="ph-confirm" role="group" [attr.aria-labelledby]="'ph-warn-' + $index">
@@ -53,7 +57,7 @@
                 </button>
               </div>
             </div>
-          } @else {
+          } @else if (canGoBack()) {
             <button
               appButton
               type="button"

@@ -13,3 +13,13 @@ export const FAKE_VISITOR_ACCOUNT = {
   password: 'fake-visitor-password',
   uid: 'fake-visitor-uid',
 };
+
+/**
+ * A content manager (0019). They have no access until the owner adds this id on Team access, as
+ * with a real manager; the e2e suite does that first.
+ */
+export const FAKE_MANAGER_ACCOUNT = {
+  email: 'manager@taalyatra.test',
+  password: 'fake-manager-password',
+  uid: 'fake-manager-uid',
+};

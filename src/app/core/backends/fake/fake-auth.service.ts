@@ -4,7 +4,11 @@ import { AuthErrorKind } from '@core/enums/auth-error-kind.enum';
 import { AuthError, type IAuthService, type IAuthUser } from '@core/interfaces/i-auth-service';
 import { LocalStoreService } from '@core/services/local-store.service';
 import { APP_ENVIRONMENT } from '@core/tokens/app-environment.token';
-import { FAKE_ADMIN_ACCOUNT, FAKE_VISITOR_ACCOUNT } from './fake-auth.constants';
+import {
+  FAKE_ADMIN_ACCOUNT,
+  FAKE_MANAGER_ACCOUNT,
+  FAKE_VISITOR_ACCOUNT,
+} from './fake-auth.constants';
 
 /** Where the fake session is kept, like Firebase Auth's local persistence (survives reloads). */
 export const FAKE_SESSION_STORAGE_KEY = 'taal-yatra.fake-auth.session';
@@ -14,7 +18,7 @@ export const FAKE_ID_TOKEN = 'fake-id-token';
 
 /**
  * In-memory auth for development and the e2e suite: knows the fake admin (UID =
- * `environment.adminUid`) and one non-admin account. The session lasts until reload.
+ * `environment.adminUid`), one non-admin account and a content manager (0019). The session lasts until reload.
  */
 export class FakeAuthService implements IAuthService {
   public readonly user$: Observable<IAuthUser | null>;
@@ -24,6 +28,7 @@ export class FakeAuthService implements IAuthService {
   private readonly accounts: readonly (IAuthUser & { readonly password: string })[] = [
     { ...FAKE_ADMIN_ACCOUNT, uid: this.environment.adminUid },
     FAKE_VISITOR_ACCOUNT,
+    FAKE_MANAGER_ACCOUNT,
   ];
   // Restored from storage, so a reload (or the editor's preview frame) stays signed in.
   private readonly current = new BehaviorSubject<IAuthUser | null>(this.restore());

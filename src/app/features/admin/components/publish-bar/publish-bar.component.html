@@ -8,13 +8,15 @@
     </button>
   } @else if (model.problems() > 0) {
     <a class="pb-link" [routerLink]="reviewUrl">{{ model.problems() }} to fix before publishing</a>
+  } @else if (model.toSend() > 0) {
+    <a class="pb-link" [routerLink]="reviewUrl">{{ model.toSend() }} to send for approval</a>
   }
 </div>
 <div class="pb-actions">
   <!-- A page's own control for this bar, e.g. the editor's Show preview on phones (0017). -->
   <ng-content />
   @if (model.confirmingDiscard()) {
-    <span class="pb-ask">Undo every change that isn’t on the website yet?</span>
+    <span class="pb-ask">Undo your changes that aren’t on the website yet?</span>
     <button
       appButton
       type="button"
