@@ -6,6 +6,13 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-11-20
+
+### Changed
+
+- Nothing you’ll see: roles and approvals are now also tested end to end against the real database rules (a manager’s
+  approval, and requests they aren’t allowed), and their design is written up for the record.
+
 ## [2.0.1] - 2026-11-19
 
 ### Added

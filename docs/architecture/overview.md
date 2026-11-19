@@ -29,7 +29,7 @@ flowchart TB
     B[ApiBaseService<br/>+ HttpsErrorHandler]
   end
   subgraph Ports
-    P{{IHttpBackend · IAuthService (1.4.0)<br/>IDocumentStore (1.6.0) · IEmailService<br/>IMediaService · IClipboardService<br/>IFileService (1.12.0, admin only)}}
+    P{{"IHttpBackend · IAuthService (1.4.0)<br/>IDocumentStore (1.6.0) · IEmailService<br/>IMediaService · IClipboardService<br/>IFileService (1.12.0, admin only)"}}
   end
   subgraph Adapters [core/backends]
     F[Firebase*]
@@ -72,6 +72,27 @@ tracked, or a browser where the admin area has been opened. The admin area adds 
 create-only `visitDays/{date}` document and removes that day's single visits (`VisitsService`); the Visits page draws visits
 and proposals by day, week, month or year with its own SVG bars. The Leads page reads `proposals`, changes only a lead's
 `status` and `statusAt`, exports CSV through `IFileService`, and deletes a lead on request.
+
+## Roles and approvals (0019, 2.0.0)
+
+The owner is fixed by UID; managers are added on Team access (`roles/{uid}`) with a setting per editor page and an
+upload switch ([ADR-0018](adr/0018-roles-and-approvals.md)). `AccessService` turns the signed-in account into a
+`Permissions` model that guards, the menu, the dashboard, Review & publish, the editor and the photo library ask.
+`firestore.rules` enforce the same per page and per part of `site/config`, and the upload function reads the
+manager's upload setting with their own sign-in.
+
+```mermaid
+flowchart LR
+  A[Auth user] --> AS[AccessService]
+  AS -- "owner: fixed UID" --> P[Permissions]
+  AS -- "roles/{uid}" --> P
+  P --> G[Guards and menu]
+  P --> R[Review & publish: publish or send]
+  P --> E[Editor: locked while waiting]
+  P --> M[Photo library: upload, replace, delete]
+  R --> AP[ApprovalService]
+  AP -- "one commit: request + locks" --> F[(Firestore rules)]
+```
 
 ## Dependency rules
 

@@ -38,6 +38,8 @@ const AUTH_EMULATOR_HOST = '127.0.0.1:9099';
 export const EMULATOR_USERS = [
   { uid: '5zsz2DlUaja2Ss7wbFTrpiMMROk2', email: 'admin@taalyatra.test', password: 'emulator-admin-password' },
   { uid: 'emulator-visitor-uid', email: 'visitor@taalyatra.test', password: 'emulator-visitor-password' },
+  // A content manager (0019): no access until a test adds them on Team access, as in real life.
+  { uid: 'emulator-manager-uid', email: 'manager@taalyatra.test', password: 'emulator-manager-password' },
 ];
 
 /**

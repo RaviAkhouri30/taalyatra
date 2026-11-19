@@ -11,6 +11,10 @@ flowchart TD
 
 ```mermaid
 classDiagram
+  %% Replace with the feature's models, view models and services.
+  class FeatureModel {
+    +title string
+  }
 ```
 
 ## Sequence diagram
