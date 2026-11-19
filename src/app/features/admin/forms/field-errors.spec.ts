@@ -8,6 +8,12 @@ describe('fieldErrorMessage', () => {
     [{ phone: true }, 'Use the international format, for example +919284276168.'],
     [{ email: true }, 'Use a valid email address.'],
     [{ date: true }, 'Use a valid date.'],
+    [{ accountId: true }, 'Paste the User UID from Firebase: letters and numbers, no spaces.'],
+    [{ ownerAccount: true }, 'That’s your own account: you always have full access.'],
+    [
+      { listedAccount: true },
+      'This account is already a manager. Use Change on their card instead.',
+    ],
     [{ min: { min: 2020, actual: 1999 } }, 'Use a number of at least 2020.'],
     [{ max: { max: 2100, actual: 3000 } }, 'Use a number of at most 2100.'],
     [{ somethingElse: true }, 'Check this value.'],

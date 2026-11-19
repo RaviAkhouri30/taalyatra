@@ -15,6 +15,8 @@ import {
   PUBLISH_PATH,
   RELEASES_LABEL,
   RELEASES_PATH,
+  TEAM_ACCESS_LABEL,
+  TEAM_ACCESS_PATH,
   VISITS_LABEL,
   VISITS_PATH,
 } from './models/editor-nav.constants';
@@ -90,6 +92,12 @@ const adminRoutes: Routes = [
             canActivate: [ownerGuard],
             title: `${LEADS_LABEL} — ${ADMIN_TITLE_SUFFIX}`,
             loadComponent: () => import('./components/leads-page/leads-page.component'),
+          },
+          {
+            path: TEAM_ACCESS_PATH,
+            canActivate: [ownerGuard],
+            title: `${TEAM_ACCESS_LABEL} — ${ADMIN_TITLE_SUFFIX}`,
+            loadComponent: () => import('./components/team-access-page/team-access-page.component'),
           },
           {
             path: RELEASES_PATH,

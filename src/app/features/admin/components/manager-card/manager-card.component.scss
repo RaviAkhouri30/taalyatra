@@ -1,0 +1,82 @@
+@use 'tokens' as t;
+
+:host {
+  display: block;
+}
+
+.mgr {
+  display: grid;
+  gap: 12px;
+  padding: 18px 20px;
+  border: 1px solid t.$color-line;
+  border-radius: 16px;
+  background: t.$color-surface-raised;
+}
+
+.mgr-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: baseline;
+  justify-content: space-between;
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    overflow-wrap: anywhere;
+  }
+}
+
+.mgr-when,
+.mgr-uid {
+  margin: 0;
+  color: t.$color-muted-strong;
+  font-size: 14px;
+}
+
+.mgr-uid code {
+  color: t.$color-cream;
+  overflow-wrap: anywhere;
+}
+
+.mgr-access {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+
+  div {
+    display: grid;
+    gap: 2px;
+  }
+
+  dt {
+    color: t.$color-muted-strong;
+    font-size: 13px;
+  }
+
+  dd {
+    margin: 0;
+    color: t.$color-cream;
+  }
+
+  // What they publish without you stands out.
+  [data-access='publish'] dt {
+    color: t.$color-amber;
+  }
+}
+
+.mgr-confirm {
+  display: grid;
+  gap: 10px;
+
+  p {
+    margin: 0;
+    color: t.$color-muted;
+  }
+}
+
+.mgr-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

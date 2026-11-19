@@ -1,0 +1,58 @@
+<article class="mgr" [attr.aria-labelledby]="headingId()">
+  <header class="mgr-head">
+    <h2 [id]="headingId()">{{ manager().role.email }}</h2>
+    <span class="mgr-when">Added {{ added() }}</span>
+  </header>
+  <p class="mgr-uid">
+    User UID <code>{{ manager().uid }}</code>
+  </p>
+  <dl class="mgr-access">
+    @for (group of groups(); track group.access) {
+      <div [attr.data-access]="group.access">
+        <dt>{{ group.label }}</dt>
+        <dd>{{ group.pages }}</dd>
+      </div>
+    }
+    <div>
+      <dt>Photo uploads</dt>
+      <dd>{{ uploads() }}</dd>
+    </div>
+  </dl>
+  @if (confirming()) {
+    <div class="mgr-confirm" role="group" [attr.aria-labelledby]="headingId() + '-confirm'">
+      <p [id]="headingId() + '-confirm'">
+        {{ manager().role.email }} loses access from their next click. Their account stays in
+        Firebase, and their unpublished changes stay for you to publish or discard.
+      </p>
+      <div class="mgr-actions">
+        <button appButton type="button" [disabled]="busy()" (click)="removeConfirmed.emit()">
+          {{ busy() ? 'Removing…' : 'Yes, remove' }}
+        </button>
+        <button appButton type="button" [variant]="ghost" (click)="removeCancelled.emit()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  } @else {
+    <div class="mgr-actions">
+      <button
+        appButton
+        type="button"
+        [variant]="ghost"
+        [attr.aria-label]="'Change ' + manager().role.email"
+        (click)="editAsked.emit()"
+      >
+        Change
+      </button>
+      <button
+        appButton
+        type="button"
+        [variant]="ghost"
+        [attr.aria-label]="'Remove ' + manager().role.email"
+        (click)="removeAsked.emit()"
+      >
+        Remove
+      </button>
+    </div>
+  }
+</article>
