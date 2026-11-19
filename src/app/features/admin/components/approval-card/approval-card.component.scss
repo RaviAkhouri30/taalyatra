@@ -1,0 +1,81 @@
+@use 'tokens' as t;
+@use 'forms' as f;
+
+:host {
+  display: block;
+}
+
+.ap {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid t.$color-line;
+  border-left: 3px solid t.$color-amber;
+  border-radius: 12px;
+  background: t.$color-surface;
+
+  &[data-status='approved'] {
+    border-left-color: t.$color-line;
+  }
+}
+
+.ap-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  align-items: baseline;
+  justify-content: space-between;
+
+  h3 {
+    margin: 0;
+    font-size: 16px;
+  }
+}
+
+.ap-when,
+.ap-status {
+  margin: 0;
+  color: t.$color-muted-strong;
+  font-size: 14px;
+}
+
+.ap-note,
+.ap-answer {
+  margin: 0;
+  color: t.$color-cream;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.ap-problems {
+  margin: 0;
+  color: t.$color-amber-soft;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ap-reason {
+  display: grid;
+  gap: 6px;
+
+  label {
+    color: t.$color-muted-strong;
+    font-size: 14px;
+  }
+
+  textarea {
+    @include f.text-input;
+
+    resize: vertical;
+  }
+}
+
+.ap-error {
+  @include f.field-error;
+}
+
+.ap-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

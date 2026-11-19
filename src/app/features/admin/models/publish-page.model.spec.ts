@@ -1,56 +1,71 @@
 import { type IDraft } from '@core/interfaces/i-draft';
-import { ALL_SECTIONS, SECTIONS_WITH_TABS } from '../schemas/editor-tabs';
+import { SECTIONS_WITH_TABS } from '../schemas/editor-tabs';
+import { Permissions } from './permissions.model';
 import { PublishPageModel } from './publish-page.model';
-import { PublishReport } from './publish-report.model';
+import { Review, documentTitles } from './review.model';
 
 describe('PublishPageModel', () => {
   const now = new Date('2026-10-31T10:00:00Z');
+  const owner = { uid: 'owner', email: 'o@b.co' };
   const draft = (path: string): IDraft => ({
     path,
     content: {},
     savedAt: '2026-10-31T10:00:00.000Z',
   });
 
-  it('should name each changed document by the cards that edit it', () => {
-    const page = new PublishPageModel(
-      new Map([
-        ['site/config', draft('site/config')],
-        ['home/unknown', draft('home/unknown')],
-      ]),
-      [],
-      ALL_SECTIONS,
-      PublishReport.check(new Map(), ALL_SECTIONS, now),
+  function page(
+    drafts: ReadonlyMap<string, IDraft>,
+    history: ConstructorParameters<typeof PublishPageModel>[1] = [],
+  ) {
+    const review = new Review(
+      {
+        permissions: Permissions.owner(owner),
+        drafts,
+        requests: [],
+        live: new Map(),
+        emails: new Map(),
+        ownerUid: owner.uid,
+      },
+      documentTitles(SECTIONS_WITH_TABS),
     );
+    return new PublishPageModel(review, history, SECTIONS_WITH_TABS, null);
+  }
 
-    expect(page.changes.map((change) => change.title)).toEqual([
-      'Offer switch and dates, Site details, Contact details',
-      'home/unknown',
-    ]);
-    expect(page.changes[0]?.savedAt).toBe('31 Oct 2026, 3:30 pm');
-    expect(page.confirmText).toBe(
-      'Publish 2 changed documents? Visitors see the changes on their next visit.',
-    );
+  it('should list the review’s changes', () => {
+    const model = page(new Map([['home/unknown', draft('home/unknown')]]));
+
+    expect(model.changes.map((change) => change.title)).toEqual(['home/unknown']);
   });
 
-  it('should run the checks and describe the history', () => {
-    const drafts = new Map([['home/hero', draft('home/hero')]]);
-    const page = new PublishPageModel(
-      drafts,
-      [
-        {
-          id: 'r',
-          publishedAt: '2026-10-30T10:00:00.000Z',
-          changed: ['home/hero', 'home/team'],
-          before: {},
-        },
-      ],
-      SECTIONS_WITH_TABS,
-      PublishReport.check(drafts, ALL_SECTIONS, now),
-    );
+  it('should run the checks on the ticked changes only', () => {
+    const model = page(new Map([['home/hero', draft('home/hero')]]));
 
-    expect(page.report.canPublish).toBe(false);
+    expect(model.reportFor(new Set(['home/hero']), now).canPublish).toBe(false);
+    expect(model.reportFor(new Set(), now).canPublish).toBe(true);
+  });
+
+  it('should describe the history, with who published', () => {
+    const record = {
+      id: 'r',
+      publishedAt: '2026-10-30T10:00:00.000Z',
+      changed: ['home/hero', 'home/team'],
+      before: {},
+    };
+    const model = page(new Map(), [
+      { ...record, id: 'c', by: 'manager', byEmail: 'm@b.co' },
+      { ...record, id: 'b', by: owner.uid, approvedFrom: 'm@b.co' },
+      { ...record, id: 'a', by: 'owner-before' },
+      record,
+    ]);
+
     // Named by tab and card: the Team tab's heading card is called "Section heading".
-    expect(page.history[0]?.title).toBe('Hero; Team · Section heading');
-    expect(page.confirmText).toContain('Publish 1 changed document?');
+    expect(model.history[0]?.title).toBe('Hero; Team · Section heading');
+    expect(model.history.map((entry) => entry.who)).toEqual([
+      'by m@b.co',
+      'by you, approved from m@b.co',
+      'by the owner',
+      'by you',
+    ]);
+    expect(model.history.map((entry) => entry.newest)).toEqual([true, false, false, false]);
   });
 });

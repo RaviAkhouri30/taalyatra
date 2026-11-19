@@ -1,13 +1,25 @@
 import { TestBed } from '@angular/core/testing';
 import fakeDb from '@core/backends/fake/fake-db.json';
-import { layoutStub, provideEditorTesting, provideLayout } from '../../testing/editor-testing';
+import {
+  layoutStub,
+  provideEditorTesting,
+  provideLayout,
+  provideSignedIn,
+} from '../../testing/editor-testing';
 import PublishPageComponent from './publish-page.component';
 
 describe('PublishPageComponent', () => {
-  function render(seed: Parameters<typeof provideEditorTesting>[0] = {}) {
+  function render(
+    seed: Parameters<typeof provideEditorTesting>[0] = {},
+    user?: { uid: string; email: string },
+  ) {
     const testing = provideEditorTesting(seed);
     TestBed.configureTestingModule({
-      providers: [...testing.providers, provideLayout(layoutStub())],
+      providers: [
+        ...testing.providers,
+        ...(user ? provideSignedIn(user) : []),
+        provideLayout(layoutStub()),
+      ],
     });
     const fixture = TestBed.createComponent(PublishPageComponent);
     fixture.detectChanges();
@@ -130,5 +142,41 @@ describe('PublishPageComponent', () => {
     const { element } = render();
 
     expect(element.querySelector('#backups')?.textContent).toContain('No backup yet');
+  });
+
+  it('should show a manager who changed what, with a note for what needs approval', () => {
+    const manager = { uid: 'manager', email: 'm@b.co' };
+    const { fixture, element, button } = render(
+      {
+        'roles/manager': { email: manager.email, pages: {}, uploads: true, addedAt: 'x' },
+        'drafts/home__hero': {
+          path: 'home/hero',
+          content: fakeDb.home.hero,
+          savedAt: 'x',
+          savedBy: manager.uid,
+        },
+        'drafts/home__offer': { path: 'home/offer', content: fakeDb.home.offer, savedAt: 'x' },
+      },
+      manager,
+    );
+    const ticks = element.querySelectorAll<HTMLInputElement>('.pp-tick input');
+    const authors = Array.from(element.querySelectorAll('.pp-tick small')).map((small) =>
+      small.textContent.replace(/\s+/gu, ' ').trim(),
+    );
+
+    expect([...ticks].map((tick) => tick.checked)).toEqual([true, false]);
+    expect(authors[0]).toMatch(/^changed by you, .* · needs approval$/u);
+    expect(authors[1]).toMatch(/^changed by the owner, /u);
+    expect(button('Undo the changes to Hero')).toBeDefined();
+    expect(button('Undo the changes to Offer · Offer section')).toBeUndefined();
+    expect(element.querySelector('.pp-note textarea')).not.toBeNull();
+    expect(button('Send for approval')).toBeDefined();
+    expect(element.querySelector('app-backup-panel')).toBeNull();
+
+    ticks[0]!.checked = false;
+    ticks[0]!.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+
+    expect(element.querySelector('.pp-note')).toBeNull();
   });
 });

@@ -5,7 +5,12 @@ import { ToastTone } from '@shared/enums/toast-tone.enum';
 import { ToastService } from '@shared/services/toast.service';
 import { SaveStatus } from '../../models/save-status.enum';
 import { MediaLibraryService } from '../../services/media-library.service';
-import { layoutStub, provideEditorTesting, provideLayout } from '../../testing/editor-testing';
+import {
+  layoutStub,
+  provideEditorTesting,
+  provideLayout,
+  provideSignedIn,
+} from '../../testing/editor-testing';
 import { BACKUP_MESSAGES } from '../../view-models/backup-download';
 import { PUBLISH_BAR_MESSAGES } from '../../view-models/publish-bar.view-model';
 import { PublishBarComponent } from './publish-bar.component';
@@ -22,13 +27,17 @@ describe('PublishBarComponent', () => {
     savedAt: 'x',
   };
 
-  function render(seed: Parameters<typeof provideEditorTesting>[0] = {}) {
+  function render(
+    seed: Parameters<typeof provideEditorTesting>[0] = {},
+    user?: { uid: string; email: string },
+  ) {
     const testing = provideEditorTesting(seed);
     const layout = layoutStub();
     const show = vi.fn();
     TestBed.configureTestingModule({
       providers: [
         ...testing.providers,
+        ...(user ? provideSignedIn(user) : []),
         provideLayout(layout),
         { provide: ToastService, useValue: { show } },
       ],
@@ -248,5 +257,62 @@ describe('PublishBarComponent', () => {
 
     expect(button('Publishing…')?.disabled).toBe(true);
     expect(commit).toHaveBeenCalledTimes(1);
+  });
+
+  describe('for a manager (0019)', () => {
+    const MANAGER = { uid: 'manager', email: 'm@b.co' };
+    const role = {
+      email: MANAGER.email,
+      pages: { hero: 'publish' },
+      uploads: true,
+      addedAt: '2026-10-31T09:00:00.000Z',
+    };
+    const mine = (path: string, content: Record<string, unknown>) => ({
+      path,
+      content,
+      savedAt: 'x',
+      savedBy: MANAGER.uid,
+    });
+
+    it('should publish only their own changes on pages they may publish', async () => {
+      const { fixture, button, status, store } = render(
+        {
+          'roles/manager': role,
+          'drafts/home__hero': mine('home/hero', heroDraft.content),
+          'drafts/home__offer': mine('home/offer', fakeDb.home.offer),
+          'drafts/home__shows': { ...heroDraft, path: 'home/shows', savedBy: 'admin-uid' },
+        },
+        MANAGER,
+      );
+      const link = (fixture.nativeElement as HTMLElement).querySelector('a.pb-link')!;
+
+      expect(status()).toBe('2 unpublished changes.');
+      expect(link.textContent).toBe('1 to send for approval');
+      button('Publish')?.click();
+      await fixture.whenStable();
+
+      expect(store.documents.get('home/hero')).toMatchObject({ title: 'New' });
+      expect(store.documents.has('drafts/home__offer')).toBe(true);
+      expect(store.documents.has('drafts/home__shows')).toBe(true);
+    });
+
+    it('should undo only their own changes', async () => {
+      const { fixture, button, store } = render(
+        {
+          'roles/manager': role,
+          'drafts/home__hero': mine('home/hero', heroDraft.content),
+          'drafts/home__shows': { ...heroDraft, path: 'home/shows', savedBy: 'admin-uid' },
+        },
+        MANAGER,
+      );
+
+      button('Undo changes')?.click();
+      fixture.detectChanges();
+      button('Yes, undo them')?.click();
+      await fixture.whenStable();
+
+      expect(store.documents.has('drafts/home__hero')).toBe(false);
+      expect(store.documents.has('drafts/home__shows')).toBe(true);
+    });
   });
 });

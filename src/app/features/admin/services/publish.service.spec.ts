@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
+import { DocumentWriteKind } from '@core/enums/document-write-kind.enum';
 import { IDocumentStore } from '@core/interfaces/i-document-store';
 import { CLOCK } from '@core/tokens/clock.token';
 import { type IDraft } from '@core/interfaces/i-draft';
@@ -65,6 +66,20 @@ describe('PublishService', () => {
 
     await expect(firstValueFrom(service.publish(new Map()))).resolves.toBeNull();
     expect(store.commits).toHaveLength(0);
+  });
+
+  it('should still apply the extra writes when there are no drafts to publish', async () => {
+    const { service, store } = setUp({ 'locks/home__hero': { approval: 'r1' } });
+
+    const record = await firstValueFrom(
+      service.publish(new Map(), {
+        writes: [{ kind: DocumentWriteKind.Delete, path: 'locks/home__hero' }],
+      }),
+    );
+
+    expect(record).toBeNull();
+    expect(store.documents.has('locks/home__hero')).toBe(false);
+    expect(store.documents.size).toBe(0);
   });
 
   it('should keep the history at its limit, dropping the oldest records', async () => {

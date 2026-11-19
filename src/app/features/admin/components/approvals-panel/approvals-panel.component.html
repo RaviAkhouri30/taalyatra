@@ -1,0 +1,26 @@
+@if (model.heading(); as heading) {
+  @let panel = model.data();
+  <section class="apl" aria-labelledby="apl-title">
+    <h2 id="apl-title">{{ heading }}</h2>
+    @if (panel?.owner) {
+      <p class="apl-lead">
+        Check each change in the preview first. Approving publishes it exactly as its pages are now.
+      </p>
+    }
+    <ul class="apl-list">
+      @for (view of panel?.requests ?? []; track view.approval.id) {
+        <li>
+          <app-approval-card
+            [view]="view"
+            [owner]="panel?.owner ?? false"
+            [busy]="model.busy()"
+            (approved)="model.approve(view.approval)"
+            (sentBack)="model.sendBack(view.approval, $event)"
+            (withdrawn)="model.withdraw(view.approval)"
+            (dismissed)="model.dismiss(view.approval)"
+          />
+        </li>
+      }
+    </ul>
+  </section>
+}

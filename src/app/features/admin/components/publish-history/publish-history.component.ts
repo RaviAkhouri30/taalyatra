@@ -20,6 +20,8 @@ export class PublishHistoryComponent {
   public readonly entries = input.required<readonly IHistoryEntry[]>();
   /** The publish whose go-back is being confirmed. */
   public readonly confirming = input<string | null>(null);
+  /** Whether going back is offered: the owner's only (0019 decision 6). */
+  public readonly canGoBack = input(true);
   /** Something is running: the confirm buttons wait. */
   public readonly busy = input(false);
   /** The owner pressed "Go back to before this publish". */

@@ -1,5 +1,6 @@
 <div class="pp">
   <h1 class="d">Review &amp; publish</h1>
+  <app-approvals-panel />
   @let page = model.data();
   @if (!page) {
     <p class="pp-loading">Loading your changes…</p>
@@ -9,32 +10,52 @@
       @if (page.changes.length === 0) {
         <p>Everything is published. Changes you make in the editor appear here.</p>
       } @else {
+        <p class="pp-hint">
+          Ticked changes go with the next publish. Your own are ticked to start.
+        </p>
         <ul class="pp-list">
           @for (change of page.changes; track change.path) {
             <li>
-              <span
-                ><b>{{ change.title }}</b> <small>saved {{ change.savedAt }}</small></span
-              >
-              <button
-                appButton
-                type="button"
-                [variant]="ghost"
-                [size]="compact"
-                [disabled]="model.busy()"
-                [attr.aria-label]="'Undo the changes to ' + change.title"
-                (click)="model.discard(change.path)"
-              >
-                Undo
-              </button>
+              <label class="pp-tick">
+                <input
+                  type="checkbox"
+                  [checked]="model.selected().has(change.path)"
+                  (change)="model.toggle(change.path, tick.checked)"
+                  #tick
+                />
+                <span
+                  ><b>{{ change.title }}</b>
+                  <small
+                    >changed by {{ change.author }}, {{ change.savedAt }}
+                    @if (change.action === needsApproval) {
+                      · needs approval
+                    }
+                  </small></span
+                >
+              </label>
+              @if (change.mine || model.isOwner()) {
+                <button
+                  appButton
+                  type="button"
+                  [variant]="ghost"
+                  [size]="compact"
+                  [disabled]="model.busy()"
+                  [attr.aria-label]="'Undo the changes to ' + change.title"
+                  (click)="model.discard(change.path)"
+                >
+                  Undo
+                </button>
+              }
             </li>
           }
         </ul>
-        @if (page.report.errors.length > 0) {
+        @let report = model.report();
+        @if (report && report.errors.length > 0) {
           <div class="pp-issues pp-issues--error">
-            <h3>Fix before publishing ({{ page.report.errors.length }})</h3>
+            <h3>Fix before publishing ({{ report.errors.length }})</h3>
             <p>Publishing is off until these are fixed. Each link takes you to the right card.</p>
             <ul>
-              @for (issue of page.report.errors; track $index) {
+              @for (issue of report.errors; track $index) {
                 <li>
                   <span
                     ><b>{{ issue.section }} · {{ issue.field }}:</b> {{ issue.message }}</span
@@ -49,12 +70,12 @@
             </ul>
           </div>
         }
-        @if (page.report.warnings.length > 0) {
+        @if (report && report.warnings.length > 0) {
           <div class="pp-issues">
-            <h3>Worth a look ({{ page.report.warnings.length }})</h3>
+            <h3>Worth a look ({{ report.warnings.length }})</h3>
             <p>These won’t stop you publishing, but visitors will see them as they are.</p>
             <ul>
-              @for (issue of page.report.warnings; track $index) {
+              @for (issue of report.warnings; track $index) {
                 <li>
                   <span
                     ><b>{{ issue.section }} · {{ issue.field }}:</b> {{ issue.message }}</span
@@ -69,12 +90,23 @@
             </ul>
           </div>
         }
+        @if (model.plan().send.length > 0) {
+          <label class="pp-note">
+            <span>A note for the owner (optional)</span>
+            <textarea
+              rows="2"
+              [formControl]="model.note"
+              [attr.maxlength]="noteMax"
+              placeholder="For example: new festival dates"
+            ></textarea>
+          </label>
+        }
         @if (model.confirming()) {
           <div class="pp-confirm" role="group" aria-labelledby="pp-confirm-text">
-            <p id="pp-confirm-text">{{ page.confirmText }}</p>
+            <p id="pp-confirm-text">{{ model.confirmText() }}</p>
             <div class="pp-actions">
               <button appButton type="button" [disabled]="model.busy()" (click)="model.publish()">
-                Yes, publish
+                {{ model.confirmButtonText() }}
               </button>
               <button appButton type="button" [variant]="ghost" (click)="model.cancel()">
                 Cancel
@@ -85,17 +117,20 @@
           <button
             appButton
             type="button"
-            [disabled]="!page.report.canPublish || model.busy()"
+            [disabled]="!model.canPublish()"
             (click)="model.askToPublish()"
           >
-            Publish changes
+            {{ model.buttonText() }}
           </button>
         }
       }
     </section>
-    <app-backup-panel [justPublished]="model.justPublished()" />
+    @if (model.isOwner()) {
+      <app-backup-panel [justPublished]="model.justPublished()" />
+    }
     <app-publish-history
       [entries]="page.history"
+      [canGoBack]="model.isOwner()"
       [confirming]="model.goingBack()"
       [busy]="model.busy()"
       (asked)="model.askToGoBack($event)"

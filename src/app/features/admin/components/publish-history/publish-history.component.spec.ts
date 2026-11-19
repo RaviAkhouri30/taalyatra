@@ -6,6 +6,7 @@ const entry = (id: string, newest: boolean): IHistoryEntry => ({
   record: { id, publishedAt: 'x', changed: ['home/hero'], before: {} },
   when: id,
   title: 'Hero',
+  who: 'by you',
   newest,
 });
 
@@ -54,5 +55,17 @@ describe('PublishHistoryComponent', () => {
     button('Cancel')?.click();
 
     expect(events).toEqual(['backup', 'go back older', 'cancel']);
+  });
+
+  it('should show who published, and offer no going back to a manager', () => {
+    const fixture = TestBed.createComponent(PublishHistoryComponent);
+    fixture.componentRef.setInput('entries', [entry('newer', true)]);
+    fixture.componentRef.setInput('canGoBack', false);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('.ph-entry small')?.textContent).toBe('Hero · by you');
+    expect(element.textContent).toContain('Only the owner can go back');
+    expect(element.querySelector('button')).toBeNull();
   });
 });

@@ -27,12 +27,18 @@ import { DraftService } from '../services/draft.service';
 import { MediaLibraryService } from '../services/media-library.service';
 import { BackupService } from '../services/backup.service';
 import { PublishService } from '../services/publish.service';
+import { ReviewService } from '../services/review.service';
 import { downloadBackup } from './backup-download';
 import { EditorLayoutViewModel } from './editor-layout.view-model';
 
-/** What the bar knows about the owner's drafts. */
+/** What the bar knows about the signed-in account's own drafts (0019 decision 4). */
 export interface IPublishBarState {
+  /** Their own changes that go live with Publish. */
   readonly drafts: ReadonlyMap<string, IDraft>;
+  /** How many of their own changes there are in all. */
+  readonly own: number;
+  /** How many of them need approval, sent from Review & publish. */
+  readonly toSend: number;
   /** How many things stop publishing. */
   readonly problems: number;
 }
@@ -47,12 +53,15 @@ export const PUBLISH_BAR_MESSAGES = {
 
 /**
  * The bar under every editor page: whether there's anything to publish, and publishing or discarding
- * it there and then. The review page stays for looking through changes first and for undoing.
+ * it there and then. Only the account's own changes: others' wait on the review page, ticked by
+ * whoever publishes them, and changes needing approval are sent from there with a note (0019).
  */
 @Injectable()
 export class PublishBarViewModel extends ViewModel<IPublishBarState> {
-  /** How many documents have unpublished changes. */
-  public readonly count = computed(() => this.data()?.drafts.size ?? 0);
+  /** How many documents have unpublished changes of the account's own. */
+  public readonly count = computed(() => this.data()?.own ?? 0);
+  /** How many of them need approval. */
+  public readonly toSend = computed(() => this.data()?.toSend ?? 0);
   /** How many things stop publishing. */
   public readonly problems = computed(() => this.data()?.problems ?? 0);
   /** A publish or discard is running. */
@@ -68,7 +77,7 @@ export class PublishBarViewModel extends ViewModel<IPublishBarState> {
   /** Publishing is off while a save is running or failed, or while something needs fixing. */
   public readonly canPublish = computed(
     () =>
-      this.hasChanges() &&
+      (this.data()?.drafts.size ?? 0) > 0 &&
       !this.busy() &&
       !this.failed() &&
       this.problems() === 0 &&
@@ -95,6 +104,7 @@ export class PublishBarViewModel extends ViewModel<IPublishBarState> {
 
   private readonly layout = inject(EditorLayoutViewModel);
   private readonly draftService = inject(DraftService);
+  private readonly reviews = inject(ReviewService);
   private readonly publishes = inject(PublishService);
   private readonly library = inject(MediaLibraryService);
   private readonly backups = inject(BackupService);
@@ -136,7 +146,7 @@ export class PublishBarViewModel extends ViewModel<IPublishBarState> {
       tap((state) => {
         this.setData(state);
         // New changes since the publish: the offer was about what's live, so it goes.
-        if (state.drafts.size > 0) {
+        if (state.own > 0) {
           this.offerBackup.set(false);
         }
       }),
@@ -163,14 +173,17 @@ export class PublishBarViewModel extends ViewModel<IPublishBarState> {
   private readState(): Observable<IPublishBarState> {
     // forkJoin: both are needed to say whether publishing is allowed.
     return forkJoin([
-      this.draftService.drafts(),
+      this.reviews.review(),
       // A failed read means "not known": that skips one check, and mustn't stop all publishing.
       this.library.assets().pipe(catchError(() => of(null))),
     ]).pipe(
-      map(([drafts, assets]) => {
+      map(([review, assets]) => {
         const libraryIds = assets && new Set(assets.map((asset) => asset.id));
+        const own = review.mine();
+        const plan = review.planFor(own);
+        const drafts = review.draftsOf(plan.publish);
         const report = PublishReport.check(drafts, ALL_SECTIONS, this.clock.now(), libraryIds);
-        return { drafts, problems: report.errors.length };
+        return { drafts, own: own.size, toSend: plan.send.length, problems: report.errors.length };
       }),
       // Long-lived: a failed read keeps the last picture, and the next change tries again.
       catchError(() => EMPTY),
@@ -195,9 +208,15 @@ export class PublishBarViewModel extends ViewModel<IPublishBarState> {
     );
   }
 
+  private ownPaths(): Observable<string[]> {
+    return this.reviews.review().pipe(map((review) => [...review.mine()]));
+  }
+
   private runDiscard(): Observable<unknown> {
     this.busy.set(true);
-    return this.draftService.discard([...(this.data()?.drafts.keys() ?? [])]).pipe(
+    return this.ownPaths().pipe(
+      // switchMap: the account's own changes as they are now, including any needing approval.
+      switchMap((paths) => this.draftService.discard(paths)),
       tap(() => {
         this.toasts.show(PUBLISH_BAR_MESSAGES.discarded);
         this.confirmingDiscard.set(false);

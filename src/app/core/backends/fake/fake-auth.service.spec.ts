@@ -4,7 +4,11 @@ import { AuthErrorKind } from '@core/enums/auth-error-kind.enum';
 import { LocalStoreService } from '@core/services/local-store.service';
 import { APP_ENVIRONMENT } from '@core/tokens/app-environment.token';
 import { environment } from '@env/environment';
-import { FAKE_ADMIN_ACCOUNT, FAKE_VISITOR_ACCOUNT } from './fake-auth.constants';
+import {
+  FAKE_ADMIN_ACCOUNT,
+  FAKE_MANAGER_ACCOUNT,
+  FAKE_VISITOR_ACCOUNT,
+} from './fake-auth.constants';
 import { FAKE_SESSION_STORAGE_KEY, FakeAuthService, FAKE_ID_TOKEN } from './fake-auth.service';
 
 describe('FakeAuthService', () => {
@@ -65,6 +69,14 @@ describe('FakeAuthService', () => {
     );
 
     expect(user.uid).toBe(FAKE_VISITOR_ACCOUNT.uid);
+  });
+
+  it('should sign the content manager in with their own UID', async () => {
+    const user = await firstValueFrom(
+      create().signIn(FAKE_MANAGER_ACCOUNT.email, FAKE_MANAGER_ACCOUNT.password),
+    );
+
+    expect(user).toEqual({ uid: FAKE_MANAGER_ACCOUNT.uid, email: FAKE_MANAGER_ACCOUNT.email });
   });
 
   it('should refuse a wrong password with InvalidCredentials', async () => {

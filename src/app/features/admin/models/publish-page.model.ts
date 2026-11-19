@@ -1,66 +1,69 @@
-import { type IDraft } from '@core/interfaces/i-draft';
+import { ALL_SECTIONS } from '../schemas/editor-tabs';
 import { formatMoment } from './editor-dates';
 import { type IEditorSection } from './i-editor-section';
 import { type IPublishRecord } from './i-publish-record';
-import { type PublishReport } from './publish-report.model';
-
-/** One document with unpublished changes. */
-export interface IChangeEntry {
-  readonly path: string;
-  /** The editor cards that edit it, e.g. "Site details, Contact details". */
-  readonly title: string;
-  readonly savedAt: string;
-}
+import { PublishReport } from './publish-report.model';
+import { type IReviewChange, type Review, documentTitles } from './review.model';
 
 /** One past publish. */
 export interface IHistoryEntry {
   readonly record: IPublishRecord;
   readonly when: string;
   readonly title: string;
+  /** Who published it, and whose change it was when approved (0019). */
+  readonly who: string;
   /** The latest publish: going back to before it replaces nothing published since (0016 V3). */
   readonly newest: boolean;
 }
 
-/** The review & publish page: what will change, what the checks found, and the history. */
+/**
+ * @param record A past publish.
+ * @param viewerUid The signed-in account.
+ * @returns e.g. "by you", "by m@b.co", "by you, approved from m@b.co".
+ */
+function whoPublished(record: IPublishRecord, viewerUid: string): string {
+  // Records from before 2.0.0 aren't signed: only the owner could publish then.
+  const by =
+    record.by === undefined || record.by === viewerUid ? 'you' : (record.byEmail ?? 'the owner');
+  return record.approvedFrom === undefined
+    ? `by ${by}`
+    : `by ${by}, approved from ${record.approvedFrom}`;
+}
+
+/** The review & publish page: what will change, who changed it, and the history. */
 export class PublishPageModel {
-  public readonly changes: readonly IChangeEntry[];
+  public readonly changes: readonly IReviewChange[];
   public readonly history: readonly IHistoryEntry[];
-  /** How the confirmation sums the publish up, e.g. "Publish 2 changed documents?". */
-  public readonly confirmText: string;
 
   /**
-   * @param drafts The drafts, by path.
+   * @param review The changes and who made them.
    * @param history The publish history, newest first.
-   * @param sections Every editor section.
-   * @param report What the pre-publish checks found.
+   * @param sections Every editor section, titled for the list.
+   * @param libraryIds The photo library's ids, or `null` when they aren't known.
    */
   public constructor(
-    public readonly drafts: ReadonlyMap<string, IDraft>,
+    public readonly review: Review,
     history: readonly IPublishRecord[],
-    private readonly sections: readonly IEditorSection[],
-    public readonly report: PublishReport,
+    sections: readonly IEditorSection[],
+    private readonly libraryIds: ReadonlySet<string> | null,
   ) {
-    this.changes = [...drafts.values()].map((draft) => ({
-      path: draft.path,
-      title: this.titleOf(draft.path),
-      savedAt: formatMoment(draft.savedAt),
-    }));
+    const titleOf = documentTitles(sections);
+    this.changes = review.changes;
     this.history = history.map((record, index) => ({
       record,
       when: formatMoment(record.publishedAt),
-      title: record.changed.map((path) => this.titleOf(path)).join('; '),
+      title: record.changed.map(titleOf).join('; '),
+      who: whoPublished(record, review.permissions.uid),
       newest: index === 0,
     }));
-    const count = drafts.size;
-    this.confirmText = `Publish ${String(count)} changed ${count === 1 ? 'document' : 'documents'}? Visitors see the changes on their next visit.`;
   }
 
-  /** @returns The cards that edit a document, or its path when no card does. */
-  private titleOf(path: string): string {
-    const titles = new Map<string, string[]>();
-    for (const section of this.sections) {
-      titles.set(section.path, [...(titles.get(section.path) ?? []), section.title]);
-    }
-    return titles.get(path)?.join(', ') ?? path;
+  /**
+   * @param selected The ticked documents.
+   * @param now The current time.
+   * @returns What the checks find in them.
+   */
+  public reportFor(selected: ReadonlySet<string>, now: Date): PublishReport {
+    return PublishReport.check(this.review.draftsOf(selected), ALL_SECTIONS, now, this.libraryIds);
   }
 }
