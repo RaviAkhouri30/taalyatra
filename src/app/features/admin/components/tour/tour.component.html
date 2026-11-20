@@ -1,0 +1,40 @@
+@if (tour.step(); as step) {
+  <!-- Catches clicks: the page waits while the tour runs. -->
+  <div class="tour-block"></div>
+  @if (frame(); as placed) {
+    <div class="tour-frame" data-testid="tour-frame" aria-hidden="true" [appPlaced]="placed"></div>
+  } @else {
+    <div class="tour-shade" aria-hidden="true"></div>
+  }
+  <div
+    #card
+    class="tour-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="tour-title"
+    aria-describedby="tour-text"
+    tabindex="-1"
+    [class.tour-card--alone]="!frame()"
+    [appPlaced]="cardPlace()"
+    (keydown)="keepFocus($event)"
+  >
+    <p class="tour-progress">{{ tour.progress() }}</p>
+    <h2 id="tour-title">{{ step.title }}</h2>
+    <p id="tour-text">{{ step.text }}</p>
+    <div class="tour-actions">
+      <button appButton type="button" [variant]="ghost" [size]="compact" (click)="tour.close()">
+        Close
+      </button>
+      <span class="tour-move">
+        @if (!tour.isFirst()) {
+          <button appButton type="button" [variant]="ghost" [size]="compact" (click)="tour.back()">
+            Back
+          </button>
+        }
+        <button appButton type="button" [size]="compact" (click)="tour.next()">
+          {{ tour.isLast() ? 'Done' : 'Next' }}
+        </button>
+      </span>
+    </div>
+  </div>
+}

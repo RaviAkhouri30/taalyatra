@@ -1,0 +1,19 @@
+<button
+  #button
+  type="button"
+  class="hm-button"
+  aria-haspopup="true"
+  aria-controls="help-menu"
+  [attr.aria-expanded]="open()"
+  [appTourTarget]="helpTarget"
+  (click)="toggle()"
+>
+  Help
+</button>
+@if (open()) {
+  <ul id="help-menu" class="hm-list" aria-label="Help">
+    <li><button type="button" (click)="startTour()">Take the tour</button></li>
+    <li><a [routerLink]="featuresUrl" (click)="open.set(false)">Features</a></li>
+    <li><a [routerLink]="releasesUrl" (click)="open.set(false)">What’s new</a></li>
+  </ul>
+}

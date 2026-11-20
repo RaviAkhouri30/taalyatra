@@ -1,0 +1,62 @@
+@use 'tokens' as t;
+
+:host {
+  position: relative;
+  display: inline-block;
+}
+
+.hm-button {
+  box-sizing: border-box;
+  min-height: 38px;
+  padding: 6px 14px;
+  border: 1px solid t.$color-line;
+  border-radius: t.$radius-pill;
+  background: transparent;
+  color: t.$color-cream;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover,
+  &[aria-expanded='true'] {
+    background: t.$color-surface;
+  }
+}
+
+.hm-list {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: t.$z-header + 1;
+  display: grid;
+  min-width: 190px;
+  margin: 0;
+  padding: 6px;
+  border: 1px solid t.$color-line;
+  border-radius: 12px;
+  background: t.$color-surface-raised;
+  list-style: none;
+
+  a,
+  button {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: t.$color-cream;
+    font: inherit;
+    font-size: 15px;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      background: t.$color-surface;
+    }
+  }
+}

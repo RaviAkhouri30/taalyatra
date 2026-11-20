@@ -5,6 +5,7 @@ import { IAuthService } from '@core/interfaces/i-auth-service';
 import fakeDb from '@core/backends/fake/fake-db.json';
 import { AdminPageModel } from '../../models/admin-page.model';
 import { EditorNavService } from '../../services/editor-nav.service';
+import { TourService } from '../../services/tour.service';
 import { provideEditorTesting } from '../../testing/editor-testing';
 import { EditorLayoutViewModel } from '../../view-models/editor-layout.view-model';
 import { EditorTopBarComponent } from './editor-top-bar.component';
@@ -17,6 +18,7 @@ describe('EditorTopBarComponent', () => {
         ...provideEditorTesting().providers,
         provideRouter([]),
         EditorNavService,
+        TourService,
         {
           provide: EditorLayoutViewModel,
           useValue: {

@@ -207,4 +207,4 @@ the walkthrough:
 
 ---
 
-**Approval:** ☐ Approved by \_\_\_\_ on \_\_\_\_
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-20, with decisions 1–4 as recommended.

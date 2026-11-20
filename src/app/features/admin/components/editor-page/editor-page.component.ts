@@ -15,6 +15,8 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BaseComponent } from '@shared/base/base-component';
 import { type IUnsavedChanges } from '../../guards/unsaved-changes.guard';
 import { InViewDirective } from '../../directives/in-view.directive';
+import { TourTargetDirective } from '../../directives/tour-target.directive';
+import { TourTarget } from '../../models/tour.model';
 import { PICKABLE_SECTIONS, cardForAnchor } from '../../schemas/editor-tabs';
 import { type IEditorSection } from '../../models/i-editor-section';
 import { EditorJumpService } from '../../services/editor-jump.service';
@@ -41,6 +43,7 @@ import { ButtonSize, ButtonVariant } from '@shared/enums/button-variant.enum';
     PublishBarComponent,
     RouterLink,
     SchemaFieldsComponent,
+    TourTargetDirective,
   ],
   templateUrl: './editor-page.component.html',
   styleUrl: './editor-page.component.scss',
@@ -56,6 +59,7 @@ export default class EditorPageComponent
 
   protected readonly nav = inject(EditorNavService);
   protected readonly pickable = PICKABLE_SECTIONS;
+  protected readonly targets = TourTarget;
   protected readonly ghost = ButtonVariant.Ghost;
   protected readonly compact = ButtonSize.Compact;
   protected readonly reviewUrl = `${AppRoute.Admin}/${PUBLISH_PATH}`;

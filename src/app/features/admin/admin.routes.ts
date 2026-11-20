@@ -8,6 +8,8 @@ import { signedOutGuard } from './guards/signed-out.guard';
 import { unsavedChangesGuard } from './guards/unsaved-changes.guard';
 import {
   EDITOR_TAB_ROUTE_KEY,
+  FEATURES_LABEL,
+  FEATURES_PATH,
   LEADS_LABEL,
   LEADS_PATH,
   MEDIA_LABEL,
@@ -80,6 +82,11 @@ const adminRoutes: Routes = [
             path: PUBLISH_PATH,
             title: `Review & publish — ${ADMIN_TITLE_SUFFIX}`,
             loadComponent: () => import('./components/publish-page/publish-page.component'),
+          },
+          {
+            path: FEATURES_PATH,
+            title: `${FEATURES_LABEL} — ${ADMIN_TITLE_SUFFIX}`,
+            loadComponent: () => import('./components/features-page/features-page.component'),
           },
           {
             path: VISITS_PATH,

@@ -31,7 +31,7 @@
         </button>
       </div>
       @if (!nav.collapsed() || nav.drawerOpen()) {
-        <app-editor-find />
+        <app-editor-find [appTourTarget]="targets.Find" />
       } @else {
         <!-- Folded to icons: Find is one press away, not hidden (0017 review). -->
         <button
@@ -53,7 +53,7 @@
           </svg>
         </button>
       }
-      <nav #sideNav class="ed-nav" aria-label="Editor">
+      <nav #sideNav class="ed-nav" aria-label="Editor" [appTourTarget]="targets.Menu">
         @for (group of groups(); track group.id) {
           <div class="ed-group">
             @if (group.label) {
@@ -67,6 +67,7 @@
                     routerLinkActive="sel"
                     [routerLinkActiveOptions]="link.match"
                     ariaCurrentWhenActive="page"
+                    [appTourTarget]="link.tourTarget"
                     [attr.title]="nav.collapsed() ? link.label : null"
                     (click)="nav.closeDrawer()"
                   >
@@ -123,3 +124,6 @@
     </div>
   </div>
 </div>
+<!-- The guided tour (0020 V9): its offer, and the overlay while it runs. -->
+<app-tour-offer />
+<app-tour />

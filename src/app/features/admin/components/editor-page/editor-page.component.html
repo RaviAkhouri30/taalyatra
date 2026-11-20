@@ -5,7 +5,7 @@
     [class.ep--no-preview]="nav.previewHidden()"
   >
     <div class="ep-main">
-      <div class="ep-form">
+      <div class="ep-form" [appTourTarget]="targets.Cards">
         <div class="ep-head">
           <h1 class="d">{{ page.tab.label }}</h1>
         </div>
@@ -65,7 +65,7 @@
           }
         </fieldset>
       </div>
-      <app-publish-bar>
+      <app-publish-bar [appTourTarget]="targets.PublishBar">
         <button
           type="button"
           class="ep-toggle"
@@ -77,7 +77,13 @@
         </button>
       </app-publish-bar>
     </div>
-    <aside #previewColumn id="editor-preview" class="ep-preview" aria-label="Preview">
+    <aside
+      #previewColumn
+      id="editor-preview"
+      class="ep-preview"
+      aria-label="Preview"
+      [appTourTarget]="targets.Preview"
+    >
       <app-preview-frame
         [anchor]="model.activeAnchor()"
         [version]="model.previewVersion()"

@@ -1,0 +1,43 @@
+<div class="fp-page">
+  <h1 class="d">Features</h1>
+  <p class="fp-lead">
+    What the website does, and where each part is changed. Open a feature on the site to see it as
+    visitors do.
+  </p>
+  @for (group of model.data() ?? []; track group.label) {
+    <section class="fp-group" [attr.aria-labelledby]="'fp-' + $index">
+      <h2 [id]="'fp-' + $index">{{ group.label }}</h2>
+      <ul class="fp-list">
+        @for (feature of group.cards; track feature.id) {
+          <li>
+            <article class="fp-card" [attr.aria-labelledby]="'fp-card-' + feature.id">
+              <app-icon [name]="feature.icon" [size]="22" />
+              <div class="fp-body">
+                <h3 [id]="'fp-card-' + feature.id">{{ feature.title }}</h3>
+                <p>{{ feature.description }}</p>
+                <div class="fp-links">
+                  @if (feature.site; as site) {
+                    <a
+                      [href]="site"
+                      target="_blank"
+                      rel="noopener"
+                      [attr.aria-label]="'See ' + feature.title + ' on the site (opens a new tab)'"
+                      >See it on the site</a
+                    >
+                  }
+                  @if (feature.changeUrl; as url) {
+                    <a [routerLink]="url" [attr.aria-label]="'Change ' + feature.title"
+                      >Change it</a
+                    >
+                  } @else {
+                    <span class="fp-note">{{ feature.note }}</span>
+                  }
+                </div>
+              </div>
+            </article>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+</div>

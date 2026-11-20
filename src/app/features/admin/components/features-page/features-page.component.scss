@@ -1,0 +1,96 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.fp-page {
+  display: grid;
+  gap: 20px;
+  max-width: 1000px;
+  padding: 24px;
+
+  @include bp.down(bp.$phone) {
+    padding: 16px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+  }
+}
+
+.fp-lead {
+  margin: 0;
+  color: t.$color-muted-strong;
+}
+
+.fp-group {
+  display: grid;
+  gap: 12px;
+
+  h2 {
+    margin: 0;
+    font-size: 19px;
+  }
+}
+
+.fp-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+  }
+}
+
+.fp-card {
+  display: flex;
+  flex: 1;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px 18px;
+  border: 1px solid t.$color-line;
+  border-radius: 14px;
+  background: t.$color-surface-raised;
+  color: t.$color-amber;
+}
+
+.fp-body {
+  display: grid;
+  gap: 6px;
+  color: t.$color-cream;
+
+  h3 {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  p {
+    margin: 0;
+    color: t.$color-muted-strong;
+    font-size: 14px;
+  }
+}
+
+.fp-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 4px;
+  font-size: 14px;
+
+  a {
+    color: t.$color-cream;
+    font-weight: 700;
+  }
+}
+
+.fp-note {
+  color: t.$color-muted-strong;
+}

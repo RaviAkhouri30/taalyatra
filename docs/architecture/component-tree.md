@@ -71,3 +71,19 @@ flowchart TD
   L -->|editor tabs · editorTabGuard| EP["EditorPageComponent<br/>waiting notice · locked fieldset for managers"]
   L -->|visits, leads · ownerGuard| OW["Owner-only pages"]
 ```
+
+## Guided tour and Features (2.1.0)
+
+The tour's state lives in `TourService`, provided by the editor layout. Areas mark themselves with `TourTargetDirective`;
+`TourComponent` is the only part that measures them ([0020 design](../aidlc/0020-tour-and-showcase/02-design.md)).
+
+```mermaid
+flowchart TD
+  L["EditorLayoutComponent<br/>provides TourService"] --> TB["EditorTopBarComponent"]
+  TB --> HM["HelpMenuComponent<br/>Take the tour · Features · What's new"]
+  L --> TO["TourOfferComponent<br/>once per account and device"]
+  L --> TC["TourComponent<br/>highlight · step card"]
+  L --> N["Menu, Find, Review link<br/>appTourTarget"]
+  L -->|editor tabs| EP["EditorPageComponent<br/>cards · preview · publish bar: appTourTarget"]
+  L -->|features| FP["FeaturesPageComponent (FeaturesPageViewModel)"]
+```

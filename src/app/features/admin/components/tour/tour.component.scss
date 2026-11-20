@@ -1,0 +1,101 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+// Above the editor's drawer and its backdrop.
+$layer: t.$z-tour;
+
+.tour-block {
+  position: fixed;
+  inset: 0;
+  z-index: $layer;
+}
+
+.tour-frame,
+.tour-shade {
+  position: fixed;
+  z-index: $layer + 1;
+  pointer-events: none;
+}
+
+// The frame's shadow dims everything around the area.
+.tour-frame {
+  border: 2px solid t.$color-amber;
+  border-radius: 12px;
+  box-shadow: 0 0 0 100vmax t.$color-overlay;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition:
+      top 0.2s ease,
+      left 0.2s ease,
+      width 0.2s ease,
+      height 0.2s ease;
+  }
+}
+
+.tour-shade {
+  inset: 0;
+  background: t.$color-overlay;
+}
+
+.tour-card {
+  position: fixed;
+  z-index: $layer + 2;
+  display: grid;
+  gap: 10px;
+  box-sizing: border-box;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  padding: 18px 20px;
+  border: 1px solid t.$color-amber;
+  border-radius: 16px;
+  background: t.$color-surface-raised;
+  color: t.$color-cream;
+
+  &:focus-visible {
+    outline: 2px solid t.$color-amber;
+    outline-offset: 2px;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  // On narrow screens, and for a step with nothing to point at, the card sits on its own.
+  @include bp.down(bp.$phone) {
+    right: 16px;
+    bottom: 16px;
+    left: 16px !important;
+    top: auto !important;
+    width: auto;
+    max-width: none;
+  }
+}
+
+.tour-card--alone {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  @include bp.down(bp.$phone) {
+    transform: none;
+  }
+}
+
+.tour-progress {
+  color: t.$color-muted-strong;
+  font-size: 13px;
+}
+
+.tour-actions,
+.tour-move {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}

@@ -28,6 +28,7 @@ $color-danger-text: #f3b8a8;
 $color-logo-ground: #fdf9f3;
 $color-promo-ink: #3a2213;
 $color-header-glass: rgb(23 18 16 / 94%);
+$color-overlay: rgb(0 0 0 / 60%); // dims the page behind the admin's drawer and tour
 $color-promo-gradient: linear-gradient(135deg, $color-amber, $color-clay);
 $color-whatsapp: #25d366; // WhatsApp's green: dark icons on it reach about 9:1
 $color-fab-ring: rgb(
@@ -51,3 +52,5 @@ $z-chat: 49;
 $z-fab: 50;
 $z-toast: 60;
 $z-loader: 100;
+// The admin's guided tour, above the editor's menu drawer (0020).
+$z-tour: 110;

@@ -1,0 +1,14 @@
+@if (tour.offerOpen()) {
+  <section class="to" aria-labelledby="to-title">
+    <h2 id="to-title">Take a one-minute tour?</h2>
+    <p>See where everything is, and how changes go live. You can take it any time from Help.</p>
+    <div class="to-actions">
+      <button appButton type="button" [size]="compact" (click)="tour.start()">
+        Start the tour
+      </button>
+      <button appButton type="button" [variant]="ghost" [size]="compact" (click)="tour.decline()">
+        Not now
+      </button>
+    </div>
+  </section>
+}
