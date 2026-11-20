@@ -2,6 +2,8 @@ import { AppRoute } from '@shared/enums/app-route.enum';
 import { EDITOR_TABS } from '../schemas/editor-tabs';
 import { type Permissions } from './permissions.model';
 import { TOUR_SEEN_KEY_PREFIX } from './tour.constants';
+import { ManagerArea } from './manager-area.enum';
+import { AREA_ROWS, type IAreaRow } from './team-access.model';
 
 /** The areas a step can point at; each is marked with `appTourTarget` where it's drawn. */
 export enum TourTarget {
@@ -31,8 +33,8 @@ interface ITourStepSource {
   readonly text: string;
   /** What a manager reads instead, when it differs. */
   readonly managerText?: string;
-  /** Only the owner's tour has it. */
-  readonly ownerOnly?: boolean;
+  /** The owner's tour has it, and a manager's when given any of the owner's areas (0022). */
+  readonly areas?: boolean;
   /** Its area is in the menu, which is a drawer on phones and tablets. */
   readonly inMenu?: boolean;
 }
@@ -111,7 +113,7 @@ const STEPS: readonly ITourStepSource[] = [
     page: TourPage.Dashboard,
     title: 'Only yours',
     text: 'Leads from the proposal form, visits to the site, and Team access, where you decide what each manager may change.',
-    ownerOnly: true,
+    areas: true,
     inMenu: true,
   },
   {
@@ -132,6 +134,31 @@ export function firstTabUrl(permissions: Permissions): string | null {
   return tab ? `${AppRoute.Admin}/${tab.tab}` : null;
 }
 
+/** @returns The owner's areas a manager was given, in Team access's order. */
+function givenAreas(permissions: Permissions): readonly IAreaRow[] {
+  return AREA_ROWS.filter((row) => permissions.isManager && permissions.canUse(row.area));
+}
+
+/**
+ * The owner's areas step, for a manager given some of them (0022 design decision 3). It points at
+ * them in the menu when one has a link there (Leads, Visits); Backups and Going back are on Review
+ * & publish.
+ */
+function givenStep(step: ITourStepSource, url: string, given: readonly IAreaRow[]): ITourStep {
+  const inMenu = given.some((row) => MENU_AREAS.has(row.area));
+  return {
+    id: step.id,
+    target: inMenu ? step.target : null,
+    url,
+    title: 'Given to you',
+    text: `The owner gave you ${given.map((row) => row.label).join(', ')}. Leads and Visits are in the menu; Backups and going back are on Review & publish.`,
+    inMenu,
+  };
+}
+
+/** The owner's areas with their own page in the menu. */
+const MENU_AREAS: ReadonlySet<ManagerArea> = new Set([ManagerArea.Leads, ManagerArea.Visits]);
+
 /**
  * @param permissions The signed-in account.
  * @returns Its tour: the owner's has every step; a manager's leaves out the owner's areas, and
@@ -139,22 +166,29 @@ export function firstTabUrl(permissions: Permissions): string | null {
  */
 export function tourSteps(permissions: Permissions): ITourStep[] {
   const firstTab = firstTabUrl(permissions);
+  const given = givenAreas(permissions);
   return STEPS.flatMap((step) => {
     const url = step.page === TourPage.Dashboard ? AppRoute.Admin : firstTab;
-    if (url === null || (step.ownerOnly === true && !permissions.isOwner)) {
+    if (url === null) {
       return [];
     }
-    return [
-      {
-        id: step.id,
-        target: step.target,
-        url,
-        title: step.title,
-        text: permissions.isOwner ? step.text : (step.managerText ?? step.text),
-        inMenu: step.inMenu ?? false,
-      },
-    ];
+    if (step.areas === true && !permissions.isOwner) {
+      return given.length > 0 ? [givenStep(step, url, given)] : [];
+    }
+    return [shownStep(step, url, permissions.isOwner)];
   });
+}
+
+/** A step as the account reads it: a manager gets its manager text, when it has one. */
+function shownStep(step: ITourStepSource, url: string, owner: boolean): ITourStep {
+  return {
+    id: step.id,
+    target: step.target,
+    url,
+    title: step.title,
+    text: owner ? step.text : (step.managerText ?? step.text),
+    inMenu: step.inMenu ?? false,
+  };
 }
 
 /**

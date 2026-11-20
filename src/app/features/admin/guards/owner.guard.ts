@@ -5,7 +5,7 @@ import { AppRoute } from '@shared/enums/app-route.enum';
 import { AccessService } from '../services/access.service';
 
 /**
- * Keeps the owner's own pages (Leads, Visits, Team access) to the owner (0019 decision 6); a
+ * Keeps Team access to the owner (0019 decision 6; Leads and Visits use `areaGuard` since 2.3.0); a
  * manager lands on the dashboard instead. The rules refuse the data to anyone else anyway.
  * @returns `true`, or the dashboard.
  */

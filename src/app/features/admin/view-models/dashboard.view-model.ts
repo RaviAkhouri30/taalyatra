@@ -5,6 +5,7 @@ import { ViewModel } from '@shared/base/view-model';
 import { ContentPath } from '../models/content-path.enum';
 import { DashboardModel } from '../models/dashboard.model';
 import { type Permissions } from '../models/permissions.model';
+import { ManagerArea } from '../models/manager-area.enum';
 import { PlaceholderRule } from '../models/publish-rules';
 import { type IReleaseSummary, summarizeRelease } from '../models/releases-page.model';
 import { ALL_SECTIONS } from '../schemas/editor-tabs';
@@ -69,7 +70,7 @@ export class DashboardViewModel extends ViewModel<DashboardModel> {
       forkJoin(SECTION_PATHS.map((path) => this.drafts.document(path))),
       // Before the 2.0.0 rules are live they're refused: nothing waits.
       this.approvals.requests().pipe(catchError(() => of([]))),
-      ...this.extras(permissions.isOwner),
+      ...this.extras(permissions),
     ]).pipe(
       map(([drafts, history, documents, requests, lastBackupAt, visits, leads]) => {
         const byPath = new Map(SECTION_PATHS.map((path, index) => [path, documents.at(index)]));
@@ -97,21 +98,21 @@ export class DashboardViewModel extends ViewModel<DashboardModel> {
    * The owner's reads (0019 decision 6), whose failure only means "not known": each card then
    * says so, nothing breaks. A manager's are skipped: the rules refuse them, and the cards are hidden.
    */
+  /** Each area's read, made only when this account may use it (0022); else "not known". */
   private extras(
-    owner: boolean,
+    permissions: Permissions,
   ): readonly [
     Observable<string | null>,
     Observable<IVisitHistory | null>,
     Observable<Lead[] | null>,
   ] {
-    if (!owner) {
-      return [of(null), of(null), of(null)] as const;
-    }
+    const when = <T>(area: ManagerArea, read: () => Observable<T>): Observable<T | null> =>
+      // A failed read means "not known": the backup card then suggests one, which is harmless.
+      permissions.canUse(area) ? read().pipe(catchError(() => of(null))) : of(null);
     return [
-      // A failed read means "not known": the card then suggests a backup, which is harmless.
-      this.backups.lastMade().pipe(catchError(() => of(null))),
-      this.visits.load().pipe(catchError(() => of(null))),
-      this.leads.leads().pipe(catchError(() => of(null))),
+      when(ManagerArea.Backups, () => this.backups.lastMade()),
+      when(ManagerArea.Visits, () => this.visits.load()),
+      when(ManagerArea.Leads, () => this.leads.leads()),
     ] as const;
   }
 }

@@ -1,3 +1,5 @@
+import { ManagerArea } from './manager-area.enum';
+import { type Permissions } from './permissions.model';
 import { ALL_SECTIONS } from '../schemas/editor-tabs';
 import { formatMoment } from './editor-dates';
 import { type IEditorSection } from './i-editor-section';
@@ -22,6 +24,30 @@ export interface IHistoryEntry {
   readonly who: string;
   /** The latest publish: going back to before it replaces nothing published since (0016 V3). */
   readonly newest: boolean;
+  /** Whether this account may go back to before it (0022 D4). */
+  readonly canGoBack: boolean;
+}
+
+/**
+ * Going back to before a publish also replaces every later one (0016 V3), so a manager may do it
+ * only when every page those publishes changed is one they may publish (0022 D4); the owner always.
+ * @param permissions The signed-in account.
+ * @param history The publish history, newest first.
+ * @param index The publish's place in it.
+ * @returns Whether going back to before it is offered.
+ */
+export function canGoBackOver(
+  permissions: Permissions,
+  history: readonly IPublishRecord[],
+  index: number,
+): boolean {
+  return (
+    permissions.isOwner ||
+    (permissions.canUse(ManagerArea.GoingBack) &&
+      history
+        .slice(0, index + 1)
+        .every((record) => record.changed.every((path) => permissions.canPublishPath(path))))
+  );
 }
 
 /**
@@ -63,6 +89,7 @@ export class PublishPageModel {
       title: record.changed.map(titleOf).join('; '),
       who: whoPublished(record, review.permissions.uid),
       newest: index === 0,
+      canGoBack: canGoBackOver(review.permissions, history, index),
     }));
   }
 

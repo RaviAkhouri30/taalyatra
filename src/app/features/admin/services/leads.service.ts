@@ -33,12 +33,18 @@ export class LeadsService {
   /**
    * @param lead The lead.
    * @param status Its new status.
+   * @param by The changer's email, which the rules require to be the signed-in account's (0022).
    * @returns The lead as stored now.
    */
-  public setStatus(lead: Lead, status: LeadStatus): Observable<Lead> {
+  public setStatus(lead: Lead, status: LeadStatus, by: string): Observable<Lead> {
     // The whole document, exactly as read, plus the status: the rules accept a change to the
-    // status and its time only, so nothing the visitor sent can be altered from here.
-    const fields = { ...lead.fields, status, statusAt: this.clock.now().toISOString() };
+    // status, its time and its signer only, so nothing the visitor sent can be altered from here.
+    const fields = {
+      ...lead.fields,
+      status,
+      statusAt: this.clock.now().toISOString(),
+      statusBy: by,
+    };
     return this.store
       .commit([{ kind: DocumentWriteKind.Set, path: `${LEADS_COLLECTION}/${lead.id}`, fields }])
       .pipe(

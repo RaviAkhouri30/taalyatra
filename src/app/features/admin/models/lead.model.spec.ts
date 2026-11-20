@@ -61,4 +61,26 @@ describe('Lead', () => {
     expect(toLeadStatus('lost')).toBe(LeadStatus.Lost);
     expect(toLeadStatus('')).toBeUndefined();
   });
+
+  describe('statusLine', () => {
+    const signed = { status: 'contacted', statusBy: 'p@b.c', statusAt: '2026-11-21T05:12:00.000Z' };
+
+    it('should say who changed the status and when', () => {
+      expect(new Lead('a', signed).statusLine('o@b.c')).toMatch(
+        /^Contacted by p@b\.c, 21 Nov 2026/,
+      );
+    });
+
+    it('should say "by you" for the viewer’s own change', () => {
+      expect(new Lead('a', signed).statusLine('p@b.c')).toMatch(/^Contacted by you, /);
+    });
+
+    it('should leave the time out when it isn’t known', () => {
+      expect(new Lead('a', { ...signed, statusAt: '' }).statusLine('x')).toBe('Contacted by p@b.c');
+    });
+
+    it('should say nothing when nobody signed the status', () => {
+      expect(new Lead('a', { status: 'won' }).statusLine('o@b.c')).toBe('');
+    });
+  });
 });

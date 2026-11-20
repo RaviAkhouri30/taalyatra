@@ -1,5 +1,6 @@
 import { type DocumentFields } from '@core/interfaces/i-document-store';
 import { EditorTab } from './editor-tab.enum';
+import { ManagerArea } from './manager-area.enum';
 
 /** Where Team access keeps each manager's permissions, by account id (0019). */
 export const ROLES_COLLECTION = 'roles';
@@ -36,6 +37,8 @@ export interface IRole {
   /** Pages with a setting; any other page needs approval. */
   readonly pages: ReadonlyMap<EditorTab, PageAccess>;
   readonly uploads: boolean;
+  /** The owner's areas they were given (0022); missing means none, as in a stored role. */
+  readonly areas?: ReadonlySet<ManagerArea>;
   /** When the owner added them (ISO 8601). */
   readonly addedAt: string;
 }
@@ -61,6 +64,16 @@ function toPages(value: unknown): ReadonlyMap<EditorTab, PageAccess> {
 }
 
 /**
+ * @param value A stored role's `areas`.
+ * @returns The areas switched on: only an explicit `true`, as the rules check, so a missing or
+ *   malformed map gives none (0022 D6).
+ */
+function toAreas(value: unknown): ReadonlySet<ManagerArea> {
+  const entries = new Map(typeof value === 'object' && value !== null ? Object.entries(value) : []);
+  return new Set(Object.values(ManagerArea).filter((area) => entries.get(area) === true));
+}
+
+/**
  * @param fields A stored role.
  * @returns The role, or `null` when the stored data isn't one. Unknown pages and settings are
  *   dropped, so they need approval.
@@ -78,6 +91,7 @@ export function toRole(fields: DocumentFields | null): IRole | null {
         pages: toPages(entries.get('pages')),
         // Only an explicit yes allows uploads: the rules check for `true`.
         uploads: entries.get('uploads') === true,
+        areas: toAreas(entries.get('areas')),
         addedAt,
       }
     : null;
@@ -92,6 +106,9 @@ export function roleFields(role: IRole): DocumentFields {
     email: role.email,
     pages: Object.fromEntries(role.pages),
     uploads: role.uploads,
+    areas: Object.fromEntries(
+      Object.values(ManagerArea).map((area) => [area, role.areas?.has(area) === true]),
+    ),
     addedAt: role.addedAt,
   };
 }

@@ -13,6 +13,7 @@ import { formatDay, formatMoment } from './editor-dates';
 import { type IPublishIssue } from './i-publish-issue';
 import { type IPublishRecord } from './i-publish-record';
 import { EditorTab } from './editor-tab.enum';
+import { ManagerArea } from './manager-area.enum';
 import { type Lead, LeadStatus } from './lead.model';
 import { type Permissions } from './permissions.model';
 import { type IVisitDay } from './visit-days';
@@ -40,8 +41,11 @@ export interface IDashboardSource {
 
 /** Which cards the account sees, and its approvals in words (0019). */
 export interface IDashboardAccess {
-  /** The owner sees backups, leads, visits and speed (decision 6). */
   readonly owner: boolean;
+  /** The owner's areas this account may use (0022): their cards show only then. */
+  readonly backups: boolean;
+  readonly leads: boolean;
+  readonly visits: boolean;
   readonly canSeeOffer: boolean;
   readonly canSeeVisibility: boolean;
   /** The approvals card: always for a manager, for the owner only when something waits. */
@@ -105,6 +109,9 @@ export class DashboardModel {
     const waiting = source.requests.filter((request) => request.status === ApprovalStatus.Waiting);
     return {
       owner,
+      backups: permissions.canUse(ManagerArea.Backups),
+      leads: permissions.canUse(ManagerArea.Leads),
+      visits: permissions.canUse(ManagerArea.Visits),
       canSeeOffer: permissions.canSee(EditorTab.Offer),
       canSeeVisibility: permissions.canSee(EditorTab.Visibility),
       showApprovals: !owner || waiting.length > 0,

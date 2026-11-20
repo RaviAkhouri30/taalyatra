@@ -8,6 +8,7 @@ import {
   VISITS_PATH,
 } from './editor-nav.constants';
 import { EditorTab } from './editor-tab.enum';
+import { ManagerArea } from './manager-area.enum';
 
 /** The Features page's groups, in order (0020 V18). */
 export enum FeatureGroup {
@@ -32,6 +33,8 @@ export interface IFeature {
   readonly change: FeatureChange;
   /** One of the owner's own areas (0019 decision 6): not listed for a manager. */
   readonly ownerOnly?: boolean;
+  /** An area the owner can give a manager (0022): listed for a manager given it. */
+  readonly area?: ManagerArea;
 }
 
 const anchor = (target: PageAnchor): string => `/#${target}`;
@@ -227,7 +230,7 @@ export const FEATURES: readonly IFeature[] = [
     title: 'History and going back',
     description: 'The last 20 publishes, who made them, and going back to before any of them.',
     change: { page: PUBLISH_PATH },
-    ownerOnly: true,
+    area: ManagerArea.GoingBack,
   },
   {
     id: 'backups',
@@ -236,7 +239,7 @@ export const FEATURES: readonly IFeature[] = [
     title: 'Backups',
     description: 'Download the website’s content to keep, and restore it into a draft.',
     change: { page: PUBLISH_PATH },
-    ownerOnly: true,
+    area: ManagerArea.Backups,
   },
   {
     id: 'leads',
@@ -245,7 +248,7 @@ export const FEATURES: readonly IFeature[] = [
     title: 'Leads',
     description: 'Every proposal from the website, to follow up, mark and export.',
     change: { page: LEADS_PATH },
-    ownerOnly: true,
+    area: ManagerArea.Leads,
   },
   {
     id: 'visits',
@@ -255,7 +258,7 @@ export const FEATURES: readonly IFeature[] = [
     description:
       'Anonymous visits to the site by day, week, month or year, and where visitors arrive.',
     change: { page: VISITS_PATH },
-    ownerOnly: true,
+    area: ManagerArea.Visits,
   },
   {
     id: 'team-access',

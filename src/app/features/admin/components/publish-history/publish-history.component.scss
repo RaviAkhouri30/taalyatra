@@ -71,3 +71,9 @@
   flex-wrap: wrap;
   gap: 8px;
 }
+
+// A manager's note where going back is the owner's (0022 D4).
+.ph-ask {
+  color: t.$color-muted;
+  font-size: t.size(13px);
+}

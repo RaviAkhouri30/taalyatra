@@ -48,14 +48,19 @@ function card(feature: IFeature, permissions: Permissions): IFeatureCard {
 /**
  * @param permissions The signed-in account.
  * @param features The features to show (every one by default).
- * @returns Them by group, in order: a manager doesn't see the owner's own areas, and sees
+ * @returns Them by group, in order: a manager doesn't see the owner's own areas unless given them
+ *   (0022), and sees
  *   "Managed by the owner" for a page hidden from them.
  */
 export function featureGroups(
   permissions: Permissions,
   features: readonly IFeature[] = FEATURES,
 ): IFeatureGroup[] {
-  const shown = features.filter((feature) => permissions.isOwner || feature.ownerOnly !== true);
+  const shown = features.filter(
+    (feature) =>
+      permissions.isOwner ||
+      (feature.area === undefined ? feature.ownerOnly !== true : permissions.canUse(feature.area)),
+  );
   return Object.values(FeatureGroup).flatMap((label) => {
     const cards = shown
       .filter((feature) => feature.group === label)

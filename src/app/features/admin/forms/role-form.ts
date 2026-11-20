@@ -1,7 +1,8 @@
 import { FormControl, FormGroup, FormRecord } from '@angular/forms';
 import { type EditorTab } from '../models/editor-tab.enum';
+import { type ManagerArea } from '../models/manager-area.enum';
 import { type IRole, PageAccess, pageAccess } from '../models/role.model';
-import { type IManager, PAGE_ROWS } from '../models/team-access.model';
+import { AREA_ROWS, type IManager, PAGE_ROWS } from '../models/team-access.model';
 import { emailAddressValidator, requiredTrimmedValidator } from './auth.validators';
 import { accountIdValidator, notListedValidator, notOwnerValidator } from './role.validators';
 
@@ -12,6 +13,8 @@ export interface IRoleControls {
   /** One setting per editor page, by tab. */
   readonly pages: FormRecord<FormControl<PageAccess>>;
   readonly uploads: FormControl<boolean>;
+  /** One switch per owner's area, by area (0022). */
+  readonly areas: FormRecord<FormControl<boolean>>;
 }
 
 /** What the form holds once it's valid. */
@@ -20,6 +23,14 @@ export interface IRoleFormValue {
   readonly email: string;
   readonly pages: ReadonlyMap<EditorTab, PageAccess>;
   readonly uploads: boolean;
+  readonly areas: ReadonlySet<ManagerArea>;
+}
+
+function areaControls(): Record<string, FormControl<boolean>> {
+  // All off: the owner's areas stay the owner's until they turn one on (0022 D6).
+  return Object.fromEntries(
+    AREA_ROWS.map((row) => [row.area, new FormControl(false, { nonNullable: true })]),
+  );
 }
 
 function pageControls(): Record<string, FormControl<PageAccess>> {
@@ -55,6 +66,7 @@ export function createRoleForm(
     pages: new FormRecord(pageControls()),
     // On by default (D4); deleting photos stays with the owner whatever this says.
     uploads: new FormControl(true, { nonNullable: true }),
+    areas: new FormRecord(areaControls()),
   });
 }
 
@@ -79,6 +91,9 @@ export function fillRoleForm(form: FormGroup<IRoleControls>, manager: IManager):
     email: manager.role.email,
     pages: Object.fromEntries(PAGE_ROWS.map((row) => [row.tab, pageAccess(manager.role, row.tab)])),
     uploads: manager.role.uploads,
+    areas: Object.fromEntries(
+      AREA_ROWS.map((row) => [row.area, manager.role.areas?.has(row.area) === true]),
+    ),
   });
   form.controls.uid.disable();
 }
@@ -88,8 +103,9 @@ export function fillRoleForm(form: FormGroup<IRoleControls>, manager: IManager):
  * @returns What it holds, trimmed, with every page's setting.
  */
 export function roleFormValue(form: FormGroup<IRoleControls>): IRoleFormValue {
-  const { uid, email, pages, uploads } = form.getRawValue();
+  const { uid, email, pages, uploads, areas } = form.getRawValue();
   const settings = new Map(Object.entries(pages));
+  const switches = new Map(Object.entries(areas));
   return {
     uid: uid.trim(),
     email: email.trim(),
@@ -97,6 +113,9 @@ export function roleFormValue(form: FormGroup<IRoleControls>): IRoleFormValue {
       PAGE_ROWS.map((row) => [row.tab, settings.get(row.tab) ?? PageAccess.Approval] as const),
     ),
     uploads,
+    areas: new Set(
+      AREA_ROWS.filter((row) => switches.get(row.area) === true).map((row) => row.area),
+    ),
   };
 }
 
@@ -106,5 +125,11 @@ export function roleFormValue(form: FormGroup<IRoleControls>): IRoleFormValue {
  * @returns The role to store.
  */
 export function roleOf(value: IRoleFormValue, addedAt: string): IRole {
-  return { email: value.email, pages: value.pages, uploads: value.uploads, addedAt };
+  return {
+    email: value.email,
+    pages: value.pages,
+    uploads: value.uploads,
+    areas: value.areas,
+    addedAt,
+  };
 }

@@ -127,22 +127,26 @@ service cloud.firestore {
     // The editor's own notes (0016 V13): when the last backup was made, so every device agrees.
     // Only known documents, each with only its known field.
     match /adminState/{document} {
-      allow read: if isOwner();
-      allow create, update: if isOwner()
+      allow read: if canUseArea('backups');
+      allow create, update: if canUseArea('backups')
         && document == 'backups'
         && request.resource.data.keys().hasOnly(['lastAt'])
         && isText(request.resource.data.lastAt, 20, 40);
     }
 
-    // Proposal requests. Visitors may create a well-formed one and nothing else. The admin reads
-    // them on the Leads page (0018), deletes one on request, and changes only its status.
+    // Proposal requests. Visitors may create a well-formed one and nothing else. The Leads page
+    // (0018) reads them and changes only their status, signed with the changer's own email (0022);
+    // the owner, or a manager given Leads. Deleting one, on a customer's request, stays the owner's.
     match /proposals/{proposal} {
       allow create: if isValidProposal(request.resource.data);
-      allow read, delete: if isOwner();
-      allow update: if isOwner()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'statusAt'])
+      allow read: if canUseArea('leads');
+      allow delete: if isOwner();
+      allow update: if canUseArea('leads')
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['status', 'statusAt', 'statusBy'])
         && request.resource.data.status in ['new', 'contacted', 'won', 'lost']
-        && isText(request.resource.data.statusAt, 20, 40);
+        && isText(request.resource.data.statusAt, 20, 40)
+        && request.resource.data.get('statusBy', null) == request.auth.token.email;
     }
 
     // Anonymous visit counts (0018). A visitor adds one visit: the page arrived on, the kind of
@@ -150,13 +154,13 @@ service cloud.firestore {
     // finished day up into `visitDays` and removes that day's single visits.
     match /visits/{visit} {
       allow create: if isValidVisit(request.resource.data);
-      allow read, delete: if isOwner();
+      allow read, delete: if canUseArea('visits');
     }
     // Created once per day and never changed, so a second device adding the same day up can't
     // overwrite the first with a different total.
     match /visitDays/{day} {
-      allow read: if isOwner();
-      allow create: if isOwner()
+      allow read: if canUseArea('visits');
+      allow create: if canUseArea('visits')
         && day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
         && isValidVisitDay(request.resource.data);
     }
@@ -165,7 +169,7 @@ service cloud.firestore {
     // nothing else; only the admin reads or deletes them. Nothing in them identifies anyone.
     match /vitals/{report} {
       allow create: if isValidVitals(request.resource.data);
-      allow read, delete: if isOwner();
+      allow read, delete: if canUseArea('visits');
     }
 
     // The limits mirror PROPOSAL_MAX_LENGTH (proposal-limits.constants.ts); the rules tests build
@@ -267,6 +271,12 @@ service cloud.firestore {
       return isOwner() || (isManager() && pageSetting(page) != 'hidden');
     }
 
+    // One of the owner's areas (0022): the owner, or a manager whose role turns it on. A role
+    // without `areas` has none, so managers added before 2.3.0 change nothing.
+    function canUseArea(area) {
+      return isOwner() || (isManager() && role().get('areas', {}).get(area, false) == true);
+    }
+
     function canPublish(page) {
       return isOwner() || (isManager() && pageSetting(page) == 'publish');
     }
@@ -347,7 +357,11 @@ service cloud.firestore {
     // Keys mirror the EditorTab enum, and values PageAccess.
     function isValidRole(data) {
       let fields = ['email', 'pages', 'uploads', 'addedAt'];
-      return data.keys().hasAll(fields) && data.keys().hasOnly(fields)
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields.concat(['areas']))
+        // Keys mirror ManagerArea (manager-area.enum.ts).
+        && (!('areas' in data) || (data.areas is map
+            && data.areas.keys().hasOnly(['leads', 'visits', 'backups', 'goingBack'])
+            && data.areas.values().hasOnly([true, false])))
         && isText(data.email, 3, 254)
         && data.pages is map
         && data.pages.keys().hasOnly(['hero', 'offer', 'audiences', 'experiences', 'shows',

@@ -118,3 +118,10 @@
     color: t.$color-danger-text;
   }
 }
+
+// Who last changed the status (0022 D5).
+.lc-by {
+  margin: 0;
+  font-size: t.size(13px);
+  color: t.$color-muted;
+}

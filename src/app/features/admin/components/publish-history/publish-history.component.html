@@ -4,7 +4,10 @@
     <p>Nothing published from the editor yet.</p>
   } @else {
     @if (canGoBack()) {
-      <p>The last 20 publishes. You can go back to how the website was before any of them.</p>
+      <p>
+        The last 20 publishes. You can go back to how the website was before
+        {{ owner() ? 'any of them' : 'those that changed only your pages' }}.
+      </p>
     } @else {
       <p>The latest publishes, and who made them. Only the owner can go back to an earlier one.</p>
     }
@@ -57,7 +60,7 @@
                 </button>
               </div>
             </div>
-          } @else if (canGoBack()) {
+          } @else if (entry.canGoBack) {
             <button
               appButton
               type="button"
@@ -68,6 +71,9 @@
             >
               Go back to before this publish
             </button>
+          } @else if (canGoBack()) {
+            <!-- A manager with Going back, over a publish that changed someone else's page (0022 D4). -->
+            <small class="ph-ask">Ask the owner to go back to before this one.</small>
           }
         </li>
       }

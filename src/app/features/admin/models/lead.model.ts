@@ -72,6 +72,10 @@ export class Lead {
   public readonly day: string;
   /** The month it arrived (`YYYY-MM`), or empty when unknown. */
   public readonly month: string;
+  /** Who last changed its status (their email), or empty before 2.3.0 (0022 D5). */
+  public readonly statusBy: string;
+  /** When its status last changed (ISO 8601), or empty. */
+  public readonly statusAt: string;
 
   /**
    * @param id The stored document's id.
@@ -99,6 +103,8 @@ export class Lead {
         : formatMoment(new Date(this.receivedAt).toISOString());
     this.day = this.receivedAt === null ? '' : siteDay(this.receivedAt);
     this.month = this.day && monthOf(this.day);
+    this.statusBy = text(fields, 'statusBy');
+    this.statusAt = text(fields, 'statusAt');
   }
 
   /** The phone's digits with a country code; Indian numbers are often written without one. */
@@ -120,6 +126,21 @@ export class Lead {
   /** @returns A `mailto:` link, or empty when there's no address. */
   public get mailLink(): string {
     return this.email ? `mailto:${this.email}` : '';
+  }
+
+  /**
+   * @param viewer The signed-in account's email.
+   * @returns Who last changed the status and when, e.g. "Contacted by priya@…, 21 Nov 2026, 10:42 am"
+   *   or "… by you, …"; empty when nobody signed it (0022 D5).
+   */
+  public statusLine(viewer: string): string {
+    if (!this.statusBy) {
+      return '';
+    }
+    const label = LEAD_STATUSES.find((choice) => choice.status === this.status)?.label ?? '';
+    const who = this.statusBy === viewer ? 'you' : this.statusBy;
+    const when = this.statusAt ? `, ${formatMoment(this.statusAt)}` : '';
+    return `${label} by ${who}${when}`;
   }
 }
 

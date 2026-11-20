@@ -13,6 +13,9 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 
+/** The owner's email, which signs their lead changes (0022). */
+const OWNER_EMAIL = 'owner@taalyatra.in';
+
 const DENIED = { code: 'permission-denied' };
 
 /** The production admin UID; `firestore.rules` checks it and the emulator build uses it too. */
@@ -55,7 +58,10 @@ describe('firestore.rules · visits and leads', () => {
       await setDoc(doc(db, 'visitDays/2026-11-17'), day());
       await setDoc(doc(db, 'proposals/existing'), { name: 'Asha', phone: '98200 00000' });
     });
-    admin = env.authenticatedContext(ADMIN_UID).firestore() as unknown as Firestore;
+    // With an email: a lead's status change is signed with it (0022).
+    admin = env
+      .authenticatedContext(ADMIN_UID, { email: OWNER_EMAIL })
+      .firestore() as unknown as Firestore;
     member = env.authenticatedContext('someone-else').firestore() as unknown as Firestore;
     visitor = env.unauthenticatedContext().firestore() as unknown as Firestore;
   });
@@ -136,18 +142,31 @@ describe('firestore.rules · visits and leads', () => {
     it('should let the admin read leads and change a status', async () => {
       await expect(getDocs(collection(admin, 'proposals'))).resolves.toBeDefined();
       await expect(
-        updateDoc(doc(admin, 'proposals/existing'), { status: 'contacted', statusAt: STATUS_AT }),
+        updateDoc(doc(admin, 'proposals/existing'), {
+          status: 'contacted',
+          statusAt: STATUS_AT,
+          statusBy: OWNER_EMAIL,
+        }),
       ).resolves.toBeUndefined();
     });
 
     it.each(['new', 'contacted', 'won', 'lost'])('should accept the status %s', async (status) => {
       await expect(
-        updateDoc(doc(admin, 'proposals/existing'), { status, statusAt: STATUS_AT }),
+        updateDoc(doc(admin, 'proposals/existing'), {
+          status,
+          statusAt: STATUS_AT,
+          statusBy: OWNER_EMAIL,
+        }),
       ).resolves.toBeUndefined();
     });
 
     it.each([
-      ['an unknown status', { status: 'maybe', statusAt: STATUS_AT }],
+      ['an unknown status', { status: 'maybe', statusAt: STATUS_AT, statusBy: OWNER_EMAIL }],
+      ['a status nobody signed', { status: 'won', statusAt: STATUS_AT }],
+      [
+        'a status signed by someone else',
+        { status: 'won', statusAt: STATUS_AT, statusBy: 'm@b.c' },
+      ],
       ['a status without its time', { status: 'won', statusAt: '' }],
       ['a changed name', { name: 'Someone else' }],
       ['a changed phone with the status', { status: 'won', statusAt: STATUS_AT, phone: '1' }],

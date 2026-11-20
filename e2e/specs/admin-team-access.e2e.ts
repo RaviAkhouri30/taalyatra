@@ -30,7 +30,7 @@ test.describe('Admin team access', () => {
     const change = page.getByRole('form', { name: `Change ${MANAGER_EMAIL}` });
     await expect(change.getByRole('textbox', { name: 'User UID' })).toBeDisabled();
     await change.getByRole('combobox', { name: 'Hero' }).selectOption('publish');
-    await change.getByRole('checkbox').uncheck();
+    await change.getByRole('checkbox', { name: /^Can upload photos/ }).uncheck();
     await change.getByRole('button', { name: 'Save' }).click();
     await expect(card).toContainText('Can publish');
     await expect(card).toContainText('Can’t upload');

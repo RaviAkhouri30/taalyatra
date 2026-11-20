@@ -32,18 +32,19 @@ describe('LeadsService', () => {
     expect(leads.map((lead) => lead.name)).toEqual(['Asha', 'Ravi']);
   });
 
-  it('should save a status with its time, keeping the rest exactly as read', async () => {
+  it('should save a status with its time and signer, keeping the rest exactly as read', async () => {
     const { service, store } = setUp();
     const [lead] = await firstValueFrom(service.leads());
     const changed = vi.fn();
     service.changed$.subscribe(changed);
 
-    const saved = await firstValueFrom(service.setStatus(lead!, LeadStatus.Contacted));
+    const saved = await firstValueFrom(service.setStatus(lead!, LeadStatus.Contacted, 'me@x.in'));
 
     expect(store.documents.get('proposals/a')).toEqual({
       ...asha,
       status: 'contacted',
       statusAt: now.toISOString(),
+      statusBy: 'me@x.in',
     });
     expect(saved.status).toBe(LeadStatus.Contacted);
     expect(changed).toHaveBeenCalledTimes(1);

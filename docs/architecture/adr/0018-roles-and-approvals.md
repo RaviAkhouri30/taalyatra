@@ -1,6 +1,6 @@
 # ADR-0018: Roles and approvals
 
-- **Status:** Accepted · **Date:** 2026-11-20 · **Version:** 2.0.0 (photo permissions 2.0.1)
+- **Status:** Accepted · **Date:** 2026-11-20 · **Version:** 2.0.0 (photo permissions 2.0.1, the owner's areas 2.3.0)
 
 ## Context
 
@@ -55,3 +55,13 @@ addedAt }`. A page without a setting needs approval. Only the owner writes roles
 - Rollback to 1.13.0 keeps working with these rules: the owner's access is unchanged.
 - `tests/rules/firestore-roles.rules.spec.ts` and `firestore-manager-publish.rules.spec.ts` cover the rules;
   `e2e/specs/firebase-roles.e2e.ts` runs a manager's approval through them in a browser.
+
+## 2.3.0: the owner's areas for chosen managers (0022)
+
+The owner's areas (decision 6) became switches, as uploads are: `areas` in a role turns on **Leads**, **Visits and
+speed**, **Backups** and **Going back** for that manager, each checked by the rules (`canUseArea`), all off when
+missing, so roles from before 2.3.0 change nothing. Deleting a lead, restoring a backup, Team access and going back
+over someone else's publish stay the owner's. A lead's status change is signed (`statusBy`), and the rules require the
+signature to be the signer's own email. Going back needs no new rule: it saves drafts, which the page rules check, and
+a manager's history record already names only pages they may publish. See the
+[0022 design](../../aidlc/0022-manager-areas/02-design.md).

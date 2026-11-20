@@ -30,6 +30,8 @@
               [lead]="lead"
               [confirming]="model.confirming() === lead.id"
               [busy]="model.removing()"
+              [viewer]="model.me()"
+              [canRemove]="model.canRemove()"
               (statusChanged)="model.setStatus(lead, $event)"
               (removeAsked)="model.askToRemove(lead)"
               (removeConfirmed)="model.remove(lead)"

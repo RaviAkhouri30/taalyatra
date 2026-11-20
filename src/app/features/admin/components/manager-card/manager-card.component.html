@@ -17,6 +17,10 @@
       <dt>Photo uploads</dt>
       <dd>{{ uploads() }}</dd>
     </div>
+    <div>
+      <dt>Your areas</dt>
+      <dd>{{ areas() }}</dd>
+    </div>
   </dl>
   @if (confirming()) {
     <div class="mgr-confirm" role="group" [attr.aria-labelledby]="headingId() + '-confirm'">

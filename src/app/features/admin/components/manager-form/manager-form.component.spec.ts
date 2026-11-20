@@ -66,4 +66,15 @@ describe('ManagerFormComponent', () => {
     expect(save?.textContent.trim()).toBe('Saving…');
     expect(save?.disabled).toBe(true);
   });
+
+  it('should offer the owner’s areas, all off, saying what Leads shows', () => {
+    const { element } = render();
+    const switches = Array.from(
+      element.querySelectorAll<HTMLInputElement>('fieldset[formGroupName="areas"] input'),
+    );
+
+    expect(switches).toHaveLength(4);
+    expect(switches.every((input) => !input.checked)).toBe(true);
+    expect(element.textContent).toContain('names, phone numbers and emails');
+  });
 });
