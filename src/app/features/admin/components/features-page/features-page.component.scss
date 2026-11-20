@@ -14,7 +14,7 @@
 
   h1 {
     margin: 0;
-    font-size: 28px;
+    font-size: t.size(28px);
   }
 }
 
@@ -29,7 +29,7 @@
 
   h2 {
     margin: 0;
-    font-size: 19px;
+    font-size: t.size(19px);
   }
 }
 
@@ -65,13 +65,13 @@
 
   h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: t.size(16px);
   }
 
   p {
     margin: 0;
     color: t.$color-muted-strong;
-    font-size: 14px;
+    font-size: t.size(14px);
   }
 }
 
@@ -80,7 +80,7 @@
   flex-wrap: wrap;
   gap: 4px 16px;
   margin-top: 4px;
-  font-size: 14px;
+  font-size: t.size(14px);
 
   a {
     color: t.$color-cream;

@@ -20,6 +20,7 @@ service cloud.firestore {
       allow update: if isValidSiteDocument(document, request.resource.data)
         && (isOwner()
             || (document == 'visibility' && canPublish('visibility'))
+            || (document == 'theme' && canPublish('theme'))
             // Offer, Business details and Contact & social links share this document: a manager
             // changes only the parts of the pages they may publish.
             || (document == 'config' && isManager()
@@ -288,7 +289,7 @@ service cloud.firestore {
         'home/drumCircle': 'drum-circle', 'home/rhythmGame': 'rhythm-game',
         'home/videos': 'videos', 'videos': 'videos', 'home/gallery': 'gallery',
         'gallery': 'gallery', 'home/team': 'team', 'team': 'team',
-        'home/contact': 'proposal-form', 'site/visibility': 'visibility'
+        'home/contact': 'proposal-form', 'site/visibility': 'visibility', 'site/theme': 'theme'
       };
     }
 
@@ -328,7 +329,8 @@ service cloud.firestore {
         .concat(pathsIf(pages, 'proposal-form', ['home/contact']))
         .concat(pathsIf(pages, 'business', ['site/config']))
         .concat(pathsIf(pages, 'contact', ['site/config']))
-        .concat(pathsIf(pages, 'visibility', ['site/visibility']));
+        .concat(pathsIf(pages, 'visibility', ['site/visibility']))
+        .concat(pathsIf(pages, 'theme', ['site/theme']));
     }
 
     // A draft id is its path with `/` as `__` (draftId in i-draft.ts).
@@ -350,7 +352,8 @@ service cloud.firestore {
         && data.pages is map
         && data.pages.keys().hasOnly(['hero', 'offer', 'audiences', 'experiences', 'shows',
                                       'drum-circle', 'rhythm-game', 'videos', 'gallery', 'team',
-                                      'proposal-form', 'business', 'contact', 'visibility'])
+                                      'proposal-form', 'business', 'contact', 'visibility',
+                                      'theme'])
         && data.pages.values().hasOnly(['hidden', 'approval', 'publish'])
         && data.uploads is bool
         && isText(data.addedAt, 20, 40);
@@ -377,7 +380,8 @@ service cloud.firestore {
 
     function isValidSiteDocument(document, data) {
       return (document == 'config' && isValidSiteConfig(data))
-        || (document == 'visibility' && isValidVisibility(data));
+        || (document == 'visibility' && isValidVisibility(data))
+        || (document == 'theme' && isValidTheme(data));
     }
 
     // The limits mirror CONTENT_MAX_LENGTH (content-limits.constants.ts); the rules tests read it.
@@ -438,6 +442,33 @@ service cloud.firestore {
             && data.folded.keys().hasOnly(['philosophy', 'cities', 'how', 'instagram', 'proof',
                                            'faq'])
             && data.folded.values().hasOnly(['never', 'phone', 'desktop', 'always'])));
+    }
+
+    // The site's theme (0021, ADR-0019). Every field is optional: a missing one keeps today's look.
+    // Colours mirror HEX_COLOUR (colour.util.ts) and the lists the Theme* enums. The rules check the
+    // shape only; contrast is checked by the admin before publishing, and again by the site.
+    function isValidTheme(data) {
+      let colours = ['background', 'cards', 'text', 'quietText', 'accent', 'secondAccent'];
+      return data.keys().hasOnly(colours.concat(['preset', 'backdrop', 'textSize',
+                                                 'headingWeight', 'fonts']))
+        && isColourOrMissing(data, 'background') && isColourOrMissing(data, 'cards')
+        && isColourOrMissing(data, 'text') && isColourOrMissing(data, 'quietText')
+        && isColourOrMissing(data, 'accent') && isColourOrMissing(data, 'secondAccent')
+        && isOneOfOrMissing(data, 'preset',
+                            ['warm-night', 'daylight', 'festival', 'high-contrast', 'custom'])
+        && isOneOfOrMissing(data, 'backdrop', ['plain', 'gradient'])
+        && isOneOfOrMissing(data, 'textSize', ['smaller', 'standard', 'larger'])
+        && isOneOfOrMissing(data, 'headingWeight', ['bold', 'extra-bold'])
+        && isOneOfOrMissing(data, 'fonts', ['bricolage-dm', 'fraunces-inter', 'playfair-source',
+                                            'poppins-nunito', 'space-work', 'yatra-mukta']);
+    }
+
+    function isColourOrMissing(data, field) {
+      return !(field in data) || (data[field] is string && data[field].matches('^#[0-9a-f]{6}$'));
+    }
+
+    function isOneOfOrMissing(data, field, values) {
+      return !(field in data) || (data[field] is string && data[field] in values);
     }
 
     // A collection's numbered document, from 001 up to its item limit.

@@ -22,7 +22,7 @@
 
   h2 {
     margin: 0;
-    font-size: 18px;
+    font-size: t.size(18px);
     overflow-wrap: anywhere;
   }
 }
@@ -31,7 +31,7 @@
 .mgr-uid {
   margin: 0;
   color: t.$color-muted-strong;
-  font-size: 14px;
+  font-size: t.size(14px);
 }
 
 .mgr-uid code {
@@ -51,7 +51,7 @@
 
   dt {
     color: t.$color-muted-strong;
-    font-size: 13px;
+    font-size: t.size(13px);
   }
 
   dd {

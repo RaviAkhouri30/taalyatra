@@ -28,13 +28,13 @@
 
   h2 {
     margin: 0;
-    font-size: 18px;
+    font-size: t.size(18px);
   }
 }
 
 .lc-when {
   color: t.$color-muted-strong;
-  font-size: 14px;
+  font-size: t.size(14px);
 }
 
 .lc-contact {
@@ -57,7 +57,7 @@
 
   dt {
     color: t.$color-muted-strong;
-    font-size: 13px;
+    font-size: t.size(13px);
   }
 
   dd {

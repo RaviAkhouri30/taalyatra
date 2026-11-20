@@ -14,4 +14,6 @@ export enum EditorTab {
   Business = 'business',
   Contact = 'contact',
   Visibility = 'visibility',
+  /** The site's colours, background, text and fonts (0021). */
+  Theme = 'theme',
 }

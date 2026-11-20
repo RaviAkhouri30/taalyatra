@@ -27,17 +27,17 @@ img {
 b {
   display: block;
   font-family: t.$font-display;
-  font-size: 21px;
+  font-size: t.size(21px);
   line-height: 1;
 
   @include bp.down(bp.$phone) {
-    font-size: 19px;
+    font-size: t.size(19px);
   }
 }
 
 span {
   display: block;
-  font-size: 11px;
+  font-size: t.size(11px);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: t.$color-amber;

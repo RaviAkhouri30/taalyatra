@@ -48,6 +48,17 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;500;700&display=swap"
     />
+    <!-- Before the app loads, only the page's background shows: paint the theme's background this
+         device remembered (RootStyleService, ADR-0019), so a published theme doesn't flash today's
+         colours first. Checked as #rrggbb; the strict CSP hashes this inline script. -->
+    <script>
+      try {
+        var tyBackground = localStorage.getItem('taal-yatra.theme.background');
+        if (tyBackground && /^#[0-9a-f]{6}$/.test(tyBackground)) {
+          document.documentElement.style.setProperty('--ty-ink', tyBackground);
+        }
+      } catch (e) {}
+    </script>
     <!-- Firebase web config, written at deploy time (git-ignored; CLAUDE.md §10). A classic script,
          so it runs before the app's module scripts. Development on the Fake backend ignores it. -->
     <script src="runtime-config.js"></script>

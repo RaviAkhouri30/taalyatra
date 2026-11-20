@@ -12,7 +12,7 @@
   color: t.$color-ink;
   font-family: inherit;
   font-weight: 700;
-  font-size: 16px;
+  font-size: t.size(16px);
   padding: 13px 25px;
   border-radius: t.$radius-pill;
   border: 0;
@@ -32,11 +32,11 @@
   @include bp.down(bp.$phone) {
     min-height: 44px;
     padding: 10px 18px;
-    font-size: 15px;
+    font-size: t.size(15px);
   }
 
   @include bp.down(bp.$phone-sm) {
-    font-size: 14px;
+    font-size: t.size(14px);
     padding: 10px 15px;
   }
 }
@@ -73,5 +73,5 @@
 /// Header-sized button (prototype: inline `padding:12px 22px;font-size:16px`).
 .btn--compact {
   padding: 12px 22px;
-  font-size: 16px;
+  font-size: t.size(16px);
 }

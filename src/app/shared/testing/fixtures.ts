@@ -7,9 +7,12 @@ import { LAYOUT_CHROME } from '@shared/constants/navigation.constants';
 import { PageLayout } from '@shared/enums/page-layout.enum';
 import { type ISiteConfigDto } from '@shared/interfaces/i-site-config';
 import { SiteConfigModel } from '@shared/models/site-config.model';
+import { SiteTheme } from '@shared/models/site-theme.model';
 import { SiteVisibility } from '@shared/models/site-visibility.model';
 import { SiteConfigService } from '@shared/services/site-config.service';
+import { SiteThemeService } from '@shared/services/site-theme.service';
 import { SiteVisibilityService } from '@shared/services/site-visibility.service';
+import { themeRootStyle } from '@shared/utils/theme-root-style.util';
 
 /** Test fixtures shared by specs (excluded from coverage), built from the fake database. */
 export const SITE_DTO: ISiteConfigDto = fakeDb.site.config;
@@ -36,6 +39,15 @@ export function provideVisibility(
 ): Provider {
   return { provide: SiteVisibilityService, useValue: { getVisibility: () => of(visibility) } };
 }
+
+/**
+ * @param theme The theme to serve; today's look by default.
+ * @returns A `SiteThemeService` stand-in for specs that render the chrome without a backend.
+ */
+export function provideTheme(theme: SiteTheme = SiteTheme.default): Provider {
+  return { provide: SiteThemeService, useValue: { getStyle: () => of(themeRootStyle(theme)) } };
+}
+
 export const HOME_CHROME = LAYOUT_CHROME[PageLayout.Home]!;
 export const PAGE_CHROME = LAYOUT_CHROME[PageLayout.Page]!;
 

@@ -17,7 +17,12 @@ import {
   type ITextFieldSchema,
 } from '../models/i-field-schema';
 import { emailAddressValidator, requiredTrimmedValidator } from './auth.validators';
-import { dateValidator, phoneE164Validator, urlValidator } from './content.validators';
+import {
+  colourValidator,
+  dateValidator,
+  phoneE164Validator,
+  urlValidator,
+} from './content.validators';
 import { imageChosenValidator, imageDescribedValidator, toImage } from './image-value';
 import { fieldOf } from './json-node';
 
@@ -27,6 +32,7 @@ const FORMAT_VALIDATORS: ReadonlyMap<FieldKind, ValidatorFn> = new Map([
   [FieldKind.Tel, phoneE164Validator],
   [FieldKind.Email, emailAddressValidator],
   [FieldKind.Date, dateValidator],
+  [FieldKind.Colour, colourValidator],
 ]);
 
 /*

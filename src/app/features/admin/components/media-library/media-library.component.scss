@@ -19,7 +19,7 @@
 
   h1 {
     margin: 0;
-    font-size: 28px;
+    font-size: t.size(28px);
   }
 }
 
@@ -37,8 +37,8 @@
 
 .ml-count {
   margin: 8px 0 0;
-  font-size: 15px;
-  font-weight: 800;
+  font-size: t.size(15px);
+  font-weight: t.$weight-heading;
 }
 
 .ml-grid {

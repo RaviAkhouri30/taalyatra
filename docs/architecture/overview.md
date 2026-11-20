@@ -48,7 +48,9 @@ one commit and keeps the previous versions in `publishes/*` for undo. `?preview`
 site with the drafts through `DraftOverlayBackend`
 ([ADR-0013](adr/0013-drafts-publish-preview.md)). Editors are built from field schemas
 ([ADR-0014](adr/0014-schema-driven-editors.md)). `site/visibility` switches home sections, inner
-pages and widgets ([ADR-0015](adr/0015-site-visibility.md)). Only the admin UID may write, by
+pages and widgets ([ADR-0015](adr/0015-site-visibility.md)). `site/theme` sets the colours, background,
+text size and fonts of every page, the admin's too, through CSS variables; its code loads only when a
+theme is stored ([ADR-0019](adr/0019-editable-theme.md)). Only the admin UID may write, by
 `firestore.rules`.
 
 ## Media (1.7.0)

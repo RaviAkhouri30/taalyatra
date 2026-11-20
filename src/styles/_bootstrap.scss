@@ -1,18 +1,21 @@
 // Bootstrap is used for its grid and utility classes only (ADR-0004).
+// Its palette is compiled in, so it takes the tokens' defaults: no template uses its colour
+// classes, and the themed colours reach every component through the tokens' variables.
 // Reboot, typography and component partials are deliberately excluded: the design system is
 // custom and pixel-matched to the prototype, which uses no reset.
+@use 'sass:map';
 @use 'tokens' as t;
 
 @import 'bootstrap/scss/functions';
 
-$primary: t.$color-amber;
-$secondary: t.$color-clay;
-$dark: t.$color-ink;
-$light: t.$color-ivory;
-$body-bg: t.$color-ink;
-$body-color: t.$color-cream;
-$font-family-base: t.$font-body;
-$headings-font-family: t.$font-display;
+$primary: map.get(t.$palette, 'amber');
+$secondary: map.get(t.$palette, 'clay');
+$dark: map.get(t.$palette, 'ink');
+$light: map.get(t.$palette, 'ivory');
+$body-bg: map.get(t.$palette, 'ink');
+$body-color: map.get(t.$palette, 'cream');
+$font-family-base: t.$font-body-default;
+$headings-font-family: t.$font-display-default;
 $enable-negative-margins: true;
 
 // Grid tiers aligned with the prototype's breakpoints (≤380, ≤620, ≤1000, ≥1600, ≥2200).

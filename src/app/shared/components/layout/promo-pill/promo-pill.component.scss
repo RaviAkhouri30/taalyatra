@@ -4,20 +4,20 @@
 
 // Burst sparks: x offset, y offset, colour, delay, width, height (from the design).
 $sparks: (
-  (31px, 1px, #ffe6b8, 1.76s, 6px, 6px),
-  (31px, 14px, #ffd79a, 0.86s, 6px, 6px),
-  (20px, 18px, #fff, 0.2s, 7px, 5px),
-  (7px, 31px, #f3a24b, 1.56s, 5px, 5px),
-  (-9px, 32px, #fff0d2, 1.41s, 7px, 6px),
-  (-24px, 35px, #ffe6b8, 1.39s, 7px, 7px),
-  (-46px, 15px, #ffd79a, 0.55s, 7px, 7px),
-  (-52px, -3px, #fff, 0.87s, 7px, 7px),
-  (-34px, -10px, #f3a24b, 1.17s, 7px, 5px),
-  (-32px, -30px, #fff0d2, 0.45s, 7px, 6px),
-  (-12px, -39px, #ffe6b8, 0.9s, 7px, 6px),
-  (7px, -35px, #ffd79a, 0.62s, 6px, 6px),
-  (23px, -16px, #fff, 1.57s, 7px, 6px),
-  (35px, -7px, #f3a24b, 0.93s, 7px, 5px)
+  (31px, 1px, t.$color-spark-glow, 1.76s, 6px, 6px),
+  (31px, 14px, t.$color-spark-gold, 0.86s, 6px, 6px),
+  (20px, 18px, t.$color-spark-white, 0.2s, 7px, 5px),
+  (7px, 31px, t.$color-spark-orange, 1.56s, 5px, 5px),
+  (-9px, 32px, t.$color-spark-pale, 1.41s, 7px, 6px),
+  (-24px, 35px, t.$color-spark-glow, 1.39s, 7px, 7px),
+  (-46px, 15px, t.$color-spark-gold, 0.55s, 7px, 7px),
+  (-52px, -3px, t.$color-spark-white, 0.87s, 7px, 7px),
+  (-34px, -10px, t.$color-spark-orange, 1.17s, 7px, 5px),
+  (-32px, -30px, t.$color-spark-pale, 0.45s, 7px, 6px),
+  (-12px, -39px, t.$color-spark-glow, 0.9s, 7px, 6px),
+  (7px, -35px, t.$color-spark-gold, 0.62s, 6px, 6px),
+  (23px, -16px, t.$color-spark-white, 1.57s, 7px, 6px),
+  (35px, -7px, t.$color-spark-orange, 0.93s, 7px, 5px)
 );
 
 :host {
@@ -55,13 +55,13 @@ $sparks: (
 
   b {
     font-family: t.$font-display;
-    font-size: 14px;
+    font-size: t.size(14px);
     line-height: 1;
     white-space: nowrap;
     letter-spacing: -0.01em;
 
     @include bp.down(bp.$phone) {
-      font-size: 13px;
+      font-size: t.size(13px);
     }
   }
 }
@@ -72,7 +72,7 @@ $sparks: (
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: rgb(23 18 16 / 88%);
+  background: t.with-alpha(t.$color-ink, 88%);
 }
 
 .promo-x {
@@ -82,11 +82,11 @@ $sparks: (
   height: 26px;
   margin-right: 6px;
   border-radius: 50%;
-  background: rgb(23 18 16 / 14%);
-  font-size: 15px;
+  background: t.with-alpha(t.$color-ink, 14%);
+  font-size: t.size(15px);
 
   &:hover {
-    background: rgb(23 18 16 / 30%);
+    background: t.with-alpha(t.$color-ink, 30%);
   }
 }
 

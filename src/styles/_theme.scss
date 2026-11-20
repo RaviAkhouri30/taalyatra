@@ -1,0 +1,14 @@
+// The theme's defaults (colours, text size, heading weight, fonts), as CSS variables on the page root (ADR-0019). A published theme
+// sets its own values on `<html>`, which win over these.
+@use 'tokens' as t;
+
+:root {
+  @each $name, $value in t.$palette {
+    --ty-#{$name}: #{$value};
+  }
+
+  --ty-text-scale: 1;
+  --ty-heading-weight: #{t.$weight-heading-default};
+  --ty-font-display: #{t.$font-display-default};
+  --ty-font-body: #{t.$font-body-default};
+}

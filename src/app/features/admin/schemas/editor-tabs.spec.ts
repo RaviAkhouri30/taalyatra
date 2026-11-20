@@ -53,21 +53,23 @@ describe('editor schemas', () => {
   });
 
   // Drift guard (ADR-0014): every field the editor writes must exist in the stored document,
-  // because firestore.rules refuses a write that changes a document's shape.
-  it.each(ALL_SECTIONS.map((section) => [section.id, section] as const))(
-    'should only edit fields that exist in the stored document: %s',
-    (_id, section) => {
-      const stored = section.path
-        .split('/')
-        .reduce<unknown>((node, key) => (node as Record<string, unknown>)[key], fakeDb);
-      // A collection is a list in this file, and one document holding it in a draft (D15).
-      const document = Array.isArray(stored) ? { _items: stored } : stored;
+  // because firestore.rules refuses a write that changes a document's shape. Not the theme: its
+  // rules allow any of its fields, and its stored document is empty, which is today's look (0021).
+  it.each(
+    ALL_SECTIONS.filter((section) => section.path !== ContentPath.SiteTheme).map(
+      (section) => [section.id, section] as const,
+    ),
+  )('should only edit fields that exist in the stored document: %s', (_id, section) => {
+    const stored = section.path
+      .split('/')
+      .reduce<unknown>((node, key) => (node as Record<string, unknown>)[key], fakeDb);
+    // A collection is a list in this file, and one document holding it in a draft (D15).
+    const document = Array.isArray(stored) ? { _items: stored } : stored;
 
-      const edited = sectionContent(section, document);
+    const edited = sectionContent(section, document);
 
-      expect(keyPaths(section.fields).filter((path) => !has(edited, path))).toEqual([]);
-    },
-  );
+    expect(keyPaths(section.fields).filter((path) => !has(edited, path))).toEqual([]);
+  });
 
   // A collection's list replaces each item whole, and firestore.rules requires exact keys, so a
   // key missing from a schema would make every publish of that collection fail.

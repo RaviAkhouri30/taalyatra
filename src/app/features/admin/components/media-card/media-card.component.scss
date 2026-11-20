@@ -32,13 +32,13 @@
 
 .mc-size {
   margin: 0;
-  font-size: 13px;
+  font-size: t.size(13px);
   color: t.$color-muted-strong;
 }
 
 .mc-label {
   margin-top: 4px;
-  font-size: 13.5px;
+  font-size: t.size(13.5px);
   font-weight: 700;
   color: t.$color-cream;
 }
@@ -51,7 +51,7 @@
 }
 
 .mc-uses {
-  font-size: 13px;
+  font-size: t.size(13px);
   color: t.$color-muted-strong;
 
   p {
@@ -70,7 +70,7 @@
 .mc-confirm {
   flex: 1 1 100%;
   margin: 0;
-  font-size: 13.5px;
+  font-size: t.size(13.5px);
   font-weight: 600;
   color: t.$color-cream;
 }
@@ -92,7 +92,7 @@
     border-radius: 10px;
     background: transparent;
     color: t.$color-cream;
-    font-size: 14px;
+    font-size: t.size(14px);
     font-weight: 700;
     cursor: pointer;
   }

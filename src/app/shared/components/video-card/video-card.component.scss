@@ -23,17 +23,22 @@
   }
 
   h3 {
-    font-size: 19px;
+    font-size: t.size(19px);
     margin-top: 8px;
   }
 
   p {
-    font-size: 15px;
+    font-size: t.size(15px);
     color: t.$color-muted;
 
     @include bp.down(bp.$phone) {
-      font-size: 13px;
+      font-size: t.size(13px);
     }
+  }
+
+  // In the styles, not the SVG, so it follows the theme.
+  path {
+    fill: t.$color-ink;
   }
 }
 
@@ -82,14 +87,14 @@
   right: 10px;
   bottom: 10px;
   background: t.$color-ink;
-  font-size: 13px;
+  font-size: t.size(13px);
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 6px;
 }
 
 .vcat {
-  font-size: 13px;
+  font-size: t.size(13px);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 700;
@@ -101,7 +106,7 @@
   margin-top: 0;
 
   @include bp.down(bp.$phone) {
-    font-size: 17px;
+    font-size: t.size(17px);
   }
 }
 
@@ -118,7 +123,7 @@
   }
 
   h2 {
-    font-size: 40px;
+    font-size: t.size(40px);
     margin: 10px 0 12px;
   }
 

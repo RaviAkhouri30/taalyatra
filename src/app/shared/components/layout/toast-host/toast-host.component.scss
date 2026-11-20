@@ -25,7 +25,7 @@
   background: t.$color-ivory;
   color: t.$color-ink;
   font-weight: 700;
-  font-size: 15px;
+  font-size: t.size(15px);
   border-radius: t.$radius-pill;
   padding: 10px 18px;
   box-shadow: 0 10px 30px rgb(0 0 0 / 45%);

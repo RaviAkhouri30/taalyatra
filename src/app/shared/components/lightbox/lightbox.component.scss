@@ -10,7 +10,7 @@
   position: fixed;
   inset: 0;
   z-index: 60;
-  background: rgb(10 8 7 / 95%);
+  background: t.$color-lightbox;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,7 +36,7 @@
   position: absolute;
   border-radius: 50%;
   background: t.$color-surface;
-  border: 1px solid #4a3a2c;
+  border: 1px solid t.$color-edge;
   color: t.$color-cream;
   cursor: pointer;
   font-family: inherit;
@@ -55,7 +55,7 @@
   right: 22px;
   width: 44px;
   height: 44px;
-  font-size: 22px;
+  font-size: t.size(22px);
 }
 
 .lbnav {
@@ -65,13 +65,13 @@
   transform: translateY(-50%);
   width: 48px;
   height: 48px;
-  font-size: 26px;
+  font-size: t.size(26px);
   line-height: 1;
 
   @include bp.down(bp.$tablet) {
     width: 40px;
     height: 40px;
-    font-size: 22px;
+    font-size: t.size(22px);
   }
 }
 
@@ -97,7 +97,7 @@
   left: 0;
   right: 0;
   text-align: center;
-  font-size: 14px;
+  font-size: t.size(14px);
   color: t.$color-muted;
   padding: 0 20px;
 }

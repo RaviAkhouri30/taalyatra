@@ -1,0 +1,43 @@
+/* Fallbacks sized to match Poppins and Nunito Sans (0021, measured in Chrome against Arial as
+   0007 did), so text set in Arial takes the web font's space and the swap doesn't move the page.
+   Loaded with the pair's Google Fonts stylesheet, only when a theme chooses it. */
+
+@font-face {
+  font-family: 'Poppins Fallback';
+  font-weight: 400 600;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 110.52%;
+  ascent-override: 95.01%;
+  descent-override: 31.67%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Poppins Fallback';
+  font-weight: 700 900;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 106.36%;
+  ascent-override: 98.72%;
+  descent-override: 32.91%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Nunito Sans Fallback';
+  font-weight: 400 600;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 101.37%;
+  ascent-override: 99.63%;
+  descent-override: 34.53%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Nunito Sans Fallback';
+  font-weight: 700 900;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 98.05%;
+  ascent-override: 103.01%;
+  descent-override: 35.7%;
+  line-gap-override: 0%;
+}

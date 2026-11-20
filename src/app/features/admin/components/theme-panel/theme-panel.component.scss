@@ -1,0 +1,125 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.tp-note {
+  margin: 0;
+  font-size: t.size(13px);
+  color: t.$color-muted;
+}
+
+// Ready-made themes: a swatch of each, its own colours shown on it.
+.tp-presets {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+
+  legend {
+    padding: 0;
+    margin-bottom: 4px;
+    font-size: t.size(14px);
+    font-weight: 700;
+    color: t.$color-cream;
+  }
+}
+
+.tp-swatches {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+
+  @include bp.down(bp.$phone) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.tp-swatch {
+  display: grid;
+  gap: 8px;
+  padding: 8px 8px 10px;
+  border: 2px solid t.$color-line;
+  border-radius: 12px;
+  background: t.$color-surface;
+  color: t.$color-cream;
+  font: inherit;
+  font-size: t.size(13px);
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+
+  &[aria-pressed='true'] {
+    border-color: t.$color-amber;
+  }
+
+  &:focus-visible {
+    outline: 3px solid t.$color-amber;
+    outline-offset: 2px;
+  }
+}
+
+.tp-contrast {
+  display: grid;
+  gap: 8px;
+}
+
+.tp-summary {
+  margin: 0;
+  font-size: t.size(14px);
+  font-weight: 700;
+  color: t.$color-sage-pale;
+
+  &--bad {
+    color: t.$color-danger-text;
+  }
+}
+
+.tp-failing {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 10px 12px 10px 28px;
+  border: 1px solid t.$color-danger-line;
+  border-radius: 10px;
+  background: t.$color-danger-tint;
+  font-size: t.size(14px);
+  color: t.$color-danger-text;
+}
+
+.tp-all {
+  font-size: t.size(13px);
+  color: t.$color-muted;
+
+  summary {
+    cursor: pointer;
+  }
+
+  ul {
+    display: grid;
+    gap: 4px;
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .tp-fail {
+    color: t.$color-danger-text;
+  }
+}
+
+.tp-reset {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+}

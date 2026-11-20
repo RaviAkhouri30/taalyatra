@@ -58,7 +58,7 @@ $layer: t.$z-tour;
 
   h2 {
     margin: 0;
-    font-size: 18px;
+    font-size: t.size(18px);
   }
 
   p {
@@ -88,7 +88,7 @@ $layer: t.$z-tour;
 
 .tour-progress {
   color: t.$color-muted-strong;
-  font-size: 13px;
+  font-size: t.size(13px);
 }
 
 .tour-actions,

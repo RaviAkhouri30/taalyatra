@@ -83,7 +83,8 @@
                           >
                         } @else if (model.changeCount() > 0) {
                           <span class="count"
-                            >{{ model.changeCount() }}<span class="sr"> unpublished</span></span
+                            >{{ model.changeCount()
+                            }}<span class="visually-hidden"> unpublished</span></span
                           >
                         }
                       }
@@ -95,7 +96,7 @@
                       @case (badges.NewLeads) {
                         @if (model.newLeads() > 0) {
                           <span class="count"
-                            >{{ model.newLeads() }}<span class="sr"> new</span></span
+                            >{{ model.newLeads() }}<span class="visually-hidden"> new</span></span
                           >
                         }
                       }
@@ -111,7 +112,7 @@
         <!-- Phones: the account, moved out of the top bar so it fits one row (0017 U6). -->
         <div class="ed-side-account">
           <p>
-            <span class="sr">{{ page.home.signedInAs }} </span>{{ model.email() }}
+            <span class="visually-hidden">{{ page.home.signedInAs }} </span>{{ model.email() }}
           </p>
           <button type="button" [disabled]="model.signingOut()" (click)="model.signOut()">
             {{ model.signingOut() ? page.home.signingOut : page.home.signOut }}

@@ -13,7 +13,12 @@
   margin: 0 auto;
   border-radius: 50%;
   padding: 22px;
-  background: radial-gradient(circle, #2e241d 0%, #221a15 66%, #171210 100%);
+  background: radial-gradient(
+    circle,
+    t.$color-surface-high 0%,
+    t.$color-surface-mid 66%,
+    t.$color-ink 100%
+  );
   box-sizing: border-box;
 
   &::before {
@@ -48,8 +53,8 @@
   border: 5px solid t.$color-ivory;
   cursor: pointer;
   font-family: t.$font-display;
-  font-size: 22px;
-  font-weight: 800;
+  font-size: t.size(22px);
+  font-weight: t.$weight-heading;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -63,24 +68,24 @@
   padding: 0;
 
   @include bp.down(bp.$phone) {
-    font-size: 17px;
+    font-size: t.size(17px);
     border-width: 4px;
   }
 
   @include bp.down(bp.$phone-sm) {
-    font-size: 15px;
+    font-size: t.size(15px);
   }
 
   small {
     font-family: t.$font-body;
-    font-size: 12px;
+    font-size: t.size(12px);
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     opacity: 0.75;
 
     @include bp.down(bp.$phone) {
-      font-size: 9px;
+      font-size: t.size(9px);
     }
   }
 
@@ -99,19 +104,19 @@
 }
 
 .p0 {
-  background: radial-gradient(circle at 50% 35%, #f3c078, #e9a552 62%);
+  background: radial-gradient(circle at 50% 35%, t.$color-amber-light, t.$color-amber 62%);
 }
 
 .p1 {
-  background: radial-gradient(circle at 50% 35%, #fffdf8, #efe3d0 62%);
+  background: radial-gradient(circle at 50% 35%, t.$color-paper, t.$color-cream-deep 62%);
 }
 
 .p2 {
-  background: radial-gradient(circle at 50% 35%, #b6c48c, #7e8a55 70%);
+  background: radial-gradient(circle at 50% 35%, t.$color-sage-light, t.$color-sage-deep 70%);
 }
 
 .p3 {
-  background: radial-gradient(circle at 50% 35%, #3a2e25, #1c1511 70%);
+  background: radial-gradient(circle at 50% 35%, t.$color-line, t.$color-panel 70%);
   color: t.$color-ivory;
 }
 
@@ -123,8 +128,8 @@
 .pad.lit {
   transform: scale(0.93);
   box-shadow:
-    0 0 0 9px rgb(233 165 82 / 32%),
-    0 0 60px 8px rgb(233 165 82 / 75%);
+    0 0 0 9px t.with-alpha(t.$color-amber, 32%),
+    0 0 60px 8px t.with-alpha(t.$color-amber, 75%);
   filter: brightness(1.25);
 
   &::before {
@@ -132,7 +137,7 @@
     position: absolute;
     inset: -6px;
     border-radius: 50%;
-    border: 4px solid #f3c078;
+    border: 4px solid t.$color-amber-light;
     animation: ripple 0.55s ease-out forwards;
     pointer-events: none;
   }
@@ -158,24 +163,24 @@
   line-height: 1.1;
 
   small {
-    font-size: 10px;
+    font-size: t.size(10px);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     font-weight: 700;
     color: t.$color-amber;
 
     @include bp.down(bp.$phone) {
-      font-size: 8px;
+      font-size: t.size(8px);
     }
   }
 
   b {
     font-family: t.$font-display;
-    font-size: 24px;
-    font-weight: 800;
+    font-size: t.size(24px);
+    font-weight: t.$weight-heading;
 
     @include bp.down(bp.$phone) {
-      font-size: 19px;
+      font-size: t.size(19px);
     }
   }
 
@@ -188,9 +193,9 @@
   position: absolute;
   z-index: 3;
   font-family: t.$font-display;
-  font-weight: 800;
-  font-size: 26px;
-  color: #f3c078;
+  font-weight: t.$weight-heading;
+  font-size: t.size(26px);
+  color: t.$color-amber-light;
   pointer-events: none;
   animation: float-up 0.85s ease-out forwards;
 }
@@ -235,11 +240,11 @@
 
 @keyframes core-pulse {
   from {
-    box-shadow: 0 0 0 0 rgb(254 127 45 / 60%);
+    box-shadow: 0 0 0 0 t.with-alpha(t.$color-flare, 60%);
   }
 
   to {
-    box-shadow: 0 0 0 14px rgb(254 127 45 / 0%);
+    box-shadow: 0 0 0 14px t.with-alpha(t.$color-flare, 0%);
   }
 }
 

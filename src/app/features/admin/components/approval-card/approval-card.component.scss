@@ -28,7 +28,7 @@
 
   h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: t.size(16px);
   }
 }
 
@@ -36,7 +36,7 @@
 .ap-status {
   margin: 0;
   color: t.$color-muted-strong;
-  font-size: 14px;
+  font-size: t.size(14px);
 }
 
 .ap-note,
@@ -50,7 +50,7 @@
 .ap-problems {
   margin: 0;
   color: t.$color-amber-soft;
-  font-size: 14px;
+  font-size: t.size(14px);
   font-weight: 700;
 }
 
@@ -60,7 +60,7 @@
 
   label {
     color: t.$color-muted-strong;
-    font-size: 14px;
+    font-size: t.size(14px);
   }
 
   textarea {

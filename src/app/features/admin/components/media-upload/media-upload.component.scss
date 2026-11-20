@@ -44,19 +44,19 @@
 }
 
 .mu-title {
-  font-weight: 800;
+  font-weight: t.$weight-heading;
   color: t.$color-cream;
 }
 
 .mu-hint,
 .mu-state {
-  font-size: 13.5px;
+  font-size: t.size(13.5px);
   color: t.$color-muted-strong;
 }
 
 .mu-summary {
   margin: 0;
-  font-size: 13.5px;
+  font-size: t.size(13.5px);
   color: t.$color-muted-strong;
 
   &:empty {
@@ -96,7 +96,7 @@
 
 .mu-error {
   flex: 1 1 100%;
-  font-size: 13.5px;
+  font-size: t.size(13.5px);
   color: t.$color-cream;
 }
 

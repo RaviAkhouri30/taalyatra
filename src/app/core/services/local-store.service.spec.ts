@@ -3,7 +3,10 @@ import { TestBed } from '@angular/core/testing';
 import { LocalStoreService } from './local-store.service';
 
 describe('LocalStoreService', () => {
-  function create(storage: Pick<Storage, 'getItem' | 'setItem'> | undefined): LocalStoreService {
+  function create(
+    storage:
+      (Pick<Storage, 'getItem' | 'setItem'> & Partial<Pick<Storage, 'removeItem'>>) | undefined,
+  ): LocalStoreService {
     TestBed.configureTestingModule({
       providers: [
         {
@@ -46,5 +49,29 @@ describe('LocalStoreService', () => {
     store.set('ty_best', '1');
 
     expect(store.get('ty_best')).toBeNull();
+  });
+
+  it('should forget a value when asked to remove it', () => {
+    const values = new Map([['ty_theme', '#000000']]);
+    const store = create({
+      getItem: (key) => values.get(key) ?? null,
+      setItem: (key, value) => values.set(key, value),
+      removeItem: (key) => values.delete(key),
+    });
+
+    store.remove('ty_theme');
+
+    expect(store.get('ty_theme')).toBeNull();
+  });
+
+  it('should do nothing when storage throws on remove', () => {
+    const blocked = (): never => {
+      throw new Error('blocked');
+    };
+    const store = create({ getItem: blocked, setItem: blocked, removeItem: blocked });
+
+    expect(() => {
+      store.remove('ty_theme');
+    }).not.toThrow();
   });
 });

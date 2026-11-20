@@ -13,7 +13,7 @@
 }
 
 .asideh {
-  font-size: 12px;
+  font-size: t.size(12px);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   font-weight: 700;
@@ -38,7 +38,7 @@
 
   &:hover {
     transform: translateY(-3px);
-    background: #2e241d;
+    background: t.$color-surface-high;
 
     .cico {
       background: t.$color-amber;
@@ -55,7 +55,7 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: #2e241d;
+  background: t.$color-surface-high;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,23 +74,23 @@
   b {
     display: block;
     font-family: t.$font-display;
-    font-size: 15px;
+    font-size: t.size(15px);
     line-height: 1.2;
 
     @include bp.down(bp.$phone) {
-      font-size: 14px;
+      font-size: t.size(14px);
     }
   }
 
   small {
-    font-size: 12px;
+    font-size: t.size(12px);
     color: t.$color-muted;
   }
 }
 
 .carr {
   color: t.$color-amber;
-  font-size: 18px;
+  font-size: t.size(18px);
   font-weight: 700;
   line-height: 1;
 }
@@ -107,16 +107,16 @@
   b {
     display: block;
     font-family: t.$font-display;
-    font-size: 15px;
+    font-size: t.size(15px);
     margin-bottom: 4px;
   }
 
   p {
-    font-size: 13px;
+    font-size: t.size(13px);
     line-height: 1.5;
 
     @include bp.down(bp.$phone) {
-      font-size: 12.5px;
+      font-size: t.size(12.5px);
     }
   }
 }

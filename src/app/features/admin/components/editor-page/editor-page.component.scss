@@ -53,17 +53,17 @@
 
   h1 {
     margin: 0;
-    font-size: 34px;
+    font-size: t.size(34px);
 
     @include bp.down(bp.$phone) {
-      font-size: 26px;
+      font-size: t.size(26px);
     }
   }
 }
 
 .ep-lead {
   margin: 0;
-  font-size: 15.5px;
+  font-size: t.size(15.5px);
   line-height: 1.55;
   color: t.$color-muted-strong;
 }
@@ -143,12 +143,12 @@
 
   // The same size as the publish bar's own buttons, so the three fit one row on phones.
   @include bp.down(bp.$phone) {
-    font-size: 14px;
+    font-size: t.size(14px);
   }
 
   @include bp.down(bp.$phone-sm) {
     padding: 8px 11px;
-    font-size: 13px;
+    font-size: t.size(13px);
   }
 }
 
@@ -161,7 +161,7 @@
 
   h2 {
     margin: 0;
-    font-size: 19px;
+    font-size: t.size(19px);
   }
 }
 
@@ -170,7 +170,7 @@
   padding: 10px 12px;
   border-left: 3px solid t.$color-amber;
   background: t.$color-surface;
-  font-size: 13.5px;
+  font-size: t.size(13.5px);
   color: t.$color-muted-strong;
 }
 

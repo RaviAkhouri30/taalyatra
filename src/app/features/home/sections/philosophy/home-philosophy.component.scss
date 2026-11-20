@@ -7,33 +7,33 @@
 }
 
 .eyebrow {
-  color: #9a4f1c;
+  color: t.$color-paper-accent;
 }
 
 // Design `.big` statement title (rules ordered as in the prototype's cascade).
 .big {
   max-width: 900px;
-  font-size: 38px;
-  font-weight: 800;
+  font-size: t.size(38px);
+  font-weight: t.$weight-heading;
 
   @include bp.desktop-short {
-    font-size: 32px;
+    font-size: t.size(32px);
   }
 
   @include bp.down(bp.$tablet) {
-    font-size: 30px;
+    font-size: t.size(30px);
   }
 
   @include bp.down(bp.$phone) {
-    font-size: 25px;
+    font-size: t.size(25px);
   }
 
   @include bp.up(bp.$wide) {
-    font-size: 44px;
+    font-size: t.size(44px);
   }
 
   @include bp.up(bp.$ultra) {
-    font-size: 54px;
+    font-size: t.size(54px);
   }
 }
 
@@ -63,17 +63,17 @@
   }
 
   h3 {
-    font-size: 23px;
+    font-size: t.size(23px);
     color: t.$color-clay;
     margin-bottom: 12px;
 
     @include bp.down(bp.$phone) {
-      font-size: 20px;
+      font-size: t.size(20px);
     }
   }
 
   p {
-    font-size: 16px;
+    font-size: t.size(16px);
   }
 }
 
@@ -90,8 +90,8 @@
 }
 
 .sub {
-  font-size: 30px;
-  font-weight: 800;
+  font-size: t.size(30px);
+  font-weight: t.$weight-heading;
 }
 
 .goals {
@@ -111,23 +111,23 @@
 
   b {
     font-family: t.$font-display;
-    font-size: 38px;
+    font-size: t.size(38px);
     color: t.$color-clay;
     display: block;
     line-height: 1;
 
     @include bp.down(bp.$phone) {
-      font-size: 30px;
+      font-size: t.size(30px);
     }
   }
 
   h3 {
-    font-size: 20px;
+    font-size: t.size(20px);
     margin: 10px 0 8px;
   }
 
   p {
-    font-size: 15px;
+    font-size: t.size(15px);
     line-height: 1.6;
   }
 }
@@ -166,24 +166,24 @@
   }
 
   b {
-    font-size: 12px;
+    font-size: t.size(12px);
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #9a4f1c;
+    color: t.$color-paper-accent;
     font-weight: 700;
   }
 
   h3 {
-    font-size: 23px;
+    font-size: t.size(23px);
     margin: 4px 0 6px;
 
     @include bp.down(bp.$phone) {
-      font-size: 19px;
+      font-size: t.size(19px);
     }
   }
 
   p {
-    font-size: 16px;
+    font-size: t.size(16px);
     max-width: 60ch;
   }
 }

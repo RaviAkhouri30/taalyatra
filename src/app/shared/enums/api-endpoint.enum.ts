@@ -38,6 +38,8 @@ export enum ApiEndpoint {
   SiteConfig = 'site/config',
   /** Which home sections, inner pages and site widgets are switched on (ADR-0015). */
   SiteVisibility = 'site/visibility',
+  /** The site's colours, background, text and fonts (0021, ADR-0019). */
+  SiteTheme = 'site/theme',
   /** Proposal requests from the contact form (create-only collection). */
   Proposals = 'proposals',
   /** Anonymous speed reports from real visits (0012). */

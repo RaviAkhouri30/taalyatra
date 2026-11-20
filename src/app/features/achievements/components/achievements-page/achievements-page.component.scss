@@ -7,8 +7,8 @@
 }
 
 h2 {
-  font-size: 36px;
-  font-weight: 800;
+  font-size: t.size(36px);
+  font-weight: t.$weight-heading;
 }
 
 .alt {
@@ -49,18 +49,18 @@ h2 {
   dd {
     margin: 0;
     font-family: t.$font-display;
-    font-size: 40px;
-    font-weight: 800;
+    font-size: t.size(40px);
+    font-weight: t.$weight-heading;
     color: t.$color-amber;
     line-height: 1;
 
     @include bp.down(bp.$phone) {
-      font-size: 30px;
+      font-size: t.size(30px);
     }
   }
 
   dt {
-    font-size: 15px;
+    font-size: t.size(15px);
     font-weight: 700;
   }
 }
@@ -110,7 +110,7 @@ h2 {
   }
 
   b {
-    font-size: 12px;
+    font-size: t.size(12px);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: t.$color-amber;
@@ -118,16 +118,16 @@ h2 {
   }
 
   h3 {
-    font-size: 21px;
+    font-size: t.size(21px);
     margin: 3px 0 4px;
 
     @include bp.down(bp.$phone) {
-      font-size: 19px;
+      font-size: t.size(19px);
     }
   }
 
   p {
-    font-size: 15px;
+    font-size: t.size(15px);
     color: t.$color-muted;
     max-width: 60ch;
   }
@@ -161,12 +161,12 @@ h2 {
   }
 
   h3 {
-    font-size: 18px;
+    font-size: t.size(18px);
     margin-bottom: 5px;
   }
 
   p {
-    font-size: 14px;
+    font-size: t.size(14px);
     color: t.$color-muted;
     line-height: 1.5;
   }
@@ -195,7 +195,7 @@ h2 {
 }
 
 .small-title {
-  font-size: 30px;
+  font-size: t.size(30px);
   margin-bottom: 18px;
 }
 
@@ -218,11 +218,11 @@ h2 {
   b {
     display: block;
     font-family: t.$font-display;
-    font-size: 16px;
+    font-size: t.size(16px);
   }
 
   span {
-    font-size: 13px;
+    font-size: t.size(13px);
     color: t.$color-muted;
   }
 }
@@ -249,11 +249,11 @@ a.pr:hover {
 
   b {
     font-family: t.$font-display;
-    font-size: 16px;
+    font-size: t.size(16px);
   }
 
   span {
-    font-size: 13px;
+    font-size: t.size(13px);
     color: t.$color-muted;
   }
 }

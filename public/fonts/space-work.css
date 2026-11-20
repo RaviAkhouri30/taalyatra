@@ -1,0 +1,43 @@
+/* Fallbacks sized to match Space Grotesk and Work Sans (0021, measured in Chrome against Arial as
+   0007 did), so text set in Arial takes the web font's space and the swap doesn't move the page.
+   Loaded with the pair's Google Fonts stylesheet, only when a theme chooses it. */
+
+@font-face {
+  font-family: 'Space Grotesk Fallback';
+  font-weight: 400 600;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 107.92%;
+  ascent-override: 90.81%;
+  descent-override: 26.87%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Space Grotesk Fallback';
+  font-weight: 700 900;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 101.27%;
+  ascent-override: 96.77%;
+  descent-override: 28.64%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Work Sans Fallback';
+  font-weight: 400 600;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 111.01%;
+  ascent-override: 83.78%;
+  descent-override: 21.62%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Work Sans Fallback';
+  font-weight: 700 900;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 104.35%;
+  ascent-override: 89.12%;
+  descent-override: 23%;
+  line-gap-override: 0%;
+}

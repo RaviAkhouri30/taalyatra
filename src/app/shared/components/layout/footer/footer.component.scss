@@ -22,7 +22,7 @@ a {
 
 .about {
   margin-top: 16px;
-  font-size: 16px;
+  font-size: t.size(16px);
   max-width: 300px;
 }
 
@@ -32,7 +32,7 @@ a {
 
 .domain {
   margin-top: 14px;
-  font-size: 16px;
+  font-size: t.size(16px);
   font-weight: 700;
 }
 
@@ -46,7 +46,7 @@ a {
 }
 
 .fine {
-  font-size: 15px;
+  font-size: t.size(15px);
   border-top: 1px solid t.$color-surface;
   padding-top: 22px;
 }
@@ -83,12 +83,12 @@ a {
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
-  font-size: 14px;
+  font-size: t.size(14px);
   border-top: 1px solid t.$color-line;
   padding-top: 24px;
 
   @include bp.down(bp.$phone) {
-    font-size: 13px;
+    font-size: t.size(13px);
   }
 
   a {

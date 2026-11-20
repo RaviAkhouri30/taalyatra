@@ -13,7 +13,14 @@ import { type IPromotionDto } from '@shared/interfaces/i-site-config';
 import { SiteConfigModel } from '@shared/models/site-config.model';
 import { SiteVisibility } from '@shared/models/site-visibility.model';
 import { SiteConfigService } from '@shared/services/site-config.service';
-import { SITE_DTO, provideSiteConfig, provideVisibility } from '@shared/testing/fixtures';
+import { RootStyleService } from '@core/services/root-style.service';
+import { SiteTheme } from '@shared/models/site-theme.model';
+import {
+  SITE_DTO,
+  provideSiteConfig,
+  provideTheme,
+  provideVisibility,
+} from '@shared/testing/fixtures';
 import { SiteShellComponent } from './site-shell.component';
 
 @Component({ template: '<p class="page">page</p>' })
@@ -29,6 +36,7 @@ describe('SiteShellComponent', () => {
       providers: [
         provideSiteConfig(new SiteConfigModel({ ...SITE_DTO, promotion })),
         provideVisibility(visibility),
+        provideTheme(SiteTheme.from({ accent: '#ffb21e' })),
         { provide: IClipboardService, useClass: FakeClipboardService },
         { provide: IVitalsReporter, useClass: FakeVitalsReporter },
         provideRouter([
@@ -143,6 +151,18 @@ describe('SiteShellComponent', () => {
     expect(element.querySelector('app-footer')).toBeNull();
   });
 
+  it('should apply the theme to the page when the site data arrives', async () => {
+    await renderAt('/');
+
+    expect(document.documentElement.style.getPropertyValue('--ty-amber')).toBe('#ffb21e');
+    TestBed.inject(RootStyleService).apply({
+      variables: new Map(),
+      stylesheets: [],
+      browserColour: '#171210',
+      rememberedBackground: null,
+    });
+  });
+
   it('should skip the promo badge when no promotion is running', async () => {
     const { element } = await renderAt('/shows', null);
 
@@ -156,6 +176,7 @@ describe('SiteShellComponent', () => {
         providers: [
           { provide: SiteConfigService, useValue: { getSiteConfig: () => site$.asObservable() } },
           provideVisibility(),
+          provideTheme(),
           { provide: IVitalsReporter, useClass: FakeVitalsReporter },
           provideRouter([{ path: '**', component: PageComponent }]),
         ],

@@ -12,9 +12,9 @@
   padding: 40px 0 54px;
   overflow: hidden;
   background:
-    radial-gradient(1000px 560px at 76% 34%, rgb(201 107 60 / 22%), transparent 70%),
-    radial-gradient(760px 460px at 10% 90%, rgb(138 106 78 / 20%), transparent 72%),
-    linear-gradient(165deg, #1e1714 0%, #171210 48%, #120e0c 100%);
+    radial-gradient(1000px 560px at 76% 34%, t.with-alpha(t.$color-clay, 22%), transparent 70%),
+    radial-gradient(760px 460px at 10% 90%, t.with-alpha(t.$color-glow, 20%), transparent 72%),
+    linear-gradient(165deg, t.$color-ink-lift 0%, t.$color-ink 48%, t.$color-ink-deep 100%);
 
   @include bp.desktop-short {
     padding: 26px 0 34px;
@@ -51,41 +51,41 @@
 }
 
 .title {
-  font-weight: 800;
-  font-size: 64px;
+  font-weight: t.$weight-heading;
+  font-size: t.size(64px);
 
   @include bp.down(bp.$tablet) {
-    font-size: 52px;
+    font-size: t.size(52px);
   }
 
   @include bp.down(bp.$phone) {
-    font-size: 40px;
+    font-size: t.size(40px);
   }
 
   @include bp.up(bp.$wide) {
-    font-size: 82px;
+    font-size: t.size(82px);
   }
 
   @include bp.up(bp.$ultra) {
-    font-size: 104px;
+    font-size: t.size(104px);
   }
 
   @include bp.desktop-short {
-    font-size: 44px;
+    font-size: t.size(44px);
   }
 }
 
 .lead {
   margin: 18px 0 26px;
   max-width: 50ch;
-  font-size: 19px;
+  font-size: t.size(19px);
 
   @include bp.down(bp.$phone) {
-    font-size: 17px;
+    font-size: t.size(17px);
   }
 
   @include bp.desktop-short {
-    font-size: 16px;
+    font-size: t.size(16px);
     margin: 12px 0 18px;
     max-width: 46ch;
   }
@@ -103,7 +103,7 @@
     .btn {
       min-height: 46px;
       padding: 12px 22px;
-      font-size: 16px;
+      font-size: t.size(16px);
     }
   }
 }
@@ -115,7 +115,7 @@
 }
 
 .pill {
-  font-size: 14px;
+  font-size: t.size(14px);
   font-weight: 700;
   border: 1px solid t.$color-bronze;
   border-radius: t.$radius-pill;
@@ -126,7 +126,7 @@
   }
 
   @include bp.down(bp.$phone) {
-    font-size: 13px;
+    font-size: t.size(13px);
     padding: 4px 12px;
   }
 

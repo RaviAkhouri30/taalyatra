@@ -59,7 +59,7 @@
   width: 32px;
   height: 32px;
   border-radius: 10px;
-  background: rgb(23 18 16 / 80%);
+  background: t.with-alpha(t.$color-ink, 80%);
   color: t.$color-amber;
   display: flex;
   align-items: center;
@@ -78,7 +78,7 @@
   background: transparent;
   color: t.$color-muted;
   font-weight: 700;
-  font-size: 14px;
+  font-size: t.size(14px);
   border-radius: 16px;
   aspect-ratio: 4 / 3;
   text-align: center;
@@ -92,6 +92,6 @@
 
 .note {
   margin-top: 16px;
-  font-size: 14px;
+  font-size: t.size(14px);
   color: t.$color-muted-strong;
 }

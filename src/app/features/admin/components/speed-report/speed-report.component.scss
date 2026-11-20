@@ -7,8 +7,8 @@
 
 h2 {
   margin: 0;
-  font-size: 15px;
-  font-weight: 800;
+  font-size: t.size(15px);
+  font-weight: t.$weight-heading;
 }
 
 p {
@@ -28,13 +28,13 @@ p {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: t.size(14px);
   color: t.$color-muted-strong;
 }
 
 caption {
   padding-bottom: 6px;
-  font-size: 13px;
+  font-size: t.size(13px);
   text-align: left;
 }
 
@@ -61,7 +61,7 @@ th {
   background: transparent;
   color: t.$color-cream;
   font: inherit;
-  font-size: 14px;
+  font-size: t.size(14px);
   font-weight: 600;
   cursor: pointer;
 

@@ -22,7 +22,7 @@
 }
 
 .title {
-  font-weight: 800;
+  font-weight: t.$weight-heading;
   margin-bottom: 20px;
 }
 
@@ -67,10 +67,10 @@
     padding: 36px 16px 14px;
     background: linear-gradient(transparent, rgb(0 0 0 / 88%));
     font-weight: 700;
-    font-size: 15px;
+    font-size: t.size(15px);
 
     @include bp.down(bp.$phone) {
-      font-size: 14px;
+      font-size: t.size(14px);
       padding: 26px 12px 10px;
     }
 
@@ -78,7 +78,7 @@
       display: block;
       font-weight: 400;
       color: t.$color-muted;
-      font-size: 13px;
+      font-size: t.size(13px);
     }
   }
 }

@@ -11,8 +11,8 @@
 }
 
 h2 {
-  font-size: 36px;
-  font-weight: 800;
+  font-size: t.size(36px);
+  font-weight: t.$weight-heading;
 }
 
 .spotlight {
@@ -72,12 +72,12 @@ h2 {
   b {
     display: block;
     font-family: t.$font-display;
-    font-size: 17px;
+    font-size: t.size(17px);
     margin-bottom: 4px;
   }
 
   span {
-    font-size: 14px;
+    font-size: t.size(14px);
     color: t.$color-muted;
     line-height: 1.5;
   }
@@ -85,7 +85,7 @@ h2 {
 
 .setups-note {
   margin-top: 24px;
-  font-size: 15px;
+  font-size: t.size(15px);
   color: t.$color-muted;
 }
 

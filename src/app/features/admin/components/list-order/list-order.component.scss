@@ -10,7 +10,7 @@
 
 .lo-title {
   margin: 0 0 10px;
-  font-size: 13px;
+  font-size: t.size(13px);
   color: t.$color-muted;
 
   b {
@@ -35,7 +35,7 @@
   border: 1px solid t.$color-field-border;
   border-radius: 9px;
   background: t.$color-surface;
-  font-size: 14px;
+  font-size: t.size(14px);
 }
 
 .lo-row--featured {
@@ -61,7 +61,7 @@
 }
 
 .lo-star {
-  font-size: 12px;
+  font-size: t.size(12px);
   color: t.$color-amber;
   white-space: nowrap;
 }

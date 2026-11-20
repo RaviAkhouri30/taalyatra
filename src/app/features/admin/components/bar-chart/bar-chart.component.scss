@@ -11,7 +11,7 @@
 
   h2 {
     margin: 0;
-    font-size: 17px;
+    font-size: t.size(17px);
   }
 
   p {
@@ -38,7 +38,7 @@
   display: flex;
   margin-top: -4px;
   color: t.$color-muted-strong;
-  font-size: 12px;
+  font-size: t.size(12px);
 
   // Each label sits under its bar; the first and last lean inwards so none runs off the card.
   span {

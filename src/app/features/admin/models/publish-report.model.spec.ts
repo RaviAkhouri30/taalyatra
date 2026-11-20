@@ -1,3 +1,4 @@
+import { THEME_PRESETS } from '@shared/constants/theme.constants';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { ContentPath } from './content-path.enum';
 import fakeDb from '@core/backends/fake/fake-db.json';
@@ -156,6 +157,23 @@ describe('PublishReport', () => {
 
     it('should not guess when the library is not known', () => {
       expect(check(items('v1/taal-yatra/media/gone'), null).errors).toEqual([]);
+    });
+  });
+
+  describe('the theme’s contrast', () => {
+    it('should let a readable theme publish', () => {
+      const daylight = THEME_PRESETS.find((preset) => preset.label === 'Daylight')!;
+
+      expect(report('site/theme', { ...daylight.colours }).errors).toEqual([]);
+    });
+
+    it('should block a theme some visitors can’t read, naming the pair and the fix', () => {
+      const { errors } = report('site/theme', { quietText: '#3a3a3a' });
+
+      expect(errors.length).toBeGreaterThan(0);
+      expect(errors[0]?.section).toBe('Theme');
+      expect(errors[0]?.field).toBe('Quiet text on the background');
+      expect(errors[0]?.message).toMatch(/:1; it needs 4\.5:1\. Make the quiet text lighter\.$/);
     });
   });
 });

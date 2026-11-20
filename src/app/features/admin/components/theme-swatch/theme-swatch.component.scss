@@ -1,0 +1,26 @@
+@use 'tokens' as t;
+
+:host {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 6px;
+  height: 44px;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--sw-bg);
+}
+
+span:first-child {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--sw-card);
+  box-shadow: inset 0 -6px 0 -3px var(--sw-text);
+}
+
+span:last-child {
+  width: 18px;
+  height: 12px;
+  border-radius: t.$radius-pill;
+  background: var(--sw-accent);
+}

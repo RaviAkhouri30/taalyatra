@@ -12,7 +12,7 @@
 
 /// Small uppercase label above a heading.
 .eyebrow {
-  font-size: 13px;
+  font-size: t.size(13px);
   letter-spacing: t.$letter-spacing-eyebrow;
   text-transform: uppercase;
   font-weight: 700;
@@ -20,86 +20,86 @@
   margin: 0 0 12px;
 
   @include bp.down(bp.$phone) {
-    font-size: 12px;
+    font-size: t.size(12px);
     margin-bottom: 10px;
   }
 }
 
 .light .eyebrow {
-  color: #9a4f1c;
+  color: t.$color-paper-accent;
 }
 
 /// Introductory paragraph.
 .lead {
-  font-size: 18px;
+  font-size: t.size(18px);
   line-height: 1.62;
   max-width: 62ch;
 
   @include bp.down(bp.$phone) {
-    font-size: 16px;
+    font-size: t.size(16px);
     line-height: 1.6;
   }
 
   @include bp.up(bp.$wide) {
-    font-size: 19px;
+    font-size: t.size(19px);
   }
 
   @include bp.up(bp.$ultra) {
-    font-size: 22px;
+    font-size: t.size(22px);
   }
 }
 
 /// Page title scale.
 .h1 {
-  font-size: 54px;
+  font-size: t.size(54px);
 
   @include bp.down(bp.$tablet) {
-    font-size: 42px;
+    font-size: t.size(42px);
   }
 
   @include bp.down(bp.$phone) {
-    font-size: 34px;
+    font-size: t.size(34px);
   }
 
   @include bp.down(bp.$phone-sm) {
-    font-size: 30px;
+    font-size: t.size(30px);
   }
 
   @include bp.up(bp.$wide) {
-    font-size: 66px;
+    font-size: t.size(66px);
   }
 
   @include bp.up(bp.$ultra) {
-    font-size: 84px;
+    font-size: t.size(84px);
   }
 }
 
 /// Section title scale.
 .h2 {
-  font-size: 40px;
+  font-size: t.size(40px);
 
   @include bp.desktop-short {
-    font-size: 34px;
+    font-size: t.size(34px);
   }
 
   @include bp.down(bp.$tablet) {
-    font-size: 32px;
+    font-size: t.size(32px);
   }
 
   @include bp.down(bp.$phone) {
-    font-size: 27px;
+    font-size: t.size(27px);
   }
 
   @include bp.down(bp.$phone-sm) {
-    font-size: 24px;
+    font-size: t.size(24px);
   }
 
   @include bp.up(bp.$wide) {
-    font-size: 48px;
+    font-size: t.size(48px);
   }
 
   @include bp.up(bp.$ultra) {
-    font-size: 58px;
+    font-size: t.size(58px);
   }
 }
 

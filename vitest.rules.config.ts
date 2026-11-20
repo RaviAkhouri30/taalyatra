@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
 /**
@@ -6,6 +7,13 @@ import { defineConfig } from 'vitest/config';
  * part of `npm run verify` because the emulator needs Java.
  */
 export default defineConfig({
+  // The app's path aliases (tsconfig.json), so the tests can import the enums the rules mirror.
+  resolve: {
+    alias: {
+      '@shared': fileURLToPath(new URL('src/app/shared', import.meta.url)),
+      '@core': fileURLToPath(new URL('src/app/core', import.meta.url)),
+    },
+  },
   test: {
     include: ['tests/rules/**/*.spec.ts'],
     environment: 'node',

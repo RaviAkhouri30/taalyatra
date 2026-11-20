@@ -86,4 +86,6 @@ flowchart TD
   L --> N["Menu, Find, Review link<br/>appTourTarget"]
   L -->|editor tabs| EP["EditorPageComponent<br/>cards · preview · publish bar: appTourTarget"]
   L -->|features| FP["FeaturesPageComponent (FeaturesPageViewModel)"]
+  EP -->|"Theme card (0021)"| TP["ThemePanelComponent (ThemePanelViewModel)<br/>ready-made themes · contrast · Reset"]
+  TP --> SW["ThemeSwatchComponent"]
 ```
