@@ -28,6 +28,7 @@ describe('EditorLayoutComponent', () => {
     expect(tabs).toEqual([
       '/admin',
       '/admin/publish',
+      '/admin/features',
       '/admin/hero',
       '/admin/offer',
       '/admin/audiences',

@@ -1,0 +1,41 @@
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+.to {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: t.$z-tour;
+  display: grid;
+  gap: 10px;
+  box-sizing: border-box;
+  width: 340px;
+  padding: 18px 20px;
+  border: 1px solid t.$color-amber;
+  border-radius: 16px;
+  background: t.$color-surface-raised;
+  color: t.$color-cream;
+
+  @include bp.down(bp.$phone) {
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+    width: auto;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 17px;
+  }
+
+  p {
+    margin: 0;
+    color: t.$color-muted-strong;
+  }
+}
+
+.to-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

@@ -32,6 +32,9 @@ export const VISITS_PATH = 'visits';
 /** The Leads page's path under `/admin` (0018 V12). */
 export const LEADS_PATH = 'leads';
 
+/** The Features page's path under `/admin` (0020 V18). */
+export const FEATURES_PATH = 'features';
+
 /** Team access's path under `/admin` (0019). */
 export const TEAM_ACCESS_PATH = 'team-access';
 
@@ -46,6 +49,9 @@ export const VISITS_LABEL = 'Visits';
 
 /** The Leads page's name in the menu and its title. */
 export const LEADS_LABEL = 'Leads';
+
+/** The Features page's name in the menu and its title. */
+export const FEATURES_LABEL = 'Features';
 
 /** Team access's name in the menu and its title. */
 export const TEAM_ACCESS_LABEL = 'Team access';
@@ -119,6 +125,8 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
       },
       // Right under Dashboard, so it's never below the fold of a long menu (0017 walkthrough).
       { ...pageLink('Review & publish', PUBLISH_PATH, IconName.Send), badge: NavBadge.Changes },
+      // What the site does and where each part is changed, for every account (0020 V18).
+      pageLink(FEATURES_LABEL, FEATURES_PATH, IconName.Check),
     ],
   },
   {

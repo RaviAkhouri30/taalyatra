@@ -104,7 +104,7 @@ $rail-width: 64px;
     display: block;
     padding: 0;
     border: 0;
-    background: rgb(0 0 0 / 60%);
+    background: t.$color-overlay;
     cursor: pointer;
   }
 }

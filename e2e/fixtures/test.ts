@@ -5,6 +5,29 @@ import { AppShellPage } from '../pages/app-shell.page';
 import { EditorPage } from '../pages/editor.page';
 import { HomePage } from '../pages/home.page';
 import { InnerPage } from '../pages/inner-page.page';
+import {
+  TOUR_SEEN_KEY_PREFIX,
+  TOUR_VERSION,
+} from '../../src/app/features/admin/models/tour.constants';
+import { FAKE_MANAGER_ACCOUNT } from '../../src/app/core/backends/fake/fake-auth.constants';
+
+/**
+ * The test accounts whose tour offer is answered before each test, so it never covers the page:
+ * the fake owner and manager, and the emulator's owner and managers.
+ */
+const TEST_ACCOUNT_UIDS = [
+  'fake-admin-uid',
+  FAKE_MANAGER_ACCOUNT.uid,
+  '5zsz2DlUaja2Ss7wbFTrpiMMROk2',
+  'emulator-manager-uid',
+  'emulator-manager-two-uid',
+];
+
+/** Options a spec can set with `test.use()`. */
+interface Options {
+  /** The guided tour offers itself on sign-in (0020), as for a real first visit. Off by default. */
+  tourOffered: boolean;
+}
 
 /** Names of the inner pages, each a key of the `innerPages` fixture. */
 export type InnerPageName = 'videos' | 'team' | 'shows' | 'achievements';
@@ -20,7 +43,21 @@ interface Fixtures {
   axe: () => AxeBuilder;
 }
 
-export const test = base.extend<Fixtures>({
+export const test = base.extend<Fixtures & Options>({
+  tourOffered: [false, { option: true }],
+  page: async ({ page, tourOffered }, use) => {
+    if (!tourOffered) {
+      await page.addInitScript(
+        ({ prefix, version, uids }) => {
+          for (const uid of uids) {
+            localStorage.setItem(prefix + uid, version);
+          }
+        },
+        { prefix: TOUR_SEEN_KEY_PREFIX, version: TOUR_VERSION, uids: TEST_ACCOUNT_UIDS },
+      );
+    }
+    await use(page);
+  },
   appShell: async ({ page }, use) => {
     await use(new AppShellPage(page));
   },

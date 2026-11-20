@@ -13,11 +13,12 @@ import { AppRoute } from '@shared/enums/app-route.enum';
 import { IconName } from '@shared/enums/icon-name.enum';
 import { EditorNavService } from '../../services/editor-nav.service';
 import { EditorLayoutViewModel } from '../../view-models/editor-layout.view-model';
+import { HelpMenuComponent } from '../help-menu/help-menu.component';
 
-/** The bar across the top of the editor: the name, the account, and the Preview and site buttons. */
+/** The bar across the top of the editor: the name, the account, Help, and the Preview and site buttons. */
 @Component({
   selector: 'app-editor-top-bar',
-  imports: [IconComponent, NgOptimizedImage, RouterLink],
+  imports: [HelpMenuComponent, IconComponent, NgOptimizedImage, RouterLink],
   templateUrl: './editor-top-bar.component.html',
   styleUrl: './editor-top-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

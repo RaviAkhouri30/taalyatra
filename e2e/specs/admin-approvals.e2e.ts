@@ -62,6 +62,32 @@ test.describe('Admin approvals', () => {
     }
   });
 
+  test('should give the manager their own tour, without the owner’s areas', async ({ page }) => {
+    await page.getByRole('button', { name: 'Help' }).click();
+    await page.getByRole('button', { name: 'Take the tour' }).click();
+    const card = page.getByRole('dialog');
+    await expect(card).toContainText('Step 1 of 8');
+
+    for (let step = 1; step < 8; step += 1) {
+      await card.getByRole('button', { name: 'Next' }).click();
+      await expect(card).not.toContainText('Leads from the proposal form');
+    }
+    await expect(card.getByRole('heading', { name: 'Help is always here' })).toBeVisible();
+  });
+
+  test('should show the manager the features, with hidden pages managed by the owner', async ({
+    editor,
+    page,
+  }) => {
+    await editor.openTab('Features');
+
+    await expect(page.getByRole('article', { name: 'Team' })).toContainText('Managed by the owner');
+    await expect(page.getByRole('article', { name: 'Leads' })).toHaveCount(0);
+    await expect(
+      page.getByRole('article', { name: 'Hero' }).getByRole('link', { name: 'Change Hero' }),
+    ).toBeVisible();
+  });
+
   test('should let the manager upload photos but not replace or delete them', async ({
     editor,
     page,
