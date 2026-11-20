@@ -6,6 +6,17 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-11-20
+
+### Added
+
+- **A guided tour** of the admin: on your first sign-in on a device it offers itself once, and **Help → Take the tour**
+  replays it any time. Each step points at one part of the screen and says what it’s for. Managers get their own tour,
+  without your areas.
+- **Help** in the top bar: take the tour, see the features, read what’s new.
+- **Features**, in the menu: everything the website and the admin do, each with **See it on the site** and **Change it**. A
+  manager sees the features they can change; the rest say “Managed by the owner”.
+
 ## [2.0.2] - 2026-11-20
 
 ### Changed
