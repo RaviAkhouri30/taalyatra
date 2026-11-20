@@ -6,6 +6,23 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-11-21
+
+### Added
+
+- **A Theme page**, in Settings: choose a ready-made theme (Warm night, today’s look; Daylight; Festival; High contrast)
+  or set your own six colours, the page background, the text size, how bold headings are, and the fonts. The preview
+  shows the whole site in the draft theme, and publishing changes every page, this admin included.
+- **Readability is checked as you choose:** each pair of colours shows its contrast, and a theme some visitors couldn’t
+  read can’t be published or sent for approval; the page names the colour to change.
+- **Reset to the default theme** puts today’s look back as a draft.
+- Managers get the Theme page on Team access like any other page; by default their changes wait for your approval.
+
+### Changed
+
+- **Form fields are easier to see:** their edges, the outline buttons’ borders and the placeholder text are slightly
+  lighter, so they reach the contrast the theme now checks for.
+
 ## [2.1.1] - 2026-11-20
 
 ### Changed
