@@ -133,10 +133,10 @@ describe('review wording', () => {
 
   it('should say which changes are published and which are sent', () => {
     expect(planConfirmText({ publish: ['a', 'b'], send: [] })).toBe(
-      'Publish 2 changed documents? Visitors see the changes on their next visit.',
+      'Publish 2 changes? Visitors see them on their next visit.',
     );
     expect(planConfirmText({ publish: ['a'], send: ['b'] })).toMatch(
-      /^Publish 1 changed document\?.* Send 1 change to the owner for approval\?/u,
+      /^Publish 1 change\?.* Send 1 change to the owner for approval\?/u,
     );
     expect(changesWord(3)).toBe('3 changes');
   });

@@ -17,6 +17,13 @@
           [itemLabel]="list.schema.item.label"
         />
       }
+      @if (list.items.length === 0) {
+        <!-- An emptied list says what to do, not just shows a button (0020 V6). -->
+        <p class="sf-empty">
+          None yet. Press “+ {{ list.schema.addLabel }}” to add one; it shows on the website once
+          published.
+        </p>
+      }
       @for (item of list.items.controls; track item; let i = $index, first = $first, last = $last) {
         <div
           class="sf-item"

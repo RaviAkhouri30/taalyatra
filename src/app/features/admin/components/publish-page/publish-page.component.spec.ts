@@ -56,9 +56,7 @@ describe('PublishPageComponent', () => {
     button('Publish changes')?.click();
     fixture.detectChanges();
 
-    expect(element.querySelector('#pp-confirm-text')?.textContent).toContain(
-      'Publish 1 changed document?',
-    );
+    expect(element.querySelector('#pp-confirm-text')?.textContent).toContain('Publish 1 change?');
     expect(button('Yes, publish')).toBeDefined();
   });
 

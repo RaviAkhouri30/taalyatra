@@ -38,6 +38,11 @@
   @include bp.down(bp.$phone) {
     padding: 10px 16px;
   }
+
+  // Small phones: Menu, the logo, Help and View site still share one row (0020 V6).
+  @include bp.down(bp.$phone-sm) {
+    column-gap: 6px;
+  }
 }
 
 .ed-brand {
@@ -120,6 +125,10 @@
 
   &[aria-pressed='false'] {
     color: t.$color-muted-strong;
+  }
+
+  @include bp.down(bp.$phone-sm) {
+    padding: 6px 10px;
   }
 }
 

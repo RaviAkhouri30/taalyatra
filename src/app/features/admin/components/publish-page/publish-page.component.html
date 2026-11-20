@@ -1,5 +1,10 @@
 <div class="pp">
-  <h1 class="d">Review &amp; publish</h1>
+  <header class="pp-head">
+    <h1 class="d">Review &amp; publish</h1>
+    @if (model.intro(); as intro) {
+      <p class="pp-lead">{{ intro }}</p>
+    }
+  </header>
   <app-approvals-panel />
   @let page = model.data();
   @if (!page) {

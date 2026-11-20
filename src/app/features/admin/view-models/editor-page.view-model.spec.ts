@@ -86,7 +86,14 @@ describe('EditorPageViewModel', () => {
     ]);
     expect(section('team')?.form.get('title')?.value).toBe('Drafted title');
     expect(section('team')?.titleId).toBe('card-team');
+    expect(section('team')?.repeatsPageTitle).toBe(false);
     expect(model.activeAnchor()).toBe(PageAnchor.Team);
+  });
+
+  it('should mark a card whose heading only repeats the page title', () => {
+    const { section } = setUp();
+
+    expect(section('hero')?.repeatsPageTitle).toBe(true);
   });
 
   it('should fill a card from the live document when there is no draft', () => {

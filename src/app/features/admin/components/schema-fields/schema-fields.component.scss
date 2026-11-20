@@ -102,6 +102,12 @@ legend {
   justify-self: start;
 }
 
+.sf-empty {
+  margin: 0;
+  font-size: 14px;
+  color: t.$color-muted-strong;
+}
+
 // A group inside a card (e.g. "Brand") is a label, not another box: one box per card is enough
 // (0017 U5). Lists keep their border, as each holds several items.
 .sf-group {

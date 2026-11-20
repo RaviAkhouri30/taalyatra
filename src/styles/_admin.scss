@@ -1,0 +1,12 @@
+// Shared by the admin area's pages (lazy-loaded with it, so nothing here reaches the public site).
+@use 'tokens' as t;
+@use 'breakpoints' as bp;
+
+/// An admin page's padding: the same on every page, so the heading stays put between pages.
+@mixin page {
+  padding: t.$admin-page-padding;
+
+  @include bp.down(bp.$phone) {
+    padding: t.$admin-page-padding-phone;
+  }
+}

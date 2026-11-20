@@ -11,6 +11,7 @@ import {
   provideLayout,
   provideSignedIn,
 } from '../testing/editor-testing';
+import { PUBLISH_INTRO } from '../models/publish-page.model';
 import { BACKUP_MESSAGES } from './backup-download';
 import { PUBLISH_MESSAGES, PublishPageViewModel } from './publish-page.view-model';
 
@@ -51,6 +52,24 @@ describe('PublishPageViewModel', () => {
 
     expect(model.data()?.changes.map((change) => change.title)).toEqual(['Hero']);
     expect(model.report()?.canPublish).toBe(true);
+  });
+
+  it('should have no intro when nothing is loaded yet', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        ...provideEditorTesting({}).providers,
+        provideLayout(layoutStub()),
+        PublishPageViewModel,
+      ],
+    });
+
+    expect(TestBed.inject(PublishPageViewModel).intro()).toBe('');
+  });
+
+  it('should explain the page to the owner when loaded', () => {
+    const { model } = setUp();
+
+    expect(model.intro()).toBe(PUBLISH_INTRO.owner);
   });
 
   it('should still load, skipping that check, when the media library cannot be read', () => {
@@ -203,6 +222,12 @@ describe('PublishPageViewModel', () => {
       expect(show).toHaveBeenCalledWith(PUBLISH_MESSAGES.publishedAndSent);
       expect(model.note.value).toBe('');
       expect(model.data()?.changes).toEqual([]);
+    });
+
+    it('should explain the page to a manager when loaded', () => {
+      const { model } = setUp(seed, MANAGER);
+
+      expect(model.intro()).toBe(PUBLISH_INTRO.manager);
     });
 
     it('should only send, when nothing ticked may be published', () => {

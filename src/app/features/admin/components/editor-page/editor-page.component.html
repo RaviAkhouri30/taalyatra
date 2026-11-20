@@ -52,7 +52,9 @@
               (entered)="follow(entry.section)"
               (focusin)="model.focus(entry.section)"
             >
-              <h2 class="d" [id]="entry.titleId">{{ entry.section.title }}</h2>
+              <h2 class="d" [class.ep-sr]="entry.repeatsPageTitle" [id]="entry.titleId">
+                {{ entry.section.title }}
+              </h2>
               @if (entry.section.tip) {
                 <p class="ep-tip">{{ entry.section.tip }}</p>
               }

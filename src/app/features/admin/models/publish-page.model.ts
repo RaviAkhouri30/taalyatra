@@ -5,6 +5,14 @@ import { type IPublishRecord } from './i-publish-record';
 import { PublishReport } from './publish-report.model';
 import { type IReviewChange, type Review, documentTitles } from './review.model';
 
+/** What Review & publish is for, in one line, as every admin page says (0020 V6). */
+export const PUBLISH_INTRO = {
+  owner:
+    'Changes wait here until they’re on the website. Tick the ones to publish, answer the changes waiting for your approval, and keep a backup.',
+  manager:
+    'Changes wait here until they’re on the website. Tick yours, then publish them or send them to the owner for approval, with a note.',
+} as const;
+
 /** One past publish. */
 export interface IHistoryEntry {
   readonly record: IPublishRecord;

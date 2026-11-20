@@ -54,3 +54,8 @@ $z-toast: 60;
 $z-loader: 100;
 // The admin's guided tour, above the editor's menu drawer (0020).
 $z-tour: 110;
+
+// ---- Admin pages ---------------------------------------------------------
+// Every admin page's content starts at the same place, so its heading doesn't jump (0020 V6).
+$admin-page-padding: 30px 32px 40px;
+$admin-page-padding-phone: 20px 16px 28px;
