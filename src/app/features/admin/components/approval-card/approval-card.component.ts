@@ -24,12 +24,16 @@ export class ApprovalCardComponent {
   public readonly owner = input(false);
   /** Whether an answer is being saved. */
   public readonly busy = input(false);
+  /** Whether the manager approves their own changes (0023 D4). */
+  public readonly canApproveOwn = input(false);
   /** The owner approved it. */
   public readonly approved = output();
   /** The owner sent it back, with this reason. */
   public readonly sentBack = output<string>();
   /** The manager took it back. */
   public readonly withdrawn = output();
+  /** A manager who can approve takes their waiting request back to approve it themselves (0023 D4). */
+  public readonly approvedOwn = output();
   /** The manager cleared an answered request. */
   public readonly dismissed = output();
 

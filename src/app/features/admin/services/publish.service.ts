@@ -10,7 +10,11 @@ import { CLOCK } from '@core/tokens/clock.token';
 import { DRAFTS_COLLECTION, type IDraft, draftId } from '@core/interfaces/i-draft';
 import { expandCollection, isCollection } from '../models/collection-expander';
 import { PUBLISHES_COLLECTION, PUBLISH_HISTORY_LIMIT } from '../models/editor-storage.constants';
-import { type IPublishRecord } from '../models/i-publish-record';
+import {
+  type IPublishRecord,
+  type ISelfApproval,
+  SELF_APPROVALS_COLLECTION,
+} from '../models/i-publish-record';
 import { type Permissions } from '../models/permissions.model';
 import { AccessService } from './access.service';
 import { DraftService } from './draft.service';
@@ -33,8 +37,22 @@ function toRecord(id: string, fields: DocumentFields): IPublishRecord | null {
         ...optionalText(entries, 'by'),
         ...optionalText(entries, 'byEmail'),
         ...optionalText(entries, 'approvedFrom'),
+        ...selfApprovalOf(entries.get('selfApproval')),
       }
     : null;
+}
+
+/** `{ selfApproval }` when one is stored, its title and note as text, else nothing. */
+function selfApprovalOf(value: unknown): Partial<Pick<IPublishRecord, 'selfApproval'>> {
+  if (typeof value !== 'object' || value === null) {
+    return {};
+  }
+  const entries = new Map(Object.entries(value as Record<string, unknown>));
+  const text = (key: string): string => {
+    const stored = entries.get(key);
+    return typeof stored === 'string' ? stored : '';
+  };
+  return { selfApproval: { title: text('title'), note: text('note') } };
 }
 
 /** `{ key: value }` when the stored value is text, else nothing (exact optional properties). */
@@ -50,6 +68,8 @@ function optionalText(
 export interface IPublishExtras {
   /** For an approved change, the email of the manager who sent it. */
   readonly approvedFrom?: string;
+  /** For a manager approving their own changes (0023): their title and note. */
+  readonly selfApproval?: ISelfApproval;
   /** More writes for the same commit, e.g. answering the request (0019). */
   readonly writes?: readonly DocumentWrite[];
 }
@@ -98,7 +118,11 @@ export class PublishService {
         // Only the owner trims: the rules never let a manager delete history.
         const trimmed = permissions.isOwner ? history : [];
         return this.store
-          .commit([...this.writes(drafts, existing, record, trimmed), ...(extras.writes ?? [])])
+          .commit([
+            ...this.writes(drafts, existing, record, trimmed),
+            ...this.markerWrites(record, permissions),
+            ...(extras.writes ?? []),
+          ])
           .pipe(map(() => record));
       }),
     );
@@ -169,7 +193,24 @@ export class PublishService {
       by: permissions.uid,
       byEmail: permissions.email,
       ...(extras.approvedFrom === undefined ? {} : { approvedFrom: extras.approvedFrom }),
+      ...(extras.selfApproval === undefined ? {} : { selfApproval: extras.selfApproval }),
     };
+  }
+
+  /**
+   * A self-approved publish's marker (0023 D5): the rules accept the manager's live writes to pages
+   * that need approval only when it changes in the same commit and points at this new record.
+   */
+  private markerWrites(record: IPublishRecord, permissions: Permissions): DocumentWrite[] {
+    return record.selfApproval === undefined
+      ? []
+      : [
+          {
+            kind: DocumentWriteKind.Set,
+            path: `${SELF_APPROVALS_COLLECTION}/${permissions.uid}`,
+            fields: { record: record.id, paths: record.changed },
+          },
+        ];
   }
 
   private writes(

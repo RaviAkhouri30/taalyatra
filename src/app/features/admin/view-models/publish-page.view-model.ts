@@ -34,19 +34,25 @@ import { PublishService } from '../services/publish.service';
 import { ReviewService } from '../services/review.service';
 import { downloadBackup } from './backup-download';
 import { EditorLayoutViewModel } from './editor-layout.view-model';
+import { SELF_APPROVALS_SEEN_KEY, newestSelfApproval } from '../models/self-approvals';
+import { DeviceStoreService } from '../services/device-store.service';
 
 /** What the account is told after each action. */
 export const PUBLISH_MESSAGES = {
   published: 'Published. Visitors see the changes on their next visit.',
   sent: 'Sent for approval. You’ll see the answer here and on your dashboard.',
   publishedAndSent: 'Published, and the rest sent for approval.',
+  approved: 'Approved and published. The owner sees your title and note in the history.',
   publishFailed: 'Couldn’t publish. Nothing changed on the site; please try again.',
   discarded: 'Draft thrown away.',
   restored: 'That version is back in your draft. Review it, then publish.',
   failed: 'Something went wrong. Please try again.',
 } as const;
 
-const NOTHING: IPublishPlan = { publish: [], send: [] };
+const NOTHING: IPublishPlan = { publish: [], send: [], approve: [] };
+
+/** The most characters of a self-approval's title (0023 D2; mirrors `firestore.rules`). */
+export const SELF_APPROVAL_TITLE_MAX = 80;
 
 /**
  * Review & publish (0008 D4, D5, D18; 0016 V3; 0019): the changes with who made them, ticked to
@@ -58,6 +64,15 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
   public readonly selected = signal<ReadonlySet<string>>(new Set());
   /** The manager's note for the owner, sent with changes that need approval. */
   public readonly note = new FormControl('', {
+    nonNullable: true,
+    validators: [Validators.maxLength(APPROVAL_NOTE_MAX)],
+  });
+  /** A manager's own approval (0023 D2): a title and what changed and why, both optional. */
+  public readonly approvalTitle = new FormControl('', {
+    nonNullable: true,
+    validators: [Validators.maxLength(SELF_APPROVAL_TITLE_MAX)],
+  });
+  public readonly approvalNote = new FormControl('', {
     nonNullable: true,
     validators: [Validators.maxLength(APPROVAL_NOTE_MAX)],
   });
@@ -90,12 +105,16 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
   );
   public readonly buttonText = computed(() => planButtonText(this.plan()));
   public readonly confirmText = computed(() => planConfirmText(this.plan()));
-  public readonly confirmButtonText = computed(() =>
-    this.plan().publish.length > 0 ? 'Yes, publish' : 'Yes, send',
-  );
+  public readonly confirmButtonText = computed(() => {
+    const plan = this.plan();
+    if (plan.approve.length > 0) {
+      return 'Yes, approve and publish';
+    }
+    return plan.publish.length > 0 ? 'Yes, publish' : 'Yes, send';
+  });
   public readonly canPublish = computed(() => {
     const plan = this.plan();
-    const chosen = plan.publish.length + plan.send.length > 0;
+    const chosen = plan.publish.length + plan.send.length + plan.approve.length > 0;
     return chosen && this.report()?.canPublish === true && !this.busy();
   });
 
@@ -108,6 +127,7 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
   private readonly layout = inject(EditorLayoutViewModel);
   private readonly toasts = inject(ToastService);
   private readonly clock = inject(CLOCK);
+  private readonly device = inject(DeviceStoreService);
   private readonly reloads = new Subject<void>();
   private readonly publishRequests = new Subject<void>();
   private readonly discardRequests = new Subject<string>();
@@ -179,6 +199,7 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
       tap((page) => {
         this.setData(page);
         this.selected.set(page.review.mine());
+        this.markSelfApprovalsSeen(page);
       }),
     );
   }
@@ -196,16 +217,29 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
     );
   }
 
-  /** Publishes what may go live, then sends the rest for approval. */
+  /**
+   * Publishes what may go live, with the manager's own approval when they approve some (0023), then
+   * sends the rest for approval.
+   */
   private runPlan(plan: IPublishPlan): Observable<unknown> {
     const review = this.data()?.review;
+    const live = [...plan.publish, ...plan.approve];
+    const extras =
+      plan.approve.length > 0
+        ? {
+            selfApproval: {
+              title: this.approvalTitle.value.trim(),
+              note: this.approvalNote.value.trim(),
+            },
+          }
+        : {};
     const published =
-      review && plan.publish.length > 0
-        ? this.publishes.publish(review.draftsOf(plan.publish))
-        : of(null);
+      review && live.length > 0 ? this.publishes.publish(review.draftsOf(live), extras) : of(null);
     const action = published.pipe(
       tap(() => {
-        this.justPublished.set(plan.publish.length > 0);
+        this.justPublished.set(live.length > 0);
+        this.approvalTitle.reset();
+        this.approvalNote.reset();
       }),
       // switchMap: sent only once the publish is stored, so a refused publish sends nothing.
       switchMap(() =>
@@ -219,6 +253,9 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
   }
 
   private successOf(plan: IPublishPlan): string {
+    if (plan.approve.length > 0) {
+      return PUBLISH_MESSAGES.approved;
+    }
     if (plan.send.length === 0) {
       return PUBLISH_MESSAGES.published;
     }
@@ -277,6 +314,14 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
         this.busy.set(false);
       }),
     );
+  }
+
+  /** The owner has now seen every self-approval in the history (0023 D3). */
+  private markSelfApprovalsSeen(page: PublishPageModel): void {
+    const newest = newestSelfApproval(page.history.map((entry) => entry.record));
+    if (page.review.permissions.isOwner && newest !== null) {
+      this.device.set(SELF_APPROVALS_SEEN_KEY, newest);
+    }
   }
 
   private can(area: ManagerArea): boolean {

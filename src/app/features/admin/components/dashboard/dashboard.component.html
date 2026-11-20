@@ -36,6 +36,9 @@
       <section class="db-card" aria-labelledby="db-history">
         <h2 id="db-history">History</h2>
         <p>{{ dash.lastPublished }}</p>
+        @if (dash.selfApproved) {
+          <p class="db-count-line">{{ dash.selfApproved }}</p>
+        }
         <a [routerLink]="links.publish">See the publish history</a>
       </section>
       @if (dash.access.backups) {

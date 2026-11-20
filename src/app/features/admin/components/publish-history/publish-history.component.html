@@ -17,6 +17,15 @@
           <span class="ph-entry"
             ><b>{{ entry.when }}</b> <small>{{ entry.title }} · {{ entry.who }}</small></span
           >
+          @if (entry.approval; as approval) {
+            <!-- A manager's own approval, for the owner to read (0023 D3). -->
+            <p class="ph-approval">
+              <b>{{ approval.title }}</b>
+              @if (approval.note) {
+                — {{ approval.note }}
+              }
+            </p>
+          }
           @if (confirming() === entry.record.id) {
             <div class="ph-confirm" role="group" [attr.aria-labelledby]="'ph-warn-' + $index">
               <p [id]="'ph-warn-' + $index">

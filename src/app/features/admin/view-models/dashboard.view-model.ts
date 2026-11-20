@@ -19,6 +19,11 @@ import { ReleaseNotesService } from '../services/release-notes.service';
 import { type IVisitHistory, VisitsService } from '../services/visits.service';
 import { type Lead } from '../models/lead.model';
 import { EditorLayoutViewModel } from './editor-layout.view-model';
+import { SELF_APPROVALS_SEEN_KEY, unseenSelfApprovals } from '../models/self-approvals';
+import { DeviceStoreService } from '../services/device-store.service';
+import { type IPublishRecord } from '../models/i-publish-record';
+import { type IPublishIssue } from '../models/i-publish-issue';
+import { type DocumentFields } from '@core/interfaces/i-document-store';
 
 /** Every document the editor's sections live in, once each. */
 const SECTION_PATHS = [...new Set(ALL_SECTIONS.map((section) => section.path))];
@@ -43,6 +48,7 @@ export class DashboardViewModel extends ViewModel<DashboardModel> {
   private readonly visits = inject(VisitsService);
   private readonly leads = inject(LeadsService);
   private readonly clock = inject(CLOCK);
+  private readonly device = inject(DeviceStoreService);
 
   public constructor() {
     super();
@@ -74,15 +80,13 @@ export class DashboardViewModel extends ViewModel<DashboardModel> {
     ]).pipe(
       map(([drafts, history, documents, requests, lastBackupAt, visits, leads]) => {
         const byPath = new Map(SECTION_PATHS.map((path, index) => [path, documents.at(index)]));
-        const placeholders = new PlaceholderRule();
         return new DashboardModel({
           changeCount: [...drafts.keys()].filter((path) => permissions.canSeePath(path)).length,
           lastPublish: history[0] ?? null,
+          unseenSelfApprovals: this.unseenFor(permissions, history),
           siteConfig: byPath.get(ContentPath.SiteConfig) ?? null,
           visibility: byPath.get(ContentPath.SiteVisibility) ?? null,
-          warnings: ALL_SECTIONS.filter((section) => permissions.canSeePath(section.path)).flatMap(
-            (section) => placeholders.check(section, byPath.get(section.path) ?? {}),
-          ),
+          warnings: this.warningsFor(permissions, byPath),
           lastBackupAt,
           visits,
           leads,
@@ -98,6 +102,24 @@ export class DashboardViewModel extends ViewModel<DashboardModel> {
    * The owner's reads (0019 decision 6), whose failure only means "not known": each card then
    * says so, nothing breaks. A manager's are skipped: the rules refuse them, and the cards are hidden.
    */
+  /** Placeholder text left in the pages this account sees. */
+  private warningsFor(
+    permissions: Permissions,
+    byPath: ReadonlyMap<string, DocumentFields | null | undefined>,
+  ): IPublishIssue[] {
+    const placeholders = new PlaceholderRule();
+    return ALL_SECTIONS.filter((section) => permissions.canSeePath(section.path)).flatMap(
+      (section) => placeholders.check(section, byPath.get(section.path) ?? {}),
+    );
+  }
+
+  /** Only the owner is told: a manager's self-approvals are their own (0023 D3). */
+  private unseenFor(permissions: Permissions, history: readonly IPublishRecord[]): number {
+    return permissions.isOwner
+      ? unseenSelfApprovals(history, this.device.get(SELF_APPROVALS_SEEN_KEY))
+      : 0;
+  }
+
   /** Each area's read, made only when this account may use it (0022); else "not known". */
   private extras(
     permissions: Permissions,

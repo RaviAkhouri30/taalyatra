@@ -86,6 +86,17 @@
         >
           Withdraw
         </button>
+        @if (canApproveOwn()) {
+          <button
+            appButton
+            type="button"
+            [size]="compact"
+            [disabled]="busy()"
+            (click)="approvedOwn.emit()"
+          >
+            Approve it yourself
+          </button>
+        }
       } @else {
         <button
           appButton

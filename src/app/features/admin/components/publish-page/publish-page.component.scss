@@ -178,9 +178,29 @@
   color: t.$color-muted-strong;
   font-size: t.size(14px);
 
+  input,
   textarea {
     @include f.text-input;
+  }
 
+  textarea {
     resize: vertical;
+  }
+}
+
+// A manager's own approval: its title and note (0023).
+.pp-approval {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+
+  legend {
+    margin-bottom: 4px;
+    padding: 0;
+    color: t.$color-cream;
+    font-weight: 700;
   }
 }

@@ -296,6 +296,20 @@ describe('PublishBarComponent', () => {
       expect(store.documents.has('drafts/home__shows')).toBe(true);
     });
 
+    it('should point a manager who can approve at Review & publish to approve (0023)', () => {
+      const { fixture } = render(
+        {
+          'roles/manager': { ...role, canApprove: true },
+          'drafts/home__offer': mine('home/offer', fakeDb.home.offer),
+        },
+        MANAGER,
+      );
+
+      expect((fixture.nativeElement as HTMLElement).querySelector('a.pb-link')?.textContent).toBe(
+        '1 to approve',
+      );
+    });
+
     it('should undo only their own changes', async () => {
       const { fixture, button, store } = render(
         {

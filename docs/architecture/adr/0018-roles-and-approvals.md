@@ -1,6 +1,6 @@
 # ADR-0018: Roles and approvals
 
-- **Status:** Accepted · **Date:** 2026-11-20 · **Version:** 2.0.0 (photo permissions 2.0.1, the owner's areas 2.3.0)
+- **Status:** Accepted · **Date:** 2026-11-20 · **Version:** 2.0.0 (photo permissions 2.0.1, the owner's areas 2.3.0, approving their own 2.4.0)
 
 ## Context
 
@@ -65,3 +65,12 @@ over someone else's publish stay the owner's. A lead's status change is signed (
 signature to be the signer's own email. Going back needs no new rule: it saves drafts, which the page rules check, and
 a manager's history record already names only pages they may publish. See the
 [0022 design](../../aidlc/0022-manager-areas/02-design.md).
+
+## 2.4.0: a manager who can approve their own changes (0023)
+
+`canApprove` in a role lets a manager publish pages set to **Needs approval** by approving the change themselves, with
+an optional title and note kept in the history (`selfApproval`). The rules accept such a live write only in a commit
+that also rewrites the manager's marker, `selfApprovals/{uid}`, naming that document and pointing at a history record
+that is new in the same commit and carries the approval. A marker left from an earlier commit doesn't count, so no
+self-approved change goes live without its record. The owner's dashboard counts self-approvals since they last looked.
+See the [0023 design](../../aidlc/0023-manager-approves/02-design.md).

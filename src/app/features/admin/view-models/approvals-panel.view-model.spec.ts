@@ -97,6 +97,15 @@ describe('ApprovalsPanelViewModel', () => {
     expect(show).toHaveBeenCalledWith(APPROVAL_MESSAGES.withdrawn);
   });
 
+  it('should withdraw a request a manager approves themselves, saying what’s next (0023)', () => {
+    const { model, show, first, store } = setUp(MANAGER);
+
+    model.approveOwn(first());
+
+    expect(store.documents.has('approvals/r1')).toBe(false);
+    expect(show).toHaveBeenCalledWith(APPROVAL_MESSAGES.approveOwn);
+  });
+
   it('should let a manager clear an answered request', () => {
     const { model, first, store } = setUp(MANAGER, {
       'approvals/r1': { ...REQUEST, status: 'sent-back', answer: 'No', answeredAt: 'x' },

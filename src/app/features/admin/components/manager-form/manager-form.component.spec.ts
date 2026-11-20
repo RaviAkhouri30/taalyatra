@@ -77,4 +77,15 @@ describe('ManagerFormComponent', () => {
     expect(switches.every((input) => !input.checked)).toBe(true);
     expect(element.textContent).toContain('names, phone numbers and emails');
   });
+
+  it('should offer approving their own changes, off by default (0023)', () => {
+    const { element } = render();
+    const approve = Array.from(
+      element.querySelectorAll<HTMLInputElement>('input[type="checkbox"]'),
+    ).find((input) =>
+      input.closest('label')?.textContent.includes('Can approve their own changes'),
+    );
+
+    expect(approve?.checked).toBe(false);
+  });
 });

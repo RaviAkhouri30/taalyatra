@@ -6,6 +6,17 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-11-21
+
+### Added
+
+- **A manager who can approve their own changes:** turn on **Can approve their own changes** for a manager on Team
+  access. Their changes on pages that need approval then go live when they approve them, with an optional title and a
+  note on what changed and why.
+- **You see every self-approval:** the publish history shows “self-approved by …” with its title and note, and your
+  dashboard counts the self-approvals since you last looked. You can still go back over any of them.
+- A manager who can approve sees **Approve it yourself** on a request that’s still waiting for you.
+
 ## [2.3.0] - 2026-11-21
 
 ### Added

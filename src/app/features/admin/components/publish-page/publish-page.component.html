@@ -106,6 +106,29 @@
             ></textarea>
           </label>
         }
+        @if (model.plan().approve.length > 0) {
+          <!-- A manager approving their own changes says what and why, for the owner (0023). -->
+          <fieldset class="pp-approval">
+            <legend>Your approval</legend>
+            <label class="pp-note">
+              <span>Title (optional)</span>
+              <input
+                type="text"
+                [formControl]="model.approvalTitle"
+                [attr.maxlength]="titleMax"
+                placeholder="For example: Diwali dates"
+              />
+            </label>
+            <label class="pp-note">
+              <span>What changed and why (optional)</span>
+              <textarea
+                rows="2"
+                [formControl]="model.approvalNote"
+                [attr.maxlength]="noteMax"
+              ></textarea>
+            </label>
+          </fieldset>
+        }
         @if (model.confirming()) {
           <div class="pp-confirm" role="group" aria-labelledby="pp-confirm-text">
             <p id="pp-confirm-text">{{ model.confirmText() }}</p>

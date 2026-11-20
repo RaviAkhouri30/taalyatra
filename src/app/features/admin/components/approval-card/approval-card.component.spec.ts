@@ -121,4 +121,19 @@ describe('ApprovalCardComponent', () => {
 
     expect(element.querySelector('.ap-status')?.textContent).toContain('Approved and published');
   });
+
+  it('should let a manager who can approve take their waiting request back to approve it (0023)', () => {
+    const fixture = TestBed.createComponent(ApprovalCardComponent);
+    fixture.componentRef.setInput('view', view(ApprovalStatus.Waiting));
+    fixture.componentRef.setInput('canApproveOwn', true);
+    fixture.detectChanges();
+    const approvedOwn = vi.fn();
+    fixture.componentInstance.approvedOwn.subscribe(approvedOwn);
+
+    Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('button'))
+      .find((candidate) => candidate.textContent.trim() === 'Approve it yourself')
+      ?.click();
+
+    expect(approvedOwn).toHaveBeenCalled();
+  });
 });

@@ -11,7 +11,10 @@ import { BackupPanelComponent } from '../backup-panel/backup-panel.component';
 import { PublishHistoryComponent } from '../publish-history/publish-history.component';
 import { ButtonSize, ButtonVariant } from '@shared/enums/button-variant.enum';
 import { type PublishPageModel } from '../../models/publish-page.model';
-import { PublishPageViewModel } from '../../view-models/publish-page.view-model';
+import {
+  PublishPageViewModel,
+  SELF_APPROVAL_TITLE_MAX,
+} from '../../view-models/publish-page.view-model';
 
 /**
  * Review & publish: the changes and who made them, what the checks found, publishing or sending for
@@ -39,4 +42,5 @@ export default class PublishPageComponent extends BaseComponent<PublishPageModel
   protected readonly compact = ButtonSize.Compact;
   protected readonly needsApproval = DraftAction.Approval;
   protected readonly noteMax = APPROVAL_NOTE_MAX;
+  protected readonly titleMax = SELF_APPROVAL_TITLE_MAX;
 }

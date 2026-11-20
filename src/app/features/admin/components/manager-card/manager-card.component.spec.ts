@@ -38,8 +38,9 @@ describe('ManagerCardComponent', () => {
     expect(element.querySelector('code')?.textContent).toBe('manager-uid');
     expect(element.querySelector('.mgr-when')?.textContent).toContain('31 Oct 2026');
     expect(groups[0]).toBe('Can publish · Hero');
-    expect(groups.at(-3)).toBe('Hidden · Team');
-    expect(groups.at(-2)).toBe('Photo uploads · Can’t upload');
+    expect(groups.at(-4)).toBe('Hidden · Team');
+    expect(groups.at(-3)).toBe('Photo uploads · Can’t upload');
+    expect(groups.at(-2)).toBe('Approving · Sends them to you');
     expect(groups.at(-1)).toBe('Your areas · None');
   });
 

@@ -11,7 +11,7 @@ service cloud.firestore {
     match /home/{section} {
       allow read: if true;
       allow update: if section in homePages()
-        && canPublish(homePages()[section])
+        && canPublishHere(homePages()[section], 'home/' + section)
         && isValidHomeSection(request.resource.data, resource.data);
     }
     match /site/{document} {
@@ -19,13 +19,17 @@ service cloud.firestore {
       allow create: if isOwner() && isValidSiteDocument(document, request.resource.data);
       allow update: if isValidSiteDocument(document, request.resource.data)
         && (isOwner()
-            || (document == 'visibility' && canPublish('visibility'))
-            || (document == 'theme' && canPublish('theme'))
+            || (document == 'visibility' && canPublishHere('visibility', 'site/visibility'))
+            || (document == 'theme' && canPublishHere('theme', 'site/theme'))
             // Offer, Business details and Contact & social links share this document: a manager
             // changes only the parts of the pages they may publish.
             || (document == 'config' && isManager()
                 && request.resource.data.diff(resource.data).affectedKeys()
-                  .hasOnly(publishableConfigKeys())));
+                  .hasOnly(publishableConfigKeys()))
+            // A manager who can approve: the parts of the pages they see, with their approval (0023).
+            || (document == 'config' && selfApprovesShared('site/config')
+                && request.resource.data.diff(resource.data).affectedKeys()
+                  .hasOnly(approvableConfigKeys())));
     }
     match /pages/{page} {
       allow read: if true;
@@ -35,27 +39,27 @@ service cloud.firestore {
     // mirrors COLLECTION_MAX_ITEMS (content-limits.constants.ts).
     match /showFormats/{item} {
       allow read: if true;
-      allow create, update: if canPublish('shows') && isItemId(item, 20)
+      allow create, update: if canPublishHere('shows', 'showFormats') && isItemId(item, 20)
         && isValidShowFormat(request.resource.data);
-      allow delete: if canPublish('shows');
+      allow delete: if canPublishHere('shows', 'showFormats');
     }
     match /videos/{item} {
       allow read: if true;
-      allow create, update: if canPublish('videos') && isItemId(item, 60)
+      allow create, update: if canPublishHere('videos', 'videos') && isItemId(item, 60)
         && isValidVideo(request.resource.data);
-      allow delete: if canPublish('videos');
+      allow delete: if canPublishHere('videos', 'videos');
     }
     match /gallery/{item} {
       allow read: if true;
-      allow create, update: if canPublish('gallery') && isItemId(item, 60)
+      allow create, update: if canPublishHere('gallery', 'gallery') && isItemId(item, 60)
         && isValidGalleryItem(request.resource.data);
-      allow delete: if canPublish('gallery');
+      allow delete: if canPublishHere('gallery', 'gallery');
     }
     match /team/{item} {
       allow read: if true;
-      allow create, update: if canPublish('team') && isItemId(item, 24)
+      allow create, update: if canPublishHere('team', 'team') && isItemId(item, 24)
         && isValidTeamMember(request.resource.data);
-      allow delete: if canPublish('team');
+      allow delete: if canPublishHere('team', 'team');
     }
 
     // The uploaded-image library. Visitors only ever get an image through a published document
@@ -89,7 +93,24 @@ service cloud.firestore {
       allow create: if isManager()
         && request.resource.data.by == request.auth.uid
         && request.resource.data.changed is list
-        && request.resource.data.changed.hasOnly(publishablePaths());
+        && (request.resource.data.changed.hasOnly(publishablePaths())
+            // Pages that need approval, approved by the manager themselves, saying so (0023).
+            || (role().get('canApprove', false) == true
+                && isValidSelfApproval(request.resource.data.get('selfApproval', null))
+                && request.resource.data.changed.hasOnly(approvablePaths())));
+    }
+    // A manager's self-approval marker (0023 D5): rewritten with every self-approved publish, in
+    // the same commit, pointing at that publish's new history record. Live writes to pages that
+    // need approval check it, so none goes live without its record.
+    match /selfApprovals/{uid} {
+      allow read: if isOwner() || (request.auth != null && request.auth.uid == uid);
+      allow create, update: if isManager() && request.auth.uid == uid
+        && role().get('canApprove', false) == true
+        && request.resource.data.keys().hasAll(['record', 'paths'])
+        && request.resource.data.keys().hasOnly(['record', 'paths'])
+        && request.resource.data.paths is list
+        && request.resource.data.paths.hasOnly(approvablePaths())
+        && isNewSelfApprovedRecord(request.resource.data.record);
     }
 
     // Who may do what (0019). Only the owner adds, changes or removes a manager; a manager reads
@@ -277,6 +298,35 @@ service cloud.firestore {
       return isOwner() || (isManager() && role().get('areas', {}).get(area, false) == true);
     }
 
+    // A publish record made in this commit, by this manager, as a self-approval (0023).
+    function isNewSelfApprovedRecord(id) {
+      let path = /databases/$(database)/documents/publishes/$(id);
+      return id is string && !exists(path) && existsAfter(path)
+        && getAfter(path).data.by == request.auth.uid
+        && getAfter(path).data.get('selfApproval', null) is map;
+    }
+
+    // The title and note a manager gives their own approval; both may be empty (0023 D2).
+    function isValidSelfApproval(approval) {
+      return approval is map && approval.keys().hasOnly(['title', 'note'])
+        && isText(approval.get('title', ''), 0, 80) && isText(approval.get('note', ''), 0, 500);
+    }
+
+    // A page the account publishes as it is, or a manager who can approve publishes with their
+    // own approval in the same commit (0023 D5).
+    function canPublishHere(page, path) {
+      return canPublish(page) || (isManager() && pageSetting(page) == 'approval'
+                                  && selfApprovesShared(path));
+    }
+
+    // This manager's marker changed in this commit (so it can't be an old one) and names `path`.
+    function selfApprovesShared(path) {
+      let marker = /databases/$(database)/documents/selfApprovals/$(request.auth.uid);
+      return isManager() && role().get('canApprove', false) == true
+        && existsAfter(marker) && path in getAfter(marker).data.paths
+        && (!exists(marker) || get(marker).data.record != getAfter(marker).data.record);
+    }
+
     function canPublish(page) {
       return isOwner() || (isManager() && pageSetting(page) == 'publish');
     }
@@ -323,6 +373,39 @@ service cloud.firestore {
       return pages.get(page, 'approval') == 'publish' ? paths : [];
     }
 
+    // `paths` when the manager sees `page` at all, else nothing (0023).
+    function pathsIfSeen(pages, page, paths) {
+      return pages.get(page, 'approval') != 'hidden' ? paths : [];
+    }
+
+    // The parts of `site/config` a manager who can approve may change: those of the pages they see.
+    function approvableConfigKeys() {
+      let pages = role().pages;
+      return pathsIfSeen(pages, 'business', ['brand'])
+        .concat(pathsIfSeen(pages, 'offer', ['promotion']))
+        .concat(pathsIfSeen(pages, 'contact', ['contact', 'socials', 'copyrightYear']));
+    }
+
+    // The documents a manager who can approve may name in a self-approved record: their pages'.
+    function approvablePaths() {
+      let pages = role().pages;
+      return pathsIfSeen(pages, 'hero', ['home/hero'])
+        .concat(pathsIfSeen(pages, 'offer', ['home/offer', 'site/config']))
+        .concat(pathsIfSeen(pages, 'audiences', ['home/audiences']))
+        .concat(pathsIfSeen(pages, 'experiences', ['home/experiences']))
+        .concat(pathsIfSeen(pages, 'shows', ['home/shows', 'showFormats']))
+        .concat(pathsIfSeen(pages, 'drum-circle', ['home/drumCircle']))
+        .concat(pathsIfSeen(pages, 'rhythm-game', ['home/rhythmGame']))
+        .concat(pathsIfSeen(pages, 'videos', ['home/videos', 'videos']))
+        .concat(pathsIfSeen(pages, 'gallery', ['home/gallery', 'gallery']))
+        .concat(pathsIfSeen(pages, 'team', ['home/team', 'team']))
+        .concat(pathsIfSeen(pages, 'proposal-form', ['home/contact']))
+        .concat(pathsIfSeen(pages, 'business', ['site/config']))
+        .concat(pathsIfSeen(pages, 'contact', ['site/config']))
+        .concat(pathsIfSeen(pages, 'visibility', ['site/visibility']))
+        .concat(pathsIfSeen(pages, 'theme', ['site/theme']));
+    }
+
     // The documents a manager may name in a publish record. Called for managers only.
     function publishablePaths() {
       let pages = role().pages;
@@ -357,7 +440,8 @@ service cloud.firestore {
     // Keys mirror the EditorTab enum, and values PageAccess.
     function isValidRole(data) {
       let fields = ['email', 'pages', 'uploads', 'addedAt'];
-      return data.keys().hasAll(fields) && data.keys().hasOnly(fields.concat(['areas']))
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields.concat(['areas', 'canApprove']))
+        && (!('canApprove' in data) || data.canApprove is bool)
         // Keys mirror ManagerArea (manager-area.enum.ts).
         && (!('areas' in data) || (data.areas is map
             && data.areas.keys().hasOnly(['leads', 'visits', 'backups', 'goingBack'])

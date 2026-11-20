@@ -39,6 +39,8 @@ export interface IPublishBarState {
   readonly own: number;
   /** How many of them need approval, sent from Review & publish. */
   readonly toSend: number;
+  /** Changes a manager who can approve approves on Review & publish (0023). */
+  readonly toApprove: number;
   /** How many things stop publishing. */
   readonly problems: number;
 }
@@ -62,6 +64,7 @@ export class PublishBarViewModel extends ViewModel<IPublishBarState> {
   public readonly count = computed(() => this.data()?.own ?? 0);
   /** How many of them need approval. */
   public readonly toSend = computed(() => this.data()?.toSend ?? 0);
+  public readonly toApprove = computed(() => this.data()?.toApprove ?? 0);
   /** How many things stop publishing. */
   public readonly problems = computed(() => this.data()?.problems ?? 0);
   /** A publish or discard is running. */
@@ -183,7 +186,13 @@ export class PublishBarViewModel extends ViewModel<IPublishBarState> {
         const plan = review.planFor(own);
         const drafts = review.draftsOf(plan.publish);
         const report = PublishReport.check(drafts, ALL_SECTIONS, this.clock.now(), libraryIds);
-        return { drafts, own: own.size, toSend: plan.send.length, problems: report.errors.length };
+        return {
+          drafts,
+          own: own.size,
+          toSend: plan.send.length,
+          toApprove: plan.approve.length,
+          problems: report.errors.length,
+        };
       }),
       // Long-lived: a failed read keeps the last picture, and the next change tries again.
       catchError(() => EMPTY),

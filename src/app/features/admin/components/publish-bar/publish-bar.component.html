@@ -8,6 +8,8 @@
     </button>
   } @else if (model.problems() > 0) {
     <a class="pb-link" [routerLink]="reviewUrl">{{ model.problems() }} to fix before publishing</a>
+  } @else if (model.toApprove() > 0) {
+    <a class="pb-link" [routerLink]="reviewUrl">{{ model.toApprove() }} to approve</a>
   } @else if (model.toSend() > 0) {
     <a class="pb-link" [routerLink]="reviewUrl">{{ model.toSend() }} to send for approval</a>
   }

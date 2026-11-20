@@ -7,6 +7,7 @@ describe('role model', () => {
     email: 'content-manager@taalyatra.in',
     pages: { hero: 'publish', team: 'hidden' },
     uploads: true,
+    canApprove: false,
     areas: { leads: true, visits: false, backups: true, goingBack: false },
     addedAt: '2026-11-19T10:00:00.000Z',
   };

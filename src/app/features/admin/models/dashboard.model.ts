@@ -37,6 +37,8 @@ export interface IDashboardSource {
   readonly permissions: Permissions;
   /** Every approval request (empty when they couldn't be read). */
   readonly requests: readonly IApproval[];
+  /** For the owner, managers' self-approvals since they last looked (0023 D3); 0 for a manager. */
+  readonly unseenSelfApprovals?: number;
 }
 
 /** Which cards the account sees, and its approvals in words (0019). */
@@ -66,6 +68,8 @@ export class DashboardModel {
   public readonly offer: string;
   public readonly hidden: string;
   public readonly lastPublished: string;
+  /** "2 changes self-approved since you last looked", or empty (0023 D3). */
+  public readonly selfApproved: string;
   public readonly warnings: readonly IPublishIssue[];
   public readonly backup: BackupStatus;
   /** Visits in the last week, in words. */
@@ -93,6 +97,11 @@ export class DashboardModel {
     this.lastPublished = source.lastPublish
       ? `Last published ${formatMoment(source.lastPublish.publishedAt)}.`
       : 'Nothing published from the editor yet.';
+    const unseen = source.unseenSelfApprovals ?? 0;
+    this.selfApproved =
+      unseen > 0
+        ? `${plural(unseen, 'change', 'changes')} self-approved by managers since you last looked.`
+        : '';
     this.warnings = source.warnings;
     this.backup = new BackupStatus(source.lastBackupAt, source.now);
     this.visits = source.visits

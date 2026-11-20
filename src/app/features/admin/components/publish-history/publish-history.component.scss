@@ -77,3 +77,14 @@
   color: t.$color-muted;
   font-size: t.size(13px);
 }
+
+// A manager's own approval: its title and note (0023 D3).
+.ph-approval {
+  margin: 4px 0 0;
+  font-size: t.size(14px);
+  color: t.$color-muted;
+
+  b {
+    color: t.$color-cream;
+  }
+}
