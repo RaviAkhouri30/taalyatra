@@ -38,7 +38,7 @@
         <p>{{ dash.lastPublished }}</p>
         <a [routerLink]="links.publish">See the publish history</a>
       </section>
-      @if (dash.access.owner) {
+      @if (dash.access.backups) {
         <section class="db-card" aria-labelledby="db-backup">
           <h2 id="db-backup">
             Backups
@@ -47,8 +47,12 @@
             }
           </h2>
           <p>{{ dash.backup.text }}</p>
-          <a [routerLink]="links.publish" fragment="backups">Make or restore a backup</a>
+          <a [routerLink]="links.publish" fragment="backups">{{
+            dash.access.owner ? 'Make or restore a backup' : 'Make a backup'
+          }}</a>
         </section>
+      }
+      @if (dash.access.leads) {
         <section class="db-card" aria-labelledby="db-leads">
           <h2 id="db-leads">
             Leads
@@ -59,6 +63,8 @@
           <p>{{ dash.leads }}</p>
           <a [routerLink]="links.leads">See the leads</a>
         </section>
+      }
+      @if (dash.access.visits) {
         <section class="db-card" aria-labelledby="db-visits">
           <h2 id="db-visits">Visits</h2>
           <p>{{ dash.visits }}</p>
@@ -122,7 +128,7 @@
           }
         }
       </section>
-      @if (dash.access.owner) {
+      @if (dash.access.visits) {
         <section class="db-card db-card--wide" aria-labelledby="db-speed">
           <app-speed-report />
         </section>

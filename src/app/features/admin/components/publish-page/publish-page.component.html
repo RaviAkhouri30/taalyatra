@@ -130,12 +130,17 @@
         }
       }
     </section>
-    @if (model.isOwner()) {
-      <app-backup-panel [justPublished]="model.justPublished()" />
+    @if (model.canBackUp()) {
+      <app-backup-panel
+        [justPublished]="model.justPublished()"
+        [canRestore]="model.isOwner()"
+        [canIncludeLeads]="model.canSeeLeads()"
+      />
     }
     <app-publish-history
       [entries]="page.history"
-      [canGoBack]="model.isOwner()"
+      [canGoBack]="model.canGoBack()"
+      [owner]="model.isOwner()"
       [confirming]="model.goingBack()"
       [busy]="model.busy()"
       (asked)="model.askToGoBack($event)"

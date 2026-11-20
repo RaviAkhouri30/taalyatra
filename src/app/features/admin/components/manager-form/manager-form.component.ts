@@ -6,7 +6,7 @@ import { EMAIL_MAX_LENGTH } from '../../forms/auth-limits.constants';
 import { fieldErrorMessage } from '../../forms/field-errors';
 import { type IRoleControls } from '../../forms/role-form';
 import { PAGE_ACCESS_CHOICES } from '../../models/role.model';
-import { PAGE_ROWS, RoleFormMode, accessLabel } from '../../models/team-access.model';
+import { AREA_ROWS, PAGE_ROWS, RoleFormMode, accessLabel } from '../../models/team-access.model';
 
 /** The fields whose errors the form shows. */
 type CheckedField = 'uid' | 'email';
@@ -35,6 +35,7 @@ export class ManagerFormComponent {
 
   protected readonly ghost = ButtonVariant.Ghost;
   protected readonly rows = PAGE_ROWS;
+  protected readonly areaRows = AREA_ROWS;
   protected readonly choices = PAGE_ACCESS_CHOICES.map((access) => ({
     access,
     label: accessLabel(access),

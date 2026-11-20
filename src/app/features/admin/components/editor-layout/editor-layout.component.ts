@@ -21,7 +21,7 @@ import { AppRoute } from '@shared/enums/app-route.enum';
 import { IconName } from '@shared/enums/icon-name.enum';
 import { type AdminPageModel } from '../../models/admin-page.model';
 import { TourTargetDirective } from '../../directives/tour-target.directive';
-import { LEADS_PATH, NavBadge, PUBLISH_PATH } from '../../models/editor-nav.constants';
+import { NavBadge, PUBLISH_PATH } from '../../models/editor-nav.constants';
 import { TourTarget } from '../../models/tour.model';
 import { EditorNavService } from '../../services/editor-nav.service';
 import { TourService } from '../../services/tour.service';
@@ -42,7 +42,6 @@ const PREFIX: IsActiveMatchOptions = { ...EXACT, paths: 'subset' };
 /** The menu links the guided tour points at (0020 V9). */
 const TOUR_LINKS: ReadonlyMap<string, TourTarget> = new Map([
   [`${AppRoute.Admin}/${PUBLISH_PATH}`, TourTarget.Review],
-  [`${AppRoute.Admin}/${LEADS_PATH}`, TourTarget.OwnerPages],
 ]);
 
 /**
@@ -75,17 +74,22 @@ export default class EditorLayoutComponent extends BaseComponent<AdminPageModel>
   protected readonly badges = NavBadge;
   protected readonly targets = TourTarget;
   /** The side panel this account sees (0019: a manager's has no hidden or owner's pages). */
-  protected readonly groups = computed(() =>
-    this.model.groups().map((group, index) => ({
+  protected readonly groups = computed(() => {
+    const groups = this.model.groups();
+    // The owner's areas step points at the first of them in the menu: Visits for the owner, or
+    // whichever a manager was given (0022).
+    const areaUrl = groups.flatMap((group) => group.links).find((link) => link.area !== null)?.url;
+    return groups.map((group, index) => ({
       ...group,
       id: `ed-group-${String(index)}`,
       links: group.links.map((link) => ({
         ...link,
         match: link.exact ? EXACT : PREFIX,
-        tourTarget: TOUR_LINKS.get(link.url) ?? null,
+        tourTarget:
+          TOUR_LINKS.get(link.url) ?? (link.url === areaUrl ? TourTarget.OwnerPages : null),
       })),
-    })),
-  );
+    }));
+  });
 
   private readonly injector = inject(Injector);
   private readonly document = inject(DOCUMENT);

@@ -70,4 +70,34 @@ describe('DashboardViewModel', () => {
     expect(leads).not.toHaveBeenCalled();
     expect(visits).not.toHaveBeenCalled();
   });
+
+  it('should read and show a manager’s areas when the owner gave them some (0022)', () => {
+    const manager = { uid: 'manager', email: 'm@b.co' };
+    const testing = provideEditorTesting({
+      'roles/manager': {
+        email: manager.email,
+        pages: {},
+        uploads: true,
+        addedAt: 'x',
+        areas: { leads: true, visits: false, backups: true, goingBack: false },
+      },
+    });
+    TestBed.configureTestingModule({
+      providers: [
+        ...testing.providers,
+        ...provideSignedIn(manager),
+        provideLayout(layoutStub()),
+        DashboardViewModel,
+      ],
+    });
+    const leads = vi.spyOn(LeadsService.prototype, 'leads');
+    const visits = vi.spyOn(VisitsService.prototype, 'load');
+    const model = TestBed.inject(DashboardViewModel);
+
+    model.init().subscribe();
+
+    expect(model.data()?.access).toMatchObject({ leads: true, backups: true, visits: false });
+    expect(leads).toHaveBeenCalled();
+    expect(visits).not.toHaveBeenCalled();
+  });
 });

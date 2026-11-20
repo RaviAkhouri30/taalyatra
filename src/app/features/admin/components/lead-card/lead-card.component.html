@@ -60,10 +60,13 @@
         }
       </select>
     </label>
-    @if (!confirming()) {
+    @if (!confirming() && canRemove()) {
       <button appButton type="button" [variant]="ghost" (click)="removeAsked.emit()">Remove</button>
     }
   </footer>
+  @if (statusLine(); as line) {
+    <p class="lc-by">{{ line }}</p>
+  }
   @if (confirming()) {
     <div class="lc-confirm" role="group" [attr.aria-labelledby]="'lc-confirm-' + lead().id">
       <p [id]="'lc-confirm-' + lead().id">

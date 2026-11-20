@@ -28,6 +28,7 @@ import {
   leadsCsv,
   leadsCsvName,
 } from '../models/leads-page.model';
+import { AccessService } from '../services/access.service';
 import { LeadsService } from '../services/leads.service';
 
 /** What the owner is told about the Leads page's actions. */
@@ -66,6 +67,12 @@ export class LeadsPageViewModel extends ViewModel<readonly Lead[]> {
       : `Showing ${String(shown)} of ${String(all)} leads`;
   });
 
+  /** The signed-in account's email, for "by you" on a lead. */
+  public readonly me = computed(() => this.permissions()?.email ?? '');
+  /** Removing a lead is the owner's only, Leads given or not (0022 D2). */
+  public readonly canRemove = computed(() => this.permissions()?.isOwner === true);
+
+  private readonly permissions = toSignal(inject(AccessService).permissions$);
   private readonly filter = toSignal(
     this.filters.valueChanges.pipe(map(() => this.filters.getRawValue())),
     { initialValue: NO_LEAD_FILTER },
@@ -137,7 +144,7 @@ export class LeadsPageViewModel extends ViewModel<readonly Lead[]> {
   }
 
   private saveStatus({ lead, status }: IStatusChange): Observable<unknown> {
-    return this.leads.setStatus(lead, status).pipe(
+    return this.leads.setStatus(lead, status, this.me()).pipe(
       tap((saved) => {
         this.replace(lead.id, saved);
       }),

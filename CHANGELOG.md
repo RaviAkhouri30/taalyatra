@@ -6,6 +6,21 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-11-21
+
+### Added
+
+- **Give a manager your areas**, one switch each on Team access: **Leads**, **Visits and speed**, **Backups** and
+  **Going back**. All are off until you turn them on, existing managers included, and each appears in their menu,
+  dashboard, tour and Features page.
+- **Leads say who changed them:** every status change shows who made it and when (“Contacted by priya@…”, or “by
+  you”).
+
+### Changed
+
+- A manager with Backups downloads backups but can’t restore one; with Going back, they can undo only publishes of
+  pages they may publish. Deleting a lead, restoring a backup and Team access stay yours.
+
 ## [2.2.0] - 2026-11-21
 
 ### Added

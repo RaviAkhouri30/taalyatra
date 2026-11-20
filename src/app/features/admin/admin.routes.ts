@@ -3,7 +3,9 @@ import { provideFiles } from '@core/config/provide-files';
 import { provideMedia } from '@core/config/provide-media';
 import { editorGuard } from './guards/editor.guard';
 import { editorTabGuard } from './guards/editor-tab.guard';
+import { areaGuard } from './guards/area.guard';
 import { ownerGuard } from './guards/owner.guard';
+import { ManagerArea } from './models/manager-area.enum';
 import { signedOutGuard } from './guards/signed-out.guard';
 import { unsavedChangesGuard } from './guards/unsaved-changes.guard';
 import {
@@ -90,13 +92,13 @@ const adminRoutes: Routes = [
           },
           {
             path: VISITS_PATH,
-            canActivate: [ownerGuard],
+            canActivate: [areaGuard(ManagerArea.Visits)],
             title: `${VISITS_LABEL} — ${ADMIN_TITLE_SUFFIX}`,
             loadComponent: () => import('./components/visits-page/visits-page.component'),
           },
           {
             path: LEADS_PATH,
-            canActivate: [ownerGuard],
+            canActivate: [areaGuard(ManagerArea.Leads)],
             title: `${LEADS_LABEL} — ${ADMIN_TITLE_SUFFIX}`,
             loadComponent: () => import('./components/leads-page/leads-page.component'),
           },

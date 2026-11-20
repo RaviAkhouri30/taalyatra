@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 import { ButtonDirective } from '@shared/directives/button.directive';
 import { ButtonVariant } from '@shared/enums/button-variant.enum';
 import { formatMoment } from '../../models/editor-dates';
-import { type IManager, accessGroups } from '../../models/team-access.model';
+import { accessGroups, areasText, type IManager } from '../../models/team-access.model';
 
 /** One manager on Team access (0019): who, what they may do on each page, and their actions. */
 @Component({
@@ -34,5 +34,7 @@ export class ManagerCardComponent {
   protected readonly uploads = computed(() =>
     this.manager().role.uploads ? 'Can upload' : 'Can’t upload',
   );
+  /** The owner's areas they have, or "None" (0022). */
+  protected readonly areas = computed(() => areasText(this.manager().role) || 'None');
   protected readonly headingId = computed(() => `mgr-${this.manager().uid}`);
 }

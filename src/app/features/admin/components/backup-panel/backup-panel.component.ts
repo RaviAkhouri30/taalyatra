@@ -17,6 +17,10 @@ import { BackupPanelViewModel, type IBackupPanel } from '../../view-models/backu
 export class BackupPanelComponent extends BaseComponent<IBackupPanel> {
   /** A publish just finished: the card suggests keeping a copy of what's live now. */
   public readonly justPublished = input(false);
+  /** Restoring a backup is the owner's only (0022 D3). */
+  public readonly canRestore = input(true);
+  /** "Include leads" needs Leads too (0022). */
+  public readonly canIncludeLeads = input(true);
 
   protected override readonly model = inject(BackupPanelViewModel);
   protected readonly ghost = ButtonVariant.Ghost;

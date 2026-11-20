@@ -2,12 +2,13 @@ import { TestBed } from '@angular/core/testing';
 import { type IHistoryEntry } from '../../models/publish-page.model';
 import { PublishHistoryComponent } from './publish-history.component';
 
-const entry = (id: string, newest: boolean): IHistoryEntry => ({
+const entry = (id: string, newest: boolean, canGoBack = true): IHistoryEntry => ({
   record: { id, publishedAt: 'x', changed: ['home/hero'], before: {} },
   when: id,
   title: 'Hero',
   who: 'by you',
   newest,
+  canGoBack,
 });
 
 describe('PublishHistoryComponent', () => {
@@ -59,7 +60,7 @@ describe('PublishHistoryComponent', () => {
 
   it('should show who published, and offer no going back to a manager', () => {
     const fixture = TestBed.createComponent(PublishHistoryComponent);
-    fixture.componentRef.setInput('entries', [entry('newer', true)]);
+    fixture.componentRef.setInput('entries', [entry('newer', true, false)]);
     fixture.componentRef.setInput('canGoBack', false);
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
@@ -67,5 +68,17 @@ describe('PublishHistoryComponent', () => {
     expect(element.querySelector('.ph-entry small')?.textContent).toBe('Hero · by you');
     expect(element.textContent).toContain('Only the owner can go back');
     expect(element.querySelector('button')).toBeNull();
+  });
+
+  it('should ask a manager with Going back to ask the owner about someone else’s publish', () => {
+    const fixture = TestBed.createComponent(PublishHistoryComponent);
+    fixture.componentRef.setInput('entries', [entry('mine', true), entry('theirs', false, false)]);
+    fixture.componentRef.setInput('owner', false);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.textContent).toContain('those that changed only your pages');
+    expect(element.querySelectorAll('button')).toHaveLength(1);
+    expect(element.querySelector('.ph-ask')?.textContent).toContain('Ask the owner');
   });
 });

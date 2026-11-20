@@ -1,6 +1,7 @@
 import { type IAuthUser } from '@core/interfaces/i-auth-service';
 import { type DocumentFields } from '@core/interfaces/i-document-store';
 import { type EditorTab } from './editor-tab.enum';
+import { type ManagerArea } from './manager-area.enum';
 import { TABS_BY_PATH, changedPages } from './page-paths';
 import { type IRole, PageAccess, pageAccess } from './role.model';
 
@@ -74,6 +75,24 @@ export class Permissions {
    */
   public static manager(user: IAuthUser, role: IRole): Permissions {
     return new Permissions(AccountKind.Manager, user.uid, user.email, role);
+  }
+
+  /**
+   * @param area One of the owner's areas (0022).
+   * @returns Whether the account may use it: the owner always, a manager when given it.
+   */
+  public canUse(area: ManagerArea): boolean {
+    return this.isOwner || this.role?.areas?.has(area) === true;
+  }
+
+  /**
+   * @param path A stored document or collection.
+   * @returns Whether the account publishes it without approval: every page that edits it is one
+   *   they may publish. A path no page edits is the owner's.
+   */
+  public canPublishPath(path: string): boolean {
+    const tabs = TABS_BY_PATH.get(path) ?? [];
+    return this.isOwner || (tabs.length > 0 && tabs.every((tab) => this.canPublish(tab)));
   }
 
   /** @param tab An editor page. @returns The account's setting for it. */

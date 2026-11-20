@@ -2,6 +2,7 @@ import { AppRoute } from '@shared/enums/app-route.enum';
 import { IconName } from '@shared/enums/icon-name.enum';
 import { tabSchema } from '../schemas/editor-tabs';
 import { EditorTab } from './editor-tab.enum';
+import { ManagerArea } from './manager-area.enum';
 import { type Permissions } from './permissions.model';
 import { SaveStatus } from './save-status.enum';
 
@@ -80,6 +81,8 @@ export interface IEditorNavLink {
   readonly tab: EditorTab | null;
   /** Only the owner sees it (0019 decision 6). */
   readonly ownerOnly: boolean;
+  /** The owner's area it belongs to, which a manager sees when given it (0022); `null` for none. */
+  readonly area: ManagerArea | null;
 }
 
 /** A group of links in the side panel. */
@@ -98,7 +101,12 @@ function pageLink(label: string, path: string, icon: IconName): IEditorNavLink {
     badge: NavBadge.None,
     tab: null,
     ownerOnly: false,
+    area: null,
   };
+}
+
+function areaLink(label: string, path: string, icon: IconName, area: ManagerArea): IEditorNavLink {
+  return { ...pageLink(label, path, icon), area };
 }
 
 function ownerLink(label: string, path: string, icon: IconName): IEditorNavLink {
@@ -122,6 +130,7 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
         badge: NavBadge.None,
         tab: null,
         ownerOnly: false,
+        area: null,
       },
       // Right under Dashboard, so it's never below the fold of a long menu (0017 walkthrough).
       { ...pageLink('Review & publish', PUBLISH_PATH, IconName.Send), badge: NavBadge.Changes },
@@ -162,8 +171,11 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
     // Settings already has "Business details".
     label: 'Visitors',
     links: [
-      ownerLink(VISITS_LABEL, VISITS_PATH, IconName.ArrowUpRight),
-      { ...ownerLink(LEADS_LABEL, LEADS_PATH, IconName.Briefcase), badge: NavBadge.NewLeads },
+      areaLink(VISITS_LABEL, VISITS_PATH, IconName.ArrowUpRight, ManagerArea.Visits),
+      {
+        ...areaLink(LEADS_LABEL, LEADS_PATH, IconName.Briefcase, ManagerArea.Leads),
+        badge: NavBadge.NewLeads,
+      },
     ],
   },
   {
@@ -175,7 +187,8 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
 
 /**
  * @param permissions What the signed-in account may do.
- * @returns The side panel it sees: no hidden pages, no owner's pages for a manager, no empty group.
+ * @returns The side panel it sees: no hidden pages, no owner's pages or areas a manager wasn't
+ *   given, no empty group.
  */
 export function navGroupsFor(permissions: Permissions): readonly IEditorNavGroup[] {
   return EDITOR_NAV_GROUPS.map((group) => ({
@@ -183,6 +196,7 @@ export function navGroupsFor(permissions: Permissions): readonly IEditorNavGroup
     links: group.links.filter(
       (link) =>
         (permissions.isOwner || !link.ownerOnly) &&
+        (link.area === null || permissions.canUse(link.area)) &&
         (link.tab === null || permissions.canSee(link.tab)),
     ),
   })).filter((group) => group.links.length > 0);

@@ -78,4 +78,20 @@ describe('BackupPanelComponent', () => {
 
     expect(element.querySelector('[role="alert"]')?.textContent).toContain('can’t be read');
   });
+
+  it('should offer a manager the download only, without restoring or leads (0022)', () => {
+    const testing = provideEditorTesting();
+    TestBed.configureTestingModule({
+      providers: [...testing.providers, provideLayout(layoutStub())],
+    });
+    const fixture = TestBed.createComponent(BackupPanelComponent);
+    fixture.componentRef.setInput('canRestore', false);
+    fixture.componentRef.setInput('canIncludeLeads', false);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.textContent).toContain('Download a backup');
+    expect(element.textContent).not.toContain('Restore from a file');
+    expect(element.textContent).not.toContain('Include leads');
+  });
 });

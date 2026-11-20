@@ -33,10 +33,12 @@
         </div>
       </div>
     } @else {
-      <label class="bk-leads">
-        <input type="checkbox" [formControl]="model.withLeads" />
-        Include leads
-      </label>
+      @if (canIncludeLeads()) {
+        <label class="bk-leads">
+          <input type="checkbox" [formControl]="model.withLeads" />
+          Include leads
+        </label>
+      }
       @if (model.leadsTicked()) {
         <p class="bk-due">
           This file has customers’ names, phone numbers and emails. Keep it somewhere safe. It’s
@@ -47,27 +49,29 @@
         <button appButton type="button" [disabled]="model.busy()" (click)="model.download()">
           {{ model.busy() ? 'Working…' : 'Download a backup' }}
         </button>
-        <label class="btn btn--ghost bk-file">
-          <input
-            #picker
-            type="file"
-            accept=".json,application/json"
-            data-testid="backup-file"
-            [disabled]="model.busy()"
-            (change)="choose(picker)"
-          />
-          Restore from a file
-        </label>
-        @if (panel.browserCopyWhen; as when) {
-          <button
-            appButton
-            type="button"
-            [variant]="ghost"
-            [disabled]="model.busy()"
-            (click)="model.useBrowserCopy()"
-          >
-            Restore this browser’s copy ({{ when }})
-          </button>
+        @if (canRestore()) {
+          <label class="btn btn--ghost bk-file">
+            <input
+              #picker
+              type="file"
+              accept=".json,application/json"
+              data-testid="backup-file"
+              [disabled]="model.busy()"
+              (change)="choose(picker)"
+            />
+            Restore from a file
+          </label>
+          @if (panel.browserCopyWhen; as when) {
+            <button
+              appButton
+              type="button"
+              [variant]="ghost"
+              [disabled]="model.busy()"
+              (click)="model.useBrowserCopy()"
+            >
+              Restore this browser’s copy ({{ when }})
+            </button>
+          }
         }
       </div>
     }

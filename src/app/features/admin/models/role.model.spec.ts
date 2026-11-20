@@ -1,3 +1,4 @@
+import { ManagerArea } from './manager-area.enum';
 import { EditorTab } from './editor-tab.enum';
 import { PageAccess, pageAccess, roleFields, toRole } from './role.model';
 
@@ -6,6 +7,7 @@ describe('role model', () => {
     email: 'content-manager@taalyatra.in',
     pages: { hero: 'publish', team: 'hidden' },
     uploads: true,
+    areas: { leads: true, visits: false, backups: true, goingBack: false },
     addedAt: '2026-11-19T10:00:00.000Z',
   };
 
@@ -46,5 +48,17 @@ describe('role model', () => {
     const role = toRole(stored);
 
     expect(role && roleFields(role)).toEqual(stored);
+  });
+
+  it('should read the areas switched on when a role has them', () => {
+    expect([...(toRole(stored)?.areas ?? [])]).toEqual([ManagerArea.Leads, ManagerArea.Backups]);
+  });
+
+  it.each([
+    ['no areas', undefined],
+    ['a malformed map', 'all'],
+    ['a switch that isn’t true', { leads: 'yes' }],
+  ])('should give no areas when a role has %s', (_case, areas) => {
+    expect(toRole({ ...stored, areas })?.areas?.size).toBe(0);
   });
 });

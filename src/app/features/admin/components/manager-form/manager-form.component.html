@@ -80,6 +80,19 @@
       changes the live site.</span
     >
   </label>
+  <fieldset class="mf-pages" formGroupName="areas">
+    <legend>Your areas</legend>
+    <p class="mf-hint">Off unless you turn them on. Team access and your account stay yours.</p>
+    @for (row of areaRows; track row.area) {
+      <label class="mf-check">
+        <input type="checkbox" [formControlName]="row.area" />
+        <span
+          ><strong>{{ row.label }}</strong
+          >: {{ row.description }}</span
+        >
+      </label>
+    }
+  </fieldset>
   <div class="mf-actions">
     <button appButton type="submit" [disabled]="saving()">
       {{ saving() ? 'Saving…' : 'Save' }}

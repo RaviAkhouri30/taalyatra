@@ -1,3 +1,4 @@
+import { ManagerArea } from '../models/manager-area.enum';
 import { EditorTab } from '../models/editor-tab.enum';
 import { PageAccess } from '../models/role.model';
 import { createRoleForm, fillRoleForm, resetRoleForm, roleFormValue, roleOf } from './role-form';
@@ -76,5 +77,22 @@ describe('role form', () => {
 
     expect(value.uid).toBe('new-manager');
     expect(role).toMatchObject({ email: 'new@b.co', addedAt: '2026-11-19T10:00:00.000Z' });
+  });
+
+  it('should start with every owner’s area off', () => {
+    expect(roleFormValue(form()).areas.size).toBe(0);
+  });
+
+  it('should fill a manager’s areas and keep the ones ticked', () => {
+    const roleForm = form();
+    fillRoleForm(roleForm, {
+      ...manager,
+      role: { ...manager.role, areas: new Set([ManagerArea.Backups]) },
+    });
+    roleForm.controls.areas.controls[ManagerArea.Leads]?.setValue(true);
+
+    const role = roleOf(roleFormValue(roleForm), 'x');
+
+    expect([...(role.areas ?? [])]).toEqual([ManagerArea.Leads, ManagerArea.Backups]);
   });
 });

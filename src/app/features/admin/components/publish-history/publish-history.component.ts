@@ -22,6 +22,8 @@ export class PublishHistoryComponent {
   public readonly confirming = input<string | null>(null);
   /** Whether going back is offered: the owner's only (0019 decision 6). */
   public readonly canGoBack = input(true);
+  /** Whether the viewer is the owner, who may go back over any publish (0022 D4). */
+  public readonly owner = input(true);
   /** Something is running: the confirm buttons wait. */
   public readonly busy = input(false);
   /** The owner pressed "Go back to before this publish". */

@@ -74,4 +74,19 @@ describe('LeadCardComponent', () => {
     expect(confirm).toHaveBeenCalled();
     expect(cancel).toHaveBeenCalled();
   });
+
+  it('should leave Remove out and say who changed the status when shown to a manager', () => {
+    const fixture = TestBed.createComponent(LeadCardComponent);
+    fixture.componentRef.setInput(
+      'lead',
+      new Lead('a', { name: 'Asha', status: 'won', statusBy: 'm@b.c', statusAt: '' }),
+    );
+    fixture.componentRef.setInput('canRemove', false);
+    fixture.componentRef.setInput('viewer', 'm@b.c');
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.textContent).not.toContain('Remove');
+    expect(element.querySelector('.lc-by')?.textContent).toBe('Won by you');
+  });
 });

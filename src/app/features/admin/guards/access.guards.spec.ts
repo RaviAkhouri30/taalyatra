@@ -15,7 +15,9 @@ import { PageAccess } from '../models/role.model';
 import { AccessService } from '../services/access.service';
 import { editorGuard } from './editor.guard';
 import { editorTabGuard } from './editor-tab.guard';
+import { areaGuard } from './area.guard';
 import { ownerGuard } from './owner.guard';
+import { ManagerArea } from '../models/manager-area.enum';
 import { signedOutGuard } from './signed-out.guard';
 
 const OWNER = Permissions.owner({ uid: 'owner', email: 'o@b.c' });
@@ -91,6 +93,31 @@ describe('admin guards', () => {
 
     it('should send a manager to the dashboard', async () => {
       await expect(run(ownerGuard, MANAGER).result).resolves.toBe('/admin');
+    });
+  });
+
+  describe('areaGuard', () => {
+    const leadsManager = Permissions.manager(
+      { uid: 'manager', email: 'm@b.c' },
+      {
+        email: 'm@b.c',
+        pages: new Map(),
+        uploads: true,
+        addedAt: '2026-11-19T10:00:00.000Z',
+        areas: new Set([ManagerArea.Leads]),
+      },
+    );
+
+    it('should let the owner in', async () => {
+      await expect(run(areaGuard(ManagerArea.Visits), OWNER).result).resolves.toBe(true);
+    });
+
+    it('should let in a manager given the area', async () => {
+      await expect(run(areaGuard(ManagerArea.Leads), leadsManager).result).resolves.toBe(true);
+    });
+
+    it('should send a manager without the area to the dashboard', async () => {
+      await expect(run(areaGuard(ManagerArea.Visits), leadsManager).result).resolves.toBe('/admin');
     });
   });
 
