@@ -9,6 +9,9 @@ const E164_PATTERN = /^\+[1-9]\d{7,14}$/;
 /** The stored date format; the browser's date input produces it. */
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
+/** A colour as `#rrggbb`; either case, as it's stored in lower case (0021). */
+const COLOUR_PATTERN = /^#[0-9a-fA-F]{6}$/;
+
 /**
  * Builds a validator that checks a pattern, letting an empty value pass (`required` reports it).
  *
@@ -31,3 +34,6 @@ export const phoneE164Validator: ValidatorFn = patternValidator(E164_PATTERN, 'p
 
 /** A date as YYYY-MM-DD; empty passes (no date). */
 export const dateValidator: ValidatorFn = patternValidator(DATE_PATTERN, 'date');
+
+/** A colour as #rrggbb, e.g. #e9a552; empty passes (`required` reports it). */
+export const colourValidator: ValidatorFn = patternValidator(COLOUR_PATTERN, 'colour');

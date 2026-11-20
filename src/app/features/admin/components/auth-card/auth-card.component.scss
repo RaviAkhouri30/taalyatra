@@ -13,9 +13,9 @@
   padding: 40px 20px;
   box-sizing: border-box;
   background:
-    radial-gradient(900px 520px at 72% 28%, rgb(201 107 60 / 22%), transparent 70%),
-    radial-gradient(700px 440px at 14% 88%, rgb(138 106 78 / 18%), transparent 72%),
-    linear-gradient(165deg, #1e1714, t.$color-ink 48%, t.$color-ink-deep);
+    radial-gradient(900px 520px at 72% 28%, t.with-alpha(t.$color-clay, 22%), transparent 70%),
+    radial-gradient(700px 440px at 14% 88%, t.with-alpha(t.$color-glow, 18%), transparent 72%),
+    linear-gradient(165deg, t.$color-ink-lift, t.$color-ink 48%, t.$color-ink-deep);
 }
 
 .lcard {
@@ -36,13 +36,13 @@
   }
 
   h1 {
-    font-size: 27px;
-    font-weight: 800;
+    font-size: t.size(27px);
+    font-weight: t.$weight-heading;
   }
 }
 
 .lsub {
-  font-size: 14.5px;
+  font-size: t.size(14.5px);
   color: t.$color-muted;
   margin-top: 6px;
 }
@@ -50,7 +50,7 @@
 .lback {
   display: inline-block;
   margin-top: 16px;
-  font-size: 13.5px;
+  font-size: t.size(13.5px);
   font-weight: 700;
   color: t.$color-amber;
 

@@ -177,6 +177,16 @@ export const FEATURES: readonly IFeature[] = [
     change: { tab: EditorTab.Visibility },
   },
   {
+    id: 'theme',
+    group: FeatureGroup.EveryPage,
+    icon: IconName.Sparkle,
+    title: 'Theme',
+    description:
+      'The colours, background, text size and fonts of every page, from a ready-made theme or your own, checked so text stays readable.',
+    site: '/',
+    change: { tab: EditorTab.Theme },
+  },
+  {
     id: 'drafts',
     group: FeatureGroup.Admin,
     icon: IconName.Send,

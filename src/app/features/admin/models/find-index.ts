@@ -40,6 +40,7 @@ const KEYWORDS: Partial<Record<EditorTab, string>> = {
   [EditorTab.Business]: 'name logo tagline description search google',
   [EditorTab.Contact]: 'phone number email address whatsapp instagram youtube map social',
   [EditorTab.Visibility]: 'hide show turn off switch fold collapse',
+  [EditorTab.Theme]: 'colour color theme palette font background dark light contrast style',
   [EditorTab.ProposalForm]: 'enquiry booking form request',
 };
 

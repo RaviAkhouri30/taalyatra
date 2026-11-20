@@ -1,45 +1,227 @@
 // Design tokens — the single source of truth for colours, type, radii and layers.
 // Values are taken from the design prototype's computed styles (warm brand palette, v11).
 // Components and global partials consume these; never hard-code a value elsewhere.
+@use 'sass:map';
 
 // ---- Colours -------------------------------------------------------------
-$color-ink: #171210; // page background, text on light surfaces
-$color-ink-deep: #120e0c; // utility bar
-$color-cream: #efe6d9; // body text on dark
-$color-ivory: #f5ede1; // light surface, button hover fill
-$color-amber: #e9a552; // primary accent
-$color-amber-soft: #ffd79a; // highlight on accent ("hot" nav, promo border)
-$color-amber-pale: #fff0d2;
-$color-clay: #c96b3c; // secondary accent
-$color-surface: #241c17; // cards, alternate sections
-$color-surface-raised: #1e1813; // action bar, trust row
-$color-line: #3a2e25; // borders on dark
-$color-bronze: #6e5b49; // ghost button border
-$color-muted: #c6b8a6; // secondary text
-$color-muted-strong: #a89883; // fine print, admin link
-$color-sage: #afbc82; // video categories, skill pills
-$color-sage-pale: #d7dfbe; // text on sage outlines
-$color-field-border: #4a3a2c; // form inputs
-$color-placeholder: #7c6e5e;
-$color-muted-faint: #9a8c7b; // admin notes
-$color-danger-tint: rgb(193 18 31 / 14%); // error box (admin)
-$color-danger-line: #8e2b20;
-$color-danger-text: #f3b8a8;
-$color-logo-ground: #fdf9f3;
-$color-promo-ink: #3a2213;
-$color-header-glass: rgb(23 18 16 / 94%);
-$color-overlay: rgb(0 0 0 / 60%); // dims the page behind the admin's drawer and tour
+// Each themed colour is a CSS variable (ADR-0019): `_theme.scss` sets these defaults on `:root`,
+// and a published theme overrides them on `<html>`. So no Sass colour maths on these tokens: use
+// `with-alpha()` for transparency, and work shades out in the theme model.
+$palette: (
+  // Background
+  'ink': #171210,
+  // page background, text on light surfaces
+  'ink-deep': #120e0c,
+  // utility bar
+  'ink-lift': #1e1714,
+  // top of the hero's gradient
+  // Cards
+  'surface': #241c17,
+  // cards, alternate sections
+  'surface-raised': #1e1813,
+  // action bar, trust row
+  'surface-high': #2e241d,
+  // bubbles, chips and pads on cards
+  'surface-mid': #221a15,
+  // between surface and background (the game's pads)
+  'panel': #1c1511,
+  // the chat panel
+  'panel-raised': #271e18,
+  // the chat panel's header and input
+  // Text
+  'cream': #efe6d9,
+  // body text on dark
+  'cream-dim': #d8c9b5,
+  // the scrolling words
+  'cream-deep': #efe3d0,
+  // shaded side of the light game pad
+  'ivory': #f5ede1,
+  // light surface, button hover fill
+  // Quiet text
+  'muted': #c6b8a6,
+  // secondary text
+  'muted-soft': #b4a491,
+  // the chat's status line
+  'muted-strong': #a89883,
+  // fine print, admin link
+  'muted-faint': #9a8c7b,
+  // admin notes
+  'muted-dim': #8c7e6c,
+  // the chat's small print
+  'placeholder': #928474,
+  // field placeholders: 4.6:1 on cards (0021 decision 1)
+  // Lines
+  'line': #3a2e25,
+  // borders on dark
+  'edge': #4a3a2c,
+  // decorative edges: the chat panel, the photo viewer, the footer map
+  'field-border': #776758,
+  // form fields: 3:1 on cards (0021 decision 1)
+  'bronze': #725f4d,
+  // outline button border, dashed frames: 3:1 (0021 decision 1)
+  'glow': #8a6a4e,
+  // the hero's second glow
+  // Accent
+  'amber': #e9a552,
+  // primary accent
+  'amber-light': #f3c078,
+  // the accent game pad's highlight
+  'amber-deep': #de8c3f,
+  // middle of the offer's gradient
+  'amber-soft': #ffd79a,
+  // highlight on accent ("hot" nav, promo border)
+  'amber-pale': #fff0d2,
+  'flare': #fe7f2d,
+  // the game's pulse
+  'promo-ink': #3a2213,
+  // text on the accent
+  'promo-ink-soft': #5c2d12,
+  // the offer's small print, on the accent
+  'promo-ink-deep': #2b1a10,
+  // the offer's heading, on the accent
+  // Second accent
+  'clay': #c96b3c,
+  // secondary accent
+  'clay-deep': #8a4a28,
+  // the diya's rim
+  'sage': #afbc82,
+  // video categories, skill pills
+  'sage-light': #b6c48c,
+  // the sage game pad's highlight
+  'sage-soft': #c3ce9a,
+  // text on sage outlines (audiences)
+  'sage-pale': #d7dfbe,
+  // text on sage outlines
+  'sage-deep': #7e8a55,
+  // sage outlines and fills
+  // Light sections (`.light`) and paper cards
+  'paper': #fffdf8,
+  // quote and client cards
+  'paper-accent': #9a4f1c,
+  // eyebrows and labels on light sections
+  'paper-line': #e0d5c3,
+  // rules on paper
+  'paper-edge': #b9a890,
+  // the dashed frame on paper
+  'paper-text': #4a3a2c,
+  // text on the dashed paper card
+  'paper-quiet': #6a5c4c,
+  // secondary text on paper
+  'paper-faint': #8a7a66,
+  // small print on paper
+  // Errors (fixed sets, chosen by the background's lightness: 0021 decision 5)
+  'danger-tint': rgb(193 18 31 / 14%),
+  // error box (admin)
+  'danger-line': #8e2b20,
+  'danger-text': #f3b8a8
+);
+
+/// @param $name A colour in `$palette`.
+/// @return The colour's CSS variable.
+@function color($name) {
+  @if not map.has-key($palette, $name) {
+    @error 'Unknown colour token `#{$name}`.';
+  }
+  @return var(--ty-#{$name});
+}
+
+/// @param $color A colour token.
+/// @param $amount How opaque it is, e.g. 90%.
+/// @return The colour at that opacity; works on a CSS variable, unlike `rgba()`.
+@function with-alpha($color, $amount) {
+  @return color-mix(in srgb, #{$color} $amount, transparent);
+}
+
+$color-ink: color('ink');
+$color-ink-deep: color('ink-deep');
+$color-ink-lift: color('ink-lift');
+$color-surface: color('surface');
+$color-surface-raised: color('surface-raised');
+$color-surface-high: color('surface-high');
+$color-surface-mid: color('surface-mid');
+$color-panel: color('panel');
+$color-panel-raised: color('panel-raised');
+$color-cream: color('cream');
+$color-cream-dim: color('cream-dim');
+$color-cream-deep: color('cream-deep');
+$color-ivory: color('ivory');
+$color-muted: color('muted');
+$color-muted-soft: color('muted-soft');
+$color-muted-strong: color('muted-strong');
+$color-muted-faint: color('muted-faint');
+$color-muted-dim: color('muted-dim');
+$color-placeholder: color('placeholder');
+$color-line: color('line');
+$color-edge: color('edge');
+$color-field-border: color('field-border');
+$color-bronze: color('bronze');
+$color-glow: color('glow');
+$color-amber: color('amber');
+$color-amber-light: color('amber-light');
+$color-amber-deep: color('amber-deep');
+$color-amber-soft: color('amber-soft');
+$color-amber-pale: color('amber-pale');
+$color-flare: color('flare');
+$color-promo-ink: color('promo-ink');
+$color-promo-ink-soft: color('promo-ink-soft');
+$color-promo-ink-deep: color('promo-ink-deep');
+$color-clay: color('clay');
+$color-clay-deep: color('clay-deep');
+$color-sage: color('sage');
+$color-sage-light: color('sage-light');
+$color-sage-soft: color('sage-soft');
+$color-sage-pale: color('sage-pale');
+$color-sage-deep: color('sage-deep');
+$color-paper: color('paper');
+$color-paper-accent: color('paper-accent');
+$color-paper-line: color('paper-line');
+$color-paper-edge: color('paper-edge');
+$color-paper-text: color('paper-text');
+$color-paper-quiet: color('paper-quiet');
+$color-paper-faint: color('paper-faint');
+$color-danger-tint: color('danger-tint');
+$color-danger-line: color('danger-line');
+$color-danger-text: color('danger-text');
+
+// Worked out from the themed colours, so they follow a theme.
+// The page's background: the theme's gradient when it has one (`--ty-backdrop`), else the colour.
+$color-backdrop: var(--ty-backdrop, #{$color-ink});
+$color-header-glass: with-alpha($color-ink, 94%);
 $color-promo-gradient: linear-gradient(135deg, $color-amber, $color-clay);
+// Light ring that lifts the floating buttons off dark sections.
+$color-fab-ring: with-alpha($color-cream, 55%);
+
+// Fixed: they mean the same on every theme.
+$color-logo-ground: #fdf9f3; // the logo's own ground
+$color-overlay: rgb(0 0 0 / 60%); // dims the page behind the admin's drawer and tour
+$color-lightbox: rgb(10 8 7 / 95%); // behind a photo opened full screen
 $color-whatsapp: #25d366; // WhatsApp's green: dark icons on it reach about 9:1
-$color-fab-ring: rgb(
-  239 230 217 / 55%
-); // light ring that lifts the floating buttons off dark sections
+$color-online: #5e9e6b; // the chat's "online" dot
+// Sparks and festive lights: light glows that read on any background.
+$color-spark-white: #fff;
+$color-spark-cream: #fff4dc;
+$color-spark-pale: #fff0d2;
+$color-spark-glow: #ffe6b8;
+$color-spark-gold: #ffd79a;
+$color-spark-orange: #f3a24b;
 
 // ---- Typography ----------------------------------------------------------
 // Each web font is followed by a metric-matched local fallback (see _fonts.scss), so the swap
 // when the web font arrives barely moves text (CLS).
-$font-display: 'Bricolage Grotesque', 'Bricolage Grotesque Fallback', sans-serif;
-$font-body: 'DM Sans', 'DM Sans Fallback', sans-serif;
+// Today's pair; a theme can choose another (`--ty-font-display`, `--ty-font-body`, 0021 D2).
+$font-display-default: 'Bricolage Grotesque', 'Bricolage Grotesque Fallback', sans-serif;
+$font-body-default: 'DM Sans', 'DM Sans Fallback', sans-serif;
+$font-display: var(--ty-font-display);
+$font-body: var(--ty-font-body);
+// Extra-bold display text; a theme can make it bold (0021 D3).
+$weight-heading-default: 800;
+$weight-heading: var(--ty-heading-weight);
+
+/// @param $px A font size in pixels, as the design gives it.
+/// @return The size, scaled by the theme's text size (`--ty-text-scale`, 0021 D3).
+@function size($px) {
+  @return calc(#{$px} * var(--ty-text-scale));
+}
 $letter-spacing-display: -0.02em;
 $letter-spacing-eyebrow: 0.16em;
 

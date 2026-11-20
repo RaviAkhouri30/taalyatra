@@ -27,11 +27,11 @@
   }
 
   h3 {
-    font-size: 28px;
+    font-size: t.size(28px);
   }
 
   p {
-    font-size: 17px;
+    font-size: t.size(17px);
   }
 }
 
@@ -43,7 +43,7 @@
 }
 
 .role {
-  font-size: 13px;
+  font-size: t.size(13px);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 700;
@@ -60,7 +60,7 @@
   list-style: none;
 
   li {
-    font-size: 14px;
+    font-size: t.size(14px);
     font-weight: 700;
     border: 1px solid t.$color-sage;
     color: t.$color-sage-pale;
@@ -73,5 +73,5 @@
   border-top: 1px solid t.$color-bronze;
   padding-top: 12px;
   margin-top: 6px;
-  font-size: 15px;
+  font-size: t.size(15px);
 }

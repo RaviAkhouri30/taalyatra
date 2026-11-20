@@ -5,14 +5,14 @@ const BADGE_OFFSET_PX = 10;
 
 /**
  * Injected into the preview only (never the public site): an outline on the section under the
- * pointer, and an "Edit in …" label. Colours match `$color-amber` and `$color-ink` in
- * `_tokens.scss`; SCSS can't reach inside the frame.
+ * pointer, and an "Edit in …" label. SCSS can't reach inside the frame, so its colours are the
+ * theme's variables, which the previewed site sets (`_theme.scss`, ADR-0019).
  */
 const PICK_STYLES = `
-.${HOVER_CLASS} { outline: 3px solid #e9a552 !important; outline-offset: -3px; cursor: pointer; }
+.${HOVER_CLASS} { outline: 3px solid var(--ty-amber) !important; outline-offset: -3px; cursor: pointer; }
 #${BADGE_ID} {
   position: absolute; z-index: 100; padding: 6px 12px; border-radius: 999px; pointer-events: none;
-  background: #e9a552; color: #171210; font: 700 13px/1.2 system-ui, sans-serif;
+  background: var(--ty-amber); color: var(--ty-ink); font: 700 13px/1.2 system-ui, sans-serif;
   box-shadow: 0 4px 14px rgb(0 0 0 / 40%);
 }`;
 

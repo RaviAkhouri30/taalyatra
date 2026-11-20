@@ -1,6 +1,7 @@
 import { type DocumentFields } from '@core/interfaces/i-document-store';
 import { type PageAnchor } from '@shared/enums/page-anchor.enum';
 import { type ContentPath } from './content-path.enum';
+import { type SectionPanel } from './section-panel.enum';
 import { type FieldSchema } from './i-field-schema';
 
 /**
@@ -21,6 +22,13 @@ export interface ISectionView {
   write(stored: DocumentFields, edited: DocumentFields): DocumentFields;
 }
 
+/** A panel in a card, and where it goes. */
+export interface ISectionPanel {
+  readonly panel: SectionPanel;
+  /** The field it follows; `null` for above the first field. */
+  readonly after: string | null;
+}
+
 /** One card in an editor tab: some fields of one stored document. */
 export interface IEditorSection {
   /** Unique within the editor, used for ids. */
@@ -36,4 +44,6 @@ export interface IEditorSection {
   readonly view?: ISectionView;
   /** A writing tip shown beside the card. */
   readonly tip?: string;
+  /** Panels shown among the fields (0021): the theme's swatches, contrast and Reset. */
+  readonly panels?: readonly ISectionPanel[];
 }

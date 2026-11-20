@@ -14,7 +14,7 @@
 
   h1 {
     margin: 0;
-    font-size: 28px;
+    font-size: t.size(28px);
   }
 }
 
@@ -40,7 +40,7 @@
 
   h2 {
     margin: 4px 20px 6px;
-    font-size: 15px;
+    font-size: t.size(15px);
   }
 
   ul {
@@ -62,5 +62,5 @@
   border-radius: t.$radius-pill;
   background: t.$color-amber;
   color: t.$color-ink-deep;
-  font-size: 12px;
+  font-size: t.size(12px);
 }

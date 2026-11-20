@@ -7,7 +7,7 @@
 }
 
 .eyebrow {
-  color: #9a4f1c;
+  color: t.$color-paper-accent;
 }
 
 .ighead {
@@ -20,7 +20,7 @@
 }
 
 .title {
-  font-weight: 800;
+  font-weight: t.$weight-heading;
   max-width: 600px;
 }
 
@@ -45,18 +45,18 @@
   b {
     display: block;
     font-family: t.$font-display;
-    font-size: 40px;
-    font-weight: 800;
-    color: #9a4f1c;
+    font-size: t.size(40px);
+    font-weight: t.$weight-heading;
+    color: t.$color-paper-accent;
     line-height: 1;
 
     @include bp.down(bp.$phone) {
-      font-size: 30px;
+      font-size: t.size(30px);
     }
   }
 
   span {
-    font-size: 15px;
+    font-size: t.size(15px);
     font-weight: 700;
   }
 }
@@ -74,7 +74,7 @@
 
 // Keeps the browser's default figure margin (1em 40px), as the design does.
 .quote {
-  background: #fffdf8;
+  background: t.$color-paper;
   border-radius: 22px;
   padding: 24px 26px;
   display: flex;
@@ -87,12 +87,12 @@
 
   blockquote {
     margin: 0;
-    font-size: 16px;
+    font-size: t.size(16px);
     line-height: 1.65;
     flex: 1;
 
     @include bp.down(bp.$phone) {
-      font-size: 15px;
+      font-size: t.size(15px);
     }
   }
 
@@ -100,24 +100,24 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    border-top: 1px solid #e0d5c3;
+    border-top: 1px solid t.$color-paper-line;
     padding-top: 14px;
   }
 
   b {
     display: block;
-    font-size: 16px;
+    font-size: t.size(16px);
   }
 
   small {
-    font-size: 14px;
-    color: #6a5c4c;
+    font-size: t.size(14px);
+    color: t.$color-paper-quiet;
   }
 }
 
 .qm {
   font-family: t.$font-display;
-  font-size: 56px;
+  font-size: t.size(56px);
   line-height: 0.6;
   color: t.$color-clay;
   height: 30px;
@@ -127,7 +127,7 @@
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: #7e8a55;
+  background: t.$color-sage-deep;
   color: t.$color-ivory;
   display: flex;
   align-items: center;
@@ -156,23 +156,23 @@
 .client {
   width: 120px;
   height: 60px;
-  background: #fffdf8;
-  color: #4a3a2c;
-  border: 2px dashed #b9a890;
+  background: t.$color-paper;
+  color: t.$color-paper-text;
+  border: 2px dashed t.$color-paper-edge;
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   font-weight: 700;
-  font-size: 13px;
+  font-size: t.size(13px);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 
   @include bp.down(bp.$phone) {
     width: 92px;
     height: 50px;
-    font-size: 11px;
+    font-size: t.size(11px);
   }
 
   @include bp.down(bp.$phone-sm) {
@@ -181,13 +181,13 @@
   }
 
   app-icon {
-    color: #8a7a66;
+    color: t.$color-paper-faint;
   }
 }
 
 .note {
   text-align: center;
-  font-size: 15px;
-  color: #6a5c4c;
+  font-size: t.size(15px);
+  color: t.$color-paper-quiet;
   margin-top: 18px;
 }

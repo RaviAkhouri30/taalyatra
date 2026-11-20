@@ -1,0 +1,65 @@
+@switch (panel()) {
+  @case (panels.ThemePresets) {
+    <fieldset class="tp-presets">
+      <legend>Ready-made themes</legend>
+      <p class="tp-note">Each fills the colours and background below; adjust them afterwards.</p>
+      <div class="tp-swatches">
+        @for (preset of model.presets; track preset.preset) {
+          <button
+            type="button"
+            class="tp-swatch"
+            [attr.aria-pressed]="model.preset() === preset.preset"
+            (click)="model.choose(preset)"
+          >
+            <app-theme-swatch [preset]="preset" />
+            {{ preset.label }}
+          </button>
+        }
+      </div>
+    </fieldset>
+  }
+  @case (panels.ThemeContrast) {
+    <div class="tp-contrast">
+      <p class="tp-summary" aria-live="polite" [class.tp-summary--bad]="model.failing().length > 0">
+        @if (model.failing().length === 0) {
+          Every pair of colours is easy to read (WCAG 2.2 AA).
+        } @else {
+          {{ model.failing().length }} of {{ model.results().length }} pairs are hard to read.
+          Publishing is off until they’re fixed.
+        }
+      </p>
+      @if (model.failing().length > 0) {
+        <ul class="tp-failing">
+          @for (result of model.failing(); track result.label) {
+            <li>
+              <b>{{ result.label }}</b
+              >: {{ result.ratio }}:1, needs {{ result.needs }}:1.
+              {{ result.advice }}
+            </li>
+          }
+        </ul>
+      }
+      <details class="tp-all">
+        <summary>Every pair checked ({{ model.results().length }})</summary>
+        <ul>
+          @for (result of model.results(); track result.label) {
+            <li [class.tp-fail]="!result.passes">
+              <span>{{ result.label }}</span>
+              <span>{{ result.ratio }}:1 {{ result.passes ? '✓' : '✗' }}</span>
+            </li>
+          }
+        </ul>
+      </details>
+    </div>
+  }
+  @case (panels.ThemeReset) {
+    <div class="tp-reset">
+      <button appButton type="button" [variant]="ghost" [size]="compact" (click)="model.reset()">
+        Reset to the default theme
+      </button>
+      <p class="tp-note">
+        Puts today’s look back as a draft; the site changes only when it’s published.
+      </p>
+    </div>
+  }
+}

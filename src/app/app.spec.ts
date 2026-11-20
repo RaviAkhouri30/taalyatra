@@ -2,7 +2,7 @@ import { FakeVitalsReporter } from '@core/backends/fake/fake-vitals-reporter';
 import { IVitalsReporter } from '@core/interfaces/i-vitals-reporter';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { provideSiteConfig, provideVisibility } from '@shared/testing/fixtures';
+import { provideSiteConfig, provideTheme, provideVisibility } from '@shared/testing/fixtures';
 import { App } from './app';
 
 describe('App', () => {
@@ -14,6 +14,7 @@ describe('App', () => {
         provideRouter([]),
         provideSiteConfig(),
         provideVisibility(),
+        provideTheme(),
       ],
     }).compileComponents();
   });

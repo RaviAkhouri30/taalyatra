@@ -39,19 +39,19 @@
   }
 
   h3 {
-    font-size: 25px;
+    font-size: t.size(25px);
 
     @include bp.down(bp.$phone) {
-      font-size: 22px;
+      font-size: t.size(22px);
     }
   }
 
   p {
-    font-size: 16px;
+    font-size: t.size(16px);
     line-height: 1.65;
 
     @include bp.down(bp.$phone) {
-      font-size: 15px;
+      font-size: t.size(15px);
     }
   }
 }
@@ -69,14 +69,14 @@
 }
 
 .tag {
-  font-size: 12px;
+  font-size: t.size(12px);
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: t.$color-amber;
 
   @include bp.down(bp.$phone) {
-    font-size: 11px;
+    font-size: t.size(11px);
   }
 }
 
@@ -93,12 +93,12 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 13px;
+    font-size: t.size(13px);
     font-weight: 600;
     color: t.$color-muted;
 
     @include bp.down(bp.$phone) {
-      font-size: 12px;
+      font-size: t.size(12px);
     }
   }
 
@@ -162,27 +162,27 @@
   }
 
   h3 {
-    font-size: 34px;
+    font-size: t.size(34px);
 
     @include bp.down(bp.$tablet) {
-      font-size: 28px;
+      font-size: t.size(28px);
     }
 
     @include bp.down(bp.$phone) {
-      font-size: 24px;
+      font-size: t.size(24px);
     }
   }
 
   p {
-    font-size: 17px;
+    font-size: t.size(17px);
 
     @include bp.down(bp.$phone) {
-      font-size: 15px;
+      font-size: t.size(15px);
     }
   }
 
   .cspec {
-    border-top-color: rgb(23 18 16 / 30%);
+    border-top-color: t.with-alpha(t.$color-ink, 30%);
 
     li,
     app-icon {

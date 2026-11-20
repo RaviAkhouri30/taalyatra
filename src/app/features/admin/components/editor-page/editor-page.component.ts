@@ -25,6 +25,8 @@ import { type IEditorPage, EditorPageViewModel } from '../../view-models/editor-
 import { PreviewFrameComponent } from '../preview-frame/preview-frame.component';
 import { PublishBarComponent } from '../publish-bar/publish-bar.component';
 import { SchemaFieldsComponent } from '../schema-fields/schema-fields.component';
+import { ThemePanelComponent } from '../theme-panel/theme-panel.component';
+import { SectionPartsPipe } from '../../pipes/section-parts.pipe';
 import { ButtonDirective } from '@shared/directives/button.directive';
 import { AppRoute } from '@shared/enums/app-route.enum';
 import { PUBLISH_PATH } from '../../models/editor-nav.constants';
@@ -43,6 +45,8 @@ import { ButtonSize, ButtonVariant } from '@shared/enums/button-variant.enum';
     PublishBarComponent,
     RouterLink,
     SchemaFieldsComponent,
+    SectionPartsPipe,
+    ThemePanelComponent,
     TourTargetDirective,
   ],
   templateUrl: './editor-page.component.html',

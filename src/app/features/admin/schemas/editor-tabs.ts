@@ -20,6 +20,7 @@ import {
   VIDEOS_SECTIONS,
 } from './media.sections';
 import { OFFER_SECTIONS } from './offer.sections';
+import { THEME_SECTION } from './theme.sections';
 import { VISIBILITY_SECTIONS } from './visibility.sections';
 import { DRUM_CIRCLE_SECTIONS } from './drum-circle.sections';
 
@@ -122,6 +123,13 @@ export const EDITOR_TABS: readonly IEditorTabSchema[] = [
     description: 'Switch home sections, pages and the buttons on every page on or off.',
     sections: VISIBILITY_SECTIONS,
   },
+  {
+    tab: EditorTab.Theme,
+    label: 'Theme',
+    description:
+      'The colours, background, text size and fonts of the whole site, and of this admin once published.',
+    sections: [THEME_SECTION],
+  },
 ];
 
 /** Every section in the editor, for checks that look across tabs. */
@@ -177,6 +185,7 @@ export function tabSchema(tab: EditorTab): IEditorTabSchema | undefined {
 const SETTINGS_PATHS: ReadonlySet<string> = new Set([
   ContentPath.SiteConfig,
   ContentPath.SiteVisibility,
+  ContentPath.SiteTheme,
 ]);
 
 /**

@@ -1,3 +1,29 @@
+// The design's two colourings, from the theme's tokens.
+@use 'tokens' as t;
+
 :host {
   display: contents;
+}
+
+.flame {
+  fill: t.$color-amber-soft;
+}
+
+.core,
+.bowl {
+  fill: t.$color-clay;
+}
+
+.rim {
+  fill: t.$color-clay-deep;
+}
+
+:host(.diya--pill) {
+  .bowl {
+    fill: t.$color-amber-soft;
+  }
+
+  .rim {
+    fill: t.$color-amber;
+  }
 }

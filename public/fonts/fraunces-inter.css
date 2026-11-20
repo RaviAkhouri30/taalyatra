@@ -1,0 +1,43 @@
+/* Fallbacks sized to match Fraunces and Inter (0021, measured in Chrome against Arial as
+   0007 did), so text set in Arial takes the web font's space and the swap doesn't move the page.
+   Loaded with the pair's Google Fonts stylesheet, only when a theme chooses it. */
+
+@font-face {
+  font-family: 'Fraunces Fallback';
+  font-weight: 400 600;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 104.75%;
+  ascent-override: 93.56%;
+  descent-override: 24.82%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Fraunces Fallback';
+  font-weight: 700 900;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 104.52%;
+  ascent-override: 93.76%;
+  descent-override: 24.88%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Inter Fallback';
+  font-weight: 400 600;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 106.65%;
+  ascent-override: 90.95%;
+  descent-override: 22.5%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Inter Fallback';
+  font-weight: 700 900;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 102.72%;
+  ascent-override: 94.44%;
+  descent-override: 23.37%;
+  line-gap-override: 0%;
+}

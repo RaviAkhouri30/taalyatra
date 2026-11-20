@@ -7,7 +7,7 @@
 }
 
 .title {
-  font-weight: 800;
+  font-weight: t.$weight-heading;
   max-width: 820px;
   margin-bottom: 20px;
 }
@@ -46,7 +46,7 @@
     border-radius: t.$radius-pill;
     padding: 8px 18px;
     font: inherit;
-    font-size: 15px;
+    font-size: t.size(15px);
     font-weight: 700;
     cursor: pointer;
     min-height: 44px;
@@ -80,7 +80,7 @@
 
   b {
     display: block;
-    font-size: 11px;
+    font-size: t.size(11px);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: t.$color-amber;
@@ -88,12 +88,12 @@
 
   span {
     font-family: t.$font-display;
-    font-size: 28px;
-    font-weight: 800;
+    font-size: t.size(28px);
+    font-weight: t.$weight-heading;
     line-height: 1.1;
 
     @include bp.down(bp.$phone) {
-      font-size: 24px;
+      font-size: t.size(24px);
     }
   }
 }
@@ -136,7 +136,7 @@
   flex-direction: column;
 
   b {
-    font-size: 11px;
+    font-size: t.size(11px);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: t.$color-amber;
@@ -144,26 +144,26 @@
 
   span {
     font-family: t.$font-display;
-    font-size: 26px;
-    font-weight: 800;
+    font-size: t.size(26px);
+    font-weight: t.$weight-heading;
     color: t.$color-amber;
     line-height: 1.15;
   }
 
   small {
-    font-size: 14px;
+    font-size: t.size(14px);
     color: t.$color-muted;
   }
 }
 
 .gmsg {
-  font-size: 18px;
+  font-size: t.size(18px);
   font-weight: 700;
   min-height: 34px;
   color: t.$color-amber;
 
   @include bp.down(bp.$phone) {
-    font-size: 16px;
+    font-size: t.size(16px);
   }
 }
 

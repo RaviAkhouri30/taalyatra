@@ -9,7 +9,12 @@
 .diwali {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #e9a552 0%, #de8c3f 45%, #c96b3c 100%);
+  background: linear-gradient(
+    135deg,
+    t.$color-amber 0%,
+    t.$color-amber-deep 45%,
+    t.$color-clay 100%
+  );
   color: t.$color-ink;
   padding: 52px 0 46px;
 
@@ -29,27 +34,27 @@
 }
 
 .eyebrow {
-  color: #5c2d12;
+  color: t.$color-promo-ink-soft;
 }
 
 .title {
-  font-weight: 800;
+  font-weight: t.$weight-heading;
   max-width: 860px;
-  font-size: 40px;
+  font-size: t.size(40px);
 
   @include bp.down(bp.$tablet) {
-    font-size: 32px;
+    font-size: t.size(32px);
   }
 
   @include bp.down(bp.$phone) {
-    font-size: 27px;
+    font-size: t.size(27px);
   }
 }
 
 .lead {
   margin: 14px 0 0;
   max-width: 62ch;
-  color: #2b1a10;
+  color: t.$color-promo-ink-deep;
 }
 
 .dgrid {
@@ -68,7 +73,7 @@
 }
 
 .dcard {
-  background: rgb(23 18 16 / 90%);
+  background: t.with-alpha(t.$color-ink, 90%);
   color: t.$color-cream;
   border-radius: 18px;
   padding: 22px 22px 20px;
@@ -85,19 +90,19 @@
   }
 
   h3 {
-    font-size: 21px;
+    font-size: t.size(21px);
 
     @include bp.down(bp.$phone) {
-      font-size: 18px;
+      font-size: t.size(18px);
     }
   }
 
   p {
-    font-size: 15px;
+    font-size: t.size(15px);
     line-height: 1.55;
 
     @include bp.down(bp.$phone) {
-      font-size: 14px;
+      font-size: t.size(14px);
     }
   }
 }
@@ -106,7 +111,7 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: #2e241d;
+  background: t.$color-surface-high;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,7 +133,7 @@
 
 .dsmall {
   margin-top: 18px;
-  font-size: 14px;
+  font-size: t.size(14px);
   color: t.$color-promo-ink;
   font-weight: 600;
 }

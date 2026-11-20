@@ -18,7 +18,7 @@
   border-radius: t.$radius-pill;
   padding: 7px 18px;
   font: inherit;
-  font-size: 15px;
+  font-size: t.size(15px);
   cursor: pointer;
   min-height: 44px;
   transition:
@@ -26,7 +26,7 @@
     border-color 0.15s;
 
   &:hover {
-    background: #2e241d;
+    background: t.$color-surface-high;
     border-color: t.$color-amber;
   }
 

@@ -58,11 +58,18 @@
               @if (entry.section.tip) {
                 <p class="ep-tip">{{ entry.section.tip }}</p>
               }
-              <app-schema-fields
-                [fields]="entry.section.fields"
-                [group]="entry.form"
-                [idPrefix]="entry.fieldPrefix"
-              />
+              @for (part of entry.section | sectionParts; track $index) {
+                @if (part.panel) {
+                  <app-theme-panel [panel]="part.panel" [form]="entry.form" />
+                }
+                @if (part.fields.length > 0) {
+                  <app-schema-fields
+                    [fields]="part.fields"
+                    [group]="entry.form"
+                    [idPrefix]="entry.fieldPrefix"
+                  />
+                }
+              }
             </section>
           }
         </fieldset>

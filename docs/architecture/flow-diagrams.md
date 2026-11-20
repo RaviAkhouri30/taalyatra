@@ -93,3 +93,16 @@ flowchart LR
   P["site/config.promotion<br/>live · startsOn · endsOn"] --> PS["PromotionSchedule (Pune time)"]
   PS -->|"not live today"| N["no promotion: badge, offer section and Diwali links hidden"]
 ```
+
+### The theme on every page (2.2.0)
+
+```mermaid
+flowchart LR
+  T["site/theme<br/>(preloaded with site/config)"] --> TS{SiteThemeService:<br/>anything chosen?}
+  TS -- "no (missing or empty)" --> D["today's look: no code loaded,<br/>the stylesheet's :root defaults"]
+  TS -- yes --> C["theme chunk: SiteTheme<br/>works out 52 tokens, checks contrast"]
+  C -- "readable, or the owner's preview" --> R
+  C -- "unreadable, for visitors" --> D
+  D --> R["RootStyleService: --ty-* variables on html,<br/>font stylesheets, browser bar, remembered background"]
+  R --> S["SiteShell shows main<br/>(settled waits for the theme)"]
+```

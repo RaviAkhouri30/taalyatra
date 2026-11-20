@@ -2,6 +2,7 @@
 export enum ContentPath {
   SiteConfig = 'site/config',
   SiteVisibility = 'site/visibility',
+  SiteTheme = 'site/theme',
   HomeHero = 'home/hero',
   HomeOffer = 'home/offer',
   HomeAudiences = 'home/audiences',

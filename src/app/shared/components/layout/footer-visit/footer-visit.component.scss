@@ -28,13 +28,35 @@ a {
     height: auto;
   }
 
+  // The map's colours are here, not in the SVG, so they follow the theme.
+  .fmap-ground {
+    fill: t.$color-surface;
+  }
+
+  .fmap-road {
+    stroke: t.$color-edge;
+  }
+
+  .fmap-lane {
+    stroke: t.$color-line;
+  }
+
+  .fmap-pin {
+    fill: t.$color-amber;
+    stroke: t.$color-ink;
+  }
+
+  .fmap-dot {
+    fill: t.$color-ink;
+  }
+
   span {
     position: absolute;
     left: 10px;
     bottom: 10px;
     background: t.$color-amber;
     color: t.$color-ink;
-    font-size: 13px;
+    font-size: t.size(13px);
     font-weight: 700;
     padding: 5px 12px;
     border-radius: t.$radius-pill;
@@ -50,11 +72,11 @@ a {
   display: grid;
   grid-template-columns: 72px 1fr;
   gap: 8px 12px;
-  font-size: 14px;
+  font-size: t.size(14px);
 
   @include bp.down(bp.$phone) {
     grid-template-columns: 62px 1fr;
-    font-size: 13px;
+    font-size: t.size(13px);
   }
 
   dt {

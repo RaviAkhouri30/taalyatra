@@ -1,5 +1,6 @@
 import { type DocumentFields } from '@core/interfaces/i-document-store';
 import { PromotionSchedule } from '@shared/models/promotion-schedule.model';
+import { SiteTheme } from '@shared/models/site-theme.model';
 import { COLLECTION_ITEMS_FIELD } from './collection-expander';
 import { ContentPath } from './content-path.enum';
 import { fieldErrorMessage } from '../forms/field-errors';
@@ -152,5 +153,27 @@ export class PromotionDatesRule implements IPublishRule {
 
   private issue(section: IEditorSection, severity: IssueSeverity, message: string): IPublishIssue {
     return { severity, sectionId: section.id, section: section.title, field: 'Ends on', message };
+  }
+}
+
+/**
+ * A theme whose colours some visitors can't read (0021): each failing pair blocks publishing and
+ * sending for approval, as a missing required field does, and says which colour to change.
+ */
+export class ContrastRule implements IPublishRule {
+  public check(section: IEditorSection, content: DocumentFields): IPublishIssue[] {
+    if (section.path !== ContentPath.SiteTheme) {
+      return [];
+    }
+    return SiteTheme.from(content)
+      .contrast()
+      .filter((result) => !result.passes)
+      .map((result) => ({
+        severity: IssueSeverity.Error,
+        sectionId: section.id,
+        section: section.title,
+        field: result.label,
+        message: `${result.ratio.toString()}:1; it needs ${result.needs.toString()}:1. ${result.advice}`,
+      }));
   }
 }

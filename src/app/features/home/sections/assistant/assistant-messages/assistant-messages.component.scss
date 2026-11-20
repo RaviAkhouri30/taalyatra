@@ -3,8 +3,8 @@
 @use 'tokens' as t;
 @use 'breakpoints' as bp;
 
-$panel: #1c1511;
-$bubble: #2e241d;
+$panel: t.$color-panel;
+$bubble: t.$color-surface-high;
 
 :host {
   flex: 0 1 auto;
@@ -35,7 +35,7 @@ $bubble: #2e241d;
   max-width: 88%;
   padding: 10px 14px;
   border-radius: 16px;
-  font-size: 15px;
+  font-size: t.size(15px);
   line-height: 1.5;
   animation: message-in 0.3s ease both;
 

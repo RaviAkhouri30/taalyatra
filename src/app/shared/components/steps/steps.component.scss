@@ -29,31 +29,31 @@
   padding-top: 20px;
 
   h3 {
-    font-size: 21px;
+    font-size: t.size(21px);
     margin: 12px 0 8px;
 
     @include bp.down(bp.$phone) {
-      font-size: 19px;
+      font-size: t.size(19px);
     }
   }
 
   p {
-    font-size: 16px;
+    font-size: t.size(16px);
 
     @include bp.down(bp.$phone) {
-      font-size: 15px;
+      font-size: t.size(15px);
     }
   }
 }
 
 .num {
   font-family: t.$font-display;
-  font-size: 44px;
-  font-weight: 800;
+  font-size: t.size(44px);
+  font-weight: t.$weight-heading;
   color: t.$color-amber;
   line-height: 1;
 
   @include bp.down(bp.$phone) {
-    font-size: 34px;
+    font-size: t.size(34px);
   }
 }

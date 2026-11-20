@@ -2,6 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { type Observable, combineLatest, defaultIfEmpty, filter, map, tap, merge } from 'rxjs';
 import { AnchorScrollService } from '@core/services/anchor-scroll.service';
+import { RootStyleService } from '@core/services/root-style.service';
 import { IVitalsReporter } from '@core/interfaces/i-vitals-reporter';
 import { APP_PREVIEW, APP_PREVIEW_FRAME } from '@core/tokens/app-preview.token';
 import { ViewModel } from '@shared/base/view-model';
@@ -10,6 +11,7 @@ import { SiteWidget } from '@shared/enums/site-widget.enum';
 import { type ILayoutChrome } from '@shared/interfaces/i-layout-chrome';
 import { type IShellState } from '@shared/interfaces/i-shell-state';
 import { SiteConfigService } from '@shared/services/site-config.service';
+import { SiteThemeService } from '@shared/services/site-theme.service';
 import { SiteVisibilityService } from '@shared/services/site-visibility.service';
 import { SeoService } from '@shared/services/seo.service';
 import { resolvePageLayout, resolvePageMeta } from '@shared/utils/route-layout.util';
@@ -54,6 +56,8 @@ export class SiteShellViewModel extends ViewModel<IShellState> {
   private readonly router = inject(Router);
   private readonly siteConfigService = inject(SiteConfigService);
   private readonly visibilityService = inject(SiteVisibilityService);
+  private readonly themeService = inject(SiteThemeService);
+  private readonly rootStyle = inject(RootStyleService);
   private readonly anchorScroll = inject(AnchorScrollService);
   private readonly seo = inject(SeoService);
   private readonly vitals = inject(IVitalsReporter);
@@ -73,7 +77,14 @@ export class SiteShellViewModel extends ViewModel<IShellState> {
     // defaultIfEmpty: a failed read completes empty; null still settles the shell, so the page is
     // shown without chrome rather than staying hidden.
     const site$ = this.siteConfigService.getSiteConfig().pipe(defaultIfEmpty(null));
-    return combineLatest([site$, this.visibilityService.getVisibility(), navigation$]).pipe(
+    // The theme is applied before the page is shown (settled), so it never shows the old colours
+    // first; it arrives in the same preloaded read as the site config (ADR-0019), so it adds no wait.
+    const theme$ = this.themeService.getStyle().pipe(
+      tap((style) => {
+        this.rootStyle.apply(style);
+      }),
+    );
+    return combineLatest([site$, this.visibilityService.getVisibility(), navigation$, theme$]).pipe(
       tap(([site, visibility, { layout, page }]) => {
         if (site !== null) {
           this.setData({ site, layout, visibility });

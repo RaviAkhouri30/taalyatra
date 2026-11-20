@@ -1,0 +1,43 @@
+/* Fallbacks sized to match Playfair Display and Source Sans 3 (0021, measured in Chrome against Arial as
+   0007 did), so text set in Arial takes the web font's space and the swap doesn't move the page.
+   Loaded with the pair's Google Fonts stylesheet, only when a theme chooses it. */
+
+@font-face {
+  font-family: 'Playfair Display Fallback';
+  font-weight: 400 600;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 99.46%;
+  ascent-override: 108.58%;
+  descent-override: 25.14%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Playfair Display Fallback';
+  font-weight: 700 900;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 95.78%;
+  ascent-override: 112.76%;
+  descent-override: 26.1%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Source Sans 3 Fallback';
+  font-weight: 400 600;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 92.45%;
+  ascent-override: 110.33%;
+  descent-override: 43.27%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Source Sans 3 Fallback';
+  font-weight: 700 900;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 91.58%;
+  ascent-override: 111.38%;
+  descent-override: 43.68%;
+  line-gap-override: 0%;
+}

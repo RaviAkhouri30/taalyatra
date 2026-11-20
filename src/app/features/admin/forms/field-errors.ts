@@ -14,6 +14,7 @@ const MESSAGES: readonly (readonly [string, (detail: unknown) => string])[] = [
   ['ownerAccount', () => 'That’s your own account: you always have full access.'],
   ['listedAccount', () => 'This account is already a manager. Use Change on their card instead.'],
   ['date', () => 'Use a valid date.'],
+  ['colour', () => 'Use # and six letters or digits, for example #e9a552.'],
   ['imageMissing', () => 'Choose a photo.'],
   ['imageDescription', () => 'Describe this photo for people who can’t see it.'],
   ['min', (detail) => `Use a number of at least ${String(numberIn(detail, 'min'))}.`],

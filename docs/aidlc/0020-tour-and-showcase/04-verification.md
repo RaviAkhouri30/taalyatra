@@ -37,3 +37,42 @@ release commits changed only `CHANGELOG.md` and the version.
 ---
 
 **Approval:** ☑ Approved by Ravi Akhouri on 2026-11-20.
+
+## 2.1.1 · Easier admin pass (V6)
+
+The checks below ran on `feat/0020-easier-admin` before its release commits (PR #56, merged as `570f7dd`); the release
+commits changed only `CHANGELOG.md` and the version. The owner verified it locally before merging.
+
+| Check                  | Result                                                                                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm run verify`       | ✔ format, lint (0 warnings), 78 Mermaid diagrams render, typecheck, coverage, function tests, production build                             |
+| Unit tests             | ✔ 1,763 site tests (5 new); 67 function tests                                                                                              |
+| Coverage               | ✔ statements 99.17 %, branches 96.70 %, functions 98.43 %, lines 99.27 %; function 99.1 %                                                  |
+| Build                  | ✔ initial 499.80 kB raw, unchanged; no budget warnings                                                                                     |
+| `npm run e2e`          | ✔ 500 of 501; the one failure was the dashboard's phone screenshot, changed on purpose, re-recorded; then `admin-editor.e2e.ts` 108 of 108 |
+| Screenshots by hand    | ✔ every admin page at desktop, 390 and 360 px wide, as the owner (this found the top bar wrapping at 360 px)                               |
+| `npm run test:rules`   | — Not needed: no rules or data-layer change                                                                                                |
+| `npm run e2e:firebase` | — Not needed: as above                                                                                                                     |
+| Sonar quality gate     | ☐ Not run: needs `SONAR_HOST_URL` and `SONAR_TOKEN`                                                                                        |
+| Lighthouse             | ☐ Not run: the public site's code didn't change                                                                                            |
+
+### Acceptance criteria
+
+| Criterion                                                       | Result                                                                                                                 |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| An empty list says what to add (moved from 2.1.0)               | ✔ `schema-fields.component.spec.ts`                                                                                    |
+| Plain words where the walkthrough found technical ones          | ✔ `publish-page.view-model.spec.ts` (intro for the owner and a manager), `review.model.spec.ts` ("Publish 2 changes?") |
+| Every admin page starts at the same place; no title shown twice | ✔ `editor-page.view-model.spec.ts`, `editor-page.component.spec.ts`; the screenshot baselines                          |
+| The phone bars fit one row                                      | ✔ the dashboard's phone baseline; 360 px checked by hand                                                               |
+
+### Known gaps
+
+- **The full e2e wasn't re-run after the baseline was re-recorded**; only its spec was (108 of 108). The baseline belongs to
+  that spec alone.
+- **No screenshot baseline at 360 px**: the e2e phone size is 390 px. The narrower width was checked by hand.
+- **The manager's view wasn't walked through in the browser**: the fake manager exists only in the e2e seed. Their intro is
+  unit-tested and the manager e2e passed.
+
+---
+
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-20.

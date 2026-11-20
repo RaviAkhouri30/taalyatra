@@ -4,23 +4,23 @@
 
 body {
   margin: 0;
-  background: t.$color-ink;
+  background: t.$color-backdrop;
   color: t.$color-cream;
   font-family: t.$font-body;
-  font-size: 17px;
+  font-size: t.size(17px);
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
 
   @include bp.down(bp.$phone) {
-    font-size: 16px;
+    font-size: t.size(16px);
   }
 
   @include bp.up(bp.$wide) {
-    font-size: 18px;
+    font-size: t.size(18px);
   }
 
   @include bp.up(bp.$ultra) {
-    font-size: 20px;
+    font-size: t.size(20px);
   }
 }
 

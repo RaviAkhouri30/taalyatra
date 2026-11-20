@@ -2,11 +2,11 @@
 @use 'tokens' as t;
 @use 'breakpoints' as bp;
 
-$panel: #1c1511;
-$panel-raised: #271e18;
-$bubble: #2e241d;
-$edge: #4a3a2c;
-$status: #b4a491;
+$panel: t.$color-panel;
+$panel-raised: t.$color-panel-raised;
+$bubble: t.$color-surface-high;
+$edge: t.$color-edge;
+$status: t.$color-muted-soft;
 $ease-pop: cubic-bezier(0.16, 1, 0.3, 1);
 
 :host {
@@ -132,16 +132,16 @@ $ease-pop: cubic-bezier(0.16, 1, 0.3, 1);
   b {
     display: block;
     font-family: t.$font-display;
-    font-size: 17px;
+    font-size: t.size(17px);
     line-height: 1.2;
-    color: #fffdf8;
+    color: t.$color-paper;
   }
 
   span {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 12px;
+    font-size: t.size(12px);
     font-weight: 500;
     color: $status;
   }
@@ -168,9 +168,9 @@ $ease-pop: cubic-bezier(0.16, 1, 0.3, 1);
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: #5e9e6b;
+  background: t.$color-online;
   display: inline-block;
-  box-shadow: 0 0 0 3px rgb(94 158 107 / 18%);
+  box-shadow: 0 0 0 3px t.with-alpha(t.$color-online, 18%);
 }
 
 .qr {
@@ -193,7 +193,7 @@ $ease-pop: cubic-bezier(0.16, 1, 0.3, 1);
     border-radius: t.$radius-pill;
     padding: 6px 14px;
     font-family: inherit;
-    font-size: 13px;
+    font-size: t.size(13px);
     font-weight: 500;
     cursor: pointer;
     min-height: 38px;
@@ -228,12 +228,12 @@ $ease-pop: cubic-bezier(0.16, 1, 0.3, 1);
     border-radius: t.$radius-pill;
     padding: 10px 16px;
     font: inherit;
-    font-size: 15px;
+    font-size: t.size(15px);
     min-height: 46px;
     box-sizing: border-box;
 
     &::placeholder {
-      color: #8c7e6c;
+      color: t.$color-muted-dim;
     }
 
     // The amber border is the focus indicator (design).
@@ -244,7 +244,7 @@ $ease-pop: cubic-bezier(0.16, 1, 0.3, 1);
 
     // 16px stops iOS Safari zooming into the field on focus.
     @include bp.down(bp.$phone) {
-      font-size: 16px;
+      font-size: t.size(16px);
     }
   }
 
@@ -262,7 +262,7 @@ $ease-pop: cubic-bezier(0.16, 1, 0.3, 1);
     flex: none;
 
     &:hover {
-      background: #fffdf8;
+      background: t.$color-paper;
     }
   }
 }
@@ -274,7 +274,7 @@ $ease-pop: cubic-bezier(0.16, 1, 0.3, 1);
   background: $panel-raised;
   color: t.$color-muted;
   border-top: 1px solid t.$color-line;
-  font-size: 13px;
+  font-size: t.size(13px);
   font-weight: 600;
   letter-spacing: 0.01em;
 

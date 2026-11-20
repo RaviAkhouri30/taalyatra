@@ -32,8 +32,8 @@
   }
 
   h2 {
-    font-size: 52px;
-    font-weight: 800;
+    font-size: t.size(52px);
+    font-weight: t.$weight-heading;
     max-width: 760px;
     margin-bottom: 40px;
   }
@@ -55,7 +55,7 @@
   padding: 30px;
 
   h3 {
-    font-size: 26px;
+    font-size: t.size(26px);
     color: t.$color-amber;
     margin-bottom: 10px;
   }

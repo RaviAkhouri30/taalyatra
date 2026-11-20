@@ -19,7 +19,7 @@
 
   > span {
     display: block;
-    font-size: 12px;
+    font-size: t.size(12px);
     font-weight: 700;
     color: t.$color-muted;
     margin-bottom: 4px;
@@ -41,7 +41,7 @@
   background: t.$color-danger-tint;
   border: 1px solid t.$color-danger-line;
   color: t.$color-danger-text;
-  font-size: 13.5px;
+  font-size: t.size(13.5px);
   padding: 9px 12px;
   border-radius: 9px;
 }
@@ -50,7 +50,7 @@
   background: t.$color-surface;
   border: 1px solid t.$color-field-border;
   color: t.$color-cream;
-  font-size: 13.5px;
+  font-size: t.size(13.5px);
   line-height: 1.5;
   padding: 11px 13px;
   border-radius: 11px;
@@ -67,7 +67,7 @@
 }
 
 .llink {
-  font-size: 13.5px;
+  font-size: t.size(13.5px);
   color: t.$color-muted;
   text-decoration: underline;
 
@@ -77,6 +77,6 @@
 }
 
 .lnote {
-  font-size: 13px;
+  font-size: t.size(13px);
   color: t.$color-muted-faint;
 }

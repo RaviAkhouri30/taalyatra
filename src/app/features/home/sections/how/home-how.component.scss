@@ -1,8 +1,10 @@
+@use 'tokens' as t;
+
 :host {
   display: block;
 }
 
 .title {
-  font-weight: 800;
+  font-weight: t.$weight-heading;
   max-width: 720px;
 }

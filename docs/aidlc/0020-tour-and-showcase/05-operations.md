@@ -17,3 +17,16 @@
 ---
 
 **Approval:** ☑ Approved by Ravi Akhouri on 2026-11-20.
+
+## 2.1.1 · Easier admin pass (V6)
+
+- **Version:** 2.1.1, merged by the owner on 2026-11-20 (PR #56, `570f7dd`). `npm run release:patch` →
+  `chore(release): v2.1.1`, tag `v2.1.1`.
+- **CHANGELOG entry:** ☑ `## [2.1.1] - 2026-11-20`.
+- **Deploy notes:** deploys with the merge. Admin area only; no rules, data, settings or dependencies.
+- **Monitoring:** nothing new to watch.
+- **Rollback:** redeploy tag `v2.1.0`. Nothing stored changes.
+
+---
+
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-20.

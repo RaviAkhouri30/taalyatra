@@ -174,9 +174,12 @@ classDiagram
   class DraftService { +drafts() · +document(path) · +save() · +saveAll() · +discard() }
   class PublishService { +publish(drafts) · +history() · +restore(record) }
   class PublishReport { +errors · +warnings · +canPublish }
-  class IPublishRule { <<interface>> SchemaRule · PromotionDatesRule · PlaceholderRule }
+  class IPublishRule { <<interface>> SchemaRule · PromotionDatesRule · ContrastRule · PlaceholderRule }
   class IEditorSection { +path · +anchor · +fields: FieldSchema[] }
   class SiteVisibilityService { +getVisibility() }
+  class SiteThemeService { +getStyle() · loads SiteTheme only when a theme is stored }
+  class SiteTheme { +variables() · +contrast() · +fontPair }
+  class RootStyleService { +apply(IRootStyle) }
   class PromotionSchedule { +status(now) · +isActive(now) }
   IDocumentStore <|.. FirebaseDocumentStore
   IDocumentStore <|.. FakeDocumentStore
@@ -193,6 +196,10 @@ classDiagram
   EditorPageViewModel --> DraftService
   PublishPageViewModel --> PublishService
   SiteShellViewModel --> SiteVisibilityService
+  SiteShellViewModel --> SiteThemeService
+  SiteShellViewModel --> RootStyleService
+  SiteThemeService ..> SiteTheme : lazy chunk
+  IPublishRule ..> SiteTheme
   SiteConfigModel ..> PromotionSchedule
 ```
 

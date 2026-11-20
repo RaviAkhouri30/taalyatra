@@ -1,29 +1,22 @@
-/** Colours and size of the diya icon. */
+/** Which of the design's two diya colourings an icon uses (its colours are in the icon's styles). */
+export enum DiyaVariant {
+  /** Clay bowl, dark rim: the card promo on the inner pages. */
+  Card = 'card',
+  /** Gold bowl, amber rim: the pill promo on the home page. */
+  Pill = 'pill',
+}
+
+/** Size and colouring of the diya icon. */
 export interface DiyaPalette {
   readonly size: number;
-  readonly flame: string;
-  readonly core: string;
-  readonly bowl: string;
-  readonly rim: string;
+  readonly variant: DiyaVariant;
 }
 
 /** Diya icon in the card promo (inner pages), from the design. */
-export const CARD_DIYA: DiyaPalette = {
-  size: 22,
-  flame: '#FFD79A',
-  core: '#C96B3C',
-  bowl: '#C96B3C',
-  rim: '#8A4A28',
-};
+export const CARD_DIYA: DiyaPalette = { size: 22, variant: DiyaVariant.Card };
 
 /** Diya icon in the pill promo (home page), from the design. */
-export const PILL_DIYA: DiyaPalette = {
-  size: 17,
-  flame: '#FFD79A',
-  core: '#C96B3C',
-  bowl: '#FFD79A',
-  rim: '#E9A552',
-};
+export const PILL_DIYA: DiyaPalette = { size: 17, variant: DiyaVariant.Pill };
 
 /** Number of sparks drawn by each promo style (must match the SCSS spark lists). */
 const CARD_SPARK_COUNT = 6;

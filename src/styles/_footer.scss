@@ -5,14 +5,14 @@
 @mixin link {
   display: block;
   padding: 6px 0;
-  font-size: 15px;
+  font-size: t.size(15px);
 
   &:hover {
     color: t.$color-amber;
   }
 
   @include bp.down(bp.$phone) {
-    font-size: 14px;
+    font-size: t.size(14px);
   }
 }
 

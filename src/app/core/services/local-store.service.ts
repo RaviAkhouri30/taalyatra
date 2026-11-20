@@ -27,4 +27,13 @@ export class LocalStoreService {
       // Storage blocked or full: this data is a convenience, so losing it is acceptable.
     }
   }
+
+  /** Forgets a value; silently does nothing when storage is unavailable. */
+  public remove(key: string): void {
+    try {
+      this.window?.localStorage.removeItem(key);
+    } catch {
+      // Storage blocked: nothing was stored, so there's nothing to forget.
+    }
+  }
 }

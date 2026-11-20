@@ -19,7 +19,7 @@ const INPUT_TYPES: ReadonlyMap<FieldKind, string> = new Map([
 ]);
 
 /**
- * One labelled editor field (text, link, phone, email, date, number, switch, choice or image), with its
+ * One labelled editor field (text, link, phone, email, date, colour, number, switch, choice or image), with its
  * hint, error and character counter tied to it for screen readers (WCAG 2.2 AA).
  */
 /** Share of a field's limit from which its character counter shows. */

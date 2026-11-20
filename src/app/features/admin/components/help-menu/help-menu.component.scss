@@ -15,7 +15,7 @@
   background: transparent;
   color: t.$color-cream;
   font: inherit;
-  font-size: 14px;
+  font-size: t.size(14px);
   font-weight: 600;
   cursor: pointer;
 
@@ -55,7 +55,7 @@
     background: transparent;
     color: t.$color-cream;
     font: inherit;
-    font-size: 15px;
+    font-size: t.size(15px);
     text-align: left;
     text-decoration: none;
     cursor: pointer;

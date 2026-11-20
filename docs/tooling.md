@@ -8,7 +8,7 @@
 | Vitest        | `angular.json → test`                                                  | Coverage ≥ 90 % (statements, branches, functions, lines). Reports in `coverage/taal-yatra/` (html, lcov)                                                              |
 | Playwright    | `playwright.config.ts`                                                 | Specs `e2e/specs/*.e2e.ts` on desktop Chrome, iPad, Pixel 7. Screenshot diff ≤ 1 %. axe WCAG 2.2 AA                                                                   |
 | SonarQube     | `sonar-project.properties` (scanner runs via pinned `npx @sonar/scan`) | Quality gate (reads `coverage/taal-yatra/lcov.info` and `reports/eslint-report.json`)                                                                                 |
-| Angular build | `angular.json → build`                                                 | Budgets (initial 500 kB warn / 1 MB error, component style 4/8 kB), `autoCsp`                                                                                         |
+| Angular build | `angular.json → build`                                                 | Budgets (initial 510 kB warn since 2.2.0, ADR-0019 / 1 MB error, component style 4/8 kB), `autoCsp`                                                                   |
 
 ## Running SonarQube
 

@@ -52,23 +52,23 @@
 }
 
 .title {
-  font-size: 40px;
-  font-weight: 800;
+  font-size: t.size(40px);
+  font-weight: t.$weight-heading;
   margin: 6px 0 14px;
 
   @include bp.down(bp.$phone) {
-    font-size: 28px;
+    font-size: t.size(28px);
   }
 }
 
 .text {
-  font-size: 17px;
+  font-size: t.size(17px);
   color: t.$color-muted;
   line-height: 1.6;
   max-width: 48ch;
 
   @include bp.down(bp.$phone) {
-    font-size: 15px;
+    font-size: t.size(15px);
   }
 }
 

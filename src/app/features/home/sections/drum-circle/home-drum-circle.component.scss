@@ -16,31 +16,31 @@
 
 // Design `.h2.hxl`: a larger section title (rules ordered as in the prototype's cascade).
 .title {
-  font-weight: 800;
-  font-size: 54px;
+  font-weight: t.$weight-heading;
+  font-size: t.size(54px);
 
   @include bp.desktop-short {
-    font-size: 44px;
+    font-size: t.size(44px);
   }
 
   @include bp.down(bp.$tablet) {
-    font-size: 40px;
+    font-size: t.size(40px);
   }
 
   @include bp.down(bp.$phone) {
-    font-size: 32px;
+    font-size: t.size(32px);
   }
 
   @include bp.down(bp.$phone-sm) {
-    font-size: 24px;
+    font-size: t.size(24px);
   }
 
   @include bp.up(bp.$wide) {
-    font-size: 64px;
+    font-size: t.size(64px);
   }
 
   @include bp.up(bp.$ultra) {
-    font-size: 78px;
+    font-size: t.size(78px);
   }
 }
 
@@ -72,25 +72,25 @@
 
   b {
     display: block;
-    font-size: 11px;
+    font-size: t.size(11px);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: t.$color-amber;
     margin-bottom: 6px;
 
     @include bp.down(bp.$phone) {
-      font-size: 10px;
+      font-size: t.size(10px);
     }
   }
 
   span {
     font-family: t.$font-display;
-    font-size: 21px;
+    font-size: t.size(21px);
     font-weight: 700;
     line-height: 1.2;
 
     @include bp.down(bp.$phone) {
-      font-size: 18px;
+      font-size: t.size(18px);
     }
   }
 }
@@ -108,7 +108,7 @@
 }
 
 .about-title {
-  font-size: 24px;
+  font-size: t.size(24px);
   margin-bottom: 14px;
 }
 
@@ -118,7 +118,7 @@
 }
 
 .list-title {
-  font-size: 16px;
+  font-size: t.size(16px);
   margin: 22px 0 10px;
 }
 
@@ -129,12 +129,12 @@
 // Small tags, so the lists stay compact beside the picture.
 .chip {
   display: inline-block;
-  border: 1px solid #7e8a55;
+  border: 1px solid t.$color-sage-deep;
   border-radius: t.$radius-pill;
   padding: 3px 10px;
-  font-size: 12.5px;
+  font-size: t.size(12.5px);
   margin: 0 6px 8px 0;
-  color: #d7dfbe;
+  color: t.$color-sage-pale;
 }
 
 .text a {
@@ -170,7 +170,7 @@
   border-top: 1px solid t.$color-line;
 
   b {
-    font-size: 12px;
+    font-size: t.size(12px);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: t.$color-amber;
@@ -181,7 +181,7 @@
     border: 1px solid t.$color-bronze;
     border-radius: t.$radius-pill;
     padding: 6px 15px;
-    font-size: 14px;
+    font-size: t.size(14px);
     font-weight: 600;
 
     &:hover {
@@ -197,7 +197,7 @@
 }
 
 .flow-title {
-  font-size: 28px;
+  font-size: t.size(28px);
 }
 
 .flow {

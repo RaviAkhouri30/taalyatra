@@ -3,6 +3,7 @@ import { type IEditorSection } from './i-editor-section';
 import { type IPublishIssue } from './i-publish-issue';
 import { IssueSeverity } from './issue-severity.enum';
 import {
+  ContrastRule,
   ImageInLibraryRule,
   type IPublishRule,
   OneFeaturedShowRule,
@@ -19,6 +20,7 @@ export class PublishReport {
     new OneFeaturedShowRule(),
     new ImageInLibraryRule(),
     new PromotionDatesRule(),
+    new ContrastRule(),
     new PlaceholderRule(),
   ];
 

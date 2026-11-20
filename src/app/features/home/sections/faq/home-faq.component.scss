@@ -21,7 +21,7 @@
 }
 
 .title {
-  font-weight: 800;
+  font-weight: t.$weight-heading;
 }
 
 details {
@@ -36,13 +36,13 @@ summary {
   justify-content: space-between;
   gap: 24px;
   font-family: t.$font-display;
-  font-size: 20px;
+  font-size: t.size(20px);
   font-weight: 700;
   min-height: 48px;
   align-items: center;
 
   @include bp.down(bp.$phone) {
-    font-size: 18px;
+    font-size: t.size(18px);
   }
 
   &::-webkit-details-marker {
@@ -52,7 +52,7 @@ summary {
   &::after {
     content: '+';
     color: t.$color-amber;
-    font-size: 30px;
+    font-size: t.size(30px);
     line-height: 1;
   }
 }
@@ -64,9 +64,9 @@ details[open] summary::after {
 details p {
   margin: 12px 0 0;
   max-width: 62ch;
-  font-size: 16px;
+  font-size: t.size(16px);
 
   @include bp.down(bp.$phone) {
-    font-size: 15px;
+    font-size: t.size(15px);
   }
 }

@@ -1,4 +1,6 @@
 // Values from the design prototype (Team, Shows, Videos, Achievements closing CTAs).
+@use 'tokens' as t;
+
 :host {
   display: block;
 }
@@ -8,12 +10,12 @@
 }
 
 .title {
-  font-size: 52px;
-  font-weight: 800;
+  font-size: t.size(52px);
+  font-weight: t.$weight-heading;
   margin-bottom: 16px;
 
   :host(.medium) & {
-    font-size: 38px;
+    font-size: t.size(38px);
     margin-bottom: 14px;
   }
 }

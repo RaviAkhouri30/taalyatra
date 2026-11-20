@@ -39,21 +39,21 @@
   b {
     display: block;
     font-family: t.$font-display;
-    font-size: 16px;
+    font-size: t.size(16px);
     margin-bottom: 3px;
 
     @include bp.down(bp.$phone) {
-      font-size: 15px;
+      font-size: t.size(15px);
     }
   }
 
   p {
-    font-size: 13.5px;
+    font-size: t.size(13.5px);
     line-height: 1.5;
     color: t.$color-muted;
 
     @include bp.down(bp.$phone) {
-      font-size: 12.5px;
+      font-size: t.size(12.5px);
     }
   }
 }
@@ -63,7 +63,7 @@
   width: 40px;
   height: 40px;
   border-radius: 11px;
-  background: #2e241d;
+  background: t.$color-surface-high;
   color: t.$color-amber;
   display: flex;
   align-items: center;

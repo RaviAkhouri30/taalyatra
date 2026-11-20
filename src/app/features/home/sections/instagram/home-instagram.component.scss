@@ -40,12 +40,12 @@
   }
 
   p {
-    font-size: 14px;
+    font-size: t.size(14px);
     line-height: 1.5;
     color: t.$color-muted;
 
     @include bp.down(bp.$phone) {
-      font-size: 13px;
+      font-size: t.size(13px);
     }
   }
 }
@@ -72,7 +72,7 @@
   width: 32px;
   height: 32px;
   border-radius: 10px;
-  background: rgb(23 18 16 / 72%);
+  background: t.with-alpha(t.$color-ink, 72%);
   color: t.$color-amber-soft;
   display: flex;
   align-items: center;

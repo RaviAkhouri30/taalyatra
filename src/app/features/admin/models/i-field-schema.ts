@@ -10,7 +10,7 @@ interface IFieldBase {
   readonly hint?: string;
 }
 
-/** Single- or multi-line text, a link, a phone number, an email address or a date. */
+/** Single- or multi-line text, a link, a phone number, an email address, a date or a colour. */
 export interface ITextFieldSchema extends IFieldBase {
   readonly kind:
     | FieldKind.Text
@@ -18,7 +18,8 @@ export interface ITextFieldSchema extends IFieldBase {
     | FieldKind.Url
     | FieldKind.Tel
     | FieldKind.Email
-    | FieldKind.Date;
+    | FieldKind.Date
+    | FieldKind.Colour;
   /** Publishing is blocked while it's empty. */
   readonly required?: boolean;
   /** The most characters stored (matches `firestore.rules`). Not used for dates. */
