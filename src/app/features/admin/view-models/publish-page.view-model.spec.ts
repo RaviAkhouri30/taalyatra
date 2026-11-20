@@ -14,6 +14,8 @@ import {
 import { PUBLISH_INTRO } from '../models/publish-page.model';
 import { BACKUP_MESSAGES } from './backup-download';
 import { PUBLISH_MESSAGES, PublishPageViewModel } from './publish-page.view-model';
+import { SELF_APPROVALS_SEEN_KEY } from '../models/self-approvals';
+import { DeviceStoreService } from '../services/device-store.service';
 
 describe('PublishPageViewModel', () => {
   const heroDraft = {
@@ -208,7 +210,7 @@ describe('PublishPageViewModel', () => {
 
     it('should publish what they may, and send the rest for approval with their note', () => {
       const { model, show, store } = setUp(seed, MANAGER);
-      expect(model.plan()).toEqual({ publish: ['home/offer'], send: ['home/hero'] });
+      expect(model.plan()).toEqual({ publish: ['home/offer'], send: ['home/hero'], approve: [] });
       expect(model.buttonText()).toBe('Publish 1 change, send 1 change for approval');
       expect(model.isOwner()).toBe(false);
 
@@ -247,5 +249,45 @@ describe('PublishPageViewModel', () => {
       expect(model.confirmButtonText()).toBe('Yes, publish');
       expect(model.confirmText()).toContain('Send 1 change to the owner for approval?');
     });
+
+    it('should approve and publish their own changes with a title and note, when they can (0023)', () => {
+      const canApprove = {
+        ...seed,
+        'roles/manager': { ...seed['roles/manager'], canApprove: true },
+      };
+      const { model, show, store } = setUp(canApprove, MANAGER);
+      expect(model.plan()).toEqual({ publish: ['home/offer'], send: [], approve: ['home/hero'] });
+      expect(model.confirmButtonText()).toBe('Yes, approve and publish');
+
+      model.approvalTitle.setValue(' New hero ');
+      model.approvalNote.setValue('For Diwali');
+      model.publish();
+
+      const record = [...store.documents].find(([path]) => path.startsWith('publishes/'));
+      expect(record?.[1]).toMatchObject({
+        changed: ['home/offer', 'home/hero'],
+        selfApproval: { title: 'New hero', note: 'For Diwali' },
+      });
+      expect(store.documents.get('selfApprovals/manager')).toMatchObject({
+        paths: record?.[1]['changed'],
+      });
+      expect([...store.documents.keys()].some((path) => path.startsWith('approvals/'))).toBe(false);
+      expect(show).toHaveBeenCalledWith(PUBLISH_MESSAGES.approved);
+      expect(model.approvalTitle.value).toBe('');
+    });
+  });
+
+  it('should mark the self-approvals as seen when the owner opens the page (0023 D3)', () => {
+    const seed = {
+      'publishes/b': {
+        publishedAt: 'b',
+        changed: ['home/offer'],
+        before: {},
+        selfApproval: { title: '', note: '' },
+      },
+    };
+    setUp(seed);
+
+    expect(TestBed.inject(DeviceStoreService).get(SELF_APPROVALS_SEEN_KEY)).toBe('b');
   });
 });

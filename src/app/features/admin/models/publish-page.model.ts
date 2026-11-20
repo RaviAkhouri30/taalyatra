@@ -26,6 +26,8 @@ export interface IHistoryEntry {
   readonly newest: boolean;
   /** Whether this account may go back to before it (0022 D4). */
   readonly canGoBack: boolean;
+  /** A self-approval's title and note (0023), or `null` for any other publish. */
+  readonly approval: { readonly title: string; readonly note: string } | null;
 }
 
 /**
@@ -53,16 +55,22 @@ export function canGoBackOver(
 /**
  * @param record A past publish.
  * @param viewerUid The signed-in account.
- * @returns e.g. "by you", "by m@b.co", "by you, approved from m@b.co".
+ * @returns e.g. "by you", "by m@b.co", "by you, approved from m@b.co", "self-approved by m@b.co".
  */
 function whoPublished(record: IPublishRecord, viewerUid: string): string {
   // Records from before 2.0.0 aren't signed: only the owner could publish then.
   const by =
     record.by === undefined || record.by === viewerUid ? 'you' : (record.byEmail ?? 'the owner');
+  if (record.selfApproval !== undefined) {
+    return `self-approved by ${by}`;
+  }
   return record.approvedFrom === undefined
     ? `by ${by}`
     : `by ${by}, approved from ${record.approvedFrom}`;
 }
+
+/** The title a self-approval shows: the manager's, or "Self-approved" when they gave none (0023 D2). */
+export const SELF_APPROVED_TITLE = 'Self-approved';
 
 /** The review & publish page: what will change, who changed it, and the history. */
 export class PublishPageModel {
@@ -90,6 +98,13 @@ export class PublishPageModel {
       who: whoPublished(record, review.permissions.uid),
       newest: index === 0,
       canGoBack: canGoBackOver(review.permissions, history, index),
+      approval:
+        record.selfApproval === undefined
+          ? null
+          : {
+              title: record.selfApproval.title || SELF_APPROVED_TITLE,
+              note: record.selfApproval.note,
+            },
     }));
   }
 

@@ -176,3 +176,9 @@
     color: t.$color-cream;
   }
 }
+
+// Managers' self-approvals since the owner last looked (0023 D3).
+.db-count-line {
+  color: t.$color-amber-soft;
+  font-weight: 700;
+}

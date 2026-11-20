@@ -37,6 +37,8 @@ export interface IRole {
   /** Pages with a setting; any other page needs approval. */
   readonly pages: ReadonlyMap<EditorTab, PageAccess>;
   readonly uploads: boolean;
+  /** Approves their own changes on pages that need approval (0023); missing means no. */
+  readonly canApprove?: boolean;
   /** The owner's areas they were given (0022); missing means none, as in a stored role. */
   readonly areas?: ReadonlySet<ManagerArea>;
   /** When the owner added them (ISO 8601). */
@@ -91,6 +93,7 @@ export function toRole(fields: DocumentFields | null): IRole | null {
         pages: toPages(entries.get('pages')),
         // Only an explicit yes allows uploads: the rules check for `true`.
         uploads: entries.get('uploads') === true,
+        canApprove: entries.get('canApprove') === true,
         areas: toAreas(entries.get('areas')),
         addedAt,
       }
@@ -106,6 +109,7 @@ export function roleFields(role: IRole): DocumentFields {
     email: role.email,
     pages: Object.fromEntries(role.pages),
     uploads: role.uploads,
+    canApprove: role.canApprove === true,
     areas: Object.fromEntries(
       Object.values(ManagerArea).map((area) => [area, role.areas?.has(area) === true]),
     ),

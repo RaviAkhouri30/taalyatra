@@ -13,10 +13,12 @@
           <app-approval-card
             [view]="view"
             [owner]="panel?.owner ?? false"
+            [canApproveOwn]="panel?.canApproveOwn ?? false"
             [busy]="model.busy()"
             (approved)="model.approve(view.approval)"
             (sentBack)="model.sendBack(view.approval, $event)"
             (withdrawn)="model.withdraw(view.approval)"
+            (approvedOwn)="model.approveOwn(view.approval)"
             (dismissed)="model.dismiss(view.approval)"
           />
         </li>

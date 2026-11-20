@@ -31,6 +31,8 @@ export interface IPublishPlan {
   readonly publish: readonly string[];
   /** Documents sent to the owner for approval. */
   readonly send: readonly string[];
+  /** Documents a manager who can approve approves themselves, going live with a record (0023). */
+  readonly approve: readonly string[];
 }
 
 /** What Review & publish and the publish bar know when they open. */
@@ -132,13 +134,17 @@ export class Review {
    */
   public planFor(selected: ReadonlySet<string>): IPublishPlan {
     const chosen = this.changes.filter((change) => selected.has(change.path));
+    const needApproval = chosen
+      .filter((change) => change.action === DraftAction.Approval)
+      .map((change) => change.path);
+    // A manager who can approve gives the approval themselves instead of sending it (0023 D1).
+    const approveOwn = this.input.permissions.canApproveOwn;
     return {
       publish: chosen
         .filter((change) => change.action === DraftAction.Publish)
         .map((change) => change.path),
-      send: chosen
-        .filter((change) => change.action === DraftAction.Approval)
-        .map((change) => change.path),
+      send: approveOwn ? [] : needApproval,
+      approve: approveOwn ? needApproval : [],
     };
   }
 
@@ -168,6 +174,11 @@ export function changesWord(count: number): string {
  * @returns The button's label.
  */
 export function planButtonText(plan: IPublishPlan): string {
+  if (plan.approve.length > 0) {
+    return plan.publish.length === 0
+      ? `Approve and publish ${changesWord(plan.approve.length)}`
+      : `Publish ${changesWord(plan.publish.length)}, approve and publish ${String(plan.approve.length)}`;
+  }
   if (plan.send.length === 0) {
     return 'Publish changes';
   }
@@ -188,6 +199,11 @@ export function planConfirmText(plan: IPublishPlan): string {
     ...(plan.send.length > 0
       ? [
           `Send ${changesWord(plan.send.length)} to the owner for approval? You can’t change them until they answer, unless you withdraw them.`,
+        ]
+      : []),
+    ...(plan.approve.length > 0
+      ? [
+          `Approve ${changesWord(plan.approve.length)} yourself and publish ${plan.approve.length === 1 ? 'it' : 'them'}? The owner sees your title and note in the history.`,
         ]
       : []),
   ];

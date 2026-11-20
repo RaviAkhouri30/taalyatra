@@ -13,6 +13,8 @@ export interface IRoleControls {
   /** One setting per editor page, by tab. */
   readonly pages: FormRecord<FormControl<PageAccess>>;
   readonly uploads: FormControl<boolean>;
+  /** Approves their own changes on pages that need approval (0023). */
+  readonly canApprove: FormControl<boolean>;
   /** One switch per owner's area, by area (0022). */
   readonly areas: FormRecord<FormControl<boolean>>;
 }
@@ -23,6 +25,7 @@ export interface IRoleFormValue {
   readonly email: string;
   readonly pages: ReadonlyMap<EditorTab, PageAccess>;
   readonly uploads: boolean;
+  readonly canApprove: boolean;
   readonly areas: ReadonlySet<ManagerArea>;
 }
 
@@ -66,6 +69,8 @@ export function createRoleForm(
     pages: new FormRecord(pageControls()),
     // On by default (D4); deleting photos stays with the owner whatever this says.
     uploads: new FormControl(true, { nonNullable: true }),
+    // Off by default (0023 D1): their changes wait for the owner until the owner says otherwise.
+    canApprove: new FormControl(false, { nonNullable: true }),
     areas: new FormRecord(areaControls()),
   });
 }
@@ -91,6 +96,7 @@ export function fillRoleForm(form: FormGroup<IRoleControls>, manager: IManager):
     email: manager.role.email,
     pages: Object.fromEntries(PAGE_ROWS.map((row) => [row.tab, pageAccess(manager.role, row.tab)])),
     uploads: manager.role.uploads,
+    canApprove: manager.role.canApprove === true,
     areas: Object.fromEntries(
       AREA_ROWS.map((row) => [row.area, manager.role.areas?.has(row.area) === true]),
     ),
@@ -103,7 +109,7 @@ export function fillRoleForm(form: FormGroup<IRoleControls>, manager: IManager):
  * @returns What it holds, trimmed, with every page's setting.
  */
 export function roleFormValue(form: FormGroup<IRoleControls>): IRoleFormValue {
-  const { uid, email, pages, uploads, areas } = form.getRawValue();
+  const { uid, email, pages, uploads, canApprove, areas } = form.getRawValue();
   const settings = new Map(Object.entries(pages));
   const switches = new Map(Object.entries(areas));
   return {
@@ -113,6 +119,7 @@ export function roleFormValue(form: FormGroup<IRoleControls>): IRoleFormValue {
       PAGE_ROWS.map((row) => [row.tab, settings.get(row.tab) ?? PageAccess.Approval] as const),
     ),
     uploads,
+    canApprove,
     areas: new Set(
       AREA_ROWS.filter((row) => switches.get(row.area) === true).map((row) => row.area),
     ),
@@ -129,6 +136,7 @@ export function roleOf(value: IRoleFormValue, addedAt: string): IRole {
     email: value.email,
     pages: value.pages,
     uploads: value.uploads,
+    canApprove: value.canApprove,
     areas: value.areas,
     addedAt,
   };

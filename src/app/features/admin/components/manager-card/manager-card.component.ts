@@ -34,6 +34,10 @@ export class ManagerCardComponent {
   protected readonly uploads = computed(() =>
     this.manager().role.uploads ? 'Can upload' : 'Can’t upload',
   );
+  /** Whether they approve their own changes (0023). */
+  protected readonly approving = computed(() =>
+    this.manager().role.canApprove === true ? 'Approves their own changes' : 'Sends them to you',
+  );
   /** The owner's areas they have, or "None" (0022). */
   protected readonly areas = computed(() => areasText(this.manager().role) || 'None');
   protected readonly headingId = computed(() => `mgr-${this.manager().uid}`);

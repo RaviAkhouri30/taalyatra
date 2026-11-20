@@ -32,6 +32,7 @@ export const APPROVAL_MESSAGES = {
   approved: 'Approved and published. Visitors see it on their next visit.',
   sentBack: 'Sent back with your reason. The manager can carry on editing.',
   withdrawn: 'Withdrawn. You can edit those pages again.',
+  approveOwn: 'Withdrawn and ticked below. Add a title and a note, then approve and publish them.',
   dismissed: 'Cleared from your list.',
   failed: 'Something went wrong. Nothing changed; please try again.',
 } as const;
@@ -98,6 +99,18 @@ export class ApprovalsPanelViewModel extends ViewModel<IApprovalsPanel> {
     this.commands.next({
       run: () => this.approvals.withdraw(approval),
       done: APPROVAL_MESSAGES.withdrawn,
+    });
+  }
+
+  /**
+   * Takes a waiting request back so the manager approves it themselves (0023 D4): withdrawn, its
+   * changes are theirs again and ticked on Review & publish, ready to approve and publish.
+   * @param approval The manager's waiting request.
+   */
+  public approveOwn(approval: IApproval): void {
+    this.commands.next({
+      run: () => this.approvals.withdraw(approval),
+      done: APPROVAL_MESSAGES.approveOwn,
     });
   }
 

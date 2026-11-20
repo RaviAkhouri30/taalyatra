@@ -16,4 +16,15 @@ export interface IPublishRecord {
   readonly byEmail?: string;
   /** For an approved change, the email of the manager who sent it. */
   readonly approvedFrom?: string;
+  /** For a change its manager approved themselves (0023): their title and note, each may be empty. */
+  readonly selfApproval?: ISelfApproval;
 }
+
+/** A manager's own approval of their changes (0023). */
+export interface ISelfApproval {
+  readonly title: string;
+  readonly note: string;
+}
+
+/** Where a manager's self-approval marker is kept; the rules check it with the commit (0023 D5). */
+export const SELF_APPROVALS_COLLECTION = 'selfApprovals';

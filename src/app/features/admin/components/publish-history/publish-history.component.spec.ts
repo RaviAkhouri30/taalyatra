@@ -9,6 +9,7 @@ const entry = (id: string, newest: boolean, canGoBack = true): IHistoryEntry => 
   who: 'by you',
   newest,
   canGoBack,
+  approval: null,
 });
 
 describe('PublishHistoryComponent', () => {
@@ -80,5 +81,17 @@ describe('PublishHistoryComponent', () => {
     expect(element.textContent).toContain('those that changed only your pages');
     expect(element.querySelectorAll('button')).toHaveLength(1);
     expect(element.querySelector('.ph-ask')?.textContent).toContain('Ask the owner');
+  });
+
+  it('should show a self-approval’s title and note under its entry (0023)', () => {
+    const fixture = TestBed.createComponent(PublishHistoryComponent);
+    fixture.componentRef.setInput('entries', [
+      { ...entry('a', true), approval: { title: 'Diwali', note: 'New dates' } },
+    ]);
+    fixture.detectChanges();
+
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('.ph-approval')?.textContent,
+    ).toMatch(/Diwali\s+— New dates/);
   });
 });

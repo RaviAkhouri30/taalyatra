@@ -49,6 +49,7 @@ describe('RolesService', () => {
       email: 'm@b.c',
       pages: { team: 'hidden' },
       uploads: false,
+      canApprove: false,
       areas: { leads: false, visits: false, backups: false, goingBack: false },
       addedAt: '2026-11-19T10:00:00.000Z',
     });

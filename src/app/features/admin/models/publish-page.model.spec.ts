@@ -68,4 +68,30 @@ describe('PublishPageModel', () => {
     ]);
     expect(model.history.map((entry) => entry.newest)).toEqual([true, false, false, false]);
   });
+
+  it('should show a self-approval with its title and note, or "Self-approved" (0023)', () => {
+    const record = { publishedAt: '2026-11-21T10:00:00.000Z', changed: ['home/offer'], before: {} };
+    const model = page(new Map(), [
+      {
+        ...record,
+        id: 'b',
+        by: 'manager',
+        byEmail: 'm@b.co',
+        selfApproval: { title: 'Diwali', note: 'Dates' },
+      },
+      {
+        ...record,
+        id: 'a',
+        by: 'manager',
+        byEmail: 'm@b.co',
+        selfApproval: { title: '', note: '' },
+      },
+    ]);
+
+    expect(model.history[0]?.who).toBe('self-approved by m@b.co');
+    expect(model.history.map((entry) => entry.approval)).toEqual([
+      { title: 'Diwali', note: 'Dates' },
+      { title: 'Self-approved', note: '' },
+    ]);
+  });
 });

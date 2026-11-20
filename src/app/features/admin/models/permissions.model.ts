@@ -56,6 +56,14 @@ export class Permissions {
   }
 
   /**
+   * A manager who approves their own changes on pages that need approval (0023): they go live with
+   * a self-approval in the history instead of waiting. The owner needs no approval at all.
+   */
+  public get canApproveOwn(): boolean {
+    return this.isManager && this.role?.canApprove === true;
+  }
+
+  /**
    * @param user The signed-in account, or `null`.
    * @returns Permissions for no access.
    */

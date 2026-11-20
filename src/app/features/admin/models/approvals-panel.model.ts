@@ -23,6 +23,8 @@ export interface IApprovalView {
 /** What the panel shows: the owner's queue, or a manager's own requests. */
 export interface IApprovalsPanel {
   readonly owner: boolean;
+  /** A manager who approves their own changes (0023 D4): their waiting request offers it. */
+  readonly canApproveOwn: boolean;
   readonly requests: readonly IApprovalView[];
 }
 
@@ -58,6 +60,7 @@ export function approvalsPanel(input: IApprovalsInput): IApprovalsPanel {
   );
   return {
     owner: permissions.isOwner,
+    canApproveOwn: permissions.canApproveOwn,
     requests: shown.map((approval) => ({
       approval,
       title: approval.paths.map(titleOf).join('; '),

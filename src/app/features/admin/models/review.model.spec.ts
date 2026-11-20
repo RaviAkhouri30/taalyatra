@@ -102,6 +102,7 @@ describe('Review', () => {
     expect(manager.planFor(new Set(['home/hero', 'home/shows', 'home/offer']))).toEqual({
       publish: ['home/hero'],
       send: ['home/shows'],
+      approve: [],
     });
   });
 
@@ -112,6 +113,19 @@ describe('Review', () => {
   it('should keep the permissions and requests it was given', () => {
     expect(review().permissions.isOwner).toBe(true);
     expect(review().requests).toEqual([waiting]);
+  });
+
+  // A manager who can approve (0023).
+  it('should approve the changes that need approval instead of sending them', () => {
+    const manager = review({
+      permissions: Permissions.manager(MANAGER, { ...role, canApprove: true }),
+    });
+
+    expect(manager.planFor(new Set(['home/hero', 'home/shows']))).toEqual({
+      publish: ['home/hero'],
+      send: [],
+      approve: ['home/shows'],
+    });
   });
 });
 
@@ -124,20 +138,37 @@ describe('review wording', () => {
   });
 
   it.each([
-    [{ publish: ['a'], send: [] }, 'Publish changes'],
-    [{ publish: [], send: ['a'] }, 'Send for approval'],
-    [{ publish: ['a'], send: ['b', 'c'] }, 'Publish 1 change, send 2 changes for approval'],
+    [{ publish: ['a'], send: [], approve: [] }, 'Publish changes'],
+    [{ publish: [], send: ['a'], approve: [] }, 'Send for approval'],
+    [
+      { publish: ['a'], send: ['b', 'c'], approve: [] },
+      'Publish 1 change, send 2 changes for approval',
+    ],
   ])('should label the button for %j', (plan, label) => {
     expect(planButtonText(plan)).toBe(label);
   });
 
   it('should say which changes are published and which are sent', () => {
-    expect(planConfirmText({ publish: ['a', 'b'], send: [] })).toBe(
+    expect(planConfirmText({ publish: ['a', 'b'], send: [], approve: [] })).toBe(
       'Publish 2 changes? Visitors see them on their next visit.',
     );
-    expect(planConfirmText({ publish: ['a'], send: ['b'] })).toMatch(
+    expect(planConfirmText({ publish: ['a'], send: ['b'], approve: [] })).toMatch(
       /^Publish 1 change\?.* Send 1 change to the owner for approval\?/u,
     );
     expect(changesWord(3)).toBe('3 changes');
+  });
+
+  // A manager who can approve (0023).
+  it.each([
+    [{ publish: [], send: [], approve: ['a', 'b'] }, 'Approve and publish 2 changes'],
+    [{ publish: ['a'], send: [], approve: ['b', 'c'] }, 'Publish 1 change, approve and publish 2'],
+  ])('should name the button for %o', (plan, text) => {
+    expect(planButtonText(plan)).toBe(text);
+  });
+
+  it('should say the owner sees the title and note when confirming', () => {
+    expect(planConfirmText({ publish: [], send: [], approve: ['a'] })).toBe(
+      'Approve 1 change yourself and publish it? The owner sees your title and note in the history.',
+    );
   });
 });

@@ -100,4 +100,25 @@ describe('DashboardViewModel', () => {
     expect(leads).toHaveBeenCalled();
     expect(visits).not.toHaveBeenCalled();
   });
+
+  it('should tell the owner about self-approvals since they last looked (0023 D3)', () => {
+    const testing = provideEditorTesting({
+      'publishes/b': {
+        publishedAt: '2026-11-21T10:00:00.000Z',
+        changed: ['home/offer'],
+        before: {},
+        selfApproval: { title: '', note: '' },
+      },
+    });
+    TestBed.configureTestingModule({
+      providers: [...testing.providers, provideLayout(layoutStub()), DashboardViewModel],
+    });
+    const model = TestBed.inject(DashboardViewModel);
+
+    model.init().subscribe();
+
+    expect(model.data()?.selfApproved).toBe(
+      '1 change self-approved by managers since you last looked.',
+    );
+  });
 });

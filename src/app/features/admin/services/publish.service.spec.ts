@@ -237,4 +237,40 @@ describe('PublishService', () => {
       });
     });
   });
+
+  describe('a self-approved publish (0023)', () => {
+    it('should record the approval and rewrite the manager’s marker in the same commit', async () => {
+      const { service, store } = setUp({ 'drafts/home__hero': { ...heroDraft } });
+
+      const record = await firstValueFrom(
+        service.publish(new Map([['home/hero', heroDraft]]), {
+          selfApproval: { title: 'Diwali', note: 'New dates' },
+        }),
+      );
+
+      expect(store.commits).toHaveLength(1);
+      expect(record?.selfApproval).toEqual({ title: 'Diwali', note: 'New dates' });
+      expect(store.documents.get('selfApprovals/admin-uid')).toEqual({
+        record: record?.id,
+        paths: ['home/hero'],
+      });
+    });
+
+    it('should read a stored approval back, and none from an ordinary record', async () => {
+      const { service } = setUp({
+        'publishes/b': {
+          publishedAt: 'b',
+          changed: [],
+          before: {},
+          selfApproval: { title: 'Diwali', note: 7 },
+        },
+        'publishes/a': { publishedAt: 'a', changed: [], before: {} },
+      });
+
+      const history = await firstValueFrom(service.history());
+
+      expect(history[0]?.selfApproval).toEqual({ title: 'Diwali', note: '' });
+      expect(history[1]?.selfApproval).toBeUndefined();
+    });
+  });
 });
