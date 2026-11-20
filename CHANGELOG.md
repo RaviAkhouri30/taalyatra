@@ -6,6 +6,18 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.1.1] - 2026-11-20
+
+### Changed
+
+- **Review & publish explains itself** in one line at the top, as every other admin page does, and asks “Publish 2
+  changes?” instead of “Publish 2 changed documents?”.
+- **An empty list says what to do**: “None yet. Press “+ Add …” to add one”, instead of showing only the button.
+- **Every admin page starts in the same place**, so the heading no longer jumps as you move between pages; Hero, Who it’s
+  for and Rhythm game no longer repeat their title.
+- **On phones, the bars take less room**: the editor’s Show preview, Undo changes and Publish share one row, and on
+  smaller phones the top bar keeps Menu, Help and View site on one row.
+
 ## [2.1.0] - 2026-11-20
 
 ### Added

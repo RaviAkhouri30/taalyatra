@@ -50,6 +50,24 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+
+  @include bp.down(bp.$phone-sm) {
+    gap: 6px;
+  }
+}
+
+// On phones the bar's buttons share one row, so the bar covers less of the page (0020 V6).
+.pb-actions button {
+  @include bp.down(bp.$phone) {
+    min-height: 40px;
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+
+  @include bp.down(bp.$phone-sm) {
+    padding: 8px 11px;
+    font-size: 13px;
+  }
 }
 
 .pb-actions button:disabled {

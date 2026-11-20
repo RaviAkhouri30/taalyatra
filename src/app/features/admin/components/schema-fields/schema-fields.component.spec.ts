@@ -96,6 +96,20 @@ describe('SchemaFieldsComponent', () => {
     expect(tags().getRawValue()).toEqual(['b', 'a']);
   });
 
+  it('should say what to do when a list is empty', () => {
+    const { fixture, element, button, tags } = render();
+    expect(element.querySelector('.sf-empty')).toBeNull();
+
+    button('Remove Tag 1').click();
+    button('Remove Tag 1').click();
+    fixture.detectChanges();
+
+    expect(tags()).toHaveLength(0);
+    expect(element.querySelector('.sf-empty')?.textContent).toContain(
+      'Press “+ Add tag” to add one',
+    );
+  });
+
   it('should stop adding at the list limit and disable moves at either end', () => {
     const { fixture, button } = render();
 

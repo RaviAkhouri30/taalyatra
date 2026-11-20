@@ -1,3 +1,4 @@
+@use 'admin';
 @use 'tokens' as t;
 @use 'breakpoints' as bp;
 
@@ -40,11 +41,7 @@
   flex: 1;
   align-content: start;
   gap: 26px;
-  padding: 30px 32px 40px;
-
-  @include bp.down(bp.$phone) {
-    padding: 20px 16px 28px;
-  }
+  @include admin.page;
 }
 
 .ep-head {
@@ -138,12 +135,21 @@
   white-space: nowrap;
   cursor: pointer;
 
+  // Phones and tablets: in the publish bar, always in reach, never over a field (0017).
   @include bp.down(bp.$tablet) {
     display: inline-block;
     flex: none;
   }
 
-  // Phones and tablets: in the publish bar, always in reach, never over a field (0017).
+  // The same size as the publish bar's own buttons, so the three fit one row on phones.
+  @include bp.down(bp.$phone) {
+    font-size: 14px;
+  }
+
+  @include bp.down(bp.$phone-sm) {
+    padding: 8px 11px;
+    font-size: 13px;
+  }
 }
 
 // One surface with the page, not boxes on it: sections are divided by a line.
@@ -207,4 +213,14 @@
       display: none;
     }
   }
+}
+
+// A card heading that only repeats the page's: still names the card for screen readers.
+.ep-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

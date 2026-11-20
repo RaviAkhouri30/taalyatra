@@ -48,6 +48,8 @@ export interface IEditorSectionForm {
   readonly titleId: string;
   /** Prefix for the ids of the card's fields (kept apart from heading ids). */
   readonly fieldPrefix: string;
+  /** Its heading only repeats the page's (e.g. Hero on Hero): kept for screen readers, not shown. */
+  readonly repeatsPageTitle: boolean;
 }
 
 /** Changes kept on this device that never reached the draft (0016 V2). */
@@ -201,6 +203,7 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
         // Separate namespaces: section "hero" + field "title" must not reuse the heading's id.
         titleId: `card-${section.id}`,
         fieldPrefix: `field-${section.id}`,
+        repeatsPageTitle: section.title === tab.label,
       })),
     };
   }

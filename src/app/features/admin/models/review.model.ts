@@ -183,9 +183,7 @@ export function planButtonText(plan: IPublishPlan): string {
 export function planConfirmText(plan: IPublishPlan): string {
   const parts = [
     ...(plan.publish.length > 0
-      ? [
-          `Publish ${String(plan.publish.length)} changed ${plan.publish.length === 1 ? 'document' : 'documents'}? Visitors see the changes on their next visit.`,
-        ]
+      ? [`Publish ${changesWord(plan.publish.length)}? Visitors see them on their next visit.`]
       : []),
     ...(plan.send.length > 0
       ? [

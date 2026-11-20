@@ -1,4 +1,5 @@
 @use 'tokens' as t;
+@use 'breakpoints' as bp;
 
 :host {
   position: relative;
@@ -21,6 +22,11 @@
   &:hover,
   &[aria-expanded='true'] {
     background: t.$color-surface;
+  }
+
+  // Small phones: as narrow as the top bar's other buttons, so they share one row.
+  @include bp.down(bp.$phone-sm) {
+    padding: 6px 10px;
   }
 }
 

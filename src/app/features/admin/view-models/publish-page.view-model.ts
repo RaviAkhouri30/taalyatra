@@ -22,7 +22,7 @@ import { ToastTone } from '@shared/enums/toast-tone.enum';
 import { ToastService } from '@shared/services/toast.service';
 import { APPROVAL_NOTE_MAX } from '../models/approval.model';
 import { type IPublishRecord } from '../models/i-publish-record';
-import { PublishPageModel } from '../models/publish-page.model';
+import { PUBLISH_INTRO, PublishPageModel } from '../models/publish-page.model';
 import { type IPublishPlan, planButtonText, planConfirmText } from '../models/review.model';
 import { SECTIONS_WITH_TABS } from '../schemas/editor-tabs';
 import { ApprovalService } from '../services/approval.service';
@@ -69,6 +69,14 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
   /** A publish just finished: the backups card offers to keep a copy of it (0016 V13). */
   public readonly justPublished = signal(false);
   public readonly isOwner = computed(() => this.data()?.review.permissions.isOwner ?? false);
+  /** The page's intro line, once the account is known. */
+  public readonly intro = computed(() => {
+    const permissions = this.data()?.review.permissions;
+    if (!permissions) {
+      return '';
+    }
+    return permissions.isOwner ? PUBLISH_INTRO.owner : PUBLISH_INTRO.manager;
+  });
   /** What a click does with the ticked changes. */
   public readonly plan = computed(() => this.data()?.review.planFor(this.selected()) ?? NOTHING);
   /** What the checks find in the ticked changes. */
