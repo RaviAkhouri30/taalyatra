@@ -105,6 +105,8 @@ Rewrite and Suggest on prose fields, Suggest a description on uploaded photos, a
 Its HTTP adapter calls the Azure Function, which alone holds the provider's key and speaks the OpenAI-compatible
 format to any provider (Groq today), with the sign-in checked as for uploads and only the data D3 allows
 ([ADR-0020](adr/0020-ai-through-the-function.md)). Until the settings exist, the admin shows no AI buttons.
+From 2.7.0 the home page's chat sends typed questions to the function's public `ai/chat`, through `ISiteChat`, loaded on
+the first question; quick replies, and anything the AI can't answer, stay scripted.
 
 ## Dependency rules
 

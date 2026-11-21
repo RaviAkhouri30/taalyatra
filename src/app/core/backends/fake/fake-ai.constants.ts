@@ -11,3 +11,9 @@ export const FAKE_AI_DESCRIPTION = 'Children drumming together in a circle.';
 /** The Fake's analysis, whatever the counts. */
 export const FAKE_AI_ANALYSIS =
   '• Most enquiries are for corporate events.\n• December is the busiest month.';
+
+/** A typed chat question with this in it makes the Fake chat fail, so e2e can show the script answering. */
+export const FAKE_CHAT_FAIL = 'ask the script';
+
+/** How the Fake chat starts each answer, so e2e can tell an AI answer from a scripted one. */
+export const FAKE_CHAT_PREFIX = 'From the site:';

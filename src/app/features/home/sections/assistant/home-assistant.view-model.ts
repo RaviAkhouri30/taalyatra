@@ -1,6 +1,22 @@
 import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { type Observable, Subject, combineLatest, filter, map, mergeMap, tap, timer } from 'rxjs';
+import {
+  type Observable,
+  Subject,
+  catchError,
+  combineLatest,
+  defer,
+  filter,
+  map,
+  mergeMap,
+  shareReplay,
+  switchMap,
+  tap,
+  timer,
+} from 'rxjs';
+import { SITE_CHAT_LOADER } from '@core/backends/ai/site-chat-loader.token';
+import { SiteChatRole } from '@core/enums/site-chat-role.enum';
+import { type ISiteChatTurn, SITE_CHAT_HISTORY } from '@core/interfaces/i-site-chat';
 import { ViewModel } from '@shared/base/view-model';
 import { OverlayStateService } from '@shared/services/overlay-state.service';
 import { SiteConfigService } from '@shared/services/site-config.service';
@@ -12,10 +28,21 @@ import { HomeAssistantService } from './home-assistant.service';
 const REPLY_DELAY_MS = 800;
 /** Messages kept on screen (design). */
 const VISIBLE_MESSAGES = 8;
+/** The longest earlier message `api/` accepts. */
+const HISTORY_TEXT_MAX = 600;
+
+/** A question as asked: typed ones may go to the AI chat; quick replies stay scripted (0025 V7). */
+interface IQuestion {
+  readonly text: string;
+  readonly typed: boolean;
+  /** The conversation before it, for a follow-up. */
+  readonly history: readonly ISiteChatTurn[];
+}
 
 /**
  * Chat assistant state: whether the panel is open, the conversation, and the typing indicator.
- * Questions are answered locally from canned replies after a short pause.
+ * Typed questions are answered by the site's AI chat when it can (0025 V7); quick replies, and any
+ * question the AI can't answer, from the owner's scripted replies after a short pause.
  */
 @Injectable()
 export class HomeAssistantViewModel extends ViewModel<AssistantModel> {
@@ -32,7 +59,12 @@ export class HomeAssistantViewModel extends ViewModel<AssistantModel> {
   private readonly overlay = inject(OverlayStateService);
   private readonly messages = signal<readonly IChatMessage[]>([]);
   private readonly pending = signal(0);
-  private readonly questions = new Subject<string>();
+  private readonly questions = new Subject<IQuestion>();
+  private readonly loadChat = inject(SITE_CHAT_LOADER);
+  /** Loaded on the first typed question, then shared; a failed load is tried again next time. */
+  private readonly chat$ = defer(() => this.loadChat()).pipe(
+    shareReplay({ bufferSize: 1, refCount: false }),
+  );
   private nextId = 0;
 
   public constructor() {
@@ -56,10 +88,18 @@ export class HomeAssistantViewModel extends ViewModel<AssistantModel> {
     this.overlay.setPanelOpen(false);
   }
 
-  /** Asks `text`, or the typed question when omitted, and clears the input. */
-  public ask(text: string = this.question.value): void {
+  /**
+   * Asks a quick reply, or the typed question when `text` is omitted, and clears the input.
+   * @param text The quick reply chosen, if any.
+   */
+  public ask(text?: string): void {
+    const question = {
+      text: text ?? this.question.value,
+      typed: text === undefined,
+      history: this.history(),
+    };
     this.question.reset();
-    this.questions.next(text);
+    this.questions.next(question);
   }
 
   protected override attachViewHandler(): Observable<unknown> {
@@ -77,19 +117,44 @@ export class HomeAssistantViewModel extends ViewModel<AssistantModel> {
 
   protected override attachCommandHandler(): Observable<unknown> {
     return this.questions.pipe(
-      map((text) => text.trim()),
-      filter((text) => text.length > 0),
-      tap((text) => {
-        this.append(ChatRole.Visitor, text);
+      map((question) => ({ ...question, text: question.text.trim() })),
+      filter((question) => question.text.length > 0),
+      tap((question) => {
+        this.append(ChatRole.Visitor, question.text);
         this.pending.update((count) => count + 1);
       }),
       // mergeMap: every question gets its own answer, even when asked while one is pending.
-      mergeMap((text) => timer(REPLY_DELAY_MS).pipe(map(() => this.data()?.reply(text) ?? ''))),
+      mergeMap((question) => this.answer(question)),
       tap((reply) => {
         this.pending.update((count) => count - 1);
         this.append(ChatRole.Bot, reply);
       }),
     );
+  }
+
+  /** The AI chat's answer to a typed question, else the scripted reply. */
+  private answer(question: IQuestion): Observable<string> {
+    const scripted = timer(REPLY_DELAY_MS).pipe(map(() => this.data()?.reply(question.text) ?? ''));
+    if (!question.typed) {
+      return scripted;
+    }
+    return this.chat$.pipe(
+      // switchMap: the chat is loaded once; each typed question is one request.
+      switchMap((chat) => chat.ask(question.text, question.history)),
+      // Not turned on, a limit, a failure, offline or slow: the script answers, as before 2.7.0.
+      catchError(() => scripted),
+    );
+  }
+
+  /** The last few messages after the greeting, as the AI chat takes them. */
+  private history(): ISiteChatTurn[] {
+    return this.messages()
+      .slice(1)
+      .slice(-SITE_CHAT_HISTORY)
+      .map((message) => ({
+        role: message.role === ChatRole.Visitor ? SiteChatRole.Visitor : SiteChatRole.Bot,
+        text: message.text.slice(0, HISTORY_TEXT_MAX),
+      }));
   }
 
   private append(role: ChatRole, text: string): void {

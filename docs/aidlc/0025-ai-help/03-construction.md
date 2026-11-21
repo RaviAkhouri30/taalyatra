@@ -36,3 +36,33 @@ Built on the approved [inception](01-inception.md) (D1–D8) and [design](02-des
 ---
 
 **Approval:** ☑ Approved by Ravi Akhouri on 2026-11-22.
+
+---
+
+## 2.7.0 · The chat on the site (V7)
+
+Built on the approved 2.7.0 design.
+
+| #   | Increment    | Files                                                                                                                                                                                                                                                                       | Tests                                                                                                                                                                   |
+| --- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | The function | `api/src/lib/`: `site-content` (published sections by allowlist, hidden ones left out, text only, 15-minute cache), `chat-limiter` (hashed visitor, 10 an hour, 500 a day), `chat-prompts`, `ai-chat` (`AI_CHAT=on`, the body's limits); `ai/chat` route; `indiaDay` shared | `site-content`, `chat-limiter`, `chat-prompts`, `ai-chat` specs and the registration test. 194 tests, 99.3 %                                                            |
+| 2   | The app      | `ISiteChat`, `SiteChatRole`, `HttpSiteChat` (12 s), `FakeSiteChat`, `SITE_CHAT_LOADER` (its own chunk); `HomeAssistantViewModel` sends typed questions with the last 4 messages, scripts chips and failures; the panel's note                                               | the adapters' and loader's specs; the assistant's spec: AI answer, follow-up history, chips stay scripted, the note, and every older test with a chat that can't answer |
+| 3   | E2E and docs | `home-assistant.e2e.ts`: the typed question now gets the Fake AI's answer, plus a failure answered by the script; deployment (`AI_CHAT`), ADR-0020's 2.7.0 section, overview, sequence diagram, CHANGELOG                                                                   | three sizes, with the accessibility scan of the open chat and the home page's approved look                                                                             |
+
+### Decisions & deviations from design
+
+- **The note says typed questions "may" be answered by AI.** The browser can't know whether `AI_CHAT` is on, and the note
+  should be true either way; it always asks for no personal details.
+- **The time-limited offer isn't sent**, as the allowlist leaves `offer` out: an ended offer could otherwise be quoted as
+  current. Visitors asking about offers are pointed to the proposal form or WhatsApp.
+- **A question the function refuses** (for example over 300 characters) is answered from the script, like any failure.
+- **The first download grew by 0.58 kB** (507.49 → 508.07 kB; 118.44 → 118.56 kB compressed), not "unchanged" as
+  the design says: the client and its import are their own chunk, but the view model's routing of typed questions, the
+  loader's choice of adapter and the note are on the home page itself. Within the 510 kB warning budget.
+- **The note's styles were kept minimal** (a `div`, padding and `smaller` text, in the panel's own colour): the panel's
+  stylesheet is at its 4 kB budget, and a fuller style exceeded it by 100 bytes.
+- **No dependency added.** The chat client is its own chunk, loaded on the first typed question.
+
+---
+
+**Approval (2.7.0):** ☑ Approved by Ravi Akhouri on 2026-11-22.

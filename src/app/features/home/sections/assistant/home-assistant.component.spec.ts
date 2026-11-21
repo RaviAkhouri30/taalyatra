@@ -1,14 +1,24 @@
 import { TestBed } from '@angular/core/testing';
+import { of, throwError } from 'rxjs';
+import { SITE_CHAT_LOADER } from '@core/backends/ai/site-chat-loader.token';
+import { SiteChatRole } from '@core/enums/site-chat-role.enum';
+import { type ISiteChat } from '@core/interfaces/i-site-chat';
 import { ApiEndpoint } from '@shared/enums/api-endpoint.enum';
 import { OverlayStateService } from '@shared/services/overlay-state.service';
 import { texts } from '@shared/testing/fixtures';
 import { HOME, stubBackend } from '../../testing/home-fixtures';
 import { HomeAssistantComponent } from './home-assistant.component';
 
+/** A chat that can never answer: not turned on, a limit or offline. */
+const NO_CHAT: ISiteChat = { ask: () => throwError(() => new Error('unavailable')) };
+
 describe('HomeAssistantComponent', () => {
-  function render(body: unknown = HOME.assistant) {
+  /** No AI answer unless a test gives one: the script answers, as before 2.7.0. */
+  function render(body: unknown = HOME.assistant, chat: ISiteChat = NO_CHAT) {
     const backend = stubBackend(body);
-    TestBed.configureTestingModule({ providers: [backend.provider] });
+    TestBed.configureTestingModule({
+      providers: [backend.provider, { provide: SITE_CHAT_LOADER, useValue: () => of(chat) }],
+    });
     const fixture = TestBed.createComponent(HomeAssistantComponent);
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
@@ -148,5 +158,64 @@ describe('HomeAssistantComponent', () => {
 
   it('should render nothing until the assistant has loaded', () => {
     expect(render(null).element.querySelector('.fab')).toBeNull();
+  });
+
+  describe('the AI chat (0025 V7)', () => {
+    function typeAndSend(element: HTMLElement, text: string): void {
+      const input = element.querySelector<HTMLInputElement>('.chat-f input')!;
+      input.value = text;
+      input.dispatchEvent(new Event('input'));
+      element.querySelector('form')!.dispatchEvent(new Event('submit'));
+    }
+
+    it('should answer a typed question from the AI, with the conversation before it', () => {
+      const chat = { ask: vi.fn(() => of('It lasts two hours.')) };
+      const { element, fixture, toggle, click, bubbles } = render(HOME.assistant, chat);
+      click(toggle());
+
+      typeAndSend(element, 'How long is it?');
+      fixture.detectChanges();
+
+      expect(bubbles()[0]).toBe('It lasts two hours.');
+      expect(chat.ask).toHaveBeenCalledWith('How long is it?', []);
+    });
+
+    it('should send the last messages with a follow-up, as visitor and bot', () => {
+      const chat = { ask: vi.fn(() => of('Yes.')) };
+      const { element, fixture, toggle, click } = render(HOME.assistant, chat);
+      click(toggle());
+      typeAndSend(element, 'First?');
+      fixture.detectChanges();
+
+      typeAndSend(element, 'And then?');
+
+      expect(chat.ask).toHaveBeenLastCalledWith('And then?', [
+        { role: SiteChatRole.Visitor, text: 'First?' },
+        { role: SiteChatRole.Bot, text: 'Yes.' },
+      ]);
+    });
+
+    it('should keep quick replies scripted, even with the AI on', () => {
+      vi.useFakeTimers();
+      const chat = { ask: vi.fn(() => of('AI')) };
+      const { fixture, toggle, click, quick, bubbles } = render(HOME.assistant, chat);
+      click(toggle());
+
+      click(quick('Group size?'));
+      vi.advanceTimersByTime(800);
+      fixture.detectChanges();
+
+      expect(chat.ask).not.toHaveBeenCalled();
+      expect(bubbles()[0]).toMatch(/^Drum Circle runs from 10/);
+    });
+
+    it('should say the AI may answer, and ask for no personal details', () => {
+      const { element, toggle, click } = render();
+      click(toggle());
+
+      expect(element.querySelector('.chat-note')?.textContent).toContain(
+        'Please don’t share personal details here.',
+      );
+    });
   });
 });

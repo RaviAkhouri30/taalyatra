@@ -38,3 +38,12 @@ and the public site's first download has almost no room left.
 - Provider errors aren't logged in detail: the function turns them into "not available" without the provider's message,
   which can quote the request. Azure still records each call's status.
 - 2.7.0's public chat reuses the client and limiter, adding a per-visitor limit and a daily cap of its own.
+
+## 2.7.0: the chat on the site
+
+`POST /api/ai/chat` answers visitors' typed questions with no sign-in, only when the owner sets `AI_CHAT=on`. It reads
+the published site from Firestore's public REST API with no credential (an allowlist of sections, minus those hidden on
+Visibility, text only, kept 15 minutes), limits each visitor to 10 questions an hour (known only by a SHA-256 hash of
+their address, in memory) and the chat to 500 a day, and answers in at most 600 characters. In the browser,
+`SITE_CHAT_LOADER` loads the client as its own chunk on the first typed question; quick replies stay scripted, and any
+failure is answered from the script. See the [0025 design](../../aidlc/0025-ai-help/02-design.md), 2.7.0.

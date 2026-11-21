@@ -39,6 +39,10 @@ same **Environment variables → Production**, add:
 | `AI_API_KEY`      | the key from the provider's console; never committed, never in a browser |
 | `AI_VISION_MODEL` | optional: a model that reads pictures, for Suggest a description         |
 
+**The site's chat (2.7.0)** answers typed questions with AI only when you also add `AI_CHAT` = `on`, so the admin's
+help can be set up and tried first. Until then, and whenever it can't answer, the chat replies from its script as
+before. Its limits: 10 questions an hour per visitor and 500 a day in all.
+
 Until the first three are set, the admin shows no AI buttons and nothing else changes. Changing provider or model is
 a settings change, with no rebuild. A free Groq account has no card, so there's nothing to pay; past its limits the
 buttons say the help isn't available.

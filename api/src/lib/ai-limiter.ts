@@ -14,6 +14,14 @@ export const AI_REQUESTS_PER_DAY = 50;
 export const AI_LIMIT_REACHED = 'You’ve used today’s AI help. It’s back tomorrow.';
 
 /**
+ * @param now A moment in milliseconds.
+ * @returns Its day in India, `YYYY-MM-DD`: allowances start at midnight there.
+ */
+export function indiaDay(now: number): string {
+  return new Date(now + INDIA_OFFSET_MS).toISOString().slice(0, DAY_LENGTH);
+}
+
+/**
  * Counts AI requests per account per India day, in this instance's memory. Approximate across
  * instances, as approved (D4): the provider's own free limits are the hard ceiling.
  */
@@ -28,7 +36,7 @@ export class AiLimiter {
    * @throws {ApiError} 429 when the allowance for today is used up; nothing is counted then.
    */
   public take(key: string, now: number, perDay = AI_REQUESTS_PER_DAY): void {
-    const day = new Date(now + INDIA_OFFSET_MS).toISOString().slice(0, DAY_LENGTH);
+    const day = indiaDay(now);
     const entry = this.used.get(key);
     const count = entry?.day === day ? entry.count : 0;
     if (count >= perDay) {
