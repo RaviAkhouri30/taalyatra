@@ -6,6 +6,21 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-11-21
+
+### Added
+
+- **A super manager:** on Team access, make a manager a **Super manager**, for good or until the end of a day you
+  choose (India time). They approve or send back other managers' changes for you, publish every page and use every
+  area. It ends by itself on that day, even if you forget, and their own settings apply again.
+- **You see what they did:** the publish history reads “approved by … for the owner, sent by …”, and your dashboard
+  counts the changes approved for you since you last looked. A super manager's dashboard says when their access ends.
+- Every answer to a request now records who gave it, and a manager's request shows who approved or sent it back.
+
+### Changed
+
+- Team access, your account and deleting the history stay yours alone, even for a super manager.
+
 ## [2.4.0] - 2026-11-21
 
 ### Added
