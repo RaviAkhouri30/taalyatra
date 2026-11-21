@@ -41,7 +41,7 @@ export function waitingNotice(
     return null;
   }
   const sentAt = formatMoment(request.sentAt);
-  if (permissions.isOwner) {
+  if (permissions.actsAsOwner) {
     return {
       locked: false,
       text: `${request.email} sent changes on this page for your approval, ${sentAt}. Anything you change here becomes part of what you approve.`,

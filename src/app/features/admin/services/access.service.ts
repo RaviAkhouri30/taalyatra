@@ -1,16 +1,34 @@
 import { Service, inject } from '@angular/core';
-import { type Observable, catchError, map, of, shareReplay, switchMap } from 'rxjs';
+import {
+  type Observable,
+  catchError,
+  concat,
+  defer,
+  map,
+  of,
+  shareReplay,
+  switchMap,
+  timer,
+} from 'rxjs';
 import { IAuthService, type IAuthUser } from '@core/interfaces/i-auth-service';
 import { IDocumentStore } from '@core/interfaces/i-document-store';
 import { APP_ENVIRONMENT } from '@core/tokens/app-environment.token';
+import { CLOCK } from '@core/tokens/clock.token';
 import { Permissions } from '../models/permissions.model';
-import { ROLES_COLLECTION, toRole } from '../models/role.model';
+import { type IRole, ROLES_COLLECTION, toRole } from '../models/role.model';
+
+/**
+ * The longest single wait for a super manager's end: browsers fire a timer longer than about 24.8
+ * days at once, so a far end is reached in steps of a day, each judged afresh by the clock.
+ */
+export const SUPER_END_STEP_MS = 86_400_000;
 
 /**
  * What the signed-in account may do (0019): the owner, fixed by id as in `firestore.rules`
  * (decision 1); a manager, by their record on Team access; or nobody. Read once per sign-in and
  * shared by the guards and every page. A change on Team access reaches a manager's screens when
- * they next open the admin; the rules apply it at once.
+ * they next open the admin; the rules apply it at once. A super manager's end (0024) is the
+ * exception: it emits again at that moment, so their screens drop back without a reload.
  */
 @Service()
 export class AccessService {
@@ -20,6 +38,7 @@ export class AccessService {
   private readonly auth = inject(IAuthService);
   private readonly store = inject(IDocumentStore);
   private readonly ownerUid = inject(APP_ENVIRONMENT).adminUid;
+  private readonly clock = inject(CLOCK);
   /** One read per account, shared by the guard and the pages, until the next sign-out. */
   private readonly reads = new Map<string, Observable<Permissions>>();
 
@@ -52,12 +71,39 @@ export class AccessService {
       return of(Permissions.owner(user));
     }
     return this.store.read(`${ROLES_COLLECTION}/${user.uid}`).pipe(
-      map((fields) => {
-        const role = toRole(fields);
-        return role ? Permissions.manager(user, role) : Permissions.none(user);
-      }),
+      map((fields) => toRole(fields)),
       // The rules refuse an account that was never added; that's simply no access.
-      catchError(() => of(Permissions.none(user))),
+      catchError(() => of(null)),
+      // switchMap: one role read, followed by its permissions over time.
+      switchMap((role) => (role ? this.managerOverTime(user, role) : of(Permissions.none(user)))),
+    );
+  }
+
+  /** The manager's permissions now and, for a super manager with an end, once more at the end. */
+  private managerOverTime(user: IAuthUser, role: IRole): Observable<Permissions> {
+    const permissions = Permissions.manager(user, role, this.clock.now());
+    const end = permissions.superEndsAt;
+    if (end === null) {
+      return of(permissions);
+    }
+    // concat: the end's permissions only after the wait completes, judged by the clock then.
+    return concat(
+      of(permissions),
+      defer(() => this.waitUntil(end.getTime())).pipe(
+        map(() => Permissions.manager(user, role, this.clock.now())),
+      ),
+    );
+  }
+
+  /** Emits once, when the clock reaches `endMs`; a far end is waited for a day at a time. */
+  private waitUntil(endMs: number): Observable<void> {
+    const left = endMs - this.clock.now().getTime();
+    if (left <= 0) {
+      return of(undefined);
+    }
+    // switchMap: each step ends before the next starts, so one timer runs at a time.
+    return timer(Math.min(left, SUPER_END_STEP_MS)).pipe(
+      switchMap(() => defer(() => this.waitUntil(endMs))),
     );
   }
 }

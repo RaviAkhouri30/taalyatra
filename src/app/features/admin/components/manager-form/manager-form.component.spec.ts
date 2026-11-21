@@ -5,7 +5,11 @@ import { ManagerFormComponent } from './manager-form.component';
 
 describe('ManagerFormComponent', () => {
   function render(mode = RoleFormMode.Adding, saving = false) {
-    const form = createRoleForm('owner-uid', () => new Set());
+    const form = createRoleForm(
+      'owner-uid',
+      () => new Set(),
+      () => '2026-11-21',
+    );
     const fixture = TestBed.createComponent(ManagerFormComponent);
     fixture.componentRef.setInput('form', form);
     fixture.componentRef.setInput('mode', mode);
@@ -87,5 +91,42 @@ describe('ManagerFormComponent', () => {
     );
 
     expect(approve?.checked).toBe(false);
+  });
+
+  /** Ticks the super manager switch as the owner does, by clicking it. */
+  function turnSuperOn(element: HTMLElement): void {
+    element.querySelector<HTMLInputElement>('input[formControlName="superManager"]')?.click();
+  }
+
+  it('should offer for good or until a day once the super manager switch is on (0024)', () => {
+    const { fixture, element } = render();
+    expect(element.querySelector('.mf-term')).toBeNull();
+
+    turnSuperOn(element);
+    fixture.detectChanges();
+
+    expect(element.querySelectorAll('.mf-term input[type="radio"]')).toHaveLength(2);
+    expect(element.querySelector<HTMLInputElement>('input[type="date"]')?.min).toBe('2026-11-21');
+  });
+
+  it('should say what to fix in a past day, and hide the day for good', () => {
+    const { fixture, element } = render();
+    turnSuperOn(element);
+    fixture.detectChanges();
+    const day = element.querySelector<HTMLInputElement>('input[type="date"]');
+    if (day) {
+      day.value = '2026-11-01';
+      day.dispatchEvent(new Event('input'));
+      day.dispatchEvent(new Event('blur'));
+    }
+    fixture.detectChanges();
+
+    expect(element.querySelector('#mf-until-error')?.textContent).toBe(
+      'Choose today or a later day.',
+    );
+    element.querySelector<HTMLInputElement>('.mf-term input[type="radio"]')?.click();
+    fixture.detectChanges();
+
+    expect(element.querySelector('input[type="date"]')).toBeNull();
   });
 });

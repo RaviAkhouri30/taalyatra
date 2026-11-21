@@ -122,6 +122,18 @@ describe('ApprovalCardComponent', () => {
     expect(element.querySelector('.ap-status')?.textContent).toContain('Approved and published');
   });
 
+  it('should name who answered, when it’s known (0024 D6)', () => {
+    const answered = view(ApprovalStatus.Approved);
+    const { element } = render(
+      { ...answered, approval: { ...answered.approval, answeredBy: 's@b.co' } },
+      false,
+    );
+
+    expect(element.querySelector('.ap-status')?.textContent).toContain(
+      'Approved and published by s@b.co, 31 Oct',
+    );
+  });
+
   it('should let a manager who can approve take their waiting request back to approve it (0023)', () => {
     const fixture = TestBed.createComponent(ApprovalCardComponent);
     fixture.componentRef.setInput('view', view(ApprovalStatus.Waiting));

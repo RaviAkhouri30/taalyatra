@@ -50,7 +50,7 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
   public readonly approvalsToSee = signal(0);
   /** What the count beside Review & publish means. */
   public readonly approvalsWord = computed(() =>
-    this.permissions().isOwner ? 'waiting' : 'sent back',
+    this.permissions().actsAsOwner ? 'waiting' : 'sent back',
   );
   /** What the signed-in account may do; the guard has read it before the layout opens. */
   public readonly permissions: Signal<Permissions>;
@@ -145,8 +145,8 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
   private countNewLeads(): Observable<unknown> {
     return this.leads.changed$.pipe(
       startWith(undefined),
-      // Leads are the owner's only (0019 decision 6): nothing is read for a manager.
-      filter(() => this.permissions().isOwner),
+      // The owner's and a super manager's (0024): nothing is read for another manager.
+      filter(() => this.permissions().actsAsOwner),
       // switchMap: only the latest count matters. A failed read leaves the count as it was.
       switchMap(() => this.leads.leads().pipe(catchError(() => EMPTY))),
       tap((leads) => {
@@ -176,7 +176,7 @@ export class EditorLayoutViewModel extends AdminPageViewModel {
       switchMap(() => this.approvals.requests().pipe(catchError(() => EMPTY))),
       tap((requests) => {
         const permissions = this.permissions();
-        const counted = permissions.isOwner
+        const counted = permissions.actsAsOwner
           ? requests.filter((request) => request.status === ApprovalStatus.Waiting)
           : requests.filter(
               (request) =>

@@ -23,3 +23,13 @@ export const FAKE_MANAGER_ACCOUNT = {
   password: 'fake-manager-password',
   uid: 'fake-manager-uid',
 };
+
+/**
+ * A second manager, whom the e2e suite makes a super manager (0024) to approve the first
+ * manager's requests. No access until the owner adds this id on Team access.
+ */
+export const FAKE_SUPER_MANAGER_ACCOUNT = {
+  email: 'super@taalyatra.test',
+  password: 'fake-super-password',
+  uid: 'fake-super-uid',
+};

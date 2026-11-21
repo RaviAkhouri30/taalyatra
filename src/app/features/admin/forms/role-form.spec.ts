@@ -3,6 +3,8 @@ import { EditorTab } from '../models/editor-tab.enum';
 import { PageAccess } from '../models/role.model';
 import { createRoleForm, fillRoleForm, resetRoleForm, roleFormValue, roleOf } from './role-form';
 
+const TODAY = '2026-11-21';
+
 describe('role form', () => {
   const manager = {
     uid: 'manager-uid',
@@ -15,7 +17,11 @@ describe('role form', () => {
   };
 
   function form(listed: string[] = []) {
-    return createRoleForm('owner-uid', () => new Set(listed));
+    return createRoleForm(
+      'owner-uid',
+      () => new Set(listed),
+      () => TODAY,
+    );
   }
 
   it('should start with the defaults: needs approval everywhere, uploads on', () => {
@@ -73,7 +79,7 @@ describe('role form', () => {
     roleForm.patchValue({ uid: ' new-manager ', email: ' new@b.co ' });
 
     const value = roleFormValue(roleForm);
-    const role = roleOf(value, '2026-11-19T10:00:00.000Z');
+    const role = roleOf(value, '2026-11-19T10:00:00.000Z', 'x');
 
     expect(value.uid).toBe('new-manager');
     expect(role).toMatchObject({ email: 'new@b.co', addedAt: '2026-11-19T10:00:00.000Z' });
@@ -91,8 +97,80 @@ describe('role form', () => {
     });
     roleForm.controls.areas.controls[ManagerArea.Leads]?.setValue(true);
 
-    const role = roleOf(roleFormValue(roleForm), 'x');
+    const role = roleOf(roleFormValue(roleForm), 'x', 'x');
 
     expect([...(role.areas ?? [])]).toEqual([ManagerArea.Leads, ManagerArea.Backups]);
+  });
+
+  describe('a super manager (0024)', () => {
+    const SINCE = '2026-11-20T10:00:00.000Z';
+
+    function superForm() {
+      const roleForm = form();
+      roleForm.patchValue({ uid: 'new-manager', email: 'new@b.co', superManager: true });
+      return roleForm;
+    }
+
+    it('should start off, and store no entry when off', () => {
+      const role = roleOf(roleFormValue(form()), 'x', SINCE);
+
+      expect(role.superManager).toBeUndefined();
+    });
+
+    it('should store one for good', () => {
+      const roleForm = superForm();
+      roleForm.patchValue({ superEnds: false });
+
+      expect(roleForm.valid).toBe(true);
+      expect(roleOf(roleFormValue(roleForm), 'x', SINCE).superManager).toEqual({
+        since: SINCE,
+        untilMs: null,
+      });
+    });
+
+    it('should store one until the end of the chosen day in India', () => {
+      const roleForm = superForm();
+      roleForm.patchValue({ superUntil: '2026-11-30' });
+
+      expect(roleForm.valid).toBe(true);
+      expect(roleOf(roleFormValue(roleForm), 'x', SINCE).superManager?.untilMs).toBe(
+        Date.parse('2026-11-30T18:30:00Z'),
+      );
+    });
+
+    it.each([
+      ['no day', ''],
+      ['a past day', '2026-11-20'],
+      ['a malformed day', '30/11/2026'],
+    ])('should refuse an end with %s', (_case, day) => {
+      const roleForm = superForm();
+      roleForm.patchValue({ superUntil: day });
+
+      expect(roleForm.hasError('superUntil')).toBe(true);
+    });
+
+    it('should accept today as the last day', () => {
+      const roleForm = superForm();
+      roleForm.patchValue({ superUntil: TODAY });
+
+      expect(roleForm.valid).toBe(true);
+    });
+
+    it.each([
+      ['for good', null, false, ''],
+      ['until a day', Date.parse('2026-11-30T18:30:00Z'), true, '2026-11-30'],
+    ])('should fill in a super manager %s', (_case, untilMs, ends, day) => {
+      const roleForm = form();
+      fillRoleForm(roleForm, {
+        ...manager,
+        role: { ...manager.role, superManager: { since: SINCE, untilMs } },
+      });
+
+      expect(roleForm.getRawValue()).toMatchObject({
+        superManager: true,
+        superEnds: ends,
+        superUntil: day,
+      });
+    });
   });
 });

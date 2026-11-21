@@ -65,7 +65,7 @@ export class ReviewService {
     drafts: ReadonlyMap<string, IDraft>,
   ): Observable<ReadonlyMap<string, DocumentFields | null>> {
     const paths = [...drafts.keys()].filter((path) => permissions.canSeePath(path));
-    if (permissions.isOwner || paths.length === 0) {
+    if (permissions.actsAsOwner || paths.length === 0) {
       return of(new Map());
     }
     // forkJoin: independent reads, one per document.
@@ -74,9 +74,12 @@ export class ReviewService {
     );
   }
 
-  /** Managers' emails: the owner reads them; a manager may only read their own record. */
+  /**
+   * Managers' emails: the owner and a super manager read them (0024); a manager may only read their
+   * own record.
+   */
   private emails(permissions: Permissions): Observable<ReadonlyMap<string, string>> {
-    if (!permissions.isOwner) {
+    if (!permissions.actsAsOwner) {
       return of(new Map());
     }
     return this.roles.managers().pipe(

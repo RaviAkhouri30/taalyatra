@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { CLOCK } from '@core/tokens/clock.token';
 import { ButtonDirective } from '@shared/directives/button.directive';
 import { ButtonVariant } from '@shared/enums/button-variant.enum';
 import { formatMoment } from '../../models/editor-dates';
-import { accessGroups, areasText, type IManager } from '../../models/team-access.model';
+import { accessGroups, areasText, type IManager, superText } from '../../models/team-access.model';
 
 /** One manager on Team access (0019): who, what they may do on each page, and their actions. */
 @Component({
@@ -41,4 +42,10 @@ export class ManagerCardComponent {
   /** The owner's areas they have, or "None" (0022). */
   protected readonly areas = computed(() => areasText(this.manager().role) || 'None');
   protected readonly headingId = computed(() => `mgr-${this.manager().uid}`);
+  /** Whether, and until when, they stand in for the owner (0024); empty when not. */
+  protected readonly superManager = computed(() =>
+    superText(this.manager().role, this.clock.now()),
+  );
+
+  private readonly clock = inject(CLOCK);
 }

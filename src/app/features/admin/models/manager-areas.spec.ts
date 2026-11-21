@@ -23,7 +23,7 @@ function role(areas: ManagerArea[], pages: [EditorTab, PageAccess][] = []): IRol
 }
 
 const manager = (areas: ManagerArea[], pages: [EditorTab, PageAccess][] = []) =>
-  Permissions.manager(USER, role(areas, pages));
+  Permissions.manager(USER, role(areas, pages), new Date(0));
 
 const record = (id: string, changed: string[]): IPublishRecord => ({
   id,
@@ -50,12 +50,16 @@ describe('manager areas', () => {
     });
 
     it('should give a manager without areas none', () => {
-      const permissions = Permissions.manager(USER, {
-        email: USER.email,
-        pages: new Map(),
-        uploads: true,
-        addedAt: 'x',
-      });
+      const permissions = Permissions.manager(
+        USER,
+        {
+          email: USER.email,
+          pages: new Map(),
+          uploads: true,
+          addedAt: 'x',
+        },
+        new Date(0),
+      );
 
       expect(permissions.canUse(ManagerArea.Backups)).toBe(false);
     });

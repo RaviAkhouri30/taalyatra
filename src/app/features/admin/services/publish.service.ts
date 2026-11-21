@@ -38,6 +38,7 @@ function toRecord(id: string, fields: DocumentFields): IPublishRecord | null {
         ...optionalText(entries, 'byEmail'),
         ...optionalText(entries, 'approvedFrom'),
         ...selfApprovalOf(entries.get('selfApproval')),
+        ...(entries.get('forOwner') === true ? { forOwner: true } : {}),
       }
     : null;
 }
@@ -115,7 +116,8 @@ export class PublishService {
       switchMap(([permissions, live, ids, history]) => {
         const record = this.record(paths, live, permissions, extras);
         const existing = new Map(paths.map((path, index) => [path, ids.at(index) ?? []]));
-        // Only the owner trims: the rules never let a manager delete history.
+        // Only the owner trims: the rules never let a manager delete history, a super manager's
+        // included (0024 D1).
         const trimmed = permissions.isOwner ? history : [];
         return this.store
           .commit([
@@ -194,6 +196,8 @@ export class PublishService {
       byEmail: permissions.email,
       ...(extras.approvedFrom === undefined ? {} : { approvedFrom: extras.approvedFrom }),
       ...(extras.selfApproval === undefined ? {} : { selfApproval: extras.selfApproval }),
+      // A super manager approving someone's request does it for the owner, who is told (0024 D6).
+      ...(extras.approvedFrom !== undefined && permissions.isSuper ? { forOwner: true } : {}),
     };
   }
 

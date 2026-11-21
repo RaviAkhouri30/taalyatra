@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { type FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { CLOCK } from '@core/tokens/clock.token';
 import { ButtonDirective } from '@shared/directives/button.directive';
 import { ButtonVariant } from '@shared/enums/button-variant.enum';
 import { EMAIL_MAX_LENGTH } from '../../forms/auth-limits.constants';
 import { fieldErrorMessage } from '../../forms/field-errors';
 import { type IRoleControls } from '../../forms/role-form';
 import { PAGE_ACCESS_CHOICES } from '../../models/role.model';
+import { siteDay } from '../../models/site-days';
 import { AREA_ROWS, PAGE_ROWS, RoleFormMode, accessLabel } from '../../models/team-access.model';
 
 /** The fields whose errors the form shows. */
@@ -42,6 +44,8 @@ export class ManagerFormComponent {
   }));
   protected readonly emailMax = EMAIL_MAX_LENGTH;
   protected readonly adding = computed(() => this.mode() === RoleFormMode.Adding);
+  /** The earliest last day a super manager can be given: today, in India (0024 D3). */
+  protected readonly today = siteDay(inject(CLOCK).now().getTime());
 
   /**
    * @param field A checked field.
@@ -50,5 +54,13 @@ export class ManagerFormComponent {
   protected errorOf(field: CheckedField): string | null {
     const control = this.form().get(field);
     return control?.invalid && control.touched ? fieldErrorMessage(control.errors) : null;
+  }
+
+  /** @returns What to fix in a super manager's last day, once the owner has left it; else `null`. */
+  protected superUntilError(): string | null {
+    const form = this.form();
+    return form.hasError('superUntil') && form.controls.superUntil.touched
+      ? fieldErrorMessage({ superUntil: true })
+      : null;
   }
 }

@@ -44,7 +44,7 @@ export function canGoBackOver(
   index: number,
 ): boolean {
   return (
-    permissions.isOwner ||
+    permissions.actsAsOwner ||
     (permissions.canUse(ManagerArea.GoingBack) &&
       history
         .slice(0, index + 1)
@@ -55,7 +55,8 @@ export function canGoBackOver(
 /**
  * @param record A past publish.
  * @param viewerUid The signed-in account.
- * @returns e.g. "by you", "by m@b.co", "by you, approved from m@b.co", "self-approved by m@b.co".
+ * @returns e.g. "by you", "by m@b.co", "by you, approved from m@b.co", "self-approved by m@b.co",
+ *   "approved by s@b.co for the owner, sent by m@b.co".
  */
 function whoPublished(record: IPublishRecord, viewerUid: string): string {
   // Records from before 2.0.0 aren't signed: only the owner could publish then.
@@ -63,6 +64,9 @@ function whoPublished(record: IPublishRecord, viewerUid: string): string {
     record.by === undefined || record.by === viewerUid ? 'you' : (record.byEmail ?? 'the owner');
   if (record.selfApproval !== undefined) {
     return `self-approved by ${by}`;
+  }
+  if (record.forOwner === true && record.approvedFrom !== undefined) {
+    return `approved by ${by} for the owner, sent by ${record.approvedFrom}`;
   }
   return record.approvedFrom === undefined
     ? `by ${by}`

@@ -164,6 +164,7 @@ describe('DashboardModel', () => {
         uploads: true,
         addedAt: 'x',
       },
+      new Date(0),
     );
 
     it('should show the owner every card, and approvals only when something waits', () => {
@@ -197,6 +198,31 @@ describe('DashboardModel', () => {
       const access = new DashboardModel(source({ permissions: manager })).access;
 
       expect(access.approvals).toContain('Nothing waiting for the owner.');
+    });
+
+    it('should show a super manager the queue and their notice, as the owner sees it (0024)', () => {
+      const superManager = Permissions.manager(
+        { uid: 'super', email: 'super@b.co' },
+        {
+          email: 'super@b.co',
+          pages: new Map(),
+          uploads: false,
+          addedAt: 'x',
+          superManager: { since: 'x', untilMs: null },
+        },
+        new Date(0),
+      );
+      const dashboard = new DashboardModel(source({ permissions: superManager, requests }));
+
+      expect(dashboard.access).toMatchObject({
+        owner: true,
+        approvalsHeading: 'Waiting for approval',
+        approvals: '2 changes wait for your approval.',
+      });
+      expect(dashboard.superNotice).toBe(
+        'You’re a super manager: you approve changes for the owner.',
+      );
+      expect(new DashboardModel(source({ permissions: manager })).superNotice).toBe('');
     });
   });
 });

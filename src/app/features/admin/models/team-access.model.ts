@@ -1,7 +1,9 @@
 import { EDITOR_TABS } from '../schemas/editor-tabs';
 import { type EditorTab } from './editor-tab.enum';
 import { ManagerArea } from './manager-area.enum';
+import { formatDay } from './editor-dates';
 import { type IRole, PAGE_ACCESS_CHOICES, PageAccess, pageAccess } from './role.model';
+import { isSuperActive, untilDay } from './super-manager';
 
 /** A manager on Team access (0019): their account id and what the owner allowed them. */
 export interface IManager {
@@ -108,9 +110,32 @@ export function accessGroups(role: IRole): IAccessGroup[] {
 }
 
 /**
+ * @param role A manager's permissions.
+ * @param now The time to judge its end at.
+ * @returns Their card's line (0024): "For good", "Until 30 Nov 2026", "Ended 30 Nov 2026", or empty
+ *   when they aren't one.
+ */
+export function superText(role: IRole, now: Date): string {
+  const entry = role.superManager;
+  if (entry === undefined) {
+    return '';
+  }
+  if (entry.untilMs === null) {
+    return 'For good';
+  }
+  const day = formatDay(untilDay(entry.untilMs));
+  return isSuperActive(entry, now) ? `Until ${day}` : `Ended ${day}`;
+}
+
+/**
  * @param managers Managers in any order.
- * @returns Them by email, so the list reads the same on every visit.
+ * @returns Super managers first, so it's plain who can approve (0024 D5), then by email, so the
+ *   list reads the same on every visit.
  */
 export function byEmail(managers: readonly IManager[]): IManager[] {
-  return [...managers].sort((first, second) => first.role.email.localeCompare(second.role.email));
+  const rank = (manager: IManager): number => (manager.role.superManager === undefined ? 1 : 0);
+  return [...managers].sort(
+    (first, second) =>
+      rank(first) - rank(second) || first.role.email.localeCompare(second.role.email),
+  );
 }

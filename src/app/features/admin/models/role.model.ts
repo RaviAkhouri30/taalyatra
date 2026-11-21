@@ -1,6 +1,7 @@
 import { type DocumentFields } from '@core/interfaces/i-document-store';
 import { EditorTab } from './editor-tab.enum';
 import { ManagerArea } from './manager-area.enum';
+import { type ISuperManager, superManagerFields, toSuperManager } from './super-manager';
 
 /** Where Team access keeps each manager's permissions, by account id (0019). */
 export const ROLES_COLLECTION = 'roles';
@@ -41,6 +42,11 @@ export interface IRole {
   readonly canApprove?: boolean;
   /** The owner's areas they were given (0022); missing means none, as in a stored role. */
   readonly areas?: ReadonlySet<ManagerArea>;
+  /**
+   * Stands in for the owner (0024), for good or until a date; missing means not. Their other
+   * settings stay stored, and apply again when it ends (D4).
+   */
+  readonly superManager?: ISuperManager;
   /** When the owner added them (ISO 8601). */
   readonly addedAt: string;
 }
@@ -87,6 +93,7 @@ export function toRole(fields: DocumentFields | null): IRole | null {
   const entries = new Map(Object.entries(fields));
   const email = entries.get('email');
   const addedAt = entries.get('addedAt');
+  const superManager = toSuperManager(entries.get('superManager'));
   return typeof email === 'string' && typeof addedAt === 'string'
     ? {
         email,
@@ -96,6 +103,7 @@ export function toRole(fields: DocumentFields | null): IRole | null {
         canApprove: entries.get('canApprove') === true,
         areas: toAreas(entries.get('areas')),
         addedAt,
+        ...(superManager ? { superManager } : {}),
       }
     : null;
 }
@@ -114,5 +122,7 @@ export function roleFields(role: IRole): DocumentFields {
       Object.values(ManagerArea).map((area) => [area, role.areas?.has(area) === true]),
     ),
     addedAt: role.addedAt,
+    // Only when on: a role without it is no super manager, as the rules read it.
+    ...(role.superManager ? { superManager: superManagerFields(role.superManager) } : {}),
   };
 }

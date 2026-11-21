@@ -38,7 +38,7 @@
                   </small></span
                 >
               </label>
-              @if (change.mine || model.isOwner()) {
+              @if (change.mine || model.actsAsOwner()) {
                 <button
                   appButton
                   type="button"
@@ -156,14 +156,14 @@
     @if (model.canBackUp()) {
       <app-backup-panel
         [justPublished]="model.justPublished()"
-        [canRestore]="model.isOwner()"
+        [canRestore]="model.actsAsOwner()"
         [canIncludeLeads]="model.canSeeLeads()"
       />
     }
     <app-publish-history
       [entries]="page.history"
       [canGoBack]="model.canGoBack()"
-      [owner]="model.isOwner()"
+      [owner]="model.actsAsOwner()"
       [confirming]="model.goingBack()"
       [busy]="model.busy()"
       (asked)="model.askToGoBack($event)"

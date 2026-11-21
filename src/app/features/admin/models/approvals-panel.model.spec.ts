@@ -49,7 +49,7 @@ describe('approvalsPanel', () => {
   });
 
   it('should show a manager their own requests, answered ones included', () => {
-    const panel = approvalsPanel(input(Permissions.manager(MANAGER, role)));
+    const panel = approvalsPanel(input(Permissions.manager(MANAGER, role, new Date(0))));
 
     expect(panel.owner).toBe(false);
     expect(panel.requests.map((view) => view.approval.id)).toEqual(['a', 'b']);

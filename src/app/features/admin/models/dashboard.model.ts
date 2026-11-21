@@ -16,6 +16,8 @@ import { EditorTab } from './editor-tab.enum';
 import { ManagerArea } from './manager-area.enum';
 import { type Lead, LeadStatus } from './lead.model';
 import { type Permissions } from './permissions.model';
+import { type IUnseenApprovals, unseenApprovalsText } from './self-approvals';
+import { superNotice } from './super-manager';
 import { type IVisitDay } from './visit-days';
 import { recentVisitsText } from './visits-page.model';
 
@@ -37,8 +39,8 @@ export interface IDashboardSource {
   readonly permissions: Permissions;
   /** Every approval request (empty when they couldn't be read). */
   readonly requests: readonly IApproval[];
-  /** For the owner, managers' self-approvals since they last looked (0023 D3); 0 for a manager. */
-  readonly unseenSelfApprovals?: number;
+  /** For the owner, managers' approvals since they last looked (0023 D3, 0024 D6); none for others. */
+  readonly unseenApprovals?: IUnseenApprovals;
 }
 
 /** Which cards the account sees, and its approvals in words (0019). */
@@ -56,6 +58,8 @@ export interface IDashboardAccess {
   readonly approvals: string;
 }
 
+const NONE_UNSEEN: IUnseenApprovals = { self: 0, forOwner: 0 };
+
 function plural(count: number, one: string, many: string): string {
   return `${String(count)} ${count === 1 ? one : many}`;
 }
@@ -68,9 +72,11 @@ export class DashboardModel {
   public readonly offer: string;
   public readonly hidden: string;
   public readonly lastPublished: string;
-  /** "2 changes self-approved since you last looked", or empty (0023 D3). */
+  /** "2 changes self-approved and 1 approved for you since you last looked", or empty (0023, 0024). */
   public readonly selfApproved: string;
   public readonly warnings: readonly IPublishIssue[];
+  /** For a super manager, that they stand in for the owner and until when (0024 D8); else empty. */
+  public readonly superNotice: string;
   public readonly backup: BackupStatus;
   /** Visits in the last week, in words. */
   public readonly visits: string;
@@ -97,12 +103,10 @@ export class DashboardModel {
     this.lastPublished = source.lastPublish
       ? `Last published ${formatMoment(source.lastPublish.publishedAt)}.`
       : 'Nothing published from the editor yet.';
-    const unseen = source.unseenSelfApprovals ?? 0;
-    this.selfApproved =
-      unseen > 0
-        ? `${plural(unseen, 'change', 'changes')} self-approved by managers since you last looked.`
-        : '';
+    this.selfApproved = unseenApprovalsText(source.unseenApprovals ?? NONE_UNSEEN);
     this.warnings = source.warnings;
+    const { permissions } = source;
+    this.superNotice = superNotice(permissions.isSuper, permissions.superEndsAt, source.now);
     this.backup = new BackupStatus(source.lastBackupAt, source.now);
     this.visits = source.visits
       ? recentVisitsText(source.visits.days, source.visits.today)
@@ -114,7 +118,8 @@ export class DashboardModel {
 
   private static accessOf(source: IDashboardSource): IDashboardAccess {
     const { permissions } = source;
-    const owner = permissions.isOwner;
+    // A super manager sees the queue and restores backups as the owner does (0024).
+    const owner = permissions.actsAsOwner;
     const waiting = source.requests.filter((request) => request.status === ApprovalStatus.Waiting);
     return {
       owner,

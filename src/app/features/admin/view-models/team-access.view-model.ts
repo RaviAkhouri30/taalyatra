@@ -23,6 +23,7 @@ import {
   roleFormValue,
   roleOf,
 } from '../forms/role-form';
+import { siteDay } from '../models/site-days';
 import { type IManager, RoleFormMode, byEmail } from '../models/team-access.model';
 import { RolesService } from '../services/roles.service';
 
@@ -42,7 +43,11 @@ export const TEAM_MESSAGES = {
 @Injectable()
 export class TeamAccessViewModel extends ViewModel<readonly IManager[]> {
   /** The manager form, shared by adding and changing. */
-  public readonly form = createRoleForm(inject(APP_ENVIRONMENT).adminUid, () => this.listed());
+  public readonly form = createRoleForm(
+    inject(APP_ENVIRONMENT).adminUid,
+    () => this.listed(),
+    () => siteDay(this.clock.now().getTime()),
+  );
   public readonly failed = signal(false);
   public readonly mode = signal(RoleFormMode.Closed);
   public readonly saving = signal(false);
@@ -136,10 +141,12 @@ export class TeamAccessViewModel extends ViewModel<readonly IManager[]> {
 
   private saveManager(): Observable<unknown> {
     const value = roleFormValue(this.form);
-    // A change keeps the date they were first added.
-    const addedAt = this.editing()?.role.addedAt ?? this.clock.now().toISOString();
+    const now = this.clock.now().toISOString();
+    // A change keeps the date they were first added, and when they became a super manager.
+    const addedAt = this.editing()?.role.addedAt ?? now;
+    const superSince = this.editing()?.role.superManager?.since ?? now;
     this.saving.set(true);
-    return this.roles.save(value.uid, roleOf(value, addedAt)).pipe(
+    return this.roles.save(value.uid, roleOf(value, addedAt, superSince)).pipe(
       tap((saved) => {
         this.replace(saved.uid, saved);
         this.closeForm();

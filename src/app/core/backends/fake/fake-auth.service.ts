@@ -7,6 +7,7 @@ import { APP_ENVIRONMENT } from '@core/tokens/app-environment.token';
 import {
   FAKE_ADMIN_ACCOUNT,
   FAKE_MANAGER_ACCOUNT,
+  FAKE_SUPER_MANAGER_ACCOUNT,
   FAKE_VISITOR_ACCOUNT,
 } from './fake-auth.constants';
 
@@ -29,6 +30,7 @@ export class FakeAuthService implements IAuthService {
     { ...FAKE_ADMIN_ACCOUNT, uid: this.environment.adminUid },
     FAKE_VISITOR_ACCOUNT,
     FAKE_MANAGER_ACCOUNT,
+    FAKE_SUPER_MANAGER_ACCOUNT,
   ];
   // Restored from storage, so a reload (or the editor's preview frame) stays signed in.
   private readonly current = new BehaviorSubject<IAuthUser | null>(this.restore());

@@ -9,15 +9,19 @@ import {
   TOUR_SEEN_KEY_PREFIX,
   TOUR_VERSION,
 } from '../../src/app/features/admin/models/tour.constants';
-import { FAKE_MANAGER_ACCOUNT } from '../../src/app/core/backends/fake/fake-auth.constants';
+import {
+  FAKE_MANAGER_ACCOUNT,
+  FAKE_SUPER_MANAGER_ACCOUNT,
+} from '../../src/app/core/backends/fake/fake-auth.constants';
 
 /**
  * The test accounts whose tour offer is answered before each test, so it never covers the page:
- * the fake owner and manager, and the emulator's owner and managers.
+ * the fake owner and managers, and the emulator's owner and managers.
  */
 const TEST_ACCOUNT_UIDS = [
   'fake-admin-uid',
   FAKE_MANAGER_ACCOUNT.uid,
+  FAKE_SUPER_MANAGER_ACCOUNT.uid,
   '5zsz2DlUaja2Ss7wbFTrpiMMROk2',
   'emulator-manager-uid',
   'emulator-manager-two-uid',

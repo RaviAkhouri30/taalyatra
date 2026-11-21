@@ -56,9 +56,11 @@ export class ApprovalCardComponent {
     if (approval.status === ApprovalStatus.Waiting) {
       return 'Waiting for the owner. You can’t change these pages until they answer.';
     }
+    // Who answered, when it's known: the owner, or a super manager for them (0024 D6).
+    const by = approval.answeredBy === undefined ? '' : ` by ${approval.answeredBy}`;
     return approval.status === ApprovalStatus.Approved
-      ? `Approved and published, ${answeredAt}.`
-      : `Sent back, ${answeredAt}. You can carry on editing.`;
+      ? `Approved and published${by}, ${answeredAt}.`
+      : `Sent back${by}, ${answeredAt}. You can carry on editing.`;
   });
   protected readonly problemsText = computed(() => {
     const count = this.view().problems;

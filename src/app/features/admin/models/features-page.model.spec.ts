@@ -14,6 +14,7 @@ describe('featureGroups', () => {
       uploads: true,
       addedAt: 'x',
     },
+    new Date(0),
   );
   const cards = (groups: ReturnType<typeof featureGroups>) =>
     groups.flatMap((group) => group.cards);

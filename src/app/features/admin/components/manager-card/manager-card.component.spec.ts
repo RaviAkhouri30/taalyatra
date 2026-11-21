@@ -84,4 +84,17 @@ describe('ManagerCardComponent', () => {
     expect(confirmed).toHaveBeenCalled();
     expect(cancelled).toHaveBeenCalled();
   });
+
+  it('should say how long a super manager lasts, and nothing for anyone else (0024)', () => {
+    const fixture = TestBed.createComponent(ManagerCardComponent);
+    fixture.componentRef.setInput('manager', {
+      ...manager,
+      role: { ...manager.role, superManager: { since: 'x', untilMs: null } },
+    });
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('[data-access="super"] dd')?.textContent).toBe('For good');
+    expect(render().element.querySelector('[data-access="super"]')).toBeNull();
+  });
 });

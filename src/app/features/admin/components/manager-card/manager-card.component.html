@@ -17,6 +17,12 @@
       <dt>Photo uploads</dt>
       <dd>{{ uploads() }}</dd>
     </div>
+    @if (superManager()) {
+      <div data-access="super">
+        <dt>Super manager</dt>
+        <dd>{{ superManager() }}</dd>
+      </div>
+    }
     <div>
       <dt>Approving</dt>
       <dd>{{ approving() }}</dd>

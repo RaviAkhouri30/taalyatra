@@ -37,6 +37,11 @@ export interface IApproval {
   readonly answer: string;
   /** When the owner answered (ISO 8601), or empty. */
   readonly answeredAt: string;
+  /**
+   * The email of whoever answered: the owner, or a super manager for them (0024 D6). Missing on
+   * answers from before 2.5.0, which were the owner's.
+   */
+  readonly answeredBy?: string;
 }
 
 function text(entries: ReadonlyMap<string, unknown>, key: string): string {
@@ -67,6 +72,7 @@ export function toApproval(id: string, fields: DocumentFields): IApproval | null
     status,
     answer: text(entries, 'answer'),
     answeredAt: text(entries, 'answeredAt'),
+    ...(text(entries, 'answeredBy') ? { answeredBy: text(entries, 'answeredBy') } : {}),
   };
 }
 
@@ -94,6 +100,8 @@ export function answeredFields(approval: IApproval): DocumentFields {
     ...sentFields(approval),
     answer: approval.answer,
     answeredAt: approval.answeredAt,
+    // Signed: the rules require the answerer's own email (0024 D6).
+    ...(approval.answeredBy === undefined ? {} : { answeredBy: approval.answeredBy }),
   };
 }
 

@@ -54,19 +54,20 @@ function problemsIn(approval: IApproval, input: IApprovalsInput): number {
 export function approvalsPanel(input: IApprovalsInput): IApprovalsPanel {
   const { permissions } = input;
   const shown = input.requests.filter((approval) =>
-    permissions.isOwner
+    permissions.actsAsOwner
       ? approval.status === ApprovalStatus.Waiting
       : approval.by === permissions.uid,
   );
   return {
-    owner: permissions.isOwner,
+    // A super manager answers the queue for the owner (0024).
+    owner: permissions.actsAsOwner,
     canApproveOwn: permissions.canApproveOwn,
     requests: shown.map((approval) => ({
       approval,
       title: approval.paths.map(titleOf).join('; '),
       sentAt: formatMoment(approval.sentAt),
       answeredAt: approval.answeredAt ? formatMoment(approval.answeredAt) : '',
-      problems: permissions.isOwner ? problemsIn(approval, input) : 0,
+      problems: permissions.actsAsOwner ? problemsIn(approval, input) : 0,
     })),
   };
 }

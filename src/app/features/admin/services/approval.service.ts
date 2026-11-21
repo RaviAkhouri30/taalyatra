@@ -135,25 +135,26 @@ export class ApprovalService {
    */
   public approve(approval: IApproval, drafts: ReadonlyMap<string, IDraft>): Observable<void> {
     const chosen = new Map([...drafts].filter(([path]) => approval.paths.includes(path)));
-    const answered = this.answered(approval, ApprovalStatus.Approved, '');
-    return this.publishes
-      .publish(chosen, {
-        approvedFrom: approval.email,
-        writes: [
-          {
-            kind: DocumentWriteKind.Set,
-            path: this.pathOf(answered),
-            fields: answeredFields(answered),
-          },
-          ...this.unlocks(approval),
-        ],
-      })
-      .pipe(
-        map(() => undefined),
-        tap(() => {
-          this.changes.next();
+    return this.answered(approval, ApprovalStatus.Approved, '').pipe(
+      // switchMap: one publish, with the answer signed by whoever approves.
+      switchMap((answered) =>
+        this.publishes.publish(chosen, {
+          approvedFrom: approval.email,
+          writes: [
+            {
+              kind: DocumentWriteKind.Set,
+              path: this.pathOf(answered),
+              fields: answeredFields(answered),
+            },
+            ...this.unlocks(approval),
+          ],
         }),
-      );
+      ),
+      map(() => undefined),
+      tap(() => {
+        this.changes.next();
+      }),
+    );
   }
 
   /**
@@ -163,15 +164,19 @@ export class ApprovalService {
    * @returns Completes once it's answered.
    */
   public sendBack(approval: IApproval, reason: string): Observable<void> {
-    const answered = this.answered(approval, ApprovalStatus.SentBack, reason.trim());
-    return this.run([
-      {
-        kind: DocumentWriteKind.Set,
-        path: this.pathOf(answered),
-        fields: answeredFields(answered),
-      },
-      ...this.unlocks(approval),
-    ]);
+    return this.answered(approval, ApprovalStatus.SentBack, reason.trim()).pipe(
+      // switchMap: one commit, signed by whoever answers.
+      switchMap((answered) =>
+        this.run([
+          {
+            kind: DocumentWriteKind.Set,
+            path: this.pathOf(answered),
+            fields: answeredFields(answered),
+          },
+          ...this.unlocks(approval),
+        ]),
+      ),
+    );
   }
 
   private newRequest(permissions: Permissions, paths: readonly string[], note: string): IApproval {
@@ -190,8 +195,22 @@ export class ApprovalService {
     };
   }
 
-  private answered(approval: IApproval, status: ApprovalStatus, answer: string): IApproval {
-    return { ...approval, status, answer, answeredAt: this.clock.now().toISOString() };
+  /** The request with its answer, signed with the answerer's email (0024 D6). */
+  private answered(
+    approval: IApproval,
+    status: ApprovalStatus,
+    answer: string,
+  ): Observable<IApproval> {
+    return this.access.permissions$.pipe(
+      take(1),
+      map((permissions) => ({
+        ...approval,
+        status,
+        answer,
+        answeredAt: this.clock.now().toISOString(),
+        answeredBy: permissions.email,
+      })),
+    );
   }
 
   private run(writes: readonly DocumentWrite[]): Observable<void> {
