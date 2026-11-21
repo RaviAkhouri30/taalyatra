@@ -4,6 +4,7 @@ import { fieldOf } from '../../forms/json-node';
 import { ensureOneOn } from '../../forms/one-in-list';
 import { buildListItem } from '../../forms/schema-control.factory';
 import { moveListItem } from '../../forms/list-items';
+import { cardContext } from '../../models/ai-assist';
 import { FieldKind } from '../../models/field-kind.enum';
 import {
   type FieldSchema,
@@ -22,6 +23,13 @@ interface IFieldEntry {
   readonly nested: readonly FieldSchema[] | null;
   /** Set for lists. */
   readonly list: { readonly schema: IListFieldSchema; readonly items: FormArray } | null;
+  /** Reads the card's other prose when the AI help asks (0025 D3). */
+  readonly context: () => string;
+}
+
+/** @returns A card's values now, by key; none when it isn't a group. */
+function valuesOf(record: FormRecord | null): ReadonlyMap<string, unknown> {
+  return new Map(Object.entries(record?.getRawValue() ?? {}));
 }
 
 /**
@@ -58,6 +66,7 @@ export class SchemaFieldsComponent {
           field.kind === FieldKind.List && control instanceof FormArray
             ? { schema: field, items: control }
             : null,
+        context: () => cardContext(this.fields(), valuesOf(record), field.key),
       };
     });
   });

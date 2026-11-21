@@ -99,6 +99,13 @@ flowchart LR
   AP -- "one commit: request + locks" --> F[(Firestore rules)]
 ```
 
+## AI help (0025, 2.6.0)
+
+Rewrite and Suggest on prose fields, Suggest a description on uploaded photos, and Analyse on Leads ask `IAiService`.
+Its HTTP adapter calls the Azure Function, which alone holds the provider's key and speaks the OpenAI-compatible
+format to any provider (Groq today), with the sign-in checked as for uploads and only the data D3 allows
+([ADR-0020](adr/0020-ai-through-the-function.md)). Until the settings exist, the admin shows no AI buttons.
+
 ## Dependency rules
 
 1. `features → shared → core/interfaces`. Arrows never point back up.

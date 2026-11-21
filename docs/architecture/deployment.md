@@ -29,6 +29,20 @@ Production**, it needs `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` and `CLOUDI
 never committed or sent to the browser. The cloud name is public, and is in `environment.ts` too, for image
 delivery. Preview sites don't have these settings, so uploads fail there with a clear message.
 
+**AI help (2.6.0, [ADR-0020](adr/0020-ai-through-the-function.md)):** the same function answers `/api/ai/*`. In the
+same **Environment variables → Production**, add:
+
+| Setting           | Value                                                                    |
+| ----------------- | ------------------------------------------------------------------------ |
+| `AI_API_URL`      | `https://api.groq.com/openai/v1` (any OpenAI-compatible API's address)   |
+| `AI_MODEL`        | a text model from the provider's list                                    |
+| `AI_API_KEY`      | the key from the provider's console; never committed, never in a browser |
+| `AI_VISION_MODEL` | optional: a model that reads pictures, for Suggest a description         |
+
+Until the first three are set, the admin shows no AI buttons and nothing else changes. Changing provider or model is
+a settings change, with no rebuild. A free Groq account has no card, so there's nothing to pay; past its limits the
+buttons say the help isn't available.
+
 **Runtime config:** the Firebase web config is public by design (it's protected by
 `firestore.rules`) but kept out of git (CLAUDE.md §10).
 

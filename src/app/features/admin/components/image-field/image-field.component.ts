@@ -18,6 +18,8 @@ import { parseImageSrc } from '../../models/image-src';
 import { youtubeThumbnail } from '../../models/youtube-link';
 import { type MediaAsset } from '../../models/media-asset.model';
 import { ImageFieldViewModel } from '../../view-models/image-field.view-model';
+import { AiAssistMode } from '../../models/ai-assist';
+import { AiAssistComponent } from '../ai-assist/ai-assist.component';
 import { ImageCropComponent } from '../image-crop/image-crop.component';
 import { MediaPickerComponent } from '../media-picker/media-picker.component';
 
@@ -34,7 +36,7 @@ enum ImageFieldPanel {
  */
 @Component({
   selector: 'app-image-field',
-  imports: [ImageCropComponent, MediaPickerComponent, NgOptimizedImage],
+  imports: [AiAssistComponent, ImageCropComponent, MediaPickerComponent, NgOptimizedImage],
   templateUrl: './image-field.component.html',
   styleUrl: './image-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -56,12 +58,15 @@ export class ImageFieldComponent extends BaseComponent<MediaAsset | null> {
   protected readonly panels = ImageFieldPanel;
   protected readonly panel = signal(ImageFieldPanel.None);
   protected readonly maxLength = CONTENT_MAX_LENGTH.imageAlt;
+  protected readonly pictureMode = AiAssistMode.Picture;
   /** Whether the owner asked for a link's thumbnail with no YouTube link to take it from. */
   protected readonly linkMissing = signal(false);
   // The control isn't a signal: this is its value for the view, kept in step by `update`.
   protected readonly image = linkedSignal(() => this.control().value);
   /** Only uploaded files can be cropped: Cloudinary doesn't have the local ones. */
   protected readonly canCrop = computed(() => parseImageSrc(this.image().src) !== null);
+  /** Reads the description when the AI help asks (0025 V8). */
+  protected readonly readDescription = (): string => this.image().alt;
 
   /** Uses the thumbnail of the YouTube link in the sibling field, if it holds one (D20). */
   protected useLinkThumbnail(): void {

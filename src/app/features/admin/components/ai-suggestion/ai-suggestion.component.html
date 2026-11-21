@@ -1,0 +1,14 @@
+<p class="as-label">Suggestion</p>
+<p class="as-text">{{ text() }}</p>
+@if (count()) {
+  <p class="as-count" [class.as-count--over]="over()">{{ count() }}</p>
+}
+<div class="as-actions">
+  <button appButton type="button" [size]="compact" (click)="used.emit()">Use it</button>
+  <button appButton type="button" [variant]="ghost" [size]="compact" (click)="retried.emit()">
+    Try again
+  </button>
+  <button appButton type="button" [variant]="ghost" [size]="compact" (click)="kept.emit()">
+    Keep mine
+  </button>
+</div>

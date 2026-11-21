@@ -1,0 +1,72 @@
+@if (shown()) {
+  <div class="aa">
+    @if (mode() === modes.Picture) {
+      <button
+        appButton
+        type="button"
+        [variant]="ghost"
+        [size]="compact"
+        [disabled]="model.busy()"
+        (click)="describe()"
+      >
+        Suggest a description
+      </button>
+    } @else {
+      <button
+        appButton
+        type="button"
+        [variant]="ghost"
+        [size]="compact"
+        [disabled]="model.busy()"
+        [id]="buttonId()"
+        [attr.aria-expanded]="menuOpen()"
+        [attr.aria-controls]="menuId()"
+        [attr.aria-describedby]="forId()"
+        (click)="toggleMenu()"
+      >
+        AI help
+      </button>
+      <!-- A description, not part of the name: the field's label stays the field's alone. -->
+      <span class="visually-hidden" [id]="forId()">For {{ label() }}</span>
+      @if (menuOpen()) {
+        <div class="aa-menu" role="group" [id]="menuId()" [attr.aria-labelledby]="buttonId()">
+          @if (empty()) {
+            <button appButton type="button" [variant]="ghost" [size]="compact" (click)="write()">
+              Suggest a first version
+            </button>
+          } @else {
+            <span class="aa-menu-label">Rewrite:</span>
+            @for (choice of styles; track choice.style) {
+              <button
+                appButton
+                type="button"
+                [variant]="ghost"
+                [size]="compact"
+                (click)="write(choice.style)"
+              >
+                {{ choice.label }}
+              </button>
+            }
+          }
+        </div>
+      }
+    }
+    <p class="aa-status" role="status">
+      @if (model.busy()) {
+        Writing…
+      }
+    </p>
+    @if (model.error(); as error) {
+      <p class="aa-error" role="alert">{{ error }}</p>
+    }
+    @if (model.suggestion(); as suggestion) {
+      <app-ai-suggestion
+        [text]="suggestion"
+        [maxLength]="maxLength()"
+        (used)="use(suggestion)"
+        (retried)="model.tryAgain()"
+        (kept)="closeSuggestion()"
+      />
+    }
+  </div>
+}

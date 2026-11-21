@@ -382,3 +382,29 @@ sequenceDiagram
   O->>R: dashboard: "1 change approved for you by a super manager"
   Note over AS,F: at untilMs AS emits ordinary permissions, and the rules refuse from that moment
 ```
+
+## 13. AI help: a rewrite, and the leads analysis (0025, 2.6.0)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor O as Owner or manager
+  participant A as AiAssistComponent
+  participant S as IAiService (HttpAiService)
+  participant F as Azure Function
+  participant R as Firestore (roles)
+  participant P as AI provider (Groq)
+
+  O->>A: AI help, then Warmer
+  A->>S: write({ rewrite, warmer, text, label, page, context })
+  S->>F: POST /api/ai/write, Firebase ID token
+  F->>R: read roles/{uid} with the caller's token (owner: no read)
+  F->>F: check the request, count today's allowance
+  F->>P: chat/completions with the key from settings
+  P-->>F: the text
+  F-->>S: { text } fitted to the field's limit
+  S-->>A: the suggestion
+  O->>A: Use it (or Keep mine)
+  A-->>O: the field takes the text and autosaves as typing does
+  Note over O,P: Analyse on Leads sends only counts (leadsSummary), and the function rebuilds them and refuses any other key
+```

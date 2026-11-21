@@ -1,10 +1,17 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { provideNoAi } from '../../testing/editor-testing';
 import { type FormArray } from '@angular/forms';
 import { buildFormGroup } from '../../forms/schema-control.factory';
 import { FieldKind } from '../../models/field-kind.enum';
 import { type FieldSchema } from '../../models/i-field-schema';
 import { SchemaFieldsComponent } from './schema-fields.component';
+
+// The fields' AI help needs a route and the AI port; none is set up here (0025).
+beforeEach(() => {
+  TestBed.configureTestingModule({ providers: [provideRouter([]), provideNoAi()] });
+});
 
 const FIELDS: FieldSchema[] = [
   {

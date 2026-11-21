@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { CLOCK } from '@core/tokens/clock.token';
 import { createRoleForm } from '../../forms/role-form';
 import { RoleFormMode } from '../../models/team-access.model';
 import { ManagerFormComponent } from './manager-form.component';
@@ -10,6 +11,10 @@ describe('ManagerFormComponent', () => {
       () => new Set(),
       () => '2026-11-21',
     );
+    // A fixed day in India: the date field's earliest day comes from the clock (0024).
+    TestBed.configureTestingModule({
+      providers: [{ provide: CLOCK, useValue: { now: () => new Date('2026-11-21T10:00:00Z') } }],
+    });
     const fixture = TestBed.createComponent(ManagerFormComponent);
     fixture.componentRef.setInput('form', form);
     fixture.componentRef.setInput('mode', mode);

@@ -2,6 +2,7 @@ import { type InvocationContext } from '@azure/functions';
 import { type CryptoKey, SignJWT, createLocalJWKSet, exportJWK, generateKeyPair } from 'jose';
 import { type Mock, vi } from 'vitest';
 import { ADMIN_UID, FIREBASE_PROJECT_ID, TOKEN_HEADER } from '../lib/api-constants.js';
+import { AiLimiter } from '../lib/ai-limiter.js';
 import { type IApiDependencies, type IApiRequest } from '../lib/api-handler.js';
 
 /** A fixed moment: 2026-11-02T00:00:00Z. */
@@ -72,6 +73,11 @@ export function fakeDependencies(
     send: vi.fn(() => Promise.resolve(Response.json({ result: 'ok' }))),
     // No record unless a test gives one: a manager may not upload by default.
     read: vi.fn(() => Promise.resolve(new Response('{}', { status: 404 }))),
+    // The provider answers "A suggestion." unless a test gives another answer.
+    post: vi.fn(() =>
+      Promise.resolve(Response.json({ choices: [{ message: { content: 'A suggestion.' } }] })),
+    ),
+    aiLimiter: new AiLimiter(),
     ...overrides,
   };
 }
@@ -80,4 +86,22 @@ export function fakeDependencies(
 export function fakeContext(): { context: InvocationContext; error: Mock } {
   const error = vi.fn();
   return { context: { error } as unknown as InvocationContext, error };
+}
+
+/** The provider's settings, as the owner sets them in Azure (0025 D2). */
+export const AI_ENV = {
+  ...TEST_ENV,
+  AI_API_URL: 'https://ai.example/v1/',
+  AI_MODEL: 'text-model',
+  AI_API_KEY: 'not-a-real-key',
+};
+
+/** @returns A Firestore REST role document with these fields, as the rules let its owner read it. */
+export function roleDocument(fields: Record<string, unknown> = {}): Response {
+  return Response.json({ fields: { email: { stringValue: 'm@b.c' }, ...fields } });
+}
+
+/** @returns A provider answer carrying `content`. */
+export function aiAnswer(content: unknown): Response {
+  return Response.json({ choices: [{ message: { content } }] });
 }

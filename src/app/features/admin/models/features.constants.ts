@@ -35,6 +35,8 @@ export interface IFeature {
   readonly ownerOnly?: boolean;
   /** An area the owner can give a manager (0022): listed for a manager given it. */
   readonly area?: ManagerArea;
+  /** AI help (0025): listed only once the provider is set up. */
+  readonly ai?: boolean;
 }
 
 const anchor = (target: PageAnchor): string => `/#${target}`;
@@ -249,6 +251,27 @@ export const FEATURES: readonly IFeature[] = [
     description: 'Every proposal from the website, to follow up, mark and export.',
     change: { page: LEADS_PATH },
     area: ManagerArea.Leads,
+  },
+  {
+    id: 'leads-analysis',
+    group: FeatureGroup.Admin,
+    icon: IconName.Sparkle,
+    title: 'Analyse leads',
+    description:
+      'An AI summary of the leads shown: what brings enquiries, what wins, the busy months. Only counts are sent, never names or contact details.',
+    change: { page: LEADS_PATH },
+    area: ManagerArea.Leads,
+    ai: true,
+  },
+  {
+    id: 'ai-writing',
+    group: FeatureGroup.Admin,
+    icon: IconName.Sparkle,
+    title: 'Help writing with AI',
+    description:
+      'Rewrite a text clearer, shorter, warmer or more formal, fix its spelling, suggest a first version, or describe a photo. Nothing changes until you choose Use it.',
+    change: { note: 'AI help, under any text field and beside photo descriptions' },
+    ai: true,
   },
   {
     id: 'visits',

@@ -23,6 +23,7 @@
         (cleared)="model.clearFilters()"
       />
       <p class="lp-count" role="status">{{ model.count() }}</p>
+      <app-leads-analysis [leads]="model.shown()" />
       <ul class="lp-list">
         @for (lead of model.shown(); track lead.id) {
           <li>

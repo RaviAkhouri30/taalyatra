@@ -105,6 +105,11 @@
       </button>
     </fieldset>
   } @else {
-    <app-schema-field [field]="entry.field" [control]="entry.control" [fieldId]="entry.id" />
+    <app-schema-field
+      [field]="entry.field"
+      [control]="entry.control"
+      [fieldId]="entry.id"
+      [context]="entry.context"
+    />
   }
 }

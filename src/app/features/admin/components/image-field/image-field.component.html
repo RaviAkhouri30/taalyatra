@@ -22,6 +22,16 @@
       (input)="describe(description.value)"
     ></textarea>
     <p class="if-tip">Say what the photo shows, for people who can’t see it.</p>
+    <app-ai-assist
+      label="Description"
+      hint="Say what the photo shows, for people who can’t see it."
+      [mode]="pictureMode"
+      [fieldId]="fieldId()"
+      [maxLength]="maxLength"
+      [text]="readDescription"
+      [imageSrc]="current.src"
+      (used)="describe($event)"
+    />
     <div class="if-actions">
       <button
         type="button"

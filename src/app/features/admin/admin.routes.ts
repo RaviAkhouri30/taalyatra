@@ -1,4 +1,5 @@
 import { type Routes } from '@angular/router';
+import { provideAi } from '@core/config/provide-ai';
 import { provideFiles } from '@core/config/provide-files';
 import { provideMedia } from '@core/config/provide-media';
 import { editorGuard } from './guards/editor.guard';
@@ -41,7 +42,7 @@ const adminRoutes: Routes = [
     path: '',
     // Here and not with the other ports: public pages must never download the upload or backup
     // code (D9, 0016 V13).
-    providers: [...provideMedia(), provideFiles(), BackupService],
+    providers: [...provideMedia(), ...provideAi(), provideFiles(), BackupService],
     loadComponent: () => import('./components/admin-shell/admin-shell.component'),
     children: [
       {

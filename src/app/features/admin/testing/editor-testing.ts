@@ -5,8 +5,9 @@ import {
   signal,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { Subject, of } from 'rxjs';
+import { EMPTY, Subject, of } from 'rxjs';
 import { FakeFileService } from '@core/backends/fake/fake-file.service';
+import { IAiService, NO_AI } from '@core/interfaces/i-ai-service';
 import { IAuthService } from '@core/interfaces/i-auth-service';
 import { type DocumentFields, IDocumentStore } from '@core/interfaces/i-document-store';
 import { IFileService } from '@core/interfaces/i-file-service';
@@ -62,6 +63,7 @@ export function provideEditorTesting(seed: Readonly<Record<string, DocumentField
     localStore,
     providers: [
       provideRouter([]),
+      provideNoAi(),
       provideFakeContent().provider,
       provideSiteConfig(),
       { provide: LoggerService, useValue: { error: vi.fn() } },
@@ -73,6 +75,17 @@ export function provideEditorTesting(seed: Readonly<Record<string, DocumentField
       BackupService,
       { provide: DeviceStoreService, useValue: localStore },
     ],
+  };
+}
+
+/**
+ * @returns An `IAiService` with no help set up (0025), as before the provider's settings are in
+ *   place: fields show no AI buttons, so specs written before the AI help are unaffected.
+ */
+export function provideNoAi(): Provider {
+  return {
+    provide: IAiService,
+    useValue: { status: () => of(NO_AI), write: () => EMPTY, analyseLeads: () => EMPTY },
   };
 }
 

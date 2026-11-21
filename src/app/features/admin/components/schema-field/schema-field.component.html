@@ -91,6 +91,17 @@
         }
       </p>
     }
+    @if (aiHelp()) {
+      <app-ai-assist
+        [fieldId]="fieldId()"
+        [label]="item.label"
+        [hint]="item.hint ?? ''"
+        [maxLength]="aiLimit()"
+        [text]="readText"
+        [context]="context()"
+        (used)="useSuggestion(control, $event)"
+      />
+    }
     <!-- Always present, so aria-describedby never points at a missing element. -->
     <p class="fd-note" [id]="noteId()">{{ control.value | placeholderNote }}</p>
     <p class="fd-error" [id]="errorId()">{{ control.errors | fieldError }}</p>

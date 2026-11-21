@@ -12,19 +12,20 @@ Reference implementation of the architecture: `/Users/raviakhouri/MyWorks/Resume
 
 ## 1. Tech Stack (exact versions pinned in `package.json`)
 
-| Concern           | Choice                                                                                        |
-| ----------------- | --------------------------------------------------------------------------------------------- |
-| Framework         | Angular 22: standalone, zoneless, **signals** for state                                       |
-| UI / Layout       | Bootstrap **5.3.8** (latest stable; SCSS, imported selectively)                               |
-| Icons             | Bootstrap Icons 1.13: import individual SVGs, never the full icon font                        |
-| Async / Data flow | RxJS 7 for **all** asynchronous work                                                          |
-| Backend / DB      | Firebase Firestore 13, behind the `IHttpBackend` adapter                                      |
-| Authentication    | Firebase Auth, behind the `IAuthService` adapter                                              |
-| Media             | Cloudinary via `NgOptimizedImage` + our `IMAGE_LOADER` (`provideMediaImages`, ADR-0017)       |
-| Email             | EmailJS (`@emailjs/browser` 5), behind the `IEmailService` adapter                            |
-| Unit tests        | Vitest 4 (`@angular/build:unit-test`) + `@vitest/coverage-v8`                                 |
-| E2E tests         | Playwright 1.64 + `@axe-core/playwright`                                                      |
-| Static analysis   | ESLint 10 (`angular-eslint`, `typescript-eslint`, `sonarjs`, `security`), SonarQube, Prettier |
+| Concern           | Choice                                                                                              |
+| ----------------- | --------------------------------------------------------------------------------------------------- |
+| Framework         | Angular 22: standalone, zoneless, **signals** for state                                             |
+| UI / Layout       | Bootstrap **5.3.8** (latest stable; SCSS, imported selectively)                                     |
+| Icons             | Bootstrap Icons 1.13: import individual SVGs, never the full icon font                              |
+| Async / Data flow | RxJS 7 for **all** asynchronous work                                                                |
+| Backend / DB      | Firebase Firestore 13, behind the `IHttpBackend` adapter                                            |
+| Authentication    | Firebase Auth, behind the `IAuthService` adapter                                                    |
+| Media             | Cloudinary via `NgOptimizedImage` + our `IMAGE_LOADER` (`provideMediaImages`, ADR-0017)             |
+| Email             | EmailJS (`@emailjs/browser` 5), behind the `IEmailService` adapter                                  |
+| AI help           | Any OpenAI-compatible API (Groq), called only by the Azure Function, behind `IAiService` (ADR-0020) |
+| Unit tests        | Vitest 4 (`@angular/build:unit-test`) + `@vitest/coverage-v8`                                       |
+| E2E tests         | Playwright 1.64 + `@axe-core/playwright`                                                            |
+| Static analysis   | ESLint 10 (`angular-eslint`, `typescript-eslint`, `sonarjs`, `security`), SonarQube, Prettier       |
 
 - **Bootstrap 6** is still in alpha. Upgrading to it requires a stable release and an ADR.
 - **TSLint** is deprecated. `typescript-eslint` covers its rules. Never install `tslint` or `codelyzer`.
@@ -192,9 +193,9 @@ export class ApiServiceProviderFactory {
 - Every adapter honours the same `HttpResponse<T>` contract (Liskov). `RestHttpBackend` wraps
   `HttpClient` with `observe: 'response'`, so it matches the contract exactly.
 - The same pattern applies to `IAuthService` (ADR-0012), `IDocumentStore` (the editor's fresh
-  reads and atomic commits, ADR-0013), `IEmailService`, `IClipboardService`, and `IMediaService`
-  and `IFileService` (backups, 0016), both provided on the admin routes only, so public pages
-  never load them (ADR-0017).
+  reads and atomic commits, ADR-0013), `IEmailService`, `IClipboardService`, and `IMediaService`,
+  `IFileService` (backups, 0016) and `IAiService` (AI help, ADR-0020), provided on the admin routes
+  only, so public pages never load them (ADR-0017).
   Each has a Fake implementation for unit tests and e2e.
 - `ApiBaseService` sends every call through `HttpsErrorHandler` (loader, timeout, status check,
   notification) and unwraps `body`.

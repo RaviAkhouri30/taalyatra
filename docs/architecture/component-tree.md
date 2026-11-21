@@ -89,3 +89,22 @@ flowchart TD
   EP -->|"Theme card (0021)"| TP["ThemePanelComponent (ThemePanelViewModel)<br/>ready-made themes · contrast · Reset"]
   TP --> SW["ThemeSwatchComponent"]
 ```
+
+## AI help (2.6.0)
+
+Each prose field and each photo description gets its own `AiAssistComponent` with a component-scoped view model; the
+Leads page gets `LeadsAnalysisComponent`. Both ask `IAiService`, provided on the admin routes
+([ADR-0020](adr/0020-ai-through-the-function.md), [0025 design](../aidlc/0025-ai-help/02-design.md)).
+
+```mermaid
+flowchart TD
+  SFS["SchemaFieldsComponent<br/>passes each field the card's other prose"] --> SF["SchemaFieldComponent"]
+  SF -->|"text and multi-line only"| AA["AiAssistComponent (AiAssistViewModel)<br/>AI help · styles · Suggest a first version"]
+  IF["ImageFieldComponent"] -->|"uploaded photos"| AA2["AiAssistComponent<br/>Suggest a description"]
+  AA --> AS["AiSuggestionComponent<br/>Use it · Try again · Keep mine"]
+  AA2 --> AS
+  LP["LeadsPageComponent"] --> LA["LeadsAnalysisComponent (LeadsAnalysisViewModel)<br/>Analyse these N leads"]
+  AA --> S[(IAiService)]
+  AA2 --> S
+  LA --> S
+```

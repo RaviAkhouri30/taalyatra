@@ -1,0 +1,32 @@
+@if (model.data()?.text) {
+  <section class="la" aria-labelledby="la-title">
+    <h2 id="la-title">AI analysis</h2>
+    <p class="la-note">
+      Only counts are sent: statuses, event types, experiences, group sizes and months. Never a
+      name, phone number, email or message.
+    </p>
+    <div>
+      <button
+        appButton
+        type="button"
+        [variant]="ghost"
+        [disabled]="model.busy() || leads().length === 0"
+        (click)="model.analyse(leads())"
+      >
+        {{ buttonText() }}
+      </button>
+    </div>
+    <p class="la-status" role="status">
+      @if (model.busy()) {
+        Analysing…
+      }
+    </p>
+    @if (model.error(); as error) {
+      <p class="la-error" role="alert">{{ error }}</p>
+    }
+    @if (model.result(); as result) {
+      <p class="la-text">{{ result.text }}</p>
+      <p class="la-when">Analysed {{ result.when }}, from {{ result.count }} leads.</p>
+    }
+  </section>
+}
