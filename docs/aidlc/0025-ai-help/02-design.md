@@ -188,3 +188,86 @@ open and with the analysis shown.
 ---
 
 **Approval:** ☑ Approved by Ravi Akhouri on 2026-11-21.
+
+---
+
+## 2.7.0 · The chat on the site (V7)
+
+Built on the same approved inception (V7, D3, D4) and on 2.6.0's endpoint, client and limiter. The visitor's
+experience stays as today until the owner turns the AI chat on.
+
+### What changes for a visitor
+
+- **Typed questions** are answered by the AI from the site's own content: briefly, in the site's voice, ending with the
+  proposal form or WhatsApp when it can't help (inception AC 5). **The quick-reply chips stay scripted**: they're the
+  owner's own answers, instant and free.
+- The panel gains one line under the greeting: _"Typed questions are answered by AI from this site's information.
+  Please don't share personal details here."_
+- **Whenever the AI can't answer** (not turned on, a limit, a failure, offline, more than 12 s), the scripted reply
+  answers instead, as today (inception AC 6). The visitor never sees an error.
+
+### The function: `POST /api/ai/chat`
+
+| Part        | Design                                                                                                                                                                                                                                                                                                |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Who         | Anyone: no sign-in. Answers only when the owner sets **`AI_CHAT=on`** besides 2.6.0's settings, so the admin's help can be set up and tried first                                                                                                                                                     |
+| Body        | `{ question, history? }`: the question ≤ 300 characters; `history` at most the last 4 messages, each `{ role: visitor \| bot, text ≤ 600 }`. Anything else is refused (400)                                                                                                                           |
+| Limits (D4) | **10 questions an hour per visitor**, **500 a day for the whole chat**, so it can't use the free tier the admin needs. Past either: 429, and the browser answers from the script                                                                                                                      |
+| Visitor     | Known only by a SHA-256 hash of their address (`x-azure-clientip`, else the first `x-forwarded-for`), kept in memory for the hour. The address itself is never stored or logged                                                                                                                       |
+| Content     | The published site, read from Firestore's public REST API with no credential (the rules already allow it): `home/*`, `site/config`, `showFormats`, minus the sections hidden in `site/visibility`. Text fields only (no links, images or ids), cut to 12,000 characters, kept 15 minutes per instance |
+| Prompt      | The business; "answer only from the site's information below; when it isn't there, say so and suggest the proposal form or WhatsApp; never invent prices, dates or availability; 2–4 sentences; no Markdown; don't ask for personal details". The content and the conversation follow as data         |
+| Answer      | `{ text }`, plain text, at most 600 characters                                                                                                                                                                                                                                                        |
+
+The parts are 2.6.0's (`AiClient`, `readAiSettings`, `ai-request`), plus `SiteContent` (the read, the hidden sections,
+the cache) and a `ChatLimiter` (per visitor per hour, and the daily cap), each with its own tests.
+
+### The app
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor V as Visitor
+  participant VM as HomeAssistantViewModel
+  participant L as SITE_CHAT_LOADER
+  participant C as HttpSiteChat (lazy chunk)
+  participant F as Azure Function
+
+  V->>VM: types a question
+  VM->>L: first question only: load the chat client
+  L-->>VM: ISiteChat
+  VM->>C: ask(question, last 4 messages)
+  C->>F: POST /api/ai/chat
+  alt answered within 12 s
+    F-->>C: { text }
+    C-->>VM: the AI's answer
+  else not on, a limit, a failure or offline
+    C-->>VM: fails
+    VM-->>V: the scripted reply, as today
+  end
+```
+
+- **`ISiteChat`** (`core/interfaces`): `ask(question, history): Observable<string>`. **`HttpSiteChat`**
+  (`core/backends/ai/`) posts with `HttpClient`, already on every page; **`FakeSiteChat`** answers predictably for
+  development and e2e, failing on a marker phrase as the admin's Fake does.
+- **`SITE_CHAT_LOADER`** (`core/backends/ai/`), like `AFTER_LOAD_LOADER`: a dynamic import, so the client is its own
+  chunk, downloaded on the first typed question. The public site's first download stays the same (inception AC 8).
+- **`HomeAssistantViewModel`**: a typed question goes to the chat; a chip, or any failure, goes to the script. The typing
+  indicator shows while either answers, as today; `mergeMap` stays, so each question gets its own answer.
+
+### Tests
+
+**Function:** `SiteContent` (text only, hidden sections left out, the cache, an unreadable site), `ChatLimiter` (10 an
+hour per visitor, 500 a day, a new hour and day), `chat` (off without `AI_CHAT`, the body's limits, history shape, the
+hashed visitor, the answer's length). **Unit:** the port's adapters, the loader, the view model (AI answer, chip
+scripted, each failure scripted, offline, history of 4). **E2E (Fake, three sizes, axe):** a typed question answered by
+the AI, a chip answered by the script, a failure answered by the script, the notice; the public download unchanged.
+
+### Increments
+
+1. Function: `SiteContent`, `ChatLimiter`, `chat` route, prompts, tests; `AI_CHAT` in the deployment notes.
+2. App: `ISiteChat`, the HTTP adapter and Fake, `SITE_CHAT_LOADER`; the view model and the notice.
+3. E2E, ADR-0020's 2.7.0 note, diagrams, CHANGELOG.
+
+---
+
+**Approval (2.7.0):** ☑ Approved by Ravi Akhouri on 2026-11-22.

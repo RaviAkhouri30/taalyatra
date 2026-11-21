@@ -106,6 +106,14 @@ $ease-pop: cubic-bezier(0.16, 1, 0.3, 1);
   flex: none;
 }
 
+// The note on AI and privacy (0025 V7): small, above where the visitor types, in the panel's own
+// text colour. `smaller` follows the visitor's text size through the panel's. A flex item keeps
+// its text's height, so it needs no `flex: none`. Kept short: the styles are near their budget.
+.chat-note {
+  padding: 8px 16px 0;
+  font-size: smaller;
+}
+
 .chat-h {
   background: $panel-raised;
   color: t.$color-cream;

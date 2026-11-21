@@ -3,6 +3,8 @@ import { type CryptoKey, SignJWT, createLocalJWKSet, exportJWK, generateKeyPair 
 import { type Mock, vi } from 'vitest';
 import { ADMIN_UID, FIREBASE_PROJECT_ID, TOKEN_HEADER } from '../lib/api-constants.js';
 import { AiLimiter } from '../lib/ai-limiter.js';
+import { ChatLimiter } from '../lib/chat-limiter.js';
+import { SiteContent } from '../lib/site-content.js';
 import { type IApiDependencies, type IApiRequest } from '../lib/api-handler.js';
 
 /** A fixed moment: 2026-11-02T00:00:00Z. */
@@ -78,6 +80,10 @@ export function fakeDependencies(
       Promise.resolve(Response.json({ choices: [{ message: { content: 'A suggestion.' } }] })),
     ),
     aiLimiter: new AiLimiter(),
+    // No published site unless a test gives one.
+    readPublic: vi.fn(() => Promise.resolve(new Response('{}', { status: 404 }))),
+    chatLimiter: new ChatLimiter(),
+    siteContent: new SiteContent(),
     ...overrides,
   };
 }
@@ -104,4 +110,22 @@ export function roleDocument(fields: Record<string, unknown> = {}): Response {
 /** @returns A provider answer carrying `content`. */
 export function aiAnswer(content: unknown): Response {
   return Response.json({ choices: [{ message: { content } }] });
+}
+
+/** @returns A Firestore REST string value. */
+export function restText(text: string): unknown {
+  return { stringValue: text };
+}
+
+/** @returns A Firestore REST list body with these documents, by id. */
+export function restList(
+  collection: string,
+  documents: Record<string, Record<string, unknown>>,
+): Response {
+  return Response.json({
+    documents: Object.entries(documents).map(([id, fields]) => ({
+      name: `projects/x/databases/(default)/documents/${collection}/${id}`,
+      fields,
+    })),
+  });
 }

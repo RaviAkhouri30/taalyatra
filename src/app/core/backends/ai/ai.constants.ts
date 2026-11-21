@@ -2,3 +2,4 @@
 export const AI_STATUS_URL = '/api/ai/status';
 export const AI_WRITE_URL = '/api/ai/write';
 export const AI_LEADS_URL = '/api/ai/leads';
+export const AI_CHAT_URL = '/api/ai/chat';

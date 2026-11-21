@@ -21,6 +21,7 @@ describe('function registration', () => {
     await import('./ai-status.js');
     await import('./ai-write.js');
     await import('./ai-leads.js');
+    await import('./ai-chat.js');
   });
 
   it.each([
@@ -29,6 +30,7 @@ describe('function registration', () => {
     ['ai-write', 'ai/write', 'POST'],
     ['ai-leads', 'ai/leads', 'POST'],
     ['ai-status', 'ai/status', 'GET'],
+    ['ai-chat', 'ai/chat', 'POST'],
   ])('should expose %s as /api/%s, %s only', (name, route, method) => {
     expect(registered.get(name)).toMatchObject({
       methods: [method],
@@ -48,4 +50,19 @@ describe('function registration', () => {
       expect(response.status).toBe(401);
     },
   );
+});
+
+describe('the public chat', () => {
+  it('should answer without a token, saying it isn’t available until it’s turned on', async () => {
+    await import('./ai-chat.js');
+    const handler = registered.get('ai-chat')?.['handler'] as Handler;
+    const request = {
+      headers: { get: () => null },
+      json: () => Promise.resolve({ question: 'Hi' }),
+    };
+
+    const response = await handler(request, fakeContext().context);
+
+    expect(response.status).toBe(503);
+  });
 });

@@ -21,6 +21,10 @@ const AVATAR_SIZE = 46;
  * The chat panel (design `.chat`): header, conversation, quick questions, input and a WhatsApp
  * link. Presentational: the view model owns the conversation and answers questions.
  */
+/** The chat's note on AI and privacy (0025 design, 2.7.0). */
+export const ASSISTANT_AI_NOTE =
+  'Typed questions may be answered by AI from this site’s information. Please don’t share personal details here.';
+
 @Component({
   selector: 'app-assistant-panel',
   imports: [AssistantMessagesComponent, IconComponent, NgOptimizedImage, ReactiveFormsModule],
@@ -44,6 +48,8 @@ export class AssistantPanelComponent {
 
   protected readonly icon = IconName;
   protected readonly avatarSize = AVATAR_SIZE;
+  /** Typed questions may be answered by AI (0025 V7): said whether or not it's turned on. */
+  protected readonly aiNote = ASSISTANT_AI_NOTE;
   private readonly closeButton = viewChild.required<ElementRef<HTMLButtonElement>>('close');
 
   public constructor() {

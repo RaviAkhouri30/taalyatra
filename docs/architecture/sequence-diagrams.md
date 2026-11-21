@@ -408,3 +408,26 @@ sequenceDiagram
   A-->>O: the field takes the text and autosaves as typing does
   Note over O,P: Analyse on Leads sends only counts (leadsSummary), and the function rebuilds them and refuses any other key
 ```
+
+## 14. The chat on the site (0025, 2.7.0)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor V as Visitor
+  participant VM as HomeAssistantViewModel
+  participant L as SITE_CHAT_LOADER
+  participant F as Azure Function
+  participant FS as Firestore (public REST)
+  participant P as AI provider
+
+  V->>VM: types a question
+  VM->>L: the first typed question loads the chat client
+  VM->>F: POST /api/ai/chat { question, last 4 messages }
+  F->>F: AI_CHAT on? count the visitor (hashed) and the day
+  F->>FS: published sections, minus hidden ones (kept 15 minutes)
+  F->>P: the rules, the site's text, the conversation, the question
+  P-->>F: an answer
+  F-->>VM: { text }, at most 600 characters
+  Note over VM,F: off, a limit, a failure, offline or past 12 s, and the script answers, as before
+```
