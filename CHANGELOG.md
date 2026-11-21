@@ -6,6 +6,19 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-11-22
+
+### Added
+
+- **Help writing with AI:** under any text field, **AI help** rewrites your text clearer, shorter, warmer or more
+  formal, or fixes its spelling and grammar; for an empty field it suggests a first version. Beside an uploaded
+  photo's description, **Suggest a description**. Nothing changes until you choose **Use it**; **Keep mine** leaves
+  your text as it was.
+- **Analyse leads:** on Leads, **Analyse these leads** gives a short summary of what brings enquiries, what wins and
+  the busy months. Only counts are sent, never a name, phone number, email or message.
+- The help appears once the AI is set up in Azure (see the deployment notes); until then nothing changes. Each account
+  has 50 AI requests a day.
+
 ## [2.5.0] - 2026-11-21
 
 ### Added
