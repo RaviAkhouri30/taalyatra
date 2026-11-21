@@ -86,7 +86,7 @@ describe('Review', () => {
   });
 
   it('should show a manager only the pages they see, with what publishing each does', () => {
-    const manager = review({ permissions: Permissions.manager(MANAGER, role) });
+    const manager = review({ permissions: Permissions.manager(MANAGER, role, new Date(0)) });
 
     expect(manager.changes.map((change) => [change.path, change.author, change.action])).toEqual([
       ['home/hero', YOU, DraftAction.Publish],
@@ -97,7 +97,7 @@ describe('Review', () => {
   });
 
   it('should split the ticked changes into published and sent for approval', () => {
-    const manager = review({ permissions: Permissions.manager(MANAGER, role) });
+    const manager = review({ permissions: Permissions.manager(MANAGER, role, new Date(0)) });
 
     expect(manager.planFor(new Set(['home/hero', 'home/shows', 'home/offer']))).toEqual({
       publish: ['home/hero'],
@@ -118,7 +118,7 @@ describe('Review', () => {
   // A manager who can approve (0023).
   it('should approve the changes that need approval instead of sending them', () => {
     const manager = review({
-      permissions: Permissions.manager(MANAGER, { ...role, canApprove: true }),
+      permissions: Permissions.manager(MANAGER, { ...role, canApprove: true }, new Date(0)),
     });
 
     expect(manager.planFor(new Set(['home/hero', 'home/shows']))).toEqual({

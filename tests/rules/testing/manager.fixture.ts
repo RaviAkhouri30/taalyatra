@@ -17,6 +17,10 @@ export const NO_UPLOADS_UID = 'manager-without-uploads';
 
 export const SAVED_AT = '2026-11-19T10:00:00.000Z';
 
+/** The emails the clients sign in with: the rules check signatures against them (0022, 0024). */
+export const OWNER_EMAIL = 'owner@taalyatra.in';
+export const MANAGER_EMAIL = 'content-manager@taalyatra.in';
+
 export type Fields = Record<string, unknown>;
 
 export const home = fakeDb.home as unknown as Record<string, Fields>;
@@ -25,7 +29,7 @@ export const siteConfig = fakeDb.site.config as unknown as Fields;
 /** A role record as Team access stores it. */
 export function managerRole(change: Fields = {}): Fields {
   return {
-    email: 'content-manager@taalyatra.in',
+    email: MANAGER_EMAIL,
     pages: { hero: 'publish', videos: 'publish', business: 'publish', team: 'hidden' },
     uploads: true,
     addedAt: SAVED_AT,
@@ -68,11 +72,11 @@ export async function seedManagers(env: RulesTestEnvironment): Promise<IClients>
       setDoc(doc(db, `roles/${NO_UPLOADS_UID}`), managerRole({ pages: {}, uploads: false })),
     ]);
   });
-  const client = (uid: string): Firestore =>
-    env.authenticatedContext(uid).firestore() as unknown as Firestore;
+  const client = (uid: string, email = `${uid}@taalyatra.in`): Firestore =>
+    env.authenticatedContext(uid, { email }).firestore() as unknown as Firestore;
   return {
-    owner: client(OWNER_UID),
-    manager: client(MANAGER_UID),
+    owner: client(OWNER_UID, OWNER_EMAIL),
+    manager: client(MANAGER_UID, MANAGER_EMAIL),
     noUploads: client(NO_UPLOADS_UID),
     member: client('someone-else'),
   };
@@ -93,7 +97,7 @@ export function managerDraft(path: string, change: Fields = {}): Fields {
 export function approvalRequest(change: Fields = {}): Fields {
   return {
     by: MANAGER_UID,
-    email: 'content-manager@taalyatra.in',
+    email: MANAGER_EMAIL,
     paths: ['home/offer'],
     note: 'New festival dates',
     sentAt: SAVED_AT,

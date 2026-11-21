@@ -74,3 +74,15 @@ that also rewrites the manager's marker, `selfApprovals/{uid}`, naming that docu
 that is new in the same commit and carries the approval. A marker left from an earlier commit doesn't count, so no
 self-approved change goes live without its record. The owner's dashboard counts self-approvals since they last looked.
 See the [0023 design](../../aidlc/0023-manager-approves/02-design.md).
+
+## 2.5.0: a super manager (0024)
+
+`superManager { since, untilMs }` in a role makes a manager stand in for the owner, for good (`untilMs` null) or until
+the end of a chosen day in India. The rules' `isSuper()` compares `untilMs` with `request.time` on every request, so it
+ends by itself; `actsAsOwner()` (`isOwner() || isSuper()`) replaces `isOwner()` for pages, areas, the queue, photos,
+leads and drafts. Team access (`roles` writes) and changing or deleting history stay `isOwner()`, so no one else can
+lock the owner out, extend themselves or hide what was done; a super manager may read every role, to show who made
+each change. Every answer is signed (`answeredBy`, the answerer's own email, checked by the rules), and a super
+manager's approved publish carries `forOwner: true`, which the owner's dashboard counts. In the admin,
+`Permissions.actsAsOwner` follows the same split, and `AccessService` emits again at the end (in steps of at most a
+day, since longer browser timers misfire). See the [0024 design](../../aidlc/0024-super-manager/02-design.md).

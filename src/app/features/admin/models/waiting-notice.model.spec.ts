@@ -5,8 +5,8 @@ import { waitingNotice } from './waiting-notice.model';
 describe('waitingNotice', () => {
   const OWNER = Permissions.owner({ uid: 'owner', email: 'o@b.co' });
   const role = { email: 'm@b.co', pages: new Map(), uploads: true, addedAt: 'x' };
-  const MANAGER = Permissions.manager({ uid: 'manager', email: 'm@b.co' }, role);
-  const OTHER = Permissions.manager({ uid: 'other', email: 'x@b.co' }, role);
+  const MANAGER = Permissions.manager({ uid: 'manager', email: 'm@b.co' }, role, new Date(0));
+  const OTHER = Permissions.manager({ uid: 'other', email: 'x@b.co' }, role, new Date(0));
   const request = (
     id: string,
     sentAt: string,

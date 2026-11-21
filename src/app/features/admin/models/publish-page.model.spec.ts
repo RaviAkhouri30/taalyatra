@@ -94,4 +94,21 @@ describe('PublishPageModel', () => {
       { title: 'Self-approved', note: '' },
     ]);
   });
+
+  it('should name a super manager’s approval as given for the owner (0024)', () => {
+    const model = page(new Map(), [
+      {
+        id: 'a',
+        publishedAt: '2026-11-21T10:00:00.000Z',
+        changed: ['home/offer'],
+        before: {},
+        by: 'super',
+        byEmail: 's@b.co',
+        approvedFrom: 'm@b.co',
+        forOwner: true,
+      },
+    ]);
+
+    expect(model.history[0]?.who).toBe('approved by s@b.co for the owner, sent by m@b.co');
+  });
 });

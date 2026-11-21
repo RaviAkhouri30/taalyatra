@@ -1,6 +1,6 @@
 import { EditorTab } from './editor-tab.enum';
 import { type IRole, PageAccess } from './role.model';
-import { PAGE_ROWS, accessGroups, accessLabel, byEmail } from './team-access.model';
+import { PAGE_ROWS, accessGroups, accessLabel, byEmail, superText } from './team-access.model';
 
 describe('team access model', () => {
   const role = (pages: [EditorTab, PageAccess][], email = 'm@b.c'): IRole => ({
@@ -44,5 +44,35 @@ describe('team access model', () => {
     ]);
 
     expect(managers.map((manager) => manager.uid)).toEqual(['a', 'b']);
+  });
+
+  describe('a super manager (0024)', () => {
+    const END = Date.parse('2026-11-30T18:30:00Z');
+    const superRole = (untilMs: number | null, email = 'm@b.c'): IRole => ({
+      ...role([], email),
+      superManager: { since: 'x', untilMs },
+    });
+
+    it.each([
+      ['for good', null, END, 'For good'],
+      ['before the end', END, END - 1, 'Until 30 Nov 2026'],
+      ['after the end', END, END, 'Ended 30 Nov 2026'],
+    ])('should say how long one lasts %s', (_case, untilMs, now, text) => {
+      expect(superText(superRole(untilMs), new Date(now))).toBe(text);
+    });
+
+    it('should say nothing for a manager who isn’t one', () => {
+      expect(superText(role([]), new Date(END))).toBe('');
+    });
+
+    it('should list super managers first, then by email', () => {
+      const managers = [
+        { uid: 'a', role: role([], 'a@b.c') },
+        { uid: 'z', role: superRole(null, 'z@b.c') },
+        { uid: 'b', role: role([], 'b@b.c') },
+      ];
+
+      expect(byEmail(managers).map((manager) => manager.uid)).toEqual(['z', 'a', 'b']);
+    });
   });
 });

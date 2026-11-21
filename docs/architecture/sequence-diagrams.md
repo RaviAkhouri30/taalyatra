@@ -359,3 +359,26 @@ sequenceDiagram
   end
   F-->>M: Your requests shows the answer
 ```
+
+## 12a. A super manager answers for the owner, until their end (0024, 2.5.0)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor S as Super manager
+  participant AS as AccessService
+  participant R as Review & publish
+  participant A as ApprovalService
+  participant F as Firestore (rules)
+  actor O as Owner
+
+  AS->>F: read roles/{uid}
+  F-->>AS: superManager { untilMs }
+  AS-->>S: Permissions: isSuper, actsAsOwner
+  S->>R: Waiting for your approval (another manager's request)
+  R->>A: approve(request, drafts read now)
+  A->>F: one commit: live documents + history (approvedFrom, forOwner) + answer (answeredBy) + unlocks
+  F-->>A: allowed: actsAsOwner() (request.time before untilMs)
+  O->>R: dashboard: "1 change approved for you by a super manager"
+  Note over AS,F: at untilMs AS emits ordinary permissions, and the rules refuse from that moment
+```

@@ -88,6 +88,49 @@
       goes live with no note.</span
     >
   </label>
+  <fieldset class="mf-pages mf-super">
+    <legend>Super manager</legend>
+    <label class="mf-check">
+      <input type="checkbox" formControlName="superManager" />
+      <span
+        ><strong>Super manager</strong>: approves everyone’s changes for you, publishes every page
+        and uses every area. Team access, your account and deleting the history stay yours.</span
+      >
+    </label>
+    @if (form().controls.superManager.value) {
+      <div class="mf-term" role="radiogroup" aria-label="How long">
+        <label class="mf-check">
+          <input type="radio" formControlName="superEnds" [value]="false" />
+          <span>For good</span>
+        </label>
+        <label class="mf-check">
+          <input type="radio" formControlName="superEnds" [value]="true" />
+          <span>Until the end of a day you choose (India time)</span>
+        </label>
+      </div>
+      @if (form().controls.superEnds.value) {
+        @let untilError = superUntilError();
+        <label class="mf-field">
+          <span>Last day</span>
+          <input
+            type="date"
+            formControlName="superUntil"
+            [min]="today"
+            [attr.aria-invalid]="untilError !== null"
+            [attr.aria-describedby]="untilError ? 'mf-until-error' : 'mf-until-hint'"
+          />
+          @if (untilError) {
+            <small class="mf-error" id="mf-until-error">{{ untilError }}</small>
+          } @else {
+            <small class="mf-hint" id="mf-until-hint"
+              >It ends by itself after this day, even if you forget.</small
+            >
+          }
+        </label>
+      }
+      <p class="mf-hint">The page settings and switches here apply again when it ends.</p>
+    }
+  </fieldset>
   <fieldset class="mf-pages" formGroupName="areas">
     <legend>Your areas</legend>
     <p class="mf-hint">Off unless you turn them on. Team access and your account stay yours.</p>

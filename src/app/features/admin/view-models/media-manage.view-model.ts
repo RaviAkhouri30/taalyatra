@@ -60,9 +60,9 @@ export class MediaManageViewModel extends MediaLibraryViewModel {
   public readonly busyId = signal<string | null>(null);
   /** The latest message. */
   public readonly notice = signal<IMediaNotice | null>(null);
-  /** Replacing and deleting change the live site: the owner's only (0019 decision 6). */
+  /** Replacing and deleting change the live site: the owner's and a super manager's (0024 D2). */
   public readonly canManage = toSignal(
-    inject(AccessService).permissions$.pipe(map((permissions) => permissions.isOwner)),
+    inject(AccessService).permissions$.pipe(map((permissions) => permissions.actsAsOwner)),
     { initialValue: false },
   );
   /** Describing is a library change: the owner, or a manager with uploads on, as the rules allow. */

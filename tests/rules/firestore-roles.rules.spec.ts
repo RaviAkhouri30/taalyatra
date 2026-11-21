@@ -13,6 +13,7 @@ import {
   type IClients,
   MANAGER_UID,
   NO_UPLOADS_UID,
+  OWNER_EMAIL,
   OWNER_UID,
   approvalRequest,
   managerDraft,
@@ -219,7 +220,12 @@ describe('firestore.rules · roles, drafts and approvals', () => {
 
     it('should let the owner send a request back with a reason, and not change what was sent', async () => {
       await send();
-      const answer = { status: 'sent-back', answer: 'Dates are wrong', answeredAt: SAVED_AT_LATER };
+      const answer = {
+        status: 'sent-back',
+        answer: 'Dates are wrong',
+        answeredAt: SAVED_AT_LATER,
+        answeredBy: OWNER_EMAIL,
+      };
 
       await expect(
         setDoc(doc(clients.owner, 'approvals/request-1'), { ...approvalRequest(), ...answer }),

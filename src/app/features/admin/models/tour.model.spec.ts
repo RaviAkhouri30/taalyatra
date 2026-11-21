@@ -9,6 +9,7 @@ describe('tour model', () => {
     Permissions.manager(
       { uid: 'manager', email: 'm@b.co' },
       { email: 'm@b.co', pages: new Map(pages), uploads: true, addedAt: 'x' },
+      new Date(0),
     );
 
   it('should give the owner every step, the editor ones on the Hero page', () => {

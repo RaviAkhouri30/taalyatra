@@ -81,13 +81,16 @@ The owner is fixed by UID; managers are added on Team access (`roles/{uid}`) wit
 upload switch ([ADR-0018](adr/0018-roles-and-approvals.md)). `AccessService` turns the signed-in account into a
 `Permissions` model that guards, the menu, the dashboard, Review & publish, the editor and the photo library ask.
 `firestore.rules` enforce the same per page and per part of `site/config`, and the upload function reads the
-manager's upload setting with their own sign-in.
+manager's upload setting with their own sign-in. From 2.5.0 (0024) a **super manager** stands in for the owner until a
+chosen moment: `Permissions.actsAsOwner` and the rules' `actsAsOwner()` cover them, except Team access and trimming the
+history, and `AccessService` emits again at their end so the menu drops back without a reload.
 
 ```mermaid
 flowchart LR
   A[Auth user] --> AS[AccessService]
   AS -- "owner: fixed UID" --> P[Permissions]
   AS -- "roles/{uid}" --> P
+  AS -- "again at a super manager's end" --> P
   P --> G[Guards and menu]
   P --> R[Review & publish: publish or send]
   P --> E[Editor: locked while waiting]

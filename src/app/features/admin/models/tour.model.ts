@@ -175,7 +175,8 @@ export function tourSteps(permissions: Permissions): ITourStep[] {
     if (step.areas === true && !permissions.isOwner) {
       return given.length > 0 ? [givenStep(step, url, given)] : [];
     }
-    return [shownStep(step, url, permissions.isOwner)];
+    // A super manager reads the owner's texts: they answer the queue as the owner does (0024).
+    return [shownStep(step, url, permissions.actsAsOwner)];
   });
 }
 

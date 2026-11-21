@@ -29,6 +29,7 @@ const MANAGER = Permissions.manager(
     uploads: true,
     addedAt: '2026-11-19T10:00:00.000Z',
   },
+  new Date(0),
 );
 const STRANGER = Permissions.none({ uid: 'someone', email: 's@b.c' });
 const SIGNED_OUT = Permissions.none();
@@ -106,6 +107,7 @@ describe('admin guards', () => {
         addedAt: '2026-11-19T10:00:00.000Z',
         areas: new Set([ManagerArea.Leads]),
       },
+      new Date(0),
     );
 
     it('should let the owner in', async () => {

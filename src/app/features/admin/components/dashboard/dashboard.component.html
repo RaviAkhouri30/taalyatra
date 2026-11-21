@@ -4,6 +4,9 @@
     <p class="db-lead">{{ copy.lead }}</p>
   }
   @if (model.data(); as dash) {
+    @if (dash.superNotice) {
+      <p class="db-super" role="status">{{ dash.superNotice }}</p>
+    }
     <div class="db-grid">
       <section class="db-card" aria-labelledby="db-changes">
         <h2 id="db-changes">Changes not on the website yet</h2>

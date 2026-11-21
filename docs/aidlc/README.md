@@ -33,3 +33,4 @@ Each phase ends with **human approval** recorded at the bottom of its file. No p
 | 0021 | [Editable theme](0021-editable-theme/)                               | 2.2.0         | Released 2026-11-21 · tag `v2.2.0` · 01–05 approved                                                                        |
 | 0022 | [The owner's areas for managers](0022-manager-areas/)                | 2.3.0         | Released 2026-11-21 · tag `v2.3.0` · 01–05 approved                                                                        |
 | 0023 | [A manager who can approve](0023-manager-approves/)                  | 2.4.0         | Released 2026-11-21 · tag `v2.4.0` · 01–03 approved; 04–05 to write                                                        |
+| 0024 | [A super manager](0024-super-manager/)                               | 2.5.0         | 01–03 approved 2026-11-21; 04–05 to write                                                                                  |

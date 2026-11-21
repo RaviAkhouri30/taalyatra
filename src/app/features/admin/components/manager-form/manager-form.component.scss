@@ -118,6 +118,13 @@
   }
 }
 
+.mf-term {
+  display: grid;
+  gap: 8px;
+  // Under the switch's text, so the choices read as part of it.
+  padding-left: 30px;
+}
+
 .mf-actions {
   display: flex;
   flex-wrap: wrap;

@@ -18,6 +18,8 @@ export interface IPublishRecord {
   readonly approvedFrom?: string;
   /** For a change its manager approved themselves (0023): their title and note, each may be empty. */
   readonly selfApproval?: ISelfApproval;
+  /** A change a super manager approved on the owner's behalf (0024 D6); missing for any other. */
+  readonly forOwner?: boolean;
 }
 
 /** A manager's own approval of their changes (0023). */

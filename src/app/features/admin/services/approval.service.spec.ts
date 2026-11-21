@@ -100,6 +100,7 @@ describe('ApprovalService', () => {
       status: 'sent-back',
       answer: 'Dates are wrong',
       answeredAt: NOW.toISOString(),
+      answeredBy: 'm@b.c',
       note: 'New dates',
     });
     expect(store.documents.has('locks/home__offer')).toBe(false);
@@ -127,11 +128,36 @@ describe('ApprovalService', () => {
     expect(store.commits).toHaveLength(1);
     expect(store.documents.get('home/offer')).toEqual({ title: 'home/offer' });
     expect(store.documents.has('drafts/home__hero')).toBe(true);
-    expect(store.documents.get('approvals/r1')).toMatchObject({ status: 'approved' });
+    expect(store.documents.get('approvals/r1')).toMatchObject({
+      status: 'approved',
+      answeredBy: 'owner@example.com',
+    });
     expect(store.documents.has('locks/home__offer')).toBe(false);
+    const record = store.documents.get('publishes/2026-11-19T10-00-00-000Z');
+    expect(record).toMatchObject({ by: 'admin-uid', approvedFrom: 'm@b.c' });
+    expect(record).not.toHaveProperty('forOwner');
+  });
+
+  it('should mark a super manager’s approval as given for the owner (0024 D6)', async () => {
+    const superUser = { uid: 'super', email: 's@b.c' };
+    const draft = { path: 'home/offer', content: { title: 'New' }, savedAt: 'x' };
+    const { service, store } = setUp(
+      {
+        'roles/super': { ...ROLE, email: 's@b.c', superManager: { since: 'x', untilMs: null } },
+        'home/offer': { title: 'Old' },
+        'drafts/home__offer': draft,
+        'locks/home__offer': { approval: 'r1' },
+      },
+      superUser,
+    );
+
+    await firstValueFrom(service.approve(WAITING, new Map([['home/offer', draft]])));
+
+    expect(store.documents.get('approvals/r1')).toMatchObject({ answeredBy: 's@b.c' });
     expect(store.documents.get('publishes/2026-11-19T10-00-00-000Z')).toMatchObject({
-      by: 'admin-uid',
+      by: 'super',
       approvedFrom: 'm@b.c',
+      forOwner: true,
     });
   });
 

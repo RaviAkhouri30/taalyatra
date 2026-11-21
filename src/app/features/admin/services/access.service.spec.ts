@@ -6,7 +6,7 @@ import { APP_ENVIRONMENT } from '@core/tokens/app-environment.token';
 import { environment } from '@env/environment';
 import { AccountKind } from '../models/permissions.model';
 import { MemoryDocumentStore } from '../testing/memory-document-store';
-import { AccessService } from './access.service';
+import { AccessService, SUPER_END_STEP_MS } from './access.service';
 
 const OWNER = { uid: 'owner', email: 'o@b.c' };
 const MANAGER = { uid: 'manager', email: 'm@b.c' };
@@ -79,5 +79,55 @@ describe('AccessService', () => {
     await firstValueFrom(service.permissions$);
 
     expect(read).toHaveBeenCalledTimes(2);
+  });
+
+  describe('a super manager’s end (0024)', () => {
+    const NOW = Date.parse('2026-11-21T10:00:00Z');
+
+    beforeEach(() => {
+      vi.useFakeTimers({ now: NOW });
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    function superUntil(untilMs: number | null) {
+      const role = { ...ROLE, superManager: { since: 'x', untilMs } };
+      const { service } = setUp(MANAGER, new MemoryDocumentStore({ 'roles/manager': role }));
+      const seen: boolean[] = [];
+      service.permissions$.subscribe((permissions) => {
+        seen.push(permissions.isSuper);
+      });
+      return seen;
+    }
+
+    it('should drop the super manager at the end, without a reload', async () => {
+      const seen = superUntil(NOW + 60_000);
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(seen).toEqual([true]);
+      await vi.advanceTimersByTimeAsync(60_000);
+
+      expect(seen).toEqual([true, false]);
+    });
+
+    it('should reach a far end in steps no longer than a day', async () => {
+      const seen = superUntil(NOW + 40 * SUPER_END_STEP_MS);
+      await vi.advanceTimersByTimeAsync(39 * SUPER_END_STEP_MS);
+
+      expect(seen).toEqual([true]);
+      await vi.advanceTimersByTimeAsync(SUPER_END_STEP_MS);
+
+      expect(seen).toEqual([true, false]);
+    });
+
+    it('should not wait for a super manager for good', async () => {
+      const seen = superUntil(null);
+      await vi.advanceTimersByTimeAsync(SUPER_END_STEP_MS);
+
+      expect(seen).toEqual([true]);
+      expect(vi.getTimerCount()).toBe(0);
+    });
   });
 });

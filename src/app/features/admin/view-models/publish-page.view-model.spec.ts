@@ -212,7 +212,7 @@ describe('PublishPageViewModel', () => {
       const { model, show, store } = setUp(seed, MANAGER);
       expect(model.plan()).toEqual({ publish: ['home/offer'], send: ['home/hero'], approve: [] });
       expect(model.buttonText()).toBe('Publish 1 change, send 1 change for approval');
-      expect(model.isOwner()).toBe(false);
+      expect(model.actsAsOwner()).toBe(false);
 
       model.note.setValue(' New title ');
       model.publish();

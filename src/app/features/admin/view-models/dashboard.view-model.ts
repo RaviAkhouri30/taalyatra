@@ -19,7 +19,11 @@ import { ReleaseNotesService } from '../services/release-notes.service';
 import { type IVisitHistory, VisitsService } from '../services/visits.service';
 import { type Lead } from '../models/lead.model';
 import { EditorLayoutViewModel } from './editor-layout.view-model';
-import { SELF_APPROVALS_SEEN_KEY, unseenSelfApprovals } from '../models/self-approvals';
+import {
+  type IUnseenApprovals,
+  SELF_APPROVALS_SEEN_KEY,
+  unseenApprovals,
+} from '../models/self-approvals';
 import { DeviceStoreService } from '../services/device-store.service';
 import { type IPublishRecord } from '../models/i-publish-record';
 import { type IPublishIssue } from '../models/i-publish-issue';
@@ -83,7 +87,7 @@ export class DashboardViewModel extends ViewModel<DashboardModel> {
         return new DashboardModel({
           changeCount: [...drafts.keys()].filter((path) => permissions.canSeePath(path)).length,
           lastPublish: history[0] ?? null,
-          unseenSelfApprovals: this.unseenFor(permissions, history),
+          unseenApprovals: this.unseenFor(permissions, history),
           siteConfig: byPath.get(ContentPath.SiteConfig) ?? null,
           visibility: byPath.get(ContentPath.SiteVisibility) ?? null,
           warnings: this.warningsFor(permissions, byPath),
@@ -113,11 +117,17 @@ export class DashboardViewModel extends ViewModel<DashboardModel> {
     );
   }
 
-  /** Only the owner is told: a manager's self-approvals are their own (0023 D3). */
-  private unseenFor(permissions: Permissions, history: readonly IPublishRecord[]): number {
+  /**
+   * Only the owner is told: a manager's self-approvals are their own (0023 D3), and a super
+   * manager's answers are given for the owner (0024 D6).
+   */
+  private unseenFor(
+    permissions: Permissions,
+    history: readonly IPublishRecord[],
+  ): IUnseenApprovals {
     return permissions.isOwner
-      ? unseenSelfApprovals(history, this.device.get(SELF_APPROVALS_SEEN_KEY))
-      : 0;
+      ? unseenApprovals(history, this.device.get(SELF_APPROVALS_SEEN_KEY))
+      : { self: 0, forOwner: 0 };
   }
 
   /** Each area's read, made only when this account may use it (0022); else "not known". */

@@ -37,3 +37,24 @@ export function notListedValidator(listed: () => ReadonlySet<string>): Validator
   return (control: AbstractControl): ValidationErrors | null =>
     listed().has(String(control.value ?? '').trim()) ? { listedAccount: true } : null;
 }
+
+/**
+ * A super manager's last day (0024 D3): with the switch on and an end chosen, a day that is today
+ * or later. Set on the form, since it depends on the switch and the choice beside it.
+ * @param today Today in India, `YYYY-MM-DD`, read when the form is checked.
+ * @returns A validator giving `{ superUntil: true }` for a missing or past day.
+ */
+export function superUntilValidator(today: () => string): ValidatorFn {
+  return (form: AbstractControl): ValidationErrors | null => {
+    const value: unknown = form.value;
+    const fields = new Map(
+      typeof value === 'object' && value !== null ? Object.entries(value) : [],
+    );
+    const day = String(fields.get('superUntil') ?? '');
+    const needsDay = fields.get('superManager') === true && fields.get('superEnds') === true;
+    // YYYY-MM-DD compares as text; an empty or malformed day sorts before any real one.
+    return needsDay && !(/^\d{4}-\d{2}-\d{2}$/.test(day) && day >= today())
+      ? { superUntil: true }
+      : null;
+  };
+}

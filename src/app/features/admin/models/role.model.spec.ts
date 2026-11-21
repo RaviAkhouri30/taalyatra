@@ -62,4 +62,14 @@ describe('role model', () => {
   ])('should give no areas when a role has %s', (_case, areas) => {
     expect(toRole({ ...stored, areas })?.areas?.size).toBe(0);
   });
+
+  it('should read and store a super manager, and leave it out when off (0024)', () => {
+    const superManager = { since: '2026-11-21T10:00:00.000Z', untilMs: null };
+    const role = toRole({ ...stored, superManager });
+
+    expect(role?.superManager).toEqual(superManager);
+    expect(role && roleFields(role)).toEqual({ ...stored, superManager });
+    expect(toRole(stored)?.superManager).toBeUndefined();
+    expect(toRole({ ...stored, superManager: 'yes' })?.superManager).toBeUndefined();
+  });
 });

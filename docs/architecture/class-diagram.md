@@ -244,3 +244,46 @@ classDiagram
   IPublishRule <|.. ImageInLibraryRule
   IPublishRule <|.. OneFeaturedShowRule
 ```
+
+## Roles and permissions (0019–0024)
+
+Every admin screen asks `Permissions`; `firestore.rules` enforce the same. A super manager (0024) acts as the owner
+until their end, judged at the time given (`CLOCK`); `isOwner` stays the owner alone, for Team access and trimming the
+history.
+
+```mermaid
+classDiagram
+  class AccessService {
+    +permissions$: Observable~Permissions~
+  }
+  class Permissions {
+    +kind: AccountKind
+    +isOwner: boolean
+    +isSuper: boolean
+    +actsAsOwner: boolean
+    +superEndsAt: Date | null
+    +canApproveOwn: boolean
+    +canUse(area) boolean
+    +access(tab) PageAccess
+    +draftAction(path, content, live) DraftAction
+    +owner(user)$ Permissions
+    +manager(user, role, now)$ Permissions
+  }
+  class IRole {
+    +email
+    +pages: Map~EditorTab, PageAccess~
+    +uploads
+    +canApprove?
+    +areas?: Set~ManagerArea~
+    +superManager?: ISuperManager
+  }
+  class ISuperManager {
+    +since: string
+    +untilMs: number | null
+  }
+  AccessService --> IDocumentStore : roles/{uid}
+  AccessService --> CLOCK : now, and a timer to the end
+  AccessService ..> Permissions : creates
+  Permissions --> IRole
+  IRole --> ISuperManager
+```

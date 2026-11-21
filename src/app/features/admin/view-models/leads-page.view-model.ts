@@ -69,8 +69,8 @@ export class LeadsPageViewModel extends ViewModel<readonly Lead[]> {
 
   /** The signed-in account's email, for "by you" on a lead. */
   public readonly me = computed(() => this.permissions()?.email ?? '');
-  /** Removing a lead is the owner's only, Leads given or not (0022 D2). */
-  public readonly canRemove = computed(() => this.permissions()?.isOwner === true);
+  /** Removing a lead: the owner's, and a super manager's (0024 D2); not a manager given Leads. */
+  public readonly canRemove = computed(() => this.permissions()?.actsAsOwner === true);
 
   private readonly permissions = toSignal(inject(AccessService).permissions$);
   private readonly filter = toSignal(

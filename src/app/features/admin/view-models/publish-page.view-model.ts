@@ -34,7 +34,7 @@ import { PublishService } from '../services/publish.service';
 import { ReviewService } from '../services/review.service';
 import { downloadBackup } from './backup-download';
 import { EditorLayoutViewModel } from './editor-layout.view-model';
-import { SELF_APPROVALS_SEEN_KEY, newestSelfApproval } from '../models/self-approvals';
+import { SELF_APPROVALS_SEEN_KEY, newestManagersApproval } from '../models/self-approvals';
 import { DeviceStoreService } from '../services/device-store.service';
 
 /** What the account is told after each action. */
@@ -84,7 +84,10 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
   public readonly busy = signal(false);
   /** A publish just finished: the backups card offers to keep a copy of it (0016 V13). */
   public readonly justPublished = signal(false);
-  public readonly isOwner = computed(() => this.data()?.review.permissions.isOwner ?? false);
+  /** The owner, or a super manager standing in for them (0024): anyone's changes, restoring. */
+  public readonly actsAsOwner = computed(
+    () => this.data()?.review.permissions.actsAsOwner ?? false,
+  );
   /** The owner's areas this account may use here (0022). */
   public readonly canBackUp = computed(() => this.can(ManagerArea.Backups));
   public readonly canSeeLeads = computed(() => this.can(ManagerArea.Leads));
@@ -95,7 +98,7 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
     if (!permissions) {
       return '';
     }
-    return permissions.isOwner ? PUBLISH_INTRO.owner : PUBLISH_INTRO.manager;
+    return permissions.actsAsOwner ? PUBLISH_INTRO.owner : PUBLISH_INTRO.manager;
   });
   /** What a click does with the ticked changes. */
   public readonly plan = computed(() => this.data()?.review.planFor(this.selected()) ?? NOTHING);
@@ -316,9 +319,9 @@ export class PublishPageViewModel extends ViewModel<PublishPageModel> {
     );
   }
 
-  /** The owner has now seen every self-approval in the history (0023 D3). */
+  /** The owner has now seen every managers' approval in the history (0023 D3, 0024 D6). */
   private markSelfApprovalsSeen(page: PublishPageModel): void {
-    const newest = newestSelfApproval(page.history.map((entry) => entry.record));
+    const newest = newestManagersApproval(page.history.map((entry) => entry.record));
     if (page.review.permissions.isOwner && newest !== null) {
       this.device.set(SELF_APPROVALS_SEEN_KEY, newest);
     }
