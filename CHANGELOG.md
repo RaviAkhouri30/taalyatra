@@ -6,6 +6,21 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.7.0] - 2026-11-22
+
+### Added
+
+- **A smarter chat on the site:** questions visitors type are answered by AI from the site's own information (the
+  experiences, shows, FAQ, how it works and contact details, never a section you've hidden), briefly, and pointing to
+  the proposal form or WhatsApp when the answer isn't there. The quick-reply buttons keep your own answers.
+- The chat now says that typed questions may be answered by AI, and asks visitors not to share personal details.
+
+### Changed
+
+- It answers with AI only once you add `AI_CHAT` = `on` in Azure (see the deployment notes). Until then, and whenever
+  the AI can't answer, the chat replies from its script exactly as before. Each visitor can ask 10 questions an hour,
+  and the chat answers 500 a day.
+
 ## [2.6.0] - 2026-11-22
 
 ### Added
