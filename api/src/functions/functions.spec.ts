@@ -18,20 +18,26 @@ describe('function registration', () => {
   beforeEach(async () => {
     await import('./media-sign.js');
     await import('./media-delete.js');
+    await import('./ai-status.js');
+    await import('./ai-write.js');
+    await import('./ai-leads.js');
   });
 
   it.each([
-    ['media-sign', 'media/sign'],
-    ['media-delete', 'media/delete'],
-  ])('should expose %s as POST /api/%s only', (name, route) => {
+    ['media-sign', 'media/sign', 'POST'],
+    ['media-delete', 'media/delete', 'POST'],
+    ['ai-write', 'ai/write', 'POST'],
+    ['ai-leads', 'ai/leads', 'POST'],
+    ['ai-status', 'ai/status', 'GET'],
+  ])('should expose %s as /api/%s, %s only', (name, route, method) => {
     expect(registered.get(name)).toMatchObject({
-      methods: ['POST'],
+      methods: [method],
       authLevel: 'anonymous',
       route,
     });
   });
 
-  it.each(['media-sign', 'media-delete'])(
+  it.each(['media-sign', 'media-delete', 'ai-write', 'ai-leads', 'ai-status'])(
     'should refuse a request with no token when calling %s',
     async (name) => {
       const handler = registered.get(name)?.['handler'] as Handler;

@@ -7,6 +7,8 @@ import { type IImage } from '@shared/interfaces/i-image';
 import { FieldErrorPipe } from '../../pipes/field-error.pipe';
 import { PlaceholderNotePipe } from '../../pipes/placeholder-note.pipe';
 import { TextLengthPipe } from '../../pipes/text-length.pipe';
+import { AI_TEXT_KINDS } from '../../models/ai-assist';
+import { AiAssistComponent } from '../ai-assist/ai-assist.component';
 import { ImageFieldComponent } from '../image-field/image-field.component';
 
 /** The HTML input type of each single-line field kind. */
@@ -28,6 +30,7 @@ const COUNTER_SHOWS_FROM = 0.8;
 @Component({
   selector: 'app-schema-field',
   imports: [
+    AiAssistComponent,
     FieldErrorPipe,
     ImageFieldComponent,
     PlaceholderNotePipe,
@@ -45,6 +48,8 @@ export class SchemaFieldComponent {
   public readonly control = input.required<AbstractControl | null>();
   /** A page-unique id for the input. */
   public readonly fieldId = input.required<string>();
+  /** Reads the card's other prose, for the AI help (0025 D3). */
+  public readonly context = input<() => string>(() => '');
 
   protected readonly kind = FieldKind;
   protected readonly formControl = computed(() => {
@@ -90,6 +95,26 @@ export class SchemaFieldComponent {
       .filter(Boolean)
       .join(' '),
   );
+
+  /** Prose fields get AI help; links, numbers and contact details don't (0025 D7). */
+  protected readonly aiHelp = computed(() => AI_TEXT_KINDS.has(this.field().kind));
+  /** The stored maximum, which a suggestion is fitted to. */
+  protected readonly aiLimit = computed(() => {
+    const field = this.field();
+    return 'maxLength' in field ? (field.maxLength ?? null) : null;
+  });
+  /** Reads the field's text when the AI help asks. A field, so it's the same function each time. */
+  protected readonly readText = (): string => String(this.formControl()?.value ?? '');
+
+  /**
+   * The owner used an AI suggestion: it becomes the field's text, saved as typing is.
+   * @param control The field's control.
+   * @param text The suggestion.
+   */
+  protected useSuggestion(control: AbstractControl, text: string): void {
+    control.setValue(text);
+    control.markAsDirty();
+  }
 
   /** @param control The switch the owner changed; one that's unique in its list stays that way. */
   protected toggled(control: AbstractControl): void {

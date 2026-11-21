@@ -327,8 +327,11 @@ test.describe('Admin editor', () => {
   });
 
   for (const view of VIEWS) {
-    test(`should have no WCAG 2.2 AA violations on ${view}`, async ({ editor, axe }) => {
+    test(`should have no WCAG 2.2 AA violations on ${view}`, async ({ editor, page, axe }) => {
       await editor.openTab(view);
+      // The menu link's click leaves the pointer over the page: a button under it (such as AI
+      // help, 0025) would be scanned part-way through its hover transition.
+      await page.mouse.move(0, 0);
 
       // The preview frame is the public site, which has its own scans.
       const results = await axe().exclude('iframe').analyze();

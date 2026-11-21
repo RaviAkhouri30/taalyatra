@@ -1,6 +1,7 @@
 import { type HttpResponseInit, type InvocationContext } from '@azure/functions';
 import { type JWTVerifyGetKey } from 'jose';
 import { type Observable, catchError, firstValueFrom, of } from 'rxjs';
+import { type AiLimiter } from './ai-limiter.js';
 import { HttpStatus } from './api-constants.js';
 import { ApiError } from './api-error.js';
 
@@ -14,11 +15,15 @@ export interface IApiRequest {
 export interface IApiDependencies {
   readonly env: NodeJS.ProcessEnv;
   readonly keys: JWTVerifyGetKey;
+  /** Counts each account's AI requests (0025 D4); one per function instance. */
+  readonly aiLimiter: AiLimiter;
   now(): number;
   randomId(): string;
   send(url: string, form: URLSearchParams): Promise<Response>;
   /** Reads a URL as the signed-in caller, with their ID token (0019). */
   read(url: string, token: string): Promise<Response>;
+  /** Posts JSON, e.g. to the AI provider (0025); the live one gives up after `AI_TIMEOUT_MS`. */
+  post(url: string, headers: Readonly<Record<string, string>>, body: unknown): Promise<Response>;
 }
 
 const NO_STORE = { 'cache-control': 'no-store' };

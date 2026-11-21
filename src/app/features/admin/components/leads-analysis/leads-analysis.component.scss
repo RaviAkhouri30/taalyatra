@@ -1,0 +1,42 @@
+@use 'tokens' as t;
+@use 'forms';
+
+.la {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 16px 18px;
+  border: 1px solid t.$color-line;
+  border-radius: 16px;
+  background: t.$color-surface-raised;
+  color: t.$color-cream;
+
+  h2 {
+    margin: 0;
+    font-size: t.size(18px);
+  }
+}
+
+.la-note,
+.la-when,
+.la-status {
+  margin: 0;
+  font-size: t.size(13px);
+  color: t.$color-muted-strong;
+}
+
+.la-status:empty {
+  display: none;
+}
+
+.la-text {
+  margin: 0;
+  // The AI's points stay one per line; nothing in it is read as markup.
+  white-space: pre-wrap;
+}
+
+.la-error {
+  @include forms.field-error;
+
+  margin: 0;
+}

@@ -287,3 +287,29 @@ classDiagram
   Permissions --> IRole
   IRole --> ISuperManager
 ```
+
+## AI help (0025, 2.6.0)
+
+```mermaid
+classDiagram
+  class IAiService {
+    <<abstract port>>
+    +status() Observable~IAiStatus~
+    +write(request) Observable~string~
+    +analyseLeads(summary) Observable~string~
+  }
+  class HttpAiService { +x-firebase-token, cached status }
+  class FakeAiService { predictable answers, fails on request }
+  class aiServiceFactory { <<factory>> Firebase → Http, else Fake }
+  class AiError { +kind: AiErrorKind +messageOf(error)$ }
+  class AiAssistViewModel { +busy +suggestion +error +ask() +tryAgain() +dismiss() }
+  class LeadsAnalysisViewModel { +busy +result +error +analyse(leads) }
+  class leadsSummary { <<function>> counts only }
+  IAiService <|.. HttpAiService
+  IAiService <|.. FakeAiService
+  aiServiceFactory ..> IAiService : creates
+  AiAssistViewModel --> IAiService
+  LeadsAnalysisViewModel --> IAiService
+  LeadsAnalysisViewModel ..> leadsSummary
+  HttpAiService ..> AiError
+```

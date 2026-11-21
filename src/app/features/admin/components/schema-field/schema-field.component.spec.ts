@@ -1,11 +1,21 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { FakeAiService } from '@core/backends/fake/fake-ai.service';
+import { IAiService } from '@core/interfaces/i-ai-service';
+import { APP_ENVIRONMENT } from '@core/tokens/app-environment.token';
+import { environment } from '@env/environment';
 import { type AbstractControl } from '@angular/forms';
 import { buildControl } from '../../forms/schema-control.factory';
 import { FieldKind } from '../../models/field-kind.enum';
 import { type FieldSchema } from '../../models/i-field-schema';
-import { provideEditorTesting } from '../../testing/editor-testing';
+import { provideEditorTesting, provideNoAi } from '../../testing/editor-testing';
 import { SchemaFieldComponent } from './schema-field.component';
+
+// The fields' AI help needs a route and the AI port; none is set up here (0025).
+beforeEach(() => {
+  TestBed.configureTestingModule({ providers: [provideRouter([]), provideNoAi()] });
+});
 
 @Component({
   imports: [SchemaFieldComponent],
@@ -184,5 +194,51 @@ describe('SchemaFieldComponent', () => {
     element.querySelector('input')?.click();
 
     expect(control.value).toBe(false);
+  });
+
+  describe('with AI help set up (0025)', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        providers: [
+          { provide: IAiService, useClass: FakeAiService },
+          { provide: APP_ENVIRONMENT, useValue: { ...environment, fakeLatencyMs: 0 } },
+        ],
+      });
+    });
+
+    it.each([
+      [FieldKind.Text, true],
+      [FieldKind.Multiline, true],
+      [FieldKind.Url, false],
+      [FieldKind.Tel, false],
+      [FieldKind.Email, false],
+    ])('should offer it on a %s field: %s', (kind, offered) => {
+      const { element } = render({ key: 'x', label: 'X', kind } as FieldSchema, 'value');
+
+      expect(element.querySelector('app-ai-assist') !== null).toBe(offered);
+    });
+
+    it('should put a used suggestion in the field, ready to save', async () => {
+      const { fixture, control, element } = render(
+        { key: 'title', label: 'Title', kind: FieldKind.Text },
+        'Drum',
+      );
+      const click = async (name: string) => {
+        Array.from(element.querySelectorAll('button'))
+          .find((button) => button.textContent.trim() === name)
+          ?.click();
+        await new Promise((resolve) => {
+          setTimeout(resolve);
+        });
+        fixture.detectChanges();
+      };
+
+      await click('AI help');
+      await click('Shorter');
+      await click('Use it');
+
+      expect(control.value).toBe('shorter: Drum');
+      expect(control.dirty).toBe(true);
+    });
   });
 });

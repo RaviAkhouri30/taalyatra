@@ -1,0 +1,47 @@
+@use 'tokens' as t;
+
+:host {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 12px 14px;
+  border: 1px solid t.$color-amber;
+  border-radius: 12px;
+  background: t.$color-surface-raised;
+  color: t.$color-cream;
+
+  &:focus-visible {
+    outline: 2px solid t.$color-amber-soft;
+    outline-offset: 2px;
+  }
+}
+
+.as-label {
+  margin: 0;
+  font-size: t.size(12.5px);
+  font-weight: 700;
+  color: t.$color-amber-soft;
+}
+
+.as-text {
+  margin: 0;
+  // The AI's line breaks are kept; nothing in it is read as markup.
+  white-space: pre-wrap;
+}
+
+.as-count {
+  margin: 0;
+  font-size: t.size(12.5px);
+  color: t.$color-muted-strong;
+}
+
+.as-count--over {
+  font-weight: 700;
+  color: t.$color-amber-soft;
+}
+
+.as-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

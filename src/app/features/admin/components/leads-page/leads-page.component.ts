@@ -6,11 +6,12 @@ import { type Lead } from '../../models/lead.model';
 import { LeadsPageViewModel } from '../../view-models/leads-page.view-model';
 import { LeadCardComponent } from '../lead-card/lead-card.component';
 import { LeadFiltersComponent } from '../lead-filters/lead-filters.component';
+import { LeadsAnalysisComponent } from '../leads-analysis/leads-analysis.component';
 
 /** Leads (0018 V12): every proposal from the website, to follow up and keep track of. */
 @Component({
   selector: 'app-leads-page',
-  imports: [ButtonDirective, LeadCardComponent, LeadFiltersComponent],
+  imports: [ButtonDirective, LeadCardComponent, LeadFiltersComponent, LeadsAnalysisComponent],
   templateUrl: './leads-page.component.html',
   styleUrl: './leads-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
