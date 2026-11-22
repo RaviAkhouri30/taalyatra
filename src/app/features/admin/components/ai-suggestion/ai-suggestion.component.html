@@ -1,14 +1,38 @@
-<p class="as-label">Suggestion</p>
-<p class="as-text">{{ text() }}</p>
-@if (count()) {
-  <p class="as-count" [class.as-count--over]="over()">{{ count() }}</p>
+<p class="as-head">
+  <app-ai-spark [size]="15" />
+  @if (text() === null) {
+    Writing…
+  } @else {
+    {{ label() }}
+    @if (count()) {
+      <span class="as-count" [class.as-count--over]="over()">{{ count() }}</span>
+    }
+  }
+</p>
+@if (text(); as suggestion) {
+  <!-- The words arrive for the eye; a screen reader gets the text once, whole. -->
+  <p class="as-text" aria-hidden="true">
+    @for (word of words(); track $index) {
+      <span class="as-word" [appRevealDelay]="word.delayMs">{{ word.text }}</span>
+    }
+  </p>
+  <p class="visually-hidden">{{ suggestion }}</p>
+  @if (yours()) {
+    <p class="as-yours">
+      Yours: <s>{{ yours() }}</s>
+    </p>
+  }
+  <div class="as-actions">
+    <button #use appButton type="button" [size]="compact" (click)="used.emit()">Use this</button>
+    <button appButton type="button" [variant]="ghost" [size]="compact" (click)="retried.emit()">
+      <app-icon [name]="icons.Refresh" [size]="15" />
+      Try again
+    </button>
+    <button appButton type="button" [variant]="ghost" [size]="compact" (click)="discarded.emit()">
+      Discard
+    </button>
+  </div>
+} @else {
+  <span class="as-shim"></span>
+  <span class="as-shim as-shim--short"></span>
 }
-<div class="as-actions">
-  <button appButton type="button" [size]="compact" (click)="used.emit()">Use it</button>
-  <button appButton type="button" [variant]="ghost" [size]="compact" (click)="retried.emit()">
-    Try again
-  </button>
-  <button appButton type="button" [variant]="ghost" [size]="compact" (click)="kept.emit()">
-    Keep mine
-  </button>
-</div>

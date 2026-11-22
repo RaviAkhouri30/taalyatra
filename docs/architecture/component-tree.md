@@ -93,18 +93,21 @@ flowchart TD
   ST -.-> STS
 ```
 
-## AI help (2.6.0)
+## AI help (2.6.0; its look 2.13.0)
 
-Each prose field and each photo description gets its own `AiAssistComponent` with a component-scoped view model; the
-Leads page gets `LeadsAnalysisComponent`. Both ask `IAiService`, provided on the admin routes
+Each prose field and each photo description is wrapped in its own `AiAssistComponent`, with a component-scoped view
+model: the field is projected into its frame, and the ✦ chip sits in the corner (2.13.0,
+[0029 design](../aidlc/0029-ai-help-look/02-design.md)). The Leads page gets `LeadsAnalysisComponent`. Both ask `IAiService`, provided on the admin routes
 ([ADR-0020](adr/0020-ai-through-the-function.md), [0025 design](../aidlc/0025-ai-help/02-design.md)).
 
 ```mermaid
 flowchart TD
   SFS["SchemaFieldsComponent<br/>passes each field the card's other prose"] --> SF["SchemaFieldComponent"]
-  SF -->|"text and multi-line only"| AA["AiAssistComponent (AiAssistViewModel)<br/>AI help · styles · Suggest a first version"]
-  IF["ImageFieldComponent"] -->|"uploaded photos"| AA2["AiAssistComponent<br/>Suggest a description"]
-  AA --> AS["AiSuggestionComponent<br/>Use it · Try again · Keep mine"]
+  SF -->|"text and multi-line, wrapped"| AA["AiAssistComponent (AiAssistViewModel)<br/>the field · ✦ chip · Ctrl J · ring while writing · Undo"]
+  IF["ImageFieldComponent"] -->|"the description, wrapped"| AA2["AiAssistComponent<br/>Describe the photo"]
+  AA --> AM["AiMenuComponent<br/>first version · five rewrites"]
+  AA --> AS["AiSuggestionComponent<br/>word by word · Use this · Try again · Discard"]
+  AA2 --> AM
   AA2 --> AS
   LP["LeadsPageComponent"] --> LA["LeadsAnalysisComponent (LeadsAnalysisViewModel)<br/>Analyse these N leads"]
   AA --> S[(IAiService)]

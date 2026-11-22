@@ -10,28 +10,30 @@
   </div>
   <div class="if-body">
     <label [for]="fieldId()" [class.if-optional]="field().decorative">Description</label>
-    <textarea
-      #description
-      rows="2"
-      [id]="fieldId()"
-      [maxLength]="maxLength"
-      [value]="current.alt"
-      [attr.aria-required]="!field().decorative"
-      [attr.aria-invalid]="control().invalid"
-      [attr.aria-describedby]="describedBy()"
-      (input)="describe(description.value)"
-    ></textarea>
-    <p class="if-tip">Say what the photo shows, for people who can’t see it.</p>
     <app-ai-assist
       label="Description"
       hint="Say what the photo shows, for people who can’t see it."
+      [long]="true"
       [mode]="pictureMode"
       [fieldId]="fieldId()"
       [maxLength]="maxLength"
       [text]="readDescription"
       [imageSrc]="current.src"
       (used)="describe($event)"
-    />
+    >
+      <textarea
+        #description
+        rows="2"
+        [id]="fieldId()"
+        [maxLength]="maxLength"
+        [value]="current.alt"
+        [attr.aria-required]="!field().decorative"
+        [attr.aria-invalid]="control().invalid"
+        [attr.aria-describedby]="describedBy()"
+        (input)="describe(description.value)"
+      ></textarea>
+    </app-ai-assist>
+    <p class="if-tip">Say what the photo shows, for people who can’t see it.</p>
     <div class="if-actions">
       <button
         type="button"

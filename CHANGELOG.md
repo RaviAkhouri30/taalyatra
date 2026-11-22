@@ -6,6 +6,17 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.13.0] - 2026-11-23
+
+### Changed
+
+- **AI help has a new look.** Each text field has a small ✦ chip in its corner, quiet until you're in the field;
+  it opens a menu of what the AI can do (or press **Ctrl J**, **⌘ J** on a Mac). While the AI writes, a ring of
+  colour turns around the field; the suggestion then writes itself in word by word under it, with its length and
+  your own text beside it.
+- **Use this**, **Try again** and **Discard**; after Use this, **Undo** brings your text back for 8 seconds.
+- For anyone whose device asks for less motion, the ring, shimmer and word-by-word are still.
+
 ## [2.12.0] - 2026-11-23
 
 ### Added

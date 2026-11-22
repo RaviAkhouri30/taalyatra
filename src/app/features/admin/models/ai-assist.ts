@@ -1,4 +1,4 @@
-import { AiStyle } from '@core/enums/ai-style.enum';
+import { type AiStyle } from '@core/enums/ai-style.enum';
 import { AiTask } from '@core/enums/ai-task.enum';
 import { AI_CONTEXT_MAX, type IAiWriteRequest } from '@core/interfaces/i-ai-service';
 import { EDITOR_TABS } from '../schemas/editor-tabs';
@@ -10,15 +10,6 @@ export enum AiAssistMode {
   Text = 'text',
   Picture = 'picture',
 }
-
-/** The rewrite styles, in the order the menu offers them (D6). */
-export const AI_STYLE_CHOICES: readonly { readonly style: AiStyle; readonly label: string }[] = [
-  { style: AiStyle.Clearer, label: 'Clearer' },
-  { style: AiStyle.Shorter, label: 'Shorter' },
-  { style: AiStyle.Warmer, label: 'Warmer' },
-  { style: AiStyle.Formal, label: 'More formal' },
-  { style: AiStyle.Spelling, label: 'Fix spelling and grammar' },
-];
 
 /** The field kinds the AI may write: prose only, never links, numbers or contact details (D7). */
 export const AI_TEXT_KINDS: ReadonlySet<FieldKind> = new Set([FieldKind.Text, FieldKind.Multiline]);

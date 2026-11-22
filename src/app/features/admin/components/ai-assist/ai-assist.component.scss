@@ -1,37 +1,206 @@
 @use 'tokens' as t;
 @use 'forms';
 
-.aa {
-  display: grid;
-  gap: 6px;
-  margin-top: 6px;
+// The turning ring's angle, registered so it can animate (0029).
+@property --aa-spin {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
 }
 
-.aa-menu {
-  display: flex;
-  flex-wrap: wrap;
+:host {
+  display: block;
+}
+
+.aa-frame {
+  position: relative;
+  border-radius: 9px;
+
+  // While the AI writes: a ring of the theme's accent colours around the field.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    padding: 2px;
+    border-radius: 12px;
+    background: conic-gradient(
+      from var(--aa-spin),
+      t.$color-amber,
+      t.$color-amber-light,
+      t.$color-clay,
+      t.$color-amber
+    );
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+}
+
+.aa-frame--writing::before {
+  opacity: 1;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: aa-spin 2.4s linear infinite;
+  }
+}
+
+// Use this: a warm glow around the field that fades, so the eye finds the new words.
+.aa-frame--landed::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 12px;
+  box-shadow: 0 0 0 3px t.$color-amber-light;
+  opacity: 0;
+  pointer-events: none;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: aa-land 1.1s ease-out;
+  }
+}
+
+@keyframes aa-land {
+  from {
+    opacity: 0.9;
+  }
+}
+
+@keyframes aa-spin {
+  to {
+    --aa-spin: 360deg;
+  }
+}
+
+// The chip: quiet in the corner until the field is in use.
+.aa-chip {
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  display: inline-flex;
   gap: 6px;
   align-items: center;
-}
-
-.aa-menu-label {
-  font-size: t.size(12.5px);
+  height: 30px;
+  padding: 0 10px 0 8px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: t.$color-muted-strong;
+  font: inherit;
+  font-size: t.size(13px);
   font-weight: 700;
-  color: t.$color-muted-strong;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+
+  :host(.aa--long) & {
+    top: auto;
+    bottom: 7px;
+    transform: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid t.$color-amber;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: progress;
+  }
 }
 
-.aa-status {
-  margin: 0;
-  font-size: t.size(12.5px);
-  color: t.$color-muted-strong;
+.aa-frame:hover .aa-chip,
+.aa-frame:focus-within .aa-chip,
+.aa-frame--writing .aa-chip {
+  border-color: t.$color-line;
+  background: t.$color-surface-high;
+  color: t.$color-amber-soft;
+}
 
-  &:empty {
+.aa-word,
+.aa-key {
+  overflow: hidden;
+  max-width: 0;
+  white-space: nowrap;
+  opacity: 0;
+  transition:
+    max-width 0.3s ease,
+    opacity 0.2s;
+}
+
+.aa-key {
+  padding: 0 5px;
+  border: 1px solid t.$color-line;
+  border-radius: 5px;
+  font: inherit;
+  font-size: t.size(11px);
+  font-weight: 500;
+}
+
+.aa-frame:hover,
+.aa-frame:focus-within,
+.aa-frame--open {
+  .aa-word,
+  .aa-key {
+    max-width: 9em;
+    opacity: 1;
+  }
+}
+
+// Touch screens can't hover: the word always shows, the shortcut never does.
+@media (hover: none) {
+  .aa-frame .aa-word {
+    max-width: 9em;
+    opacity: 1;
+  }
+
+  .aa-frame .aa-key {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aa-frame--writing .aa-spark {
+    animation: aa-twinkle 1.1s ease-in-out infinite;
+  }
+}
+
+@keyframes aa-twinkle {
+  50% {
+    opacity: 0.6;
+    transform: rotate(90deg) scale(0.8);
   }
 }
 
 .aa-error {
   @include forms.field-error;
 
-  margin: 0;
+  margin: 8px 0 0;
+}
+
+.aa-undo {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 8px 0 0;
+  font-size: t.size(13.5px);
+  color: t.$color-muted-strong;
+}
+
+.aa-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: t.$color-amber-soft;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
 }

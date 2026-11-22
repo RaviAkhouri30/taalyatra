@@ -196,8 +196,10 @@ describe('SchemaFieldComponent', () => {
     expect(control.value).toBe(false);
   });
 
-  describe('with AI help set up (0025)', () => {
+  describe('with AI help set up (0025, 0029)', () => {
     beforeEach(() => {
+      // jsdom has no layout: the menu and suggestion scroll themselves into view.
+      Element.prototype.scrollIntoView = vi.fn();
       TestBed.configureTestingModule({
         providers: [
           { provide: IAiService, useClass: FakeAiService },
@@ -225,7 +227,7 @@ describe('SchemaFieldComponent', () => {
       );
       const click = async (name: string) => {
         Array.from(element.querySelectorAll('button'))
-          .find((button) => button.textContent.trim() === name)
+          .find((button) => button.textContent.replace(/\s+/gu, ' ').trim().endsWith(name))
           ?.click();
         await new Promise((resolve) => {
           setTimeout(resolve);
@@ -233,9 +235,10 @@ describe('SchemaFieldComponent', () => {
         fixture.detectChanges();
       };
 
-      await click('AI help');
+      element.querySelector<HTMLButtonElement>('.aa-chip')?.click();
+      fixture.detectChanges();
       await click('Shorter');
-      await click('Use it');
+      await click('Use this');
 
       expect(control.value).toBe('shorter: Drum');
       expect(control.dirty).toBe(true);
