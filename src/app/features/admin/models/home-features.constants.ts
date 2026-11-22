@@ -50,7 +50,8 @@ export const HOME_FEATURES: readonly IFeature[] = [
     group: FeatureGroup.HomePage,
     icon: IconName.Mic,
     title: 'Shows',
-    description: 'The show formats on the home page and their own page, with one in the spotlight.',
+    description:
+      'The show formats on the home page and their own page, with one in the spotlight, and that page’s text.',
     site: anchor(PageAnchor.Shows),
     change: { tab: EditorTab.Shows },
   },
@@ -77,7 +78,8 @@ export const HOME_FEATURES: readonly IFeature[] = [
     group: FeatureGroup.HomePage,
     icon: IconName.Video,
     title: 'Videos',
-    description: 'YouTube videos on the home page and their own page, filtered by category.',
+    description:
+      'YouTube videos on the home page and their own page, filtered by category, and that page’s text.',
     site: anchor(PageAnchor.Watch),
     change: { tab: EditorTab.Videos },
   },
@@ -122,7 +124,7 @@ export const HOME_FEATURES: readonly IFeature[] = [
     group: FeatureGroup.HomePage,
     icon: IconName.Group,
     title: 'Team',
-    description: 'The team members on the home page and their own page.',
+    description: 'The team members on the home page and their own page, and that page’s text.',
     site: anchor(PageAnchor.Team),
     change: { tab: EditorTab.Team },
   },

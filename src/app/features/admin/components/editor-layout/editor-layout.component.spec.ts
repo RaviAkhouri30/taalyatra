@@ -46,7 +46,9 @@ describe('EditorLayoutComponent', () => {
       '/admin/testimonials',
       '/admin/faq',
       '/admin/proposal-form',
+      '/admin/achievements',
       '/admin/business',
+      '/admin/seo',
       '/admin/contact',
       '/admin/visibility',
       '/admin/theme',
@@ -88,7 +90,7 @@ describe('EditorLayoutComponent', () => {
 
     expect(
       Array.from(element.querySelectorAll('.ed-group-label')).map((label) => label.textContent),
-    ).toEqual(['Home page', 'Settings', 'Visitors']);
+    ).toEqual(['Home page', 'Other pages', 'Settings', 'Visitors']);
     expect(element.querySelector('nav a app-icon')).not.toBeNull();
   });
 

@@ -34,7 +34,7 @@ const KEYWORDS: Partial<Record<EditorTab, string>> = {
   [EditorTab.Hero]: 'top banner headline first screen marquee scrolling words trust strip',
   [EditorTab.Offer]: 'diwali festival discount promotion deal',
   [EditorTab.DrumCircle]: 'about djembe signature',
-  [EditorTab.Team]: 'people members staff facilitators',
+  [EditorTab.Team]: 'people members staff facilitators values habits',
   [EditorTab.Gallery]: 'photos pictures images',
   [EditorTab.Videos]: 'youtube clips',
   [EditorTab.Business]: 'name logo tagline description search google',
@@ -48,6 +48,8 @@ const KEYWORDS: Partial<Record<EditorTab, string>> = {
   [EditorTab.Instagram]: 'insta social posts feed',
   [EditorTab.Testimonials]: 'reviews quotes proof clients logos numbers stats',
   [EditorTab.Faq]: 'questions answers help',
+  [EditorTab.Achievements]: 'awards honours milestones press articles performances stages numbers',
+  [EditorTab.Seo]: 'seo google search results title description meta tab link preview whatsapp',
 };
 
 function entry(

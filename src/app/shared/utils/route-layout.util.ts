@@ -1,6 +1,8 @@
 import { type ActivatedRouteSnapshot } from '@angular/router';
 import { ROUTE_DATA_KEYS } from '@shared/constants/route-data.constants';
 import { PageLayout } from '@shared/enums/page-layout.enum';
+import { PAGE_META } from '@shared/constants/page-meta.constants';
+import { type SeoPage } from '@shared/enums/seo-page.enum';
 import { type IPageMeta } from '@shared/interfaces/i-page-meta';
 
 /** Layout used when no route in the active branch declares one. */
@@ -13,6 +15,14 @@ export const DEFAULT_PAGE_LAYOUT = PageLayout.Page;
  */
 export function isPageLayout(value: unknown): value is PageLayout {
   return Object.values<unknown>(PageLayout).includes(value);
+}
+
+/**
+ * @param value Candidate value from untyped route data.
+ * @returns Whether `value` is a `SeoPage`.
+ */
+function isSeoPage(value: unknown): value is SeoPage {
+  return typeof value === 'string' && Object.hasOwn(PAGE_META, value);
 }
 
 /**
@@ -33,19 +43,23 @@ export function resolvePageLayout(root: ActivatedRouteSnapshot): PageLayout {
 }
 
 /**
- * Reads the active route branch for search and preview metadata: the deepest title and
- * description win, like the layout.
+ * Reads the active route branch for search and preview metadata: the deepest title wins, like the
+ * layout. A public page names its `SeoPage` instead, whose title and description `SeoService`
+ * takes from the owner's stored text or `PAGE_META`.
  * @param root Root snapshot of the router state.
  * @param url The router's current URL.
- * @returns The page's path, title and description.
+ * @returns The page's path, title and description, and the page whose stored text replaces them.
  */
 export function resolvePageMeta(root: ActivatedRouteSnapshot, url: string): IPageMeta {
   let title = '';
-  let description = '';
+  let page: SeoPage | undefined;
   for (let node: ActivatedRouteSnapshot | null = root; node; node = node.firstChild) {
-    const declared: unknown = node.data[ROUTE_DATA_KEYS.Description];
+    const named: unknown = node.data[ROUTE_DATA_KEYS.Seo];
     title = node.title ?? title;
-    description = typeof declared === 'string' ? declared : description;
+    page = isSeoPage(named) ? named : page;
   }
-  return { path: url.split(/[?#]/)[0] ?? '/', title, description };
+  const path = url.split(/[?#]/)[0] ?? '/';
+  return page === undefined
+    ? { path, title, description: '' }
+    : { path, title, description: '', page };
 }

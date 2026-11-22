@@ -47,6 +47,8 @@ const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
 export class PreviewFrameComponent {
   /** Where to scroll. */
   public readonly anchor = input(PageAnchor.Top);
+  /** Which site page to show (0028): the home page, or the inner page a card edits. */
+  public readonly page = input<AppRoute>(AppRoute.Home);
   /** Changes after every save, which reloads the frame. */
   public readonly version = input(0);
   /** Page sections the owner can click, by element id, with the tab that edits each (1.11.0). */
@@ -71,7 +73,7 @@ export class PreviewFrameComponent {
   });
   /** The full-page preview, for the "open in a new tab" link. */
   protected readonly fullUrl = computed(
-    () => `${AppRoute.Home}?${PREVIEW_QUERY_PARAM}=1#${this.anchor()}`,
+    () => `${this.page()}?${PREVIEW_QUERY_PARAM}=1#${this.anchor()}`,
   );
 
   private readonly frame = viewChild.required<ElementRef<HTMLIFrameElement>>('frame');
@@ -86,6 +88,8 @@ export class PreviewFrameComponent {
   private readonly loaded = signal(false);
   /** A save landed while the first load was still running: reload once it has finished. */
   private reloadPending = false;
+  /** The page the frame was last sent to; the template's address is the home page. */
+  private shownPage: AppRoute = AppRoute.Home;
 
   public constructor() {
     afterNextRender(() => {
@@ -100,12 +104,7 @@ export class PreviewFrameComponent {
         this.scroller?.dispose();
       });
     });
-    effect(() => {
-      const anchor = this.anchor();
-      if (untracked(this.loaded)) {
-        this.moveTo(anchor);
-      }
-    });
+    this.followPage();
     effect(() => {
       if (this.version() === 0) {
         return;
@@ -133,7 +132,7 @@ export class PreviewFrameComponent {
   /** The site has loaded: from now on, follow the section being edited. */
   protected onLoad(): void {
     this.loaded.set(true);
-    if (this.reloadPending) {
+    if (this.reloadPending || untracked(this.page) !== this.shownPage) {
       this.reloadPending = false;
       this.reload();
       return;
@@ -149,8 +148,26 @@ export class PreviewFrameComponent {
     }
   }
 
+  /** Follows the page and section being edited (0028: a card may be on an inner page). */
+  private followPage(): void {
+    effect(() => {
+      const anchor = this.anchor();
+      // On another page, the move waits for that page to load (`onLoad`).
+      if (untracked(this.loaded) && untracked(this.page) === this.shownPage) {
+        this.moveTo(anchor);
+      }
+    });
+    effect(() => {
+      // A card on another page: open it; a load still running opens it when it finishes.
+      if (this.page() !== this.shownPage && untracked(this.loaded)) {
+        this.reload();
+      }
+    });
+  }
+
   /**
-   * Loads the preview again; `onLoad` then brings it back to the section being edited. Not
+   * Loads the preview again, on the page being edited; `onLoad` then brings it back to the section
+   * being edited. Not
    * `location.reload()`: the site's router may have dropped `?preview` from the address, and
    * preview mode is read at startup. A new `v` makes it a fresh load. No `#section`: the site
    * would scroll there itself, smoothly, racing the scroller.
@@ -158,8 +175,9 @@ export class PreviewFrameComponent {
   private reload(): void {
     const version = String(untracked(this.version));
     const stamp = this.refreshes > 0 ? `${version}-${String(this.refreshes)}` : version;
+    this.shownPage = untracked(this.page);
     this.scroller?.hide();
-    this.site()?.location.replace(`${AppRoute.Home}?${PREVIEW_QUERY_PARAM}=1&v=${stamp}`);
+    this.site()?.location.replace(`${this.shownPage}?${PREVIEW_QUERY_PARAM}=1&v=${stamp}`);
   }
 
   /**

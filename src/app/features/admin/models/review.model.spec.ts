@@ -133,7 +133,9 @@ describe('review wording', () => {
   it('should name a document by the cards that edit it, or by its path', () => {
     const titleOf = documentTitles(ALL_SECTIONS);
 
-    expect(titleOf('site/config')).toBe('Offer switch and dates, Site details, Contact details');
+    expect(titleOf('site/config')).toBe(
+      'Offer switch and dates, Site details, Search and sharing, Contact details',
+    );
     expect(titleOf('home/x')).toBe('home/x');
   });
 

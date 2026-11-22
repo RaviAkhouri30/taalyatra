@@ -165,9 +165,16 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
     ],
   },
   {
+    // The inner pages with nothing on the home page to edit them from (0028); Videos, Team and
+    // Shows pages are edited with their home sections.
+    label: 'Other pages',
+    links: [tabLink(EditorTab.Achievements, IconName.Star)],
+  },
+  {
     label: 'Settings',
     links: [
       tabLink(EditorTab.Business, IconName.Document),
+      tabLink(EditorTab.Seo, IconName.ExternalLink),
       tabLink(EditorTab.Contact, IconName.Phone),
       tabLink(EditorTab.Visibility, IconName.Toggle),
       tabLink(EditorTab.Theme, IconName.Sparkle),

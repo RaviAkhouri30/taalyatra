@@ -14,6 +14,7 @@ import {
   type ISiteLabels,
   type ISocialLinkDto,
 } from '@shared/interfaces/i-site-config';
+import { type SeoTexts } from '@shared/interfaces/i-seo-text';
 import { type ISocialLink } from '@shared/interfaces/i-social-link';
 import { PromotionSchedule } from '@shared/models/promotion-schedule.model';
 import { toWhatsAppUrl } from '@shared/utils/contact-links.util';
@@ -53,6 +54,7 @@ export class SiteConfigModel implements ISiteConfig {
   public readonly copyrightYear: number;
   public readonly labels: ISiteLabels;
   public readonly credit: ISiteCredit | null;
+  public readonly seo: SeoTexts;
 
   /**
    * @param dto The stored site configuration.
@@ -63,9 +65,10 @@ export class SiteConfigModel implements ISiteConfig {
     this.contact = dto.contact;
     this.copyrightYear = dto.copyrightYear;
     // Optional parts may be missing in stored data; each falls back on its own (empty labels,
-    // no credit, no stored profiles, no promotion) instead of breaking the page.
+    // no credit, no stored titles, no stored profiles, no promotion) instead of breaking the page.
     this.labels = { ...NO_LABELS, ...dto.labels };
     this.credit = dto.credit ?? null;
+    this.seo = dto.seo ?? {};
     this.socials = [
       SiteConfigModel.whatsApp(dto.contact.phone),
       ...(dto.socials ?? []).flatMap((social) => SiteConfigModel.socialLink(social)),

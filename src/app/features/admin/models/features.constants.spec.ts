@@ -1,3 +1,4 @@
+import { AppRoute } from '@shared/enums/app-route.enum';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { FEATURES } from './features.constants';
 import { EditorTab } from './editor-tab.enum';
@@ -14,10 +15,17 @@ describe('FEATURES', () => {
     }
   });
 
-  it('should point every site link at a section that exists', () => {
+  it('should point every site link at a page and section that exist', () => {
+    const pages = [
+      AppRoute.Home,
+      AppRoute.Videos,
+      AppRoute.Team,
+      AppRoute.Shows,
+      AppRoute.Achievements,
+    ];
     for (const feature of FEATURES.filter((entry) => entry.site !== undefined)) {
       const [path, anchor] = (feature.site ?? '').split('#');
-      expect(path).toBe('/');
+      expect(pages).toContain(path);
       expect(anchor === undefined || anchors.has(anchor)).toBe(true);
     }
   });

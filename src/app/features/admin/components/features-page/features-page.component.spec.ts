@@ -19,7 +19,7 @@ describe('FeaturesPageComponent', () => {
       link.getAttribute('href'),
     );
 
-    expect(element.querySelectorAll('h2')).toHaveLength(3);
+    expect(element.querySelectorAll('h2')).toHaveLength(4);
     expect(links).toEqual(['/#diwali', '/admin/offer']);
     expect(offer?.querySelector('a')?.getAttribute('target')).toBe('_blank');
   });

@@ -1,4 +1,5 @@
 import { type DocumentFields } from '@core/interfaces/i-document-store';
+import { type AppRoute } from '@shared/enums/app-route.enum';
 import { type PageAnchor } from '@shared/enums/page-anchor.enum';
 import { type ContentPath } from './content-path.enum';
 import { type SectionPanel } from './section-panel.enum';
@@ -39,6 +40,8 @@ export interface IEditorSection {
   readonly path: ContentPath;
   /** Where the live preview scrolls while this section is edited. */
   readonly anchor: PageAnchor;
+  /** The site page it's on, which the preview opens (0028); the home page when missing. */
+  readonly page?: AppRoute;
   readonly fields: readonly FieldSchema[];
   /** Set when the fields don't match the stored shape directly. */
   readonly view?: ISectionView;

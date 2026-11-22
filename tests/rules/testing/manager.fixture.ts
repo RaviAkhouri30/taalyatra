@@ -25,6 +25,8 @@ export type Fields = Record<string, unknown>;
 
 export const home = fakeDb.home as unknown as Record<string, Fields>;
 export const siteConfig = fakeDb.site.config as unknown as Fields;
+/** The inner pages' documents, `pages/admin` included (0028). */
+export const pages = fakeDb.pages as unknown as Record<string, Fields>;
 
 /** A role record as Team access stores it. */
 export function managerRole(change: Fields = {}): Fields {
@@ -67,6 +69,7 @@ export async function seedManagers(env: RulesTestEnvironment): Promise<IClients>
       ...Object.entries(home).map(([section, body]) =>
         setDoc(doc(db, `home/${section}`), Array.isArray(body) ? { _items: body } : body),
       ),
+      ...Object.entries(pages).map(([page, body]) => setDoc(doc(db, `pages/${page}`), body)),
       setDoc(doc(db, 'site/config'), siteConfig),
       setDoc(doc(db, `roles/${MANAGER_UID}`), managerRole()),
       setDoc(doc(db, `roles/${NO_UPLOADS_UID}`), managerRole({ pages: {}, uploads: false })),

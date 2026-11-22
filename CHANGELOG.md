@@ -6,6 +6,23 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.11.0] - 2026-11-22
+
+### Added
+
+- **The inner pages' own text can now be edited in the admin.** **Videos**, **Team** and **Shows** each gain a card
+  for their page: its heading, labels, buttons, Team's values, Shows' setups and steps, and the closing call to
+  action. **Achievements** is a new page in the menu, with its numbers, milestones, recognition, press, performances
+  and call to action.
+- Each of these cards previews its own page, not the home page.
+- **Search and sharing** (Settings): a title and a search description for each of the five pages, used for search
+  results, the browser tab and shared links. An empty field keeps today's wording, which is shown under it.
+- On Team access, a manager's Achievements and Search and sharing pages start at Needs approval.
+
+### Changed
+
+- While you type in a card, the preview stays on it: scrolling other cards into view no longer moves it away.
+
 ## [2.10.0] - 2026-11-22
 
 ### Added

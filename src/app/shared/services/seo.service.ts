@@ -1,7 +1,8 @@
 import { DOCUMENT } from '@angular/common';
 import { Service, inject } from '@angular/core';
-import { Meta } from '@angular/platform-browser';
+import { Meta, Title } from '@angular/platform-browser';
 import { APP_ENVIRONMENT } from '@core/tokens/app-environment.token';
+import { PAGE_META } from '@shared/constants/page-meta.constants';
 import { type IPageMeta } from '@shared/interfaces/i-page-meta';
 import { type ISiteConfig } from '@shared/interfaces/i-site-config';
 import { toLocalBusiness } from '@shared/utils/local-business.util';
@@ -10,24 +11,41 @@ import { toLocalBusiness } from '@shared/utils/local-business.util';
 const STRUCTURED_DATA_ID = 'taal-yatra-business';
 
 /**
- * Keeps the page's search and preview metadata in step with the route (0007, D5–D6): description,
- * canonical URL, Open Graph and Twitter tags, and `LocalBusiness` structured data. Called from
- * `SiteShellViewModel` on every navigation; holds no state of its own.
+ * @param values Candidates, the preferred first.
+ * @returns The first that isn't missing or empty: an empty stored title keeps the default (0028).
+ */
+function firstFilled(...values: readonly (string | undefined)[]): string {
+  return values.find((value) => value !== undefined && value.length > 0) ?? '';
+}
+
+/**
+ * Keeps the page's search and preview metadata in step with the route (0007, D5–D6): the browser
+ * tab's title, description, canonical URL, Open Graph and Twitter tags, and `LocalBusiness`
+ * structured data. The owner's own title and description, when stored, replace the route's (0028).
+ * Called from `SiteShellViewModel` on every navigation; holds no state of its own.
  */
 @Service()
 export class SeoService {
   private readonly meta = inject(Meta);
+  private readonly tab = inject(Title);
   private readonly document = inject(DOCUMENT);
   private readonly siteUrl = inject(APP_ENVIRONMENT).siteUrl;
 
   /**
    * @param page The current page's path, title and description.
-   * @param site Site configuration (fallback description, business details).
+   * @param site Site configuration (stored titles, fallback description, business details).
    */
   public describe(page: IPageMeta, site: ISiteConfig): void {
     const url = `${this.siteUrl}${page.path}`;
-    const title = page.title || site.brand.name;
-    const description = page.description || site.brand.description;
+    const stored = page.page === undefined ? undefined : site.seo[page.page];
+    const defaults = page.page === undefined ? page : PAGE_META[page.page];
+    const title = firstFilled(stored?.title, defaults.title, site.brand.name);
+    const description = firstFilled(
+      stored?.description,
+      defaults.description,
+      site.brand.description,
+    );
+    this.tab.setTitle(title);
     this.meta.updateTag({ name: 'description', content: description });
     this.meta.updateTag({ property: 'og:title', content: title });
     this.meta.updateTag({ property: 'og:description', content: description });

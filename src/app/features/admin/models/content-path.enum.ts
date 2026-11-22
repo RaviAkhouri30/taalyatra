@@ -23,6 +23,11 @@ export enum ContentPath {
   HomeInstagram = 'home/instagram',
   HomeProof = 'home/proof',
   HomeFaq = 'home/faq',
+  /** The inner pages' own text (0028); `pages/admin` stays the developer's. */
+  PagesVideos = 'pages/videos',
+  PagesTeam = 'pages/team',
+  PagesShows = 'pages/shows',
+  PagesAchievements = 'pages/achievements',
   Gallery = 'gallery',
   Team = 'team',
   ShowFormats = 'showFormats',

@@ -1,4 +1,5 @@
 export { FeatureGroup, type FeatureChange, type IFeature } from './i-feature';
+import { AppRoute } from '@shared/enums/app-route.enum';
 import { IconName } from '@shared/enums/icon-name.enum';
 import {
   LEADS_PATH,
@@ -15,6 +16,16 @@ import { ManagerArea } from './manager-area.enum';
 /** Every feature, grouped as the menu is. Each line is checked by `features.constants.spec.ts`. */
 export const FEATURES: readonly IFeature[] = [
   ...HOME_FEATURES,
+  {
+    id: 'achievements',
+    group: FeatureGroup.OtherPages,
+    icon: IconName.Star,
+    title: 'Achievements page',
+    description:
+      'Your numbers, milestones, awards, press and performances, with a call to action at the end.',
+    site: AppRoute.Achievements,
+    change: { tab: EditorTab.Achievements },
+  },
   {
     id: 'whatsapp-call',
     group: FeatureGroup.EveryPage,
@@ -42,6 +53,16 @@ export const FEATURES: readonly IFeature[] = [
       'Your business name, tagline and description, in the header, the footer and search results.',
     site: '/',
     change: { tab: EditorTab.Business },
+  },
+  {
+    id: 'seo',
+    group: FeatureGroup.EveryPage,
+    icon: IconName.ExternalLink,
+    title: 'Search and sharing',
+    description:
+      'Each page’s title and description, for search results, the browser tab and shared links.',
+    site: '/',
+    change: { tab: EditorTab.Seo },
   },
   {
     id: 'visibility',

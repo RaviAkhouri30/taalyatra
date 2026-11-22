@@ -25,10 +25,11 @@ describe('featureGroups', () => {
 
     expect(groups.map((group) => group.label)).toEqual([
       FeatureGroup.HomePage,
+      FeatureGroup.OtherPages,
       FeatureGroup.EveryPage,
       FeatureGroup.Admin,
     ]);
-    expect(cards(groups)).toHaveLength(33);
+    expect(cards(groups)).toHaveLength(35);
     expect(offer).toMatchObject({ site: '/#diwali', changeUrl: '/admin/offer', note: '' });
     expect(cards(groups).find((card) => card.id === 'leads')?.changeUrl).toBe('/admin/leads');
   });

@@ -23,7 +23,11 @@ export enum EditorTab {
   /** The questions and answers (0028). */
   Faq = 'faq',
   ProposalForm = 'proposal-form',
+  /** The Achievements page (0028). */
+  Achievements = 'achievements',
   Business = 'business',
+  /** Each page's title and search description (0028). */
+  Seo = 'seo',
   Contact = 'contact',
   Visibility = 'visibility',
   /** The site's colours, background, text and fonts (0021). */

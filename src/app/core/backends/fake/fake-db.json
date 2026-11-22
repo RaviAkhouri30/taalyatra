@@ -1031,6 +1031,13 @@
         "name": "Ravi Akhouri",
         "url": "https://www.linkedin.com/in/ravi-akhouri-6696071a7/",
         "linkLabel": "Ravi Akhouri on LinkedIn (opens in a new tab)"
+      },
+      "seo": {
+        "home": { "title": "", "description": "" },
+        "videos": { "title": "", "description": "" },
+        "team": { "title": "", "description": "" },
+        "shows": { "title": "", "description": "" },
+        "achievements": { "title": "", "description": "" }
       }
     },
     "theme": {},
