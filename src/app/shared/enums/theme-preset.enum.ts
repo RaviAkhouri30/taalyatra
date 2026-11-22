@@ -1,8 +1,20 @@
-/** The ready-made themes (0021 D5), and `custom` once a colour is changed. */
+/** The ready-made themes (0021 D5, 0027 D1), and `custom` once a colour is changed. */
 export enum ThemePreset {
   WarmNight = 'warm-night',
   Daylight = 'daylight',
   Festival = 'festival',
   HighContrast = 'high-contrast',
+  IndigoNight = 'indigo-night',
+  Monsoon = 'monsoon',
+  Forest = 'forest',
+  Diwali = 'diwali',
+  Ocean = 'ocean',
+  Charcoal = 'charcoal',
+  Marigold = 'marigold',
+  Sandstone = 'sandstone',
+  Holi = 'holi',
+  Mint = 'mint',
+  Rose = 'rose',
+  Slate = 'slate',
   Custom = 'custom',
 }

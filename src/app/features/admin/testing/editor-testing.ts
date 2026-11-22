@@ -12,6 +12,7 @@ import { IAuthService } from '@core/interfaces/i-auth-service';
 import { type DocumentFields, IDocumentStore } from '@core/interfaces/i-document-store';
 import { IFileService } from '@core/interfaces/i-file-service';
 import { BackupService } from '../services/backup.service';
+import { SavedThemesService } from '../services/saved-themes.service';
 import { DeviceStoreService } from '../services/device-store.service';
 import { LoggerService } from '@core/services/logger.service';
 import { APP_ENVIRONMENT } from '@core/tokens/app-environment.token';
@@ -73,6 +74,7 @@ export function provideEditorTesting(seed: Readonly<Record<string, DocumentField
       { provide: APP_ENVIRONMENT, useValue: { ...environment, adminUid: EDITOR_ADMIN.uid } },
       { provide: IFileService, useValue: files },
       BackupService,
+      SavedThemesService,
       { provide: DeviceStoreService, useValue: localStore },
     ],
   };

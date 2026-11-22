@@ -12,7 +12,6 @@ import { ThemeBackdrop } from '@shared/enums/theme-backdrop.enum';
 import { ThemeColour } from '@shared/enums/theme-colour.enum';
 import { ThemeFonts } from '@shared/enums/theme-fonts.enum';
 import { ThemeHeadingWeight } from '@shared/enums/theme-heading-weight.enum';
-import { ThemePreset } from '@shared/enums/theme-preset.enum';
 import { ThemeTextSize } from '@shared/enums/theme-text-size.enum';
 import { type ISiteThemeDto } from '@shared/interfaces/i-site-theme';
 import { isHexColour } from '@shared/utils/colour.util';
@@ -28,9 +27,11 @@ export enum ThemeVariable {
   FontBody = '--ty-font-body',
 }
 
-/** Everything a theme chooses; the stored document's fields, checked. */
+/**
+ * Everything a theme chooses; the stored document's fields, checked. Not `preset`: it only names
+ * the ready-made theme in the admin, so the site leaves it out, and with it the list of names (0027).
+ */
 export interface ISiteThemeChoices {
-  readonly preset: ThemePreset;
   readonly colours: ThemeColours;
   readonly backdrop: ThemeBackdrop;
   readonly textSize: ThemeTextSize;
@@ -39,7 +40,6 @@ export interface ISiteThemeChoices {
 }
 
 const DEFAULT_CHOICES: ISiteThemeChoices = {
-  preset: ThemePreset.WarmNight,
   colours: DEFAULT_THEME_COLOURS,
   backdrop: ThemeBackdrop.Plain,
   textSize: ThemeTextSize.Standard,
@@ -63,7 +63,8 @@ function isWellFormed(dto: ISiteThemeDto): boolean {
     Object.values(ThemeColour).every(
       (key) => stored.get(key) === undefined || isHexColour(stored.get(key)),
     ) &&
-    isChoiceOrMissing(ThemePreset, dto.preset) &&
+    // Any name: a ready-made theme added in a later release still shows.
+    (dto.preset === undefined || typeof dto.preset === 'string') &&
     isChoiceOrMissing(ThemeBackdrop, dto.backdrop) &&
     isChoiceOrMissing(ThemeTextSize, dto.textSize) &&
     isChoiceOrMissing(ThemeHeadingWeight, dto.headingWeight) &&
@@ -98,7 +99,6 @@ function storedColours(dto: ISiteThemeDto): ThemeColours {
 function choices(dto: ISiteThemeDto): ISiteThemeChoices {
   const d = DEFAULT_CHOICES;
   return {
-    preset: pick(ThemePreset, dto.preset, d.preset),
     colours: storedColours(dto),
     backdrop: pick(ThemeBackdrop, dto.backdrop, d.backdrop),
     textSize: pick(ThemeTextSize, dto.textSize, d.textSize),

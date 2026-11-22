@@ -36,6 +36,8 @@ import {
 } from '../models/editor-storage.constants';
 import { MEDIA_COLLECTION } from '../models/i-media-asset';
 import { LEADS_COLLECTION } from '../models/lead.model';
+import { SAVED_THEMES_COLLECTION } from '../models/saved-theme.constants';
+import { SavedTheme } from '../models/saved-theme.model';
 import { reportTime } from '../models/speed-report.model';
 import { DraftService } from './draft.service';
 import { ReleaseNotesService } from './release-notes.service';
@@ -126,8 +128,9 @@ export class BackupService {
   }
 
   /**
-   * Puts a backup's content into the drafts, for Review & publish, and its photo descriptions
-   * back into the library. Photos deleted since are left out: their files are gone for good.
+   * Puts a backup's content into the drafts, for Review & publish, its photo descriptions back
+   * into the library, and its saved themes back beside any saved since (0027 D6). Photos deleted
+   * since are left out: their files are gone for good.
    * @param backup A checked backup.
    * @returns Completes once both are saved.
    */
@@ -135,19 +138,24 @@ export class BackupService {
     const entries = Object.entries(backup.documents);
     const content = new Map(entries.filter(([path]) => isContentPath(path)));
     const library = entries.filter(([path]) => path.startsWith(`${MEDIA_COLLECTION}/`));
-    return this.drafts.saveAll(content).pipe(concatMap(() => this.restoreLibrary(library)));
+    const themes = entries.filter(([path]) => path.startsWith(`${SAVED_THEMES_COLLECTION}/`));
+    return this.drafts.saveAll(content).pipe(
+      concatMap(() => this.restoreLibrary(library)),
+      concatMap(() => this.restoreSavedThemes(themes)),
+    );
   }
 
   private build(withLeads: boolean): Observable<IBackup> {
     const paths = Object.values(ContentPath);
-    // forkJoin: every document, the library and the leads are independent reads, all needed for
-    // one file.
+    // forkJoin: every document, the library, the leads and the saved themes are independent reads,
+    // all needed for one file.
     return forkJoin([
       forkJoin(paths.map((path) => this.drafts.live(path))),
       this.store.readAll(MEDIA_COLLECTION),
       withLeads ? this.store.readAll(LEADS_COLLECTION) : of(new Map<string, DocumentFields>()),
+      this.store.readAll(SAVED_THEMES_COLLECTION),
     ]).pipe(
-      map(([content, library, leads]) => ({
+      map(([content, library, leads, themes]) => ({
         format: BACKUP_FORMAT,
         site: BACKUP_SITE,
         version: this.releaseNotes.current()?.version ?? '',
@@ -160,6 +168,9 @@ export class BackupService {
           ...[...library].map(([id, fields]) => [`${MEDIA_COLLECTION}/${id}`, fields] as const),
           ...[...leads].map(
             ([id, fields]) => [`${LEADS_COLLECTION}/${id}`, readable(fields)] as const,
+          ),
+          ...[...themes].map(
+            ([id, fields]) => [`${SAVED_THEMES_COLLECTION}/${id}`, fields] as const,
           ),
         ]),
       })),
@@ -199,5 +210,18 @@ export class BackupService {
       // switchMap: one commit, built from the library as it is now.
       switchMap((writes) => (writes.length === 0 ? of(undefined) : this.store.commit(writes))),
     );
+  }
+
+  /** Each saved theme back by its id; one that isn't a saved theme is left out, as the rules would. */
+  private restoreSavedThemes(
+    entries: readonly (readonly [string, DocumentFields])[],
+  ): Observable<void> {
+    const writes = entries.flatMap(([path, fields]): DocumentWrite[] => {
+      const theme = SavedTheme.from(path.slice(SAVED_THEMES_COLLECTION.length + 1), fields);
+      return theme
+        ? [{ kind: DocumentWriteKind.Set, path, fields: { ...theme.toDocument() } }]
+        : [];
+    });
+    return writes.length === 0 ? of(undefined) : this.store.commit(writes);
   }
 }

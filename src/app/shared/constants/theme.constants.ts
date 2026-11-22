@@ -1,7 +1,5 @@
-import { ThemeBackdrop } from '@shared/enums/theme-backdrop.enum';
 import { ThemeFonts } from '@shared/enums/theme-fonts.enum';
 import { ThemeHeadingWeight } from '@shared/enums/theme-heading-weight.enum';
-import { ThemePreset } from '@shared/enums/theme-preset.enum';
 import { ThemeTextSize } from '@shared/enums/theme-text-size.enum';
 import { DEFAULT_BACKGROUND } from './theme-default.constants';
 
@@ -24,63 +22,6 @@ export const DEFAULT_THEME_COLOURS: ThemeColours = {
   accent: '#e9a552',
   secondAccent: '#c96b3c',
 };
-
-/** A ready-made theme: its name, colours and background. */
-export interface IThemePresetDefinition {
-  readonly preset: ThemePreset;
-  readonly label: string;
-  readonly colours: ThemeColours;
-  readonly backdrop: ThemeBackdrop;
-}
-
-/** The ready-made themes in the order the Theme page offers them; each passes every check. */
-export const THEME_PRESETS: readonly IThemePresetDefinition[] = [
-  {
-    preset: ThemePreset.WarmNight,
-    label: 'Warm night',
-    colours: DEFAULT_THEME_COLOURS,
-    backdrop: ThemeBackdrop.Plain,
-  },
-  {
-    preset: ThemePreset.Daylight,
-    label: 'Daylight',
-    colours: {
-      background: '#faf6f0',
-      cards: '#ffffff',
-      text: '#1f1915',
-      quietText: '#5a4e45',
-      accent: '#974912',
-      secondAccent: '#2e6b57',
-    },
-    backdrop: ThemeBackdrop.Plain,
-  },
-  {
-    preset: ThemePreset.Festival,
-    label: 'Festival',
-    colours: {
-      background: '#2b0d12',
-      cards: '#3b141b',
-      text: '#fff3e0',
-      quietText: '#ecccb4',
-      accent: '#ffb21e',
-      secondAccent: '#ff6f91',
-    },
-    backdrop: ThemeBackdrop.Gradient,
-  },
-  {
-    preset: ThemePreset.HighContrast,
-    label: 'High contrast',
-    colours: {
-      background: '#000000',
-      cards: '#121212',
-      text: '#ffffff',
-      quietText: '#e0e0e0',
-      accent: '#ffd500',
-      secondAccent: '#7fd4ff',
-    },
-    backdrop: ThemeBackdrop.Plain,
-  },
-];
 
 /** A font pair: its name, the CSS font stacks, and the stylesheet that loads it. */
 export interface IThemeFontPair {

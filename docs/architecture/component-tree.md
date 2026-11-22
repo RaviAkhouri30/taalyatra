@@ -86,8 +86,11 @@ flowchart TD
   L --> N["Menu, Find, Review link<br/>appTourTarget"]
   L -->|editor tabs| EP["EditorPageComponent<br/>cards · preview · publish bar: appTourTarget"]
   L -->|features| FP["FeaturesPageComponent (FeaturesPageViewModel)"]
-  EP -->|"Theme card (0021)"| TP["ThemePanelComponent (ThemePanelViewModel)<br/>ready-made themes · contrast · Reset"]
-  TP --> SW["ThemeSwatchComponent"]
+  EP -->|"Theme card (0021)"| TP["ThemePanelComponent (ThemePanelViewModel)<br/>Themes: yours · dark · light · contrast · Reset"]
+  TP --> SW["ThemeSwatchComponent (colours)"]
+  TP -->|"Saved themes (0027)"| ST["SavedThemesPanelComponent (SavedThemesViewModel)<br/>save · rename · delete"]
+  TP -.-> STS["SavedThemesService (admin routes)"]
+  ST -.-> STS
 ```
 
 ## AI help (2.6.0)

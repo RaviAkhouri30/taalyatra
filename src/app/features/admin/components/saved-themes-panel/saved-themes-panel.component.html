@@ -1,0 +1,112 @@
+<div class="st" role="group" aria-labelledby="st-title">
+  <h3 id="st-title">Saved themes</h3>
+  <p class="st-note">
+    Saves everything above under a name, to choose again from Themes. Saving changes nothing on the
+    site.
+  </p>
+  <div class="st-save">
+    <label for="st-name">Name</label>
+    <input
+      id="st-name"
+      type="text"
+      autocomplete="off"
+      [formControl]="model.name"
+      [attr.aria-invalid]="model.nameError() ? true : null"
+      [attr.aria-describedby]="model.nameError() ? 'st-name-error' : null"
+    />
+    <button appButton type="button" [disabled]="model.busy()" (click)="model.save()">
+      Save as my theme
+    </button>
+  </div>
+  @if (model.nameError(); as error) {
+    <p id="st-name-error" class="st-error">{{ error }}</p>
+  }
+  <p class="st-done" role="status">{{ model.done() }}</p>
+  @if (model.problem(); as problem) {
+    <p class="st-error" role="alert">{{ problem }}</p>
+  }
+  @if (model.loadFailed()) {
+    <p class="st-error" role="alert">{{ text.loadFailed }}</p>
+  }
+  @if (model.themes().length > 0) {
+    <ul class="st-list">
+      @for (theme of model.themes(); track theme.id) {
+        <li>
+          @if (model.renaming() === theme.id) {
+            <div class="st-save">
+              <label [for]="'st-rename-' + theme.id">New name for {{ theme.name }}</label>
+              <input
+                type="text"
+                autocomplete="off"
+                [id]="'st-rename-' + theme.id"
+                [formControl]="model.newName"
+                [attr.aria-invalid]="model.newNameError() ? true : null"
+                [attr.aria-describedby]="model.newNameError() ? 'st-rename-error' : null"
+              />
+              <button
+                appButton
+                type="button"
+                [disabled]="model.busy()"
+                (click)="model.rename(theme)"
+              >
+                Save name
+              </button>
+              <button appButton type="button" [variant]="ghost" (click)="model.cancelRename()">
+                Cancel
+              </button>
+            </div>
+            @if (model.newNameError(); as error) {
+              <p id="st-rename-error" class="st-error">{{ error }}</p>
+            }
+          } @else {
+            <p class="st-name">
+              <b>{{ theme.name }}</b> <span>saved {{ when(theme.savedAt) }}</span>
+            </p>
+            <div class="st-actions">
+              <button
+                appButton
+                type="button"
+                [variant]="ghost"
+                [size]="compact"
+                [attr.aria-label]="'Rename ' + theme.name"
+                (click)="model.startRename(theme)"
+              >
+                Rename
+              </button>
+              <button
+                appButton
+                type="button"
+                [variant]="ghost"
+                [size]="compact"
+                [attr.aria-label]="'Delete ' + theme.name"
+                (click)="model.askRemove(theme)"
+              >
+                Delete
+              </button>
+            </div>
+          }
+          @if (model.confirming() === theme.id) {
+            <div class="st-confirm" role="group" [attr.aria-labelledby]="'st-confirm-' + theme.id">
+              <p [id]="'st-confirm-' + theme.id">
+                Delete {{ theme.name }}? The site keeps its theme; only this saved copy goes.
+              </p>
+              <div class="st-actions">
+                <button
+                  appButton
+                  type="button"
+                  [disabled]="model.busy()"
+                  (click)="model.remove(theme)"
+                >
+                  Yes, delete
+                </button>
+                <button appButton type="button" [variant]="ghost" (click)="model.cancelRemove()">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
+</div>

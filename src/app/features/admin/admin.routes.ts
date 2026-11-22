@@ -30,6 +30,7 @@ import {
 import { EditorTab } from './models/editor-tab.enum';
 import { EDITOR_TABS } from './schemas/editor-tabs';
 import { BackupService } from './services/backup.service';
+import { SavedThemesService } from './services/saved-themes.service';
 
 /** Every admin page is on the bare layout, without the site's chrome. */
 const ADMIN_TITLE_SUFFIX = 'Admin — Taal Yatra';
@@ -44,7 +45,13 @@ const adminRoutes: Routes = [
     path: '',
     // Here and not with the other ports: public pages must never download the upload or backup
     // code (D9, 0016 V13).
-    providers: [...provideMedia(), ...provideAi(), provideFiles(), BackupService],
+    providers: [
+      ...provideMedia(),
+      ...provideAi(),
+      provideFiles(),
+      BackupService,
+      SavedThemesService,
+    ],
     loadComponent: () => import('./components/admin-shell/admin-shell.component'),
     children: [
       {

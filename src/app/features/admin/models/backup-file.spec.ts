@@ -33,6 +33,11 @@ describe('backup files', () => {
     expect(isBackupPath('media/not-an-id')).toBe(false);
   });
 
+  it('should accept a saved theme by its id, and nothing else in that collection (0027)', () => {
+    expect(isBackupPath(`savedThemes/${MEDIA_ID}`)).toBe(true);
+    expect(isBackupPath('savedThemes/spring')).toBe(false);
+  });
+
   it('should read back a backup it wrote', () => {
     expect(checkBackup(JSON.stringify(BACKUP))).toEqual({ backup: BACKUP });
   });

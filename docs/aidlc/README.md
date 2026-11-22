@@ -36,3 +36,4 @@ Each phase ends with **human approval** recorded at the bottom of its file. No p
 | 0024 | [A super manager](0024-super-manager/)                               | 2.5.0         | 01–03 approved 2026-11-21; 04–05 to write                                                                                  |
 | 0025 | [AI help: the admin, the leads and the site’s chat](0025-ai-help/)   | 2.6.0, 2.7.0  | 2.6.0: 01–03 approved, merged 2026-11-22 · 2.7.0: 01–03 approved 2026-11-22; 04–05 to write                                |
 | 0026 | [The admin on your phone](0026-admin-app/)                           | 2.8.0         | 01–03 approved 2026-11-22; 04–05 to write                                                                                  |
+| 0027 | [More themes, and your own saved](0027-more-themes/)                 | 2.9.0         | 01–03 approved 2026-11-22; 04–05 to write                                                                                  |

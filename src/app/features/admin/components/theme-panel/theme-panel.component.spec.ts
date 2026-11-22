@@ -1,8 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { type DocumentFields, IDocumentStore } from '@core/interfaces/i-document-store';
 import { buildFormGroup } from '../../forms/schema-control.factory';
 import { SectionPanel } from '../../models/section-panel.enum';
 import { THEME_SECTION } from '../../schemas/theme.sections';
+import { SavedThemesService } from '../../services/saved-themes.service';
+import { MemoryDocumentStore } from '../../testing/memory-document-store';
+import { SAVED_THEME_DOCUMENT, SAVED_THEME_PATH } from '../../testing/saved-theme.fixture';
 import { ThemePanelComponent } from './theme-panel.component';
 
 @Component({
@@ -15,7 +19,13 @@ class HostComponent {
 }
 
 describe('ThemePanelComponent', () => {
-  function render(panel: SectionPanel) {
+  function render(panel: SectionPanel, seed: Record<string, DocumentFields> = {}) {
+    TestBed.configureTestingModule({
+      providers: [
+        SavedThemesService,
+        { provide: IDocumentStore, useValue: new MemoryDocumentStore(seed) },
+      ],
+    });
     const fixture = TestBed.createComponent(HostComponent);
     fixture.componentInstance.panel.set(panel);
     fixture.detectChanges();
@@ -26,32 +36,67 @@ describe('ThemePanelComponent', () => {
     };
   }
 
-  it('should offer every ready-made theme, the current one pressed', () => {
+  it('should offer the ready-made themes, dark then light, the current one pressed', () => {
     const { element } = render(SectionPanel.ThemePresets);
+    const groups = Array.from(element.querySelectorAll('.tp-group legend'));
     const swatches = Array.from(element.querySelectorAll('.tp-swatch'));
 
-    expect(swatches.map((swatch) => swatch.textContent.trim())).toEqual([
+    expect(groups.map((legend) => legend.textContent.trim())).toEqual(['Dark', 'Light']);
+    expect(swatches).toHaveLength(16);
+    expect(swatches.slice(0, 4).map((swatch) => swatch.textContent.trim())).toEqual([
       'Warm night',
-      'Daylight',
       'Festival',
       'High contrast',
+      'Indigo night',
     ]);
-    expect(swatches.map((swatch) => swatch.getAttribute('aria-pressed'))).toEqual([
-      'true',
-      'false',
-      'false',
-      'false',
+    expect(swatches.filter((swatch) => swatch.getAttribute('aria-pressed') === 'true')).toEqual([
+      swatches[0],
     ]);
+    expect(element.querySelector('.tp-current')?.textContent).toContain('Warm night');
+  });
+
+  it('should list the saved themes first when there are any', () => {
+    const { element } = render(SectionPanel.ThemePresets, {
+      [SAVED_THEME_PATH]: SAVED_THEME_DOCUMENT,
+    });
+    const groups = Array.from(element.querySelectorAll('.tp-group legend'));
+
+    expect(groups.map((legend) => legend.textContent.trim())).toEqual([
+      'Your themes',
+      'Dark',
+      'Light',
+    ]);
+    expect(element.querySelector('.tp-swatch')?.textContent.trim()).toBe('Spring show');
+  });
+
+  it('should fill the form from a saved theme when its swatch is clicked', () => {
+    const { fixture, host, element } = render(SectionPanel.ThemePresets, {
+      [SAVED_THEME_PATH]: SAVED_THEME_DOCUMENT,
+    });
+
+    element.querySelector<HTMLButtonElement>('.tp-swatch')?.click();
+    fixture.detectChanges();
+
+    expect(host.form.get('fonts')?.value).toBe('space-work');
+    expect(element.querySelector('.tp-swatch')?.getAttribute('aria-pressed')).toBe('true');
+    expect(element.querySelector('.tp-current')?.textContent).toContain('Your theme: Spring show');
+  });
+
+  it('should show the Your themes panel when it is that panel', () => {
+    const { element } = render(SectionPanel.ThemeSaved);
+
+    expect(element.querySelector('app-saved-themes-panel')).not.toBeNull();
   });
 
   it('should fill the form when a ready-made theme is clicked', () => {
     const { fixture, host, element } = render(SectionPanel.ThemePresets);
 
-    element.querySelectorAll<HTMLButtonElement>('.tp-swatch')[3]?.click();
+    // High contrast, third in the Dark group.
+    element.querySelectorAll<HTMLButtonElement>('.tp-swatch')[2]?.click();
     fixture.detectChanges();
 
     expect(host.form.get('background')?.value).toBe('#000000');
-    expect(element.querySelectorAll('.tp-swatch')[3]?.getAttribute('aria-pressed')).toBe('true');
+    expect(element.querySelectorAll('.tp-swatch')[2]?.getAttribute('aria-pressed')).toBe('true');
   });
 
   it('should say every pair is readable when the theme is today’s look', () => {

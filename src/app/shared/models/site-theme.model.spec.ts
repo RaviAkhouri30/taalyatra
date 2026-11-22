@@ -1,4 +1,4 @@
-import { THEME_PRESETS } from '@shared/constants/theme.constants';
+import { THEME_PRESETS } from '@shared/constants/theme-presets.constants';
 import { ThemeBackdrop } from '@shared/enums/theme-backdrop.enum';
 import { ThemeFonts } from '@shared/enums/theme-fonts.enum';
 import { ThemeHeadingWeight } from '@shared/enums/theme-heading-weight.enum';
@@ -30,7 +30,6 @@ describe('SiteTheme', () => {
       });
 
       expect(theme.choices).toEqual({
-        preset: ThemePreset.Daylight,
         colours: DAYLIGHT.colours,
         backdrop: ThemeBackdrop.Gradient,
         textSize: ThemeTextSize.Larger,
@@ -42,12 +41,18 @@ describe('SiteTheme', () => {
     it.each([
       { accent: 'orange' },
       { text: '#FFFFFF' },
-      { preset: 'midnight' },
+      { preset: 3 },
       { textSize: 'huge' },
       { fonts: 'comic-sans' },
     ])('should give today’s look when a value isn’t one of the choices: %o', (stored) => {
       expect(SiteTheme.from(stored)).toBe(SiteTheme.default);
     });
+  });
+
+  it('should show a theme whatever its ready-made name when the name is one it doesn’t know', () => {
+    const theme = SiteTheme.from({ preset: 'a-later-theme', accent: '#ffb21e' });
+
+    expect(theme.choices.colours.accent).toBe('#ffb21e');
   });
 
   describe('variables', () => {

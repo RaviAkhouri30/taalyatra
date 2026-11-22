@@ -1,9 +1,17 @@
 import { type Page } from '@playwright/test';
 import { FAKE_MANAGER_ACCOUNT } from '../../src/app/core/backends/fake/fake-auth.constants';
-import { THEME_PRESETS } from '../../src/app/shared/constants/theme.constants';
+import { THEME_PRESETS } from '../../src/app/shared/constants/theme-presets.constants';
+import { ThemePreset } from '../../src/app/shared/enums/theme-preset.enum';
 import { THEME_TOKENS } from '../../src/app/shared/models/theme-tokens';
 import { type EditorPage } from '../pages/editor.page';
 import { expect, test } from '../fixtures/test';
+
+/** The ready-made themes with a picture of the site and the admin in each (0021). */
+const PICTURED = new Set<string>([
+  ThemePreset.Daylight,
+  ThemePreset.Festival,
+  ThemePreset.HighContrast,
+]);
 
 /** A themed colour as the page's root resolves it (`--ty-…`), or the root style's own value. */
 async function rootVariable(page: Page, name: string): Promise<string> {
@@ -47,6 +55,9 @@ test.describe('Admin theme', () => {
 
     for (const preset of THEME_PRESETS.slice(1)) {
       const name = preset.label.toLowerCase().replaceAll(' ', '-');
+      // Pictures for the first four (0021); the twelve of 0027 are checked by axe on both pages,
+      // without 72 more baselines.
+      const pictured = PICTURED.has(preset.preset);
 
       test(`should publish ${preset.label} to the site and the admin, readable and as approved`, async ({
         editor,
@@ -59,14 +70,19 @@ test.describe('Admin theme', () => {
         await home.open();
         expect(await rootVariable(page, '--ty-ink')).toBe(preset.colours.background);
         expect((await axe().analyze()).violations).toEqual([]);
-        await page.evaluate(async () => document.fonts.ready);
-        await expect(home.section('top')).toHaveScreenshot(`theme-${name}-top.png`, {
-          stylePath: 'e2e/support/visual.css',
-        });
+        if (pictured) {
+          await page.evaluate(async () => document.fonts.ready);
+          await expect(home.section('top')).toHaveScreenshot(`theme-${name}-top.png`, {
+            stylePath: 'e2e/support/visual.css',
+          });
+        }
 
         await page.goto('/admin');
         await editor.heading.filter({ hasText: 'Welcome back' }).waitFor();
         expect((await axe().exclude('iframe').analyze()).violations).toEqual([]);
+        if (!pictured) {
+          return;
+        }
         await page.addStyleTag({ content: '.db-notes { display: none !important; }' });
         await expect(page.locator('app-dashboard')).toHaveScreenshot(
           `theme-${name}-dashboard.png`,
