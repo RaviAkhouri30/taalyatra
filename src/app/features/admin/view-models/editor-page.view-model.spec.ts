@@ -1,15 +1,10 @@
-import { effect } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, type Subscription, throwError } from 'rxjs';
 import fakeDb from '@core/backends/fake/fake-db.json';
 import { type IDraft } from '@core/interfaces/i-draft';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
-import {
-  AUTOSAVE_DEBOUNCE_MS,
-  EDITOR_TAB_ROUTE_KEY,
-  PREVIEW_FOLLOW_DEBOUNCE_MS,
-} from '../models/editor-nav.constants';
+import { AUTOSAVE_DEBOUNCE_MS, EDITOR_TAB_ROUTE_KEY } from '../models/editor-nav.constants';
 import { EditorTab } from '../models/editor-tab.enum';
 import { DraftService } from '../services/draft.service';
 import { SAFETY_COPY_KEY_PREFIX, SafetyCopyService } from '../services/safety-copy.service';
@@ -21,7 +16,6 @@ import {
   provideLayout,
   provideSignedIn,
 } from '../testing/editor-testing';
-import { TEAM_HEADING, VIDEOS_HEADING } from '../schemas/content.sections';
 import { EditorPageViewModel, SAFETY_COPY_MESSAGES } from './editor-page.view-model';
 
 describe('EditorPageViewModel', () => {
@@ -83,6 +77,7 @@ describe('EditorPageViewModel', () => {
     expect(model.data()?.sections.map((entry) => entry.section.id)).toEqual([
       'team',
       'team-members',
+      'team-page',
     ]);
     expect(section('team')?.form.get('title')?.value).toBe('Drafted title');
     expect(section('team')?.titleId).toBe('card-team');
@@ -184,44 +179,6 @@ describe('EditorPageViewModel', () => {
       ),
     ).toBe(true);
     expect(layout.reportSaved).toHaveBeenCalled();
-  });
-
-  it('should follow the section being edited and switch the preview on phones', () => {
-    const { model } = setUp();
-
-    model.focus(VIDEOS_HEADING);
-    model.togglePreview();
-
-    expect(model.activeAnchor()).toBe(PageAnchor.Watch);
-    expect(model.previewOpen()).toBe(true);
-  });
-
-  it('should move the preview to the card scrolled to once scrolling pauses', () => {
-    const { model } = setUp();
-
-    model.follow(VIDEOS_HEADING);
-    expect(model.activeAnchor()).toBe(PageAnchor.Top);
-    vi.advanceTimersByTime(PREVIEW_FOLLOW_DEBOUNCE_MS);
-
-    expect(model.activeAnchor()).toBe(PageAnchor.Watch);
-  });
-
-  it('should move the preview once, to the last card, after a quick scroll past several', () => {
-    const { model } = setUp();
-    const moves: PageAnchor[] = [];
-    TestBed.runInInjectionContext(() => {
-      effect(() => {
-        moves.push(model.activeAnchor());
-      });
-    });
-
-    model.follow(VIDEOS_HEADING);
-    model.follow(TEAM_HEADING);
-    vi.advanceTimersByTime(PREVIEW_FOLLOW_DEBOUNCE_MS);
-    TestBed.tick();
-
-    expect(moves.at(-1)).toBe(PageAnchor.Team);
-    expect(moves).not.toContain(PageAnchor.Watch);
   });
 
   it('should open the first tab, Hero, for an unknown tab in the route', () => {

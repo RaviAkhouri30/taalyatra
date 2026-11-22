@@ -1,6 +1,7 @@
 import { type IBrand } from './i-brand';
 import { type IContactDetails } from './i-contact-details';
 import { type IPromotion } from './i-promotion';
+import { type SeoTexts } from './i-seo-text';
 import { type ISocialLink } from './i-social-link';
 
 /** Site-wide content shared by every page's chrome (header, footer, floating actions). */
@@ -15,6 +16,8 @@ export interface ISiteConfig {
   readonly labels: ISiteLabels;
   /** Footer credit, or `null` when none is stored. */
   readonly credit: ISiteCredit | null;
+  /** The owner's own page titles and search descriptions (0028); empty when none are stored. */
+  readonly seo: SeoTexts;
 }
 
 /** UI strings used by more than one page, stored once (ADR-0011). */
@@ -75,4 +78,5 @@ export interface ISiteConfigDto {
   readonly promotion?: IPromotionDto | null;
   readonly labels?: Partial<ISiteLabels>;
   readonly credit?: ISiteCredit | null;
+  readonly seo?: SeoTexts;
 }

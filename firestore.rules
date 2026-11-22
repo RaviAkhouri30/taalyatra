@@ -21,8 +21,8 @@ service cloud.firestore {
         && (actsAsOwner()
             || (document == 'visibility' && canPublishHere('visibility', 'site/visibility'))
             || (document == 'theme' && canPublishHere('theme', 'site/theme'))
-            // Offer, Business details and Contact & social links share this document: a manager
-            // changes only the parts of the pages they may publish.
+            // Offer, Business details, Search and sharing and Contact & social links share this
+            // document: a manager changes only the parts of the pages they may publish.
             || (document == 'config' && isManager()
                 && request.resource.data.diff(resource.data).affectedKeys()
                   .hasOnly(publishableConfigKeys()))
@@ -31,8 +31,12 @@ service cloud.firestore {
                 && request.resource.data.diff(resource.data).affectedKeys()
                   .hasOnly(approvableConfigKeys())));
     }
+    // The inner pages' own text (0028). Never `admin`: its sign-in wording stays the developer's.
     match /pages/{page} {
       allow read: if true;
+      allow update: if page in innerPages()
+        && canPublishHere(innerPages()[page], 'pages/' + page)
+        && isValidInnerPage(request.resource.data, resource.data);
     }
     // Collections: a publish writes them as numbered documents and deletes the numbers it no
     // longer uses (0009). The highest number allowed is the collection's item limit, which
@@ -96,9 +100,13 @@ service cloud.firestore {
         && request.resource.data.by == request.auth.uid
         && request.resource.data.changed is list
         && (isSuper()
-            || request.resource.data.changed.hasOnly(publishablePaths())
+            || (request.resource.data.get('selfApproval', null) == null
+                && request.resource.data.changed.hasOnly(publishablePaths()))
             // Pages that need approval, approved by the manager themselves, saying so (0023).
-            || (role().get('canApprove', false) == true
+            // Those pages include the ones they may publish, so only this list is built: building
+            // both would pass the rules' limit of 1,000 evaluated expressions (0028).
+            || (request.resource.data.get('selfApproval', null) != null
+                && role().get('canApprove', false) == true
                 && isValidSelfApproval(request.resource.data.get('selfApproval', null))
                 && request.resource.data.changed.hasOnly(approvablePaths())));
     }
@@ -383,7 +391,14 @@ service cloud.firestore {
       };
     }
 
-    // The editor page each drafted document belongs to, but `site/config`, which three share.
+    // The editor page each inner page's document belongs to (0028).
+    function innerPages() {
+      return {
+        'videos': 'videos', 'team': 'team', 'shows': 'shows', 'achievements': 'achievements'
+      };
+    }
+
+    // The editor page each drafted document belongs to, but `site/config`, which four share.
     // Paths mirror ContentPath (content-path.enum.ts).
     function draftPages() {
       return {
@@ -395,13 +410,16 @@ service cloud.firestore {
         'home/contact': 'proposal-form', 'site/visibility': 'visibility', 'site/theme': 'theme',
         'home/marquee': 'hero', 'home/trust': 'hero', 'home/philosophy': 'philosophy',
         'home/midCta': 'philosophy', 'home/cities': 'cities', 'home/how': 'how',
-        'home/instagram': 'instagram', 'home/proof': 'testimonials', 'home/faq': 'faq'
+        'home/instagram': 'instagram', 'home/proof': 'testimonials', 'home/faq': 'faq',
+        'pages/videos': 'videos', 'pages/team': 'team', 'pages/shows': 'shows',
+        'pages/achievements': 'achievements'
       };
     }
 
     function canDraft(path) {
       return path is string
-        && ((path == 'site/config' && (canSee('offer') || canSee('business') || canSee('contact')))
+        && ((path == 'site/config' && (canSee('offer') || canSee('business') || canSee('contact')
+                                       || canSee('seo')))
             || (path in draftPages() && canSee(draftPages()[path])));
     }
 
@@ -411,7 +429,8 @@ service cloud.firestore {
       let pages = role().pages;
       return pathsIf(pages, 'business', ['brand'])
         .concat(pathsIf(pages, 'offer', ['promotion']))
-        .concat(pathsIf(pages, 'contact', ['contact', 'socials', 'copyrightYear']));
+        .concat(pathsIf(pages, 'contact', ['contact', 'socials', 'copyrightYear']))
+        .concat(pathsIf(pages, 'seo', ['seo']));
     }
 
     // `paths` when the manager may publish `page`, else nothing.
@@ -429,7 +448,8 @@ service cloud.firestore {
       let pages = role().pages;
       return pathsIfSeen(pages, 'business', ['brand'])
         .concat(pathsIfSeen(pages, 'offer', ['promotion']))
-        .concat(pathsIfSeen(pages, 'contact', ['contact', 'socials', 'copyrightYear']));
+        .concat(pathsIfSeen(pages, 'contact', ['contact', 'socials', 'copyrightYear']))
+        .concat(pathsIfSeen(pages, 'seo', ['seo']));
     }
 
     // The documents a manager who can approve may name in a self-approved record: their pages'.
@@ -439,15 +459,16 @@ service cloud.firestore {
         .concat(pathsIfSeen(pages, 'offer', ['home/offer', 'site/config']))
         .concat(pathsIfSeen(pages, 'audiences', ['home/audiences']))
         .concat(pathsIfSeen(pages, 'experiences', ['home/experiences']))
-        .concat(pathsIfSeen(pages, 'shows', ['home/shows', 'showFormats']))
+        .concat(pathsIfSeen(pages, 'shows', ['home/shows', 'showFormats', 'pages/shows']))
         .concat(pathsIfSeen(pages, 'drum-circle', ['home/drumCircle']))
         .concat(pathsIfSeen(pages, 'rhythm-game', ['home/rhythmGame']))
-        .concat(pathsIfSeen(pages, 'videos', ['home/videos', 'videos']))
+        .concat(pathsIfSeen(pages, 'videos', ['home/videos', 'videos', 'pages/videos']))
         .concat(pathsIfSeen(pages, 'gallery', ['home/gallery', 'gallery']))
-        .concat(pathsIfSeen(pages, 'team', ['home/team', 'team']))
+        .concat(pathsIfSeen(pages, 'team', ['home/team', 'team', 'pages/team']))
         .concat(pathsIfSeen(pages, 'proposal-form', ['home/contact']))
         .concat(pathsIfSeen(pages, 'business', ['site/config']))
         .concat(pathsIfSeen(pages, 'contact', ['site/config']))
+        .concat(pathsIfSeen(pages, 'seo', ['site/config']))
         .concat(pathsIfSeen(pages, 'visibility', ['site/visibility']))
         .concat(pathsIfSeen(pages, 'theme', ['site/theme']))
         .concat(pathsIfSeen(pages, 'philosophy', ['home/philosophy', 'home/midCta']))
@@ -455,7 +476,8 @@ service cloud.firestore {
         .concat(pathsIfSeen(pages, 'how', ['home/how']))
         .concat(pathsIfSeen(pages, 'instagram', ['home/instagram']))
         .concat(pathsIfSeen(pages, 'testimonials', ['home/proof']))
-        .concat(pathsIfSeen(pages, 'faq', ['home/faq']));
+        .concat(pathsIfSeen(pages, 'faq', ['home/faq']))
+        .concat(pathsIfSeen(pages, 'achievements', ['pages/achievements']));
     }
 
     // The documents a manager may name in a publish record. Called for managers only.
@@ -465,15 +487,16 @@ service cloud.firestore {
         .concat(pathsIf(pages, 'offer', ['home/offer', 'site/config']))
         .concat(pathsIf(pages, 'audiences', ['home/audiences']))
         .concat(pathsIf(pages, 'experiences', ['home/experiences']))
-        .concat(pathsIf(pages, 'shows', ['home/shows', 'showFormats']))
+        .concat(pathsIf(pages, 'shows', ['home/shows', 'showFormats', 'pages/shows']))
         .concat(pathsIf(pages, 'drum-circle', ['home/drumCircle']))
         .concat(pathsIf(pages, 'rhythm-game', ['home/rhythmGame']))
-        .concat(pathsIf(pages, 'videos', ['home/videos', 'videos']))
+        .concat(pathsIf(pages, 'videos', ['home/videos', 'videos', 'pages/videos']))
         .concat(pathsIf(pages, 'gallery', ['home/gallery', 'gallery']))
-        .concat(pathsIf(pages, 'team', ['home/team', 'team']))
+        .concat(pathsIf(pages, 'team', ['home/team', 'team', 'pages/team']))
         .concat(pathsIf(pages, 'proposal-form', ['home/contact']))
         .concat(pathsIf(pages, 'business', ['site/config']))
         .concat(pathsIf(pages, 'contact', ['site/config']))
+        .concat(pathsIf(pages, 'seo', ['site/config']))
         .concat(pathsIf(pages, 'visibility', ['site/visibility']))
         .concat(pathsIf(pages, 'theme', ['site/theme']))
         .concat(pathsIf(pages, 'philosophy', ['home/philosophy', 'home/midCta']))
@@ -481,7 +504,8 @@ service cloud.firestore {
         .concat(pathsIf(pages, 'how', ['home/how']))
         .concat(pathsIf(pages, 'instagram', ['home/instagram']))
         .concat(pathsIf(pages, 'testimonials', ['home/proof']))
-        .concat(pathsIf(pages, 'faq', ['home/faq']));
+        .concat(pathsIf(pages, 'faq', ['home/faq']))
+        .concat(pathsIf(pages, 'achievements', ['pages/achievements']));
     }
 
     // A draft id is its path with `/` as `__` (draftId in i-draft.ts).
@@ -517,7 +541,7 @@ service cloud.firestore {
                                       'drum-circle', 'rhythm-game', 'videos', 'gallery', 'team',
                                       'proposal-form', 'business', 'contact', 'visibility',
                                       'theme', 'philosophy', 'cities', 'how', 'instagram',
-                                      'testimonials', 'faq'])
+                                      'testimonials', 'faq', 'achievements', 'seo'])
         && data.pages.values().hasOnly(['hidden', 'approval', 'publish'])
         && data.uploads is bool
         && isText(data.addedAt, 20, 40);
@@ -559,10 +583,24 @@ service cloud.firestore {
         && isOptionalText(data, 'lead', 0, 600);
     }
 
+    // An inner page's document (0028): the editor changes values, never the shape, and the page's
+    // heading is held to the limits of CONTENT_MAX_LENGTH, as a home section's is. Lists inside are
+    // held to theirs by the editor and the site (rules can't loop over a list).
+    function isValidInnerPage(data, current) {
+      return data.keys().hasAll(current.keys())
+        && data.keys().hasOnly(current.keys())
+        && data.hero is map
+        && data.hero.keys().hasOnly(['eyebrow', 'title', 'highlight', 'lead'])
+        && isOptionalText(data.hero, 'eyebrow', 0, 60)
+        && isText(data.hero.title, 1, 120)
+        && isOptionalText(data.hero, 'highlight', 0, 80)
+        && isOptionalText(data.hero, 'lead', 0, 600);
+    }
+
     function isValidSiteConfig(data) {
       return data.keys().hasAll(['brand', 'contact', 'copyrightYear'])
         && data.keys().hasOnly(['brand', 'contact', 'socials', 'promotion', 'copyrightYear',
-                                'labels', 'credit'])
+                                'labels', 'credit', 'seo'])
         && data.brand is map
         && isText(data.brand.name, 1, 60)
         && isText(data.brand.tagline, 0, 60)
@@ -574,7 +612,26 @@ service cloud.firestore {
         && isText(data.contact.address, 1, 300)
         && data.copyrightYear is int
         && (!('socials' in data) || data.socials is list)
-        && (!('promotion' in data) || isValidPromotion(data.promotion));
+        && (!('promotion' in data) || isValidPromotion(data.promotion))
+        && (!('seo' in data) || isValidSeo(data.seo));
+    }
+
+    // Each page's title and search description (0028); limits mirror SEO_MAX_LENGTH
+    // (page-content-limits.constants.ts), and keys SeoPage. Written out rather than through
+    // isOptionalText: a manager's write to this document must stay within the rules' limit of
+    // 1,000 evaluated expressions, and those helpers cost several times as many.
+    function isValidSeo(seo) {
+      return seo is map
+        && seo.keys().hasOnly(['home', 'videos', 'team', 'shows', 'achievements'])
+        && isSeoText(seo.get('home', {})) && isSeoText(seo.get('videos', {}))
+        && isSeoText(seo.get('team', {})) && isSeoText(seo.get('shows', {}))
+        && isSeoText(seo.get('achievements', {}));
+    }
+
+    function isSeoText(text) {
+      return text.keys().hasOnly(['title', 'description'])
+        && text.get('title', '') is string && text.get('title', '').size() <= 70
+        && text.get('description', '') is string && text.get('description', '').size() <= 200;
     }
 
     function isValidPromotion(promotion) {

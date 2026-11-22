@@ -74,11 +74,11 @@ describe('editor schemas', () => {
   // A collection's list replaces each item whole, and firestore.rules requires exact keys, so a
   // key missing from a schema would make every publish of that collection fail.
   it.each([
-    [EditorTab.Team, fakeDb.team],
-    [EditorTab.Shows, fakeDb.showFormats],
-    [EditorTab.Videos, fakeDb.videos],
-  ])('should edit every key of each item on the %s tab', (tab, items) => {
-    const list = tabSchema(tab)?.sections.at(-1)?.fields[0];
+    [EditorTab.Team, ContentPath.Team, fakeDb.team],
+    [EditorTab.Shows, ContentPath.ShowFormats, fakeDb.showFormats],
+    [EditorTab.Videos, ContentPath.Videos, fakeDb.videos],
+  ])('should edit every key of each item on the %s tab', (tab, path, items) => {
+    const list = tabSchema(tab)?.sections.find((section) => section.path === path)?.fields[0];
     const fields =
       list?.kind === FieldKind.List && list.item.kind === FieldKind.Group ? list.item.fields : [];
 
@@ -153,6 +153,11 @@ describe('editor schemas', () => {
 
   it('should open Hero, not the business details, for the top of the page', () => {
     expect(cardForAnchor(PageAnchor.Top)?.fragment).toBe('card-hero');
+  });
+
+  it('should open Hero, not an inner page’s card, for the top of the home page', () => {
+    expect(cardForAnchor(PageAnchor.Top, EditorTab.Team)?.fragment).toBe('card-hero');
+    expect(cardForAnchor(PageAnchor.Top, EditorTab.Achievements)?.fragment).toBe('card-hero');
   });
 
   it('should list each clickable page section with the tab that edits it', () => {

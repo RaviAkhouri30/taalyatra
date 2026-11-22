@@ -103,8 +103,17 @@ describe('SiteConfigModel', () => {
       copyFailed: '',
     });
     expect(site.credit).toBeNull();
+    expect(site.seo).toEqual({});
     expect(site.promotion).toBeNull();
     expect(site.socials.map((social) => social.platform)).toEqual([SocialPlatform.WhatsApp]);
+  });
+
+  it('should keep the stored page titles and descriptions when some are stored', () => {
+    const seo = { team: { title: 'Meet the team', description: '' } };
+
+    const site = new SiteConfigModel({ ...SITE_DTO, seo });
+
+    expect(site.seo).toEqual(seo);
   });
 
   it('should keep the stored labels and fill only the missing ones', () => {

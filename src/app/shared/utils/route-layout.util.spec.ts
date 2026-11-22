@@ -6,6 +6,7 @@ import {
   resolvePageLayout,
   resolvePageMeta,
 } from './route-layout.util';
+import { SeoPage } from '@shared/enums/seo-page.enum';
 
 /** Minimal stand-in for a route snapshot: just data and the next node. */
 interface SnapshotNode {
@@ -61,16 +62,13 @@ describe('route layout utils', () => {
       return root;
     }
 
-    it('should take the deepest title and description and drop query and fragment', () => {
-      const root = titled(
-        { data: { description: 'Site.' } },
-        { data: { description: 'Videos page.' }, title: 'Videos — Taal Yatra' },
-      );
+    it('should take the deepest title and drop query and fragment', () => {
+      const root = titled({ data: {}, title: 'Admin' }, { data: {}, title: 'Hero — Admin' });
 
-      expect(resolvePageMeta(root, '/videos?x=1#watch')).toEqual({
-        path: '/videos',
-        title: 'Videos — Taal Yatra',
-        description: 'Videos page.',
+      expect(resolvePageMeta(root, '/admin/hero?x=1#card')).toEqual({
+        path: '/admin/hero',
+        title: 'Hero — Admin',
+        description: '',
       });
     });
 
@@ -82,8 +80,21 @@ describe('route layout utils', () => {
       });
     });
 
-    it('should ignore a description that is not text', () => {
-      expect(resolvePageMeta(chain({ description: 42 }), '/team').description).toBe('');
+    it('should name a public page when its route does', () => {
+      expect(resolvePageMeta(chain({ seo: SeoPage.Videos }), '/videos')).toEqual({
+        path: '/videos',
+        title: '',
+        description: '',
+        page: SeoPage.Videos,
+      });
+    });
+
+    it('should name the page whose stored text replaces the defaults when the route gives one', () => {
+      expect(resolvePageMeta(chain({ seo: SeoPage.Team }, {}), '/team').page).toBe(SeoPage.Team);
+    });
+
+    it('should name no page when the route gives an unknown one', () => {
+      expect(resolvePageMeta(chain({ seo: 'admin' }), '/admin')).not.toHaveProperty('page');
     });
   });
 });

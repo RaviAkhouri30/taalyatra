@@ -30,7 +30,7 @@ describe('ManagerFormComponent', () => {
 
     expect(element.querySelector('h2')?.textContent).toBe('Add a manager');
     expect(element.querySelector('.mf-steps')?.textContent).toContain('User UID');
-    expect(element.querySelectorAll('.mf-row select')).toHaveLength(21);
+    expect(element.querySelectorAll('.mf-row select')).toHaveLength(23);
     expect(element.querySelector<HTMLSelectElement>('.mf-row select')?.value).toBe('approval');
     expect(element.querySelector<HTMLInputElement>('.mf-check input')?.checked).toBe(true);
   });

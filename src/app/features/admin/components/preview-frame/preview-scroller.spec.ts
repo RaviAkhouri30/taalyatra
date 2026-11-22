@@ -118,6 +118,14 @@ describe('PreviewScroller', () => {
     expect(scrollTo).not.toHaveBeenCalled();
   });
 
+  it('should go to the page’s own top when the page has no top section', () => {
+    const { element, scrollTo } = frame();
+
+    new PreviewScroller(element, false).goTo('top');
+
+    expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'instant' });
+  });
+
   it('should do nothing when the frame has no site yet', () => {
     const element = document.createElement('iframe');
     Object.defineProperty(element, 'contentWindow', { value: null });

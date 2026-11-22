@@ -11,7 +11,7 @@ describe('team access model', () => {
   });
 
   it('should list every editor page, in the side panel’s order', () => {
-    expect(PAGE_ROWS).toHaveLength(21);
+    expect(PAGE_ROWS).toHaveLength(23);
     expect(PAGE_ROWS[0]).toEqual({ tab: EditorTab.Hero, label: 'Hero' });
   });
 

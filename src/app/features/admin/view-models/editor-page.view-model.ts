@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { type AbstractControl, type FormRecord } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { AppRoute } from '@shared/enums/app-route.enum';
 import {
   EMPTY,
   type Observable,
@@ -9,6 +10,7 @@ import {
   concatMap,
   debounceTime,
   exhaustMap,
+  filter,
   forkJoin,
   from,
   map,
@@ -79,6 +81,8 @@ export interface IEditorPage {
 export class EditorPageViewModel extends ViewModel<IEditorPage> {
   /** The section the owner is working in, where the preview scrolls. */
   public readonly activeAnchor = signal(PageAnchor.Top);
+  /** The site page that section is on, which the preview shows (0028). */
+  public readonly activePage = signal<AppRoute>(AppRoute.Home);
   /** Bumped after each save, which reloads the preview. */
   public readonly previewVersion = signal(0);
   /** Phones show the form or the preview; this switches between them. */
@@ -102,16 +106,24 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
   /** Counts changes, so a save can tell whether a newer change arrived while it ran. */
   private changeCount = 0;
   /** Cards the owner has scrolled to. */
-  private readonly scrolledTo = new Subject<PageAnchor>();
+  private readonly scrolledTo = new Subject<IEditorSection>();
+  /** The card the owner is working in, which scrolling past other cards doesn't take over. */
+  private focused: IEditorSection | null = null;
 
   /** The owner is working in `section`: the preview moves there now. */
   public focus(section: IEditorSection): void {
-    this.activeAnchor.set(section.anchor);
+    this.focused = section;
+    this.show(section);
+  }
+
+  /** The owner has left the card they were working in: the preview follows scrolling again. */
+  public blur(): void {
+    this.focused = null;
   }
 
   /** The owner has scrolled to `section`: the preview follows once scrolling pauses. */
   public follow(section: IEditorSection): void {
-    this.scrolledTo.next(section.anchor);
+    this.scrolledTo.next(section);
   }
 
   public togglePreview(): void {
@@ -144,8 +156,11 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
       // debounceTime: a quick scroll past several cards moves the preview once, to where it stops.
       this.scrolledTo.pipe(
         debounceTime(PREVIEW_FOLLOW_DEBOUNCE_MS),
-        tap((anchor) => {
-          this.activeAnchor.set(anchor);
+        // Typing in a card keeps the preview on it: filling a field scrolls cards into view, and
+        // one on another page would reload the preview away from the change (0028).
+        filter(() => this.focused === null),
+        tap((section) => {
+          this.show(section);
         }),
       ),
       // exhaustMap: a second press while the copies are being saved is ignored.
@@ -182,12 +197,19 @@ export class EditorPageViewModel extends ViewModel<IEditorPage> {
       tap((page) => {
         this.pending.set(false);
         this.setData(page);
+        this.activePage.set(tab.sections[0]?.page ?? AppRoute.Home);
         this.activeAnchor.set(tab.sections[0]?.anchor ?? PageAnchor.Top);
       }),
       // switchMap: the page is built once; from then on, follow its changes. A locked page has
       // none to save: the rules would refuse them.
       switchMap((page) => (this.waiting()?.locked ? EMPTY : this.autosave(page, paths))),
     );
+  }
+
+  /** Points the preview at `section`: its page, and its place on that page. */
+  private show(section: IEditorSection): void {
+    this.activePage.set(section.page ?? AppRoute.Home);
+    this.activeAnchor.set(section.anchor);
   }
 
   private routeTab(): EditorTab {

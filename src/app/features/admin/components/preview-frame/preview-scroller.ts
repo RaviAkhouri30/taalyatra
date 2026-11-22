@@ -1,3 +1,4 @@
+import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import {
   PREVIEW_FADE_IN_MS,
   PREVIEW_FADE_OUT_MS,
@@ -119,16 +120,20 @@ export class PreviewScroller {
     hidden?.cancel();
   }
 
-  /** @returns Whether the section was there to jump to. */
+  /**
+   * @returns Whether the section was there to jump to. The top always is: an inner page has no
+   *   `#top` section, so its top is the page's own (0028).
+   */
   private jump(anchor: string): boolean {
     const site = this.site();
     const section = site?.document.getElementById(anchor);
-    if (!site || !section) {
+    if (!site || (!section && anchor !== (PageAnchor.Top as string))) {
       return false;
     }
     // The site's own window only: `scrollIntoView` would also scroll the editor's panels that
     // hold the frame. 'instant': never an animated scroll, whatever the site's scroll behaviour.
-    site.scrollTo({ top: section.getBoundingClientRect().top + site.scrollY, behavior: 'instant' });
+    const top = section ? section.getBoundingClientRect().top + site.scrollY : 0;
+    site.scrollTo({ top, behavior: 'instant' });
     return true;
   }
 

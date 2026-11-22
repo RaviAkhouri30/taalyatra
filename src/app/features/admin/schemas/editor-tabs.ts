@@ -21,6 +21,9 @@ import {
 } from './media.sections';
 import { OFFER_SECTIONS } from './offer.sections';
 import { THEME_SECTION } from './theme.sections';
+import { ACHIEVEMENTS_SECTIONS } from './achievements.sections';
+import { SHOWS_PAGE_SECTION, TEAM_PAGE_SECTION, VIDEOS_PAGE_SECTION } from './inner-pages.sections';
+import { SEO_SECTION } from './seo.sections';
 import { VISIBILITY_SECTIONS } from './visibility.sections';
 import { DRUM_CIRCLE_SECTIONS } from './drum-circle.sections';
 import {
@@ -79,8 +82,9 @@ export const EDITOR_TABS: readonly IEditorTabSchema[] = [
   {
     tab: EditorTab.Shows,
     label: 'Shows',
-    description: 'The show formats: their pictures, details and which one is featured.',
-    sections: SHOWS_SECTIONS,
+    description:
+      'The show formats: their pictures, details and which one is featured, and the Shows page’s own text.',
+    sections: [...SHOWS_SECTIONS, SHOWS_PAGE_SECTION],
   },
   {
     tab: EditorTab.DrumCircle,
@@ -98,8 +102,9 @@ export const EDITOR_TABS: readonly IEditorTabSchema[] = [
   {
     tab: EditorTab.Videos,
     label: 'Videos',
-    description: 'The videos: their YouTube links, titles and order, and the section heading.',
-    sections: [VIDEOS_HEADING, ...VIDEOS_SECTIONS],
+    description:
+      'The videos: their YouTube links, titles and order, the section heading, and the Videos page’s own text.',
+    sections: [VIDEOS_HEADING, ...VIDEOS_SECTIONS, VIDEOS_PAGE_SECTION],
   },
   {
     tab: EditorTab.Gallery,
@@ -128,8 +133,9 @@ export const EDITOR_TABS: readonly IEditorTabSchema[] = [
   {
     tab: EditorTab.Team,
     label: 'Team',
-    description: 'The team members, their photos and details, and the section heading.',
-    sections: [TEAM_HEADING, ...TEAM_SECTIONS],
+    description:
+      'The team members, their photos and details, the section heading, and the Team page’s own text.',
+    sections: [TEAM_HEADING, ...TEAM_SECTIONS, TEAM_PAGE_SECTION],
   },
   {
     tab: EditorTab.Instagram,
@@ -156,10 +162,24 @@ export const EDITOR_TABS: readonly IEditorTabSchema[] = [
     sections: [PROPOSAL_FORM_HEADING],
   },
   {
+    tab: EditorTab.Achievements,
+    label: 'Achievements',
+    description:
+      'The Achievements page: its numbers, milestones, recognition, press, performances and call to action.',
+    sections: ACHIEVEMENTS_SECTIONS,
+  },
+  {
     tab: EditorTab.Business,
     label: 'Business details',
     description: 'Your business name, the tagline under the logo, and the one-line description.',
     sections: [BRAND_SECTION],
+  },
+  {
+    tab: EditorTab.Seo,
+    label: 'Search and sharing',
+    description:
+      'Each page’s title and description, shown in search results, the browser tab and shared links.',
+    sections: [SEO_SECTION],
   },
   {
     tab: EditorTab.Contact,
@@ -241,7 +261,8 @@ const SETTINGS_PATHS: ReadonlySet<string> = new Set([
 /**
  * The card that edits the page section a preview click landed on (1.11.0): on the current tab if it
  * has one, else the first tab that does. Settings cards are skipped, so the hero opens Hero, not
- * the business details that share its anchor.
+ * the business details that share its anchor, and so are inner pages' cards (0028): the preview
+ * lets the owner click home sections only.
  *
  * @param anchor The section's element id in the site.
  * @param current The tab the owner is on.
@@ -250,7 +271,10 @@ const SETTINGS_PATHS: ReadonlySet<string> = new Set([
 export function cardForAnchor(anchor: string, current?: EditorTab): IIssueLink | null {
   const editsIt = ({ sections }: IEditorTabSchema): IEditorSection | undefined =>
     sections.find(
-      (section) => (section.anchor as string) === anchor && !SETTINGS_PATHS.has(section.path),
+      (section) =>
+        (section.anchor as string) === anchor &&
+        !SETTINGS_PATHS.has(section.path) &&
+        (section.page ?? AppRoute.Home) === AppRoute.Home,
     );
   const here = current === undefined ? undefined : tabSchema(current);
   const entry = here && editsIt(here) ? here : EDITOR_TABS.find((tab) => editsIt(tab));

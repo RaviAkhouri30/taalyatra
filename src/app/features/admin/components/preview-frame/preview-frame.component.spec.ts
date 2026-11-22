@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { AppRoute } from '@shared/enums/app-route.enum';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { type FakeAnimation, stubAnimate, stubMatchMedia } from '@shared/testing/motion-stubs';
 import { PreviewFrameComponent } from './preview-frame.component';
@@ -156,6 +157,57 @@ describe('PreviewFrameComponent', () => {
 
     const reloads = location.replace.mock.calls.filter(([url]) => String(url).includes('&v='));
     expect(reloads).toEqual([['/?preview=1&v=2']]);
+  });
+
+  it('should open the page a card is on, once the home page has loaded', () => {
+    const { fixture, iframe, location } = render();
+    fixture.componentRef.setInput('page', AppRoute.Team);
+    fixture.detectChanges();
+    expect(location.replace).not.toHaveBeenCalled();
+
+    iframe.dispatchEvent(new Event('load'));
+
+    expect(location.replace).toHaveBeenCalledWith('/team?preview=1&v=0');
+  });
+
+  it('should open another page at once when the preview has loaded', () => {
+    const { fixture, element, iframe, location } = render();
+    iframe.dispatchEvent(new Event('load'));
+
+    fixture.componentRef.setInput('page', AppRoute.Shows);
+    fixture.detectChanges();
+
+    expect(location.replace).toHaveBeenCalledWith('/shows?preview=1&v=0');
+    expect(element.querySelector('a')?.getAttribute('href')).toBe('/shows?preview=1#top');
+  });
+
+  it('should reload the page being edited after a save', () => {
+    const { fixture, iframe, location } = render();
+    iframe.dispatchEvent(new Event('load'));
+    fixture.componentRef.setInput('page', AppRoute.Videos);
+    fixture.detectChanges();
+    iframe.dispatchEvent(new Event('load'));
+    location.replace.mockClear();
+
+    fixture.componentRef.setInput('version', 3);
+    fixture.detectChanges();
+
+    expect(location.replace).toHaveBeenCalledWith('/videos?preview=1&v=3');
+  });
+
+  it('should wait for the other page to load before moving to its section', () => {
+    const { fixture, element, iframe, getElementById } = render();
+    show(element);
+    iframe.dispatchEvent(new Event('load'));
+    getElementById.mockClear();
+
+    fixture.componentRef.setInput('page', AppRoute.Team);
+    fixture.componentRef.setInput('anchor', PageAnchor.Contact);
+    fixture.detectChanges();
+    expect(getElementById).not.toHaveBeenCalled();
+    iframe.dispatchEvent(new Event('load'));
+
+    expect(getElementById).toHaveBeenCalledWith(PageAnchor.Contact);
   });
 
   describe('the frame', () => {

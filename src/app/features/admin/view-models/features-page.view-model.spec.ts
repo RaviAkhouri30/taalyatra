@@ -29,7 +29,12 @@ describe('FeaturesPageViewModel', () => {
 
     model.init().subscribe();
 
-    expect(model.data()?.map((group) => group.label)).toEqual(['Home page', 'Every page', 'Admin']);
+    expect(model.data()?.map((group) => group.label)).toEqual([
+      'Home page',
+      'Other pages',
+      'Every page',
+      'Admin',
+    ]);
   });
 
   it('should list the AI help only once it’s set up (0025)', () => {

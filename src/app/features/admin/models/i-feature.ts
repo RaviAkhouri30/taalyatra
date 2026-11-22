@@ -5,6 +5,8 @@ import { type ManagerArea } from './manager-area.enum';
 /** The Features page's groups, in order (0020 V18). */
 export enum FeatureGroup {
   HomePage = 'Home page',
+  /** Inner pages edited on a page of their own (0028). */
+  OtherPages = 'Other pages',
   EveryPage = 'Every page',
   Admin = 'Admin',
 }

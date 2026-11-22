@@ -93,3 +93,73 @@ the function not seeing its settings.
 ---
 
 **Approval:** ☑ Approved by Ravi Akhouri on 2026-11-22.
+
+# 2.11.0 · The inner pages, and search titles and descriptions
+
+The second release of the programme: the Videos, Team, Shows and Achievements pages' own text, and each page's title
+and search description. Schema-driven like 2.10.0; two small additions to the editor (the preview opening an inner
+page, and a settings page), and one small one to the site (using a stored title and description).
+
+## The inner pages
+
+Each page's document (`pages/videos`, `pages/team`, `pages/shows`, `pages/achievements`) gets editor cards. Three go on
+the menu page that already edits that page's list; Achievements, which has no list, gets a page of its own.
+
+| Menu page              | New card(s)                                                                                                         | Fields                                                                                                                                                                                                                                           |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Videos                 | **Videos page**                                                                                                     | the page's heading (eyebrow, title, highlighted line, introduction); the filter's labels; "Showing {count} videos" and "Featured · {category}" (the words in braces are filled in by the site, said in the hint); the two buttons                |
+| Team                   | **Team page**                                                                                                       | heading; "Fun fact:" label; **values** (eyebrow, title, up to 6: title, text); the closing call to action (title, text, two buttons)                                                                                                             |
+| Shows                  | **Shows page**                                                                                                      | heading and its two buttons; **formats** (eyebrow, title, note, the three detail labels); **setups** (eyebrow, title, up to 8: title, text, note); **how a show comes together** (eyebrow, title, up to 6 steps, two buttons)                    |
+| **Achievements** (new) | **Page heading and numbers** · **Milestones** · **Recognition** · **Press** · **Performances** · **Call to action** | numbers (up to 6: value, label); milestones (up to 12: year, title, text); recognition (up to 8: icon, title, text); press (up to 8: publication, headline, year, link); performances (up to 12: event, venue, year); the closing call to action |
+
+Each card's preview shows **its own page**: a section gains an optional `page` (an `AppRoute`, the home page when
+missing), and the preview frame loads `<page>?preview=1#top` instead of always the home page. Picking a part of the
+preview to jump to its card stays on the home page, as today.
+
+## Titles and search descriptions
+
+| Today                                                            | 2.11.0                                                                                                         |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Each page's title and description are written in `app.routes.ts` | They move to `PAGE_META` (`shared/constants`), as the defaults, so the routes and the admin read the same text |
+| Only a developer can change them                                 | A settings page, **Search and sharing**, edits a title and a description for each of the five pages            |
+
+- **Stored in `site/config`**, as `seo: { home, videos, team, shows, achievements }`, each `{ title, description }`.
+  The site already reads `site/config` before showing any page, so it costs no extra read or wait; Offer, Business
+  details and Contact already share that document the same way, each with its own keys.
+- **An empty field keeps the default**, shown under the field ("Leave empty to keep: …").
+- **The site:** `SeoService.describe()` takes the stored title and description over the defaults, for the description,
+  the sharing tags and the browser tab's title. A few bytes in the first download (0.62 kB left); the budget checks.
+- **Writing tips:** titles up to 70 characters (60 recommended, what Google shows), descriptions up to 200
+  (155 recommended).
+
+## The rules
+
+| Rule                                                      | Change                                                                                                                                                                                     |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `match /pages/{page}`                                     | `allow update` for `videos`, `team`, `shows` and `achievements` (never `admin`, inception D3), by who may publish that page, keeping the document's keys, with the heading's title checked |
+| `draftPages()`, `approvablePaths()`, `publishablePaths()` | the four `pages/*` documents on their menu pages                                                                                                                                           |
+| `site/config` for managers                                | `seo` joins the keys a manager may publish or approve, through the new **seo** page; drafting `site/config` also allowed to whoever sees it                                                |
+| `isValidSiteConfig`                                       | accepts `seo`: only the five pages, each only `title` (up to 70) and `description` (up to 200)                                                                                             |
+| a role's page keys                                        | `achievements`, `seo`                                                                                                                                                                      |
+
+## Tests
+
+- **Unit:** every new card loads today's content unchanged and leaves no field of its document out (as 2.10.0); the
+  preview frame's page; `PAGE_META`; `SeoService` with and without stored text; `SiteConfigModel` reading `seo`.
+- **Rules:** the owner and a manager on each page; `pages/admin` refused; `seo` with an unknown page or a long title
+  refused; a manager with Search and sharing changing only `seo`.
+- **E2E (three sizes, axe):** change the Team page's heading, see it in the preview of the Team page, publish, see it
+  on `/team`; set the Videos page's description, publish, and find it in the page's description tag; axe on
+  Achievements and Search and sharing.
+
+## Increments
+
+1. `PAGE_META`, the routes reading it; `SiteConfigModel` and `SeoService` with `seo`.
+2. The section's `page` and the preview frame.
+3. The four pages' cards; Achievements; Search and sharing; menu, Find, Features.
+4. Rules and their tests.
+5. E2E, docs, CHANGELOG.
+
+---
+
+**Approval (2.11.0):** ☑ Approved by Ravi Akhouri on 2026-11-22.

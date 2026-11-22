@@ -17,6 +17,7 @@ describe('page paths', () => {
       contact: EditorTab.Contact,
       socials: EditorTab.Contact,
       copyrightYear: EditorTab.Contact,
+      seo: EditorTab.Seo,
     });
   });
 

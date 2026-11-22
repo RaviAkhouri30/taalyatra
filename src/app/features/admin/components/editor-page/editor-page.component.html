@@ -51,6 +51,7 @@
               appInView
               (entered)="follow(entry.section)"
               (focusin)="model.focus(entry.section)"
+              (focusout)="model.blur()"
             >
               <h2 class="d" [class.ep-sr]="entry.repeatsPageTitle" [id]="entry.titleId">
                 {{ entry.section.title }}
@@ -95,6 +96,7 @@
     >
       <app-preview-frame
         [anchor]="model.activeAnchor()"
+        [page]="model.activePage()"
         [version]="model.previewVersion()"
         [pickable]="pickable"
         (picked)="openSection($event)"
