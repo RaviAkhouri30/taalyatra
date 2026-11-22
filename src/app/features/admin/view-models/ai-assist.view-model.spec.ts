@@ -6,6 +6,7 @@ import { AiTask } from '@core/enums/ai-task.enum';
 import { AI_ERROR_MESSAGES, AiError, IAiService } from '@core/interfaces/i-ai-service';
 import { EDITOR_TAB_ROUTE_KEY } from '../models/editor-nav.constants';
 import { EditorTab } from '../models/editor-tab.enum';
+import { AI_UNDO_MS } from '../models/ai-choices';
 import { AiAssistViewModel } from './ai-assist.view-model';
 
 const REQUEST = { task: AiTask.Suggest, label: 'Headline', page: 'Hero' };
@@ -90,5 +91,44 @@ describe('AiAssistViewModel', () => {
     model.dismiss();
 
     expect(model.suggestion()).toBeNull();
+  });
+  describe('Undo (0029)', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should keep the owner’s text for Undo once a suggestion is used, then drop it', () => {
+      const { model } = setUp(() => of('Shorter.'));
+      model.ask(REQUEST);
+
+      model.used('Mine, before.');
+      expect(model.undo()).toBe('Mine, before.');
+      expect(model.suggestion()).toBeNull();
+      vi.advanceTimersByTime(AI_UNDO_MS);
+
+      expect(model.undo()).toBeNull();
+    });
+
+    it('should drop Undo when it’s taken', () => {
+      const { model } = setUp(() => of('x'));
+      model.used('Mine.');
+
+      model.dropUndo();
+
+      expect(model.undo()).toBeNull();
+    });
+
+    it('should drop Undo when the owner asks again', () => {
+      const { model } = setUp(() => of('x'));
+      model.used('Mine.');
+
+      model.ask(REQUEST);
+
+      expect(model.undo()).toBeNull();
+    });
   });
 });

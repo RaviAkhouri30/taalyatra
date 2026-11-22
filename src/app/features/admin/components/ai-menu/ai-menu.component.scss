@@ -1,0 +1,79 @@
+@use 'tokens' as t;
+
+// A small card under the chip, right-aligned with the field (0029).
+:host {
+  // Room for the editor's sticky publish bar when scrolled into view.
+  scroll-margin-bottom: 120px;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 5;
+  display: grid;
+  width: min(300px, 100%);
+  padding: 8px;
+  border: 1px solid t.$color-line;
+  border-radius: 16px;
+  background: t.$color-surface-raised;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 18%);
+  transform-origin: top right;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: am-pop 0.18s ease-out;
+  }
+}
+
+@keyframes am-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+  }
+}
+
+.am-heading {
+  margin: 4px 10px 6px;
+  font-size: t.size(12px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: t.$color-muted-strong;
+}
+
+.am-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: t.$color-cream;
+  font: inherit;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    outline: none;
+    background: t.$color-surface-high;
+  }
+
+  &:focus-visible {
+    box-shadow: inset 0 0 0 2px t.$color-amber;
+  }
+}
+
+.am-glyph {
+  width: 22px;
+  color: t.$color-amber;
+  text-align: center;
+}
+
+.am-foot {
+  margin: 6px 0 0;
+  padding: 8px 12px 2px;
+  border-top: 1px solid t.$color-line;
+  font-size: t.size(12.5px);
+  color: t.$color-muted-strong;
+}

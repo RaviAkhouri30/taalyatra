@@ -7,7 +7,6 @@ import { type IImage } from '@shared/interfaces/i-image';
 import { FieldErrorPipe } from '../../pipes/field-error.pipe';
 import { PlaceholderNotePipe } from '../../pipes/placeholder-note.pipe';
 import { TextLengthPipe } from '../../pipes/text-length.pipe';
-import { AI_TEXT_KINDS } from '../../models/ai-assist';
 import { AiAssistComponent } from '../ai-assist/ai-assist.component';
 import { ImageFieldComponent } from '../image-field/image-field.component';
 
@@ -96,8 +95,6 @@ export class SchemaFieldComponent {
       .join(' '),
   );
 
-  /** Prose fields get AI help; links, numbers and contact details don't (0025 D7). */
-  protected readonly aiHelp = computed(() => AI_TEXT_KINDS.has(this.field().kind));
   /** The stored maximum, which a suggestion is fitted to. */
   protected readonly aiLimit = computed(() => {
     const field = this.field();

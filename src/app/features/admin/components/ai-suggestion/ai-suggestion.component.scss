@@ -1,24 +1,52 @@
 @use 'tokens' as t;
 
+// Opens under the field; nothing in it changes the field until Use this (0029).
 :host {
+  // Room for the editor's sticky publish bar when scrolled into view.
+  scroll-margin-bottom: 120px;
   display: grid;
-  gap: 8px;
+  gap: 10px;
   margin-top: 8px;
-  padding: 12px 14px;
+  padding: 14px 16px 12px;
   border: 1px solid t.$color-amber;
-  border-radius: 12px;
-  background: t.$color-surface-raised;
+  border-radius: 14px;
+  background: linear-gradient(180deg, t.$color-surface-high, t.$color-surface-raised 70%);
   color: t.$color-cream;
 
-  &:focus-visible {
-    outline: 2px solid t.$color-amber-soft;
-    outline-offset: 2px;
+  @media (prefers-reduced-motion: no-preference) {
+    animation: as-open 0.28s ease-out;
   }
 }
 
-.as-label {
+@keyframes as-open {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.as-head {
+  display: flex;
+  gap: 8px;
+  align-items: center;
   margin: 0;
   font-size: t.size(12.5px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: t.$color-amber-soft;
+}
+
+.as-count {
+  margin-left: auto;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  text-transform: none;
+  color: t.$color-muted-strong;
+}
+
+.as-count--over {
   font-weight: 700;
   color: t.$color-amber-soft;
 }
@@ -29,19 +57,52 @@
   white-space: pre-wrap;
 }
 
-.as-count {
-  margin: 0;
-  font-size: t.size(12.5px);
-  color: t.$color-muted-strong;
+// Each word fades in from a slight blur, in turn (its delay is set per word).
+@media (prefers-reduced-motion: no-preference) {
+  .as-word {
+    opacity: 0;
+    filter: blur(4px);
+    animation: as-word 0.35s ease-out forwards;
+  }
 }
 
-.as-count--over {
-  font-weight: 700;
-  color: t.$color-amber-soft;
+@keyframes as-word {
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.as-yours {
+  margin: 0;
+  font-size: t.size(13.5px);
+  color: t.$color-muted-strong;
 }
 
 .as-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  align-items: center;
+}
+
+.as-shim {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, t.$color-line, t.$color-surface-high, t.$color-line);
+  background-size: 200% 100%;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: as-shim 1.2s linear infinite;
+  }
+}
+
+.as-shim--short {
+  width: 62%;
+}
+
+@keyframes as-shim {
+  to {
+    background-position: -200% 0;
+  }
 }

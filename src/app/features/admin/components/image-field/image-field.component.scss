@@ -106,3 +106,8 @@
   border: 1px solid t.$color-line;
   border-radius: 12px;
 }
+
+// AI help's chip sits at the description's foot (0029): the text keeps clear of it.
+app-ai-assist.aa--on textarea {
+  padding-bottom: 44px;
+}

@@ -55,14 +55,49 @@
       }
       @case (kind.Multiline) {
         <label [for]="fieldId()" [class.fd-label--required]="required()">{{ item.label }}</label>
-        <textarea
-          rows="3"
-          [id]="fieldId()"
-          [formControl]="control"
-          [attr.aria-required]="required()"
-          [attr.aria-invalid]="control.invalid"
-          [attr.aria-describedby]="describedBy()"
-        ></textarea>
+        <!-- AI help wraps the field, its chip in the corner (0029); without it, just the field. -->
+        <app-ai-assist
+          [long]="true"
+          [filled]="(control.value | textLength) > 0"
+          [fieldId]="fieldId()"
+          [label]="item.label"
+          [hint]="item.hint ?? ''"
+          [maxLength]="aiLimit()"
+          [text]="readText"
+          [context]="context()"
+          (used)="useSuggestion(control, $event)"
+        >
+          <textarea
+            rows="3"
+            [id]="fieldId()"
+            [formControl]="control"
+            [attr.aria-required]="required()"
+            [attr.aria-invalid]="control.invalid"
+            [attr.aria-describedby]="describedBy()"
+          ></textarea>
+        </app-ai-assist>
+      }
+      @case (kind.Text) {
+        <label [for]="fieldId()" [class.fd-label--required]="required()">{{ item.label }}</label>
+        <app-ai-assist
+          [filled]="(control.value | textLength) > 0"
+          [fieldId]="fieldId()"
+          [label]="item.label"
+          [hint]="item.hint ?? ''"
+          [maxLength]="aiLimit()"
+          [text]="readText"
+          [context]="context()"
+          (used)="useSuggestion(control, $event)"
+        >
+          <input
+            [type]="inputType()"
+            [id]="fieldId()"
+            [formControl]="control"
+            [attr.aria-required]="required()"
+            [attr.aria-invalid]="control.invalid"
+            [attr.aria-describedby]="describedBy()"
+          />
+        </app-ai-assist>
       }
       @default {
         <label [for]="fieldId()" [class.fd-label--required]="required()">{{ item.label }}</label>
@@ -90,17 +125,6 @@
           {{ control.value | textLength }} / {{ limit() }} characters
         }
       </p>
-    }
-    @if (aiHelp()) {
-      <app-ai-assist
-        [fieldId]="fieldId()"
-        [label]="item.label"
-        [hint]="item.hint ?? ''"
-        [maxLength]="aiLimit()"
-        [text]="readText"
-        [context]="context()"
-        (used)="useSuggestion(control, $event)"
-      />
     }
     <!-- Always present, so aria-describedby never points at a missing element. -->
     <p class="fd-note" [id]="noteId()">{{ control.value | placeholderNote }}</p>

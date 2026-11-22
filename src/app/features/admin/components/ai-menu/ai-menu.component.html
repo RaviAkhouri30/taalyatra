@@ -1,0 +1,8 @@
+<p class="am-heading" aria-hidden="true">{{ heading() }}</p>
+@for (choice of choices(); track choice.key) {
+  <button type="button" role="menuitem" class="am-item" (click)="chosen.emit(choice)">
+    <span class="am-glyph" aria-hidden="true">{{ choice.glyph }}</span>
+    {{ choice.label }}
+  </button>
+}
+<p class="am-foot">You see it first; nothing changes until you choose it.</p>

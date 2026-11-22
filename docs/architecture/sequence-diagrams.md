@@ -383,7 +383,7 @@ sequenceDiagram
   Note over AS,F: at untilMs AS emits ordinary permissions, and the rules refuse from that moment
 ```
 
-## 13. AI help: a rewrite, and the leads analysis (0025, 2.6.0)
+## 13. AI help: a rewrite, and the leads analysis (0025, 2.6.0; 0029, 2.13.0)
 
 ```mermaid
 sequenceDiagram
@@ -395,7 +395,7 @@ sequenceDiagram
   participant R as Firestore (roles)
   participant P as AI provider (Groq)
 
-  O->>A: AI help, then Warmer
+  O->>A: the ✦ chip (or Ctrl J), then Warmer
   A->>S: write({ rewrite, warmer, text, label, page, context })
   S->>F: POST /api/ai/write, Firebase ID token
   F->>R: read roles/{uid} with the caller's token (owner: no read)
@@ -403,9 +403,9 @@ sequenceDiagram
   F->>P: chat/completions with the key from settings
   P-->>F: the text
   F-->>S: { text } fitted to the field's limit
-  S-->>A: the suggestion
-  O->>A: Use it (or Keep mine)
-  A-->>O: the field takes the text and autosaves as typing does
+  S-->>A: the suggestion, shown word by word under the field
+  O->>A: Use this (or Try again, or Discard)
+  A-->>O: the field takes the text and autosaves as typing does, with Undo for 8 seconds
   Note over O,P: Analyse on Leads sends only counts (leadsSummary), and the function rebuilds them and refuses any other key
 ```
 
