@@ -6,6 +6,23 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.12.0] - 2026-11-23
+
+### Added
+
+- **Chat assistant** (Settings): the chat's greeting, quick questions and answers, each answer with the words that
+  bring it up, and what screen readers call its parts. The chat gives the first answer with one of its words in the
+  question, so the answers can be reordered.
+- **Proposal form** now edits the whole form, not only its heading: the promises under the heading, every list of
+  choices and the choice each starts on, the form's labels and messages, the request as it reaches you by email and
+  WhatsApp, and the "Prefer to talk?" box. Every home section now has an editor.
+- Publishing is blocked while a list starts on a choice it doesn't have, which would show blank.
+- On Team access, a manager's Chat assistant page starts at Needs approval.
+
+### Changed
+
+- The chat matches its words whatever their case, so "WhatsApp" works as typed.
+
 ## [2.11.0] - 2026-11-22
 
 ### Added
