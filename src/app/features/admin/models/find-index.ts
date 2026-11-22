@@ -41,7 +41,6 @@ const KEYWORDS: Partial<Record<EditorTab, string>> = {
   [EditorTab.Contact]: 'phone number email address whatsapp instagram youtube map social',
   [EditorTab.Visibility]: 'hide show turn off switch fold collapse',
   [EditorTab.Theme]: 'colour color theme palette font background dark light contrast style',
-  [EditorTab.ProposalForm]: 'enquiry booking form request',
   [EditorTab.Philosophy]: 'about story values mission goals journey history pillars',
   [EditorTab.Cities]: 'locations places travel city where',
   [EditorTab.How]: 'process steps',
@@ -49,6 +48,8 @@ const KEYWORDS: Partial<Record<EditorTab, string>> = {
   [EditorTab.Testimonials]: 'reviews quotes proof clients logos numbers stats',
   [EditorTab.Faq]: 'questions answers help',
   [EditorTab.Achievements]: 'awards honours milestones press articles performances stages numbers',
+  [EditorTab.Chat]: 'chatbot bot assistant replies answers greeting questions keywords',
+  [EditorTab.ProposalForm]: 'enquiry booking form request choices options event types group sizes',
   [EditorTab.Seo]: 'seo google search results title description meta tab link preview whatsapp',
 };
 

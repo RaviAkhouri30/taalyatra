@@ -163,3 +163,82 @@ preview to jump to its card stays on the home page, as today.
 ---
 
 **Approval (2.11.0):** ☑ Approved by Ravi Akhouri on 2026-11-22.
+
+# 2.12.0 · The chat and the proposal form
+
+The third release of the programme: the chat assistant's script, and everything the proposal form says and offers.
+Both are home documents the site already reads (`home/assistant`, `home/contact`), so this is schema-driven like
+2.10.0. After it, **every home section has an editor**.
+
+## The chat assistant
+
+A new menu page, **Chat assistant**, under Settings after Contact & social links: the chat shows on every page. It
+edits `home/assistant`:
+
+| Card                    | Fields                                                                                                                                                                    |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Chat window**         | title, status line, greeting, the bubble's teaser, the WhatsApp line, and the answer when nothing matches                                                                 |
+| **Quick questions**     | the buttons under the greeting (up to 6)                                                                                                                                  |
+| **Answers**             | up to 30, each: the **words** that trigger it (up to 12) and the **answer**. `{email}` is filled in by the site, said in the hint                                         |
+| **Screen reader words** | what the chat's buttons and fields are called for screen readers and on hover (open or close, close, call, WhatsApp, typing, the question's label and placeholder, send…) |
+
+- **Order matters:** the chat gives the first answer with a word found in the question, so "price" before "what is".
+  The list can be reordered, and the card's tip says so.
+- **Capital letters:** today a word only matches when written in lower case. The site will compare without case
+  instead, so "WhatsApp" works as typed. It's a one-line change in the home page's own code, not the first download.
+- **The AI chat** (0025) isn't affected: it answers from the published sections, never from this script.
+
+## The proposal form
+
+The **Proposal form** page, which edits only the section's heading today, gains cards for the rest of `home/contact`:
+
+| Card                    | Fields                                                                                                                                                                      |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Promises**            | the lines under the heading (up to 5), e.g. "Reply within one working day"                                                                                                  |
+| **Choices**             | what you need, event types, experiences (up to 4 groups, each with a name and up to 12 choices), the "not sure" choice, group sizes, and **the choice each list starts on** |
+| **Form wording**        | each field's label and placeholder, the buttons, the fine print, the sent and failed messages, and the error messages                                                       |
+| **Message you receive** | the greeting, email subject and labels of the request as it reaches you by email and WhatsApp                                                                               |
+| **Prefer to talk?**     | the box beside the form: its title, the WhatsApp, call and email rows (`{phone}`, `{hours}` and `{email}` filled in by the site), and the note below                        |
+
+- **A starting choice must be one of its list's choices.** A new publish check blocks publishing otherwise ("The
+  event type starts on 'Corporate', which isn't one of the choices"), as the list would show blank.
+- **Each choice is up to 100 characters**, the length a proposal's answer may be (`isValidProposal`).
+- **Leads:** a lead keeps the words it was sent with. Leads' filters list the values leads actually have, so after a
+  rename both the old and the new name can show there until the old leads are deleted. Nothing to change.
+- **The AI chat** already reads this section, so it answers with the new choices once they're published.
+
+## The rules
+
+| Rule list                                 | Change                                                                       |
+| ----------------------------------------- | ---------------------------------------------------------------------------- |
+| `homePages()`, `draftPages()`             | `assistant` (`home/assistant`) on the new `chat` page                        |
+| `approvablePaths()`, `publishablePaths()` | the same                                                                     |
+| a role's page keys                        | `chat`                                                                       |
+| `home/contact`                            | nothing: it's already the Proposal form page's, held to its keys and heading |
+
+- **The evaluation limit (2.11.0):** each page adds about 20 of the 1,000 expressions a document may use; a
+  self-approved publish is at about 500, so there's room. The rules tests cover a self-approved publish of the chat.
+- The admin's rules test that used `home/assistant` as "a section no page edits" uses a document that doesn't exist
+  instead, as none is left.
+
+## Tests
+
+- **Unit:** every new card loads today's content unchanged and leaves no part of `home/assistant` or `home/contact`
+  without a field; the starting-choice check (in the list, not in it, an empty list); the chat matching whatever the
+  case; the menu, Find and Features entries.
+- **Rules:** the owner and a manager on the chat page; a self-approved publish of it; the role's new key.
+- **E2E (three sizes, axe):** add an answer to the chat, publish, ask the chat on the site and get it; add an event
+  type and make it the starting choice, publish, and see the form start on it; a starting choice left out of its
+  list blocks publishing; axe on Chat assistant and Proposal form.
+
+## Increments
+
+1. Constants and schemas for both documents; the new tab, menu, Find, Features.
+2. The starting-choice publish check.
+3. The chat's case-blind matching.
+4. Rules and their tests.
+5. E2E, docs, CHANGELOG.
+
+---
+
+**Approval (2.12.0):** ☑ Approved by Ravi Akhouri on 2026-11-23.

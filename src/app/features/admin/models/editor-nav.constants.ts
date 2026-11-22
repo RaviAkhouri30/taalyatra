@@ -176,6 +176,7 @@ export const EDITOR_NAV_GROUPS: readonly IEditorNavGroup[] = [
       tabLink(EditorTab.Business, IconName.Document),
       tabLink(EditorTab.Seo, IconName.ExternalLink),
       tabLink(EditorTab.Contact, IconName.Phone),
+      tabLink(EditorTab.Chat, IconName.ChatBubble),
       tabLink(EditorTab.Visibility, IconName.Toggle),
       tabLink(EditorTab.Theme, IconName.Sparkle),
       pageLink(MEDIA_LABEL, MEDIA_PATH, IconName.Folder),

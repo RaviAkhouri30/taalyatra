@@ -93,7 +93,7 @@ export const EDITABLE_HOME_SECTIONS: readonly string[] = [
   'gallery',
   'shows',
   'drumCircle',
-  // 0028 (2.10.0): the rest of the home page but the chat's script.
+  // 0028 (2.10.0): the rest of the home page; the chat's script in 2.12.0.
   'marquee',
   'trust',
   'philosophy',
@@ -103,4 +103,5 @@ export const EDITABLE_HOME_SECTIONS: readonly string[] = [
   'instagram',
   'proof',
   'faq',
+  'assistant',
 ];

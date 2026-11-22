@@ -160,7 +160,8 @@ export const HOME_FEATURES: readonly IFeature[] = [
     group: FeatureGroup.HomePage,
     icon: IconName.Mail,
     title: 'Proposal form',
-    description: 'Visitors ask for a proposal; it’s emailed to you and kept in Leads.',
+    description:
+      'Visitors ask for a proposal from the choices you set; it’s emailed to you and kept in Leads.',
     site: anchor(PageAnchor.Contact),
     change: { tab: EditorTab.ProposalForm },
   },

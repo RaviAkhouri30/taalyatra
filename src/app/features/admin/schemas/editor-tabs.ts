@@ -24,6 +24,14 @@ import { THEME_SECTION } from './theme.sections';
 import { ACHIEVEMENTS_SECTIONS } from './achievements.sections';
 import { SHOWS_PAGE_SECTION, TEAM_PAGE_SECTION, VIDEOS_PAGE_SECTION } from './inner-pages.sections';
 import { SEO_SECTION } from './seo.sections';
+import { CHAT_SECTIONS } from './chat.sections';
+import {
+  PROPOSAL_ASIDE,
+  PROPOSAL_CHOICES,
+  PROPOSAL_MESSAGE,
+  PROPOSAL_PROMISES,
+  PROPOSAL_WORDING,
+} from './proposal-form.sections';
 import { VISIBILITY_SECTIONS } from './visibility.sections';
 import { DRUM_CIRCLE_SECTIONS } from './drum-circle.sections';
 import {
@@ -158,8 +166,16 @@ export const EDITOR_TABS: readonly IEditorTabSchema[] = [
   {
     tab: EditorTab.ProposalForm,
     label: 'Proposal form',
-    description: 'The heading above the proposal form at the bottom of the home page.',
-    sections: [PROPOSAL_FORM_HEADING],
+    description:
+      'The proposal form at the bottom of the home page: its heading, promises, choices and wording, the request you receive, and the box beside it.',
+    sections: [
+      PROPOSAL_FORM_HEADING,
+      PROPOSAL_PROMISES,
+      PROPOSAL_CHOICES,
+      PROPOSAL_WORDING,
+      PROPOSAL_MESSAGE,
+      PROPOSAL_ASIDE,
+    ],
   },
   {
     tab: EditorTab.Achievements,
@@ -186,6 +202,13 @@ export const EDITOR_TABS: readonly IEditorTabSchema[] = [
     label: 'Contact & social links',
     description: 'Your phone number, email, address and social profiles, shown across the site.',
     sections: CONTACT_SECTIONS,
+  },
+  {
+    tab: EditorTab.Chat,
+    label: 'Chat assistant',
+    description:
+      'What the chat assistant says on every page: its greeting, quick questions and answers.',
+    sections: CHAT_SECTIONS,
   },
   {
     tab: EditorTab.Visibility,

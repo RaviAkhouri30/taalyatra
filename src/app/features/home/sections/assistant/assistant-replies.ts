@@ -2,7 +2,7 @@ import { type IReplyRuleDto } from './i-assistant';
 
 /**
  * Answers questions from canned replies (design behaviour): the first rule with a keyword
- * found anywhere in the question wins, otherwise the fallback suggests WhatsApp.
+ * found anywhere in the question, whatever its case, wins, otherwise the fallback suggests WhatsApp.
  */
 export class AssistantReplies {
   public constructor(
@@ -13,7 +13,10 @@ export class AssistantReplies {
   /** @returns The reply to `question`. */
   public reply(question: string): string {
     const text = question.toLowerCase();
-    const rule = this.rules.find(({ keywords }) => keywords.some((word) => text.includes(word)));
+    // Both sides lower-cased: the owner may write a word as "WhatsApp" in the admin (0028).
+    const rule = this.rules.find(({ keywords }) =>
+      keywords.some((word) => text.includes(word.toLowerCase())),
+    );
     return rule?.text ?? this.fallback;
   }
 }

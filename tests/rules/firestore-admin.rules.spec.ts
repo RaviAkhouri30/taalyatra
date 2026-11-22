@@ -102,11 +102,15 @@ describe('firestore.rules · admin editor', () => {
       await expect(setDoc(doc(admin, 'home/hero'), withoutLead)).rejects.toMatchObject(DENIED);
     });
 
-    it('should stop the admin changing a section the editor does not cover yet', async () => {
-      await expect(
-        // The chat's script: editable from 2.12.0 (0028).
-        setDoc(doc(admin, 'home/assistant'), { ...home['assistant'], title: 'Changed' }),
-      ).rejects.toMatchObject(DENIED);
+    it('should stop the admin changing a home document no editor page edits', async () => {
+      // Every home section has an editor since 2.12.0 (0028), so one is stored for this test.
+      await env.withSecurityRulesDisabled(async (context) => {
+        await setDoc(doc(context.firestore(), 'home/elsewhere'), { title: 'Stored' });
+      });
+
+      const write = setDoc(doc(admin, 'home/elsewhere'), { title: 'Changed' });
+
+      await expect(write).rejects.toMatchObject(DENIED);
     });
 
     it('should stop the admin deleting a section', async () => {

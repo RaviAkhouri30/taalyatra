@@ -1,6 +1,7 @@
 import { type IDraft } from '@core/interfaces/i-draft';
 import { type IEditorSection } from './i-editor-section';
 import { type IPublishIssue } from './i-publish-issue';
+import { FormChoicesRule } from './form-choices-rule';
 import { IssueSeverity } from './issue-severity.enum';
 import {
   ContrastRule,
@@ -18,6 +19,7 @@ export class PublishReport {
   public static readonly rules: readonly IPublishRule[] = [
     new SchemaRule(),
     new OneFeaturedShowRule(),
+    new FormChoicesRule(),
     new ImageInLibraryRule(),
     new PromotionDatesRule(),
     new ContrastRule(),

@@ -40,9 +40,10 @@ export const FEATURES: readonly IFeature[] = [
     group: FeatureGroup.EveryPage,
     icon: IconName.ChatBubble,
     title: 'Chat assistant',
-    description: 'Answers common questions and points visitors to a proposal or WhatsApp.',
+    description:
+      'Answers common questions from your own answers, and points visitors to a proposal or WhatsApp.',
     site: '/',
-    change: { tab: EditorTab.Visibility },
+    change: { tab: EditorTab.Chat },
   },
   {
     id: 'business',

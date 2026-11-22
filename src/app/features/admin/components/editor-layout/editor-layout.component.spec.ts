@@ -50,6 +50,7 @@ describe('EditorLayoutComponent', () => {
       '/admin/business',
       '/admin/seo',
       '/admin/contact',
+      '/admin/chat',
       '/admin/visibility',
       '/admin/theme',
       '/admin/media',

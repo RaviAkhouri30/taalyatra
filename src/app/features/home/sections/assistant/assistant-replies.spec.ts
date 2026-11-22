@@ -12,6 +12,12 @@ describe('AssistantReplies', () => {
     expect(replies.reply('How many people can join?')).toMatch(/^Drum Circle runs from 10/);
   });
 
+  it('should match a word the owner wrote with capitals when the question is in lower case', () => {
+    const owned = new AssistantReplies([{ keywords: ['WhatsApp'], text: 'Message us.' }], 'No.');
+
+    expect(owned.reply('is there a whatsapp number?')).toBe('Message us.');
+  });
+
   it('should fall back to suggesting WhatsApp when nothing matches', () => {
     expect(replies.reply('Xyz?')).toBe(HOME.assistant.fallback);
   });
