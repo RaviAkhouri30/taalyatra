@@ -6,6 +6,13 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.9.1] - 2026-11-22
+
+### Fixed
+
+- The Theme page's contrast check now includes the contact section's note, so a theme can't be published with that
+  note hard to read. A theme already on the site keeps showing; the check applies the next time it's changed.
+
 ## [2.9.0] - 2026-11-22
 
 ### Added

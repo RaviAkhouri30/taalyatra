@@ -133,9 +133,12 @@ export class SiteTheme {
     return THEME_FONT_PAIRS.find((pair) => pair.fonts === this.choices.fonts) ?? DEFAULT_FONT_PAIR;
   }
 
-  /** Whether every pair of colours it puts together is readable (WCAG 2.2 AA). */
+  /**
+   * Whether every pair of colours the site checks is readable (WCAG 2.2 AA). The Theme page and the
+   * publish check use every pair, `contrast()`.
+   */
   public get isReadable(): boolean {
-    return this.contrast().every((result) => result.passes);
+    return this.contrast().every((result) => result.passes || !result.bySite);
   }
 
   /**

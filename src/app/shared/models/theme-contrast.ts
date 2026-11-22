@@ -1,6 +1,6 @@
 import { TEXT_CONTRAST, UI_CONTRAST } from '@shared/constants/theme.constants';
 import { ThemeColour } from '@shared/enums/theme-colour.enum';
-import { contrast, luminance, mix } from '@shared/utils/colour.util';
+import { WHITE, contrast, luminance, mix } from '@shared/utils/colour.util';
 import { DANGER_TINT_RED, DARK_DANGER, LIGHT_DANGER } from './theme-tokens';
 
 /** A theme's colour tokens by name (`ink`, `surface`…), each `#rrggbb` except `danger-tint`. */
@@ -20,6 +20,8 @@ interface IContrastPair {
   readonly fix: ThemeColour;
   /** The colour to change is underneath (labels on an accent), not on top. */
   readonly fixesGround: boolean;
+  /** Whether the site checks it too, and ignores a published theme that fails it. */
+  readonly bySite: boolean;
 }
 
 /** The result of one pair's check, for the Theme page and the publish check. */
@@ -33,6 +35,11 @@ export interface IContrastResult {
   readonly fix: ThemeColour;
   /** "Make the quiet text lighter.", or empty when it passes. */
   readonly advice: string;
+  /**
+   * Whether the site checks it too. A pair added after 2.2.0 is the Theme page's and the publish
+   * check's only, so a theme already published keeps showing until it's next changed (2.9.1).
+   */
+  readonly bySite: boolean;
 }
 
 /** How each theme colour is named in advice. */
@@ -53,6 +60,14 @@ function accentTint(tokens: ThemeTokenValues): string {
   return mix(tokens.get('ink') ?? '', tokens.get('amber') ?? '', ACCENT_TINT);
 }
 
+/** How much white the contact note lays over the second accent (`contact-aside`'s `.cnote`). */
+const NOTE_TINT = 0.1;
+
+/** The contact note's panel: a 10 % white tint over the second accent, as it shows (2.9.1). */
+function noteGround(tokens: ThemeTokenValues): string {
+  return mix(tokens.get('clay') ?? '', WHITE, NOTE_TINT);
+}
+
 /** The error box's red tint laid over cards, as it shows. */
 function errorGround(tokens: ThemeTokenValues): string {
   const set = tokens.get('danger-tint') === LIGHT_DANGER.tint ? LIGHT_DANGER : DARK_DANGER;
@@ -63,6 +78,7 @@ function errorGround(tokens: ThemeTokenValues): string {
 interface IPairOptions {
   readonly needs?: number;
   readonly fixesGround?: boolean;
+  readonly bySite?: boolean;
 }
 
 function pair(
@@ -71,8 +87,8 @@ function pair(
   fix: ThemeColour,
   options: IPairOptions = {},
 ): IContrastPair {
-  const { needs = TEXT_CONTRAST, fixesGround = false } = options;
-  return { label, front, ground, needs, fix, fixesGround };
+  const { needs = TEXT_CONTRAST, fixesGround = false, bySite = true } = options;
+  return { label, front, ground, needs, fix, fixesGround, bySite };
 }
 
 const UNDERNEATH: IPairOptions = { fixesGround: true };
@@ -97,6 +113,8 @@ const CONTRAST_PAIRS: readonly IContrastPair[] = [
   pair('Offer text on the accent', ['promo-ink-soft', 'amber'], Accent),
   pair('Second accent on the background', ['clay', 'ink'], SecondAccent),
   pair('Labels on the second accent', ['ink', 'clay'], SecondAccent, UNDERNEATH),
+  // Found by axe with Sandstone (0027). Not the site's: see `IContrastResult.bySite`.
+  pair('The contact note', ['ink', noteGround], SecondAccent, { ...UNDERNEATH, bySite: false }),
   pair('Error messages', ['danger-text', errorGround], Background, UNDERNEATH),
   pair('Text in light sections', ['ink', 'ivory'], Text, UNDERNEATH),
   pair('Labels in light sections', ['paper-accent', 'ivory'], Accent),
@@ -136,6 +154,7 @@ export function contrastResults(tokens: ThemeTokenValues): readonly IContrastRes
       passes,
       fix: entry.fix,
       advice: passes ? '' : advice(entry, front, ground),
+      bySite: entry.bySite,
     };
   });
 }

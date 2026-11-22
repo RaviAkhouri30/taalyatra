@@ -175,5 +175,18 @@ describe('PublishReport', () => {
       expect(errors[0]?.field).toBe('Quiet text on the background');
       expect(errors[0]?.message).toMatch(/:1; it needs 4\.5:1\. Make the quiet text lighter\.$/);
     });
+
+    it('should block a theme whose contact note is hard to read, though the site would show it', () => {
+      const { errors } = report('site/theme', {
+        background: '#f6efe4',
+        cards: '#fffaf2',
+        text: '#2b1f17',
+        quietText: '#5f4f42',
+        accent: '#9c3d1c',
+        secondAccent: '#3f6b4a',
+      });
+
+      expect(errors.map((error) => error.field)).toEqual(['The contact note']);
+    });
   });
 });

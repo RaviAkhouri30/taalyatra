@@ -43,3 +43,24 @@ Built on the approved [inception](01-inception.md) (D1–D6) and [design](02-des
 ---
 
 **Approval:** ☑ Approved by Ravi Akhouri on 2026-11-22.
+
+## 2.9.1 · The contact note in the contrast check
+
+The open question above, answered by the owner on 2026-11-22: add the pair to the Theme page's check only.
+
+| Files                                                                                                                                                   | Tests                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `theme-contrast.ts`: **The contact note**, background-coloured text on the second accent under a 10 % white tint, needing 4.5:1, marked `bySite: false` | `theme-contrast.spec.ts`: Sandstone's first colours fail it with "Make the second accent darker", yet still show on the site |
+| `site-theme.model.ts`: `isReadable` checks only the pairs the site checks                                                                               | `publish-report.model.spec.ts`: publishing those colours is blocked, naming only the note                                    |
+
+### Decisions
+
+- **The site doesn't check the new pair.** A theme published before 2.9.1 that fails it keeps showing, rather than
+  dropping back to today's look without warning. The next time it's changed, the Theme page shows the pair, and
+  Publish and Send for approval stay off until it passes.
+- **Every ready-made theme passes it**, today's look included (the existing test of every theme covers it).
+- **No rules change** and no dependency.
+
+---
+
+**Approval:** ☑ Approved by Ravi Akhouri on 2026-11-22.

@@ -10,7 +10,8 @@ const HEX_PAIR = 2;
 /** A checked colour's three hex pairs. */
 const HEX_CHANNELS = /^#(..)(..)(..)$/;
 const BLACK = '#000000';
-const WHITE = '#ffffff';
+/** White, as `#rrggbb`. */
+export const WHITE = '#ffffff';
 /** WCAG 2.2's relative luminance: the sRGB curve and the channel weights. */
 const SRGB_KNEE = 0.04045;
 const SRGB_LINEAR_DIVISOR = 12.92;
