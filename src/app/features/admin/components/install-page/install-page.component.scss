@@ -1,0 +1,46 @@
+@use 'admin';
+@use 'tokens' as t;
+
+:host {
+  display: block;
+}
+
+.ip {
+  display: grid;
+  gap: 14px;
+  max-width: 720px;
+  @include admin.page;
+
+  h1 {
+    margin: 0;
+    font-size: t.size(28px);
+  }
+}
+
+.ip-lead,
+.ip-note {
+  margin: 0;
+  color: t.$color-muted-strong;
+}
+
+.ip-answer:empty {
+  display: none;
+}
+
+.ip-card {
+  padding: 16px 20px;
+  border: 1px solid t.$color-line;
+  border-radius: 18px;
+  background: t.$color-surface-raised;
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: t.size(18px);
+  }
+
+  ol {
+    margin: 0 0 8px;
+    padding-left: 20px;
+    line-height: 1.6;
+  }
+}

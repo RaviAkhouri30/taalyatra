@@ -6,6 +6,20 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.8.0] - 2026-11-22
+
+### Added
+
+- **The admin on your phone:** install it from the browser (Chrome → ⋮ → Install app on Android; Safari → Share →
+  Add to Home Screen on iPhone) and it gets its own icon and name, “TY Admin”, opens full screen at the admin, and shows
+  each new release the next time you open it. The public site isn't part of it.
+- **Help → Install on your phone** shows the steps for both phones, with an **Install** button on Android when the
+  browser offers one.
+
+### Changed
+
+- On iPhone, the admin's top bar and menu sit below the status bar when it runs full screen.
+
 ## [2.7.0] - 2026-11-22
 
 ### Added

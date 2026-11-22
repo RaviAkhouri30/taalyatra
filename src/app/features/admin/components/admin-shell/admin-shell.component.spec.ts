@@ -13,4 +13,14 @@ describe('AdminShellComponent', () => {
     fixture.destroy();
     expect(meta.getTag('name="robots"')).toBeNull();
   });
+
+  it('should make the admin installable while it is open (0026)', () => {
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    const fixture = TestBed.createComponent(AdminShellComponent);
+    fixture.detectChanges();
+
+    expect(document.head.querySelector('link[rel="manifest"]')).not.toBeNull();
+    fixture.destroy();
+    expect(document.head.querySelector('link[rel="manifest"]')).toBeNull();
+  });
 });

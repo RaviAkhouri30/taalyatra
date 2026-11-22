@@ -1,0 +1,41 @@
+<div class="ip">
+  <h1 class="d">Install on your phone</h1>
+  @if (model.installedApp) {
+    <p class="ip-lead" role="status">
+      You’re using the installed app. It shows each new release the next time you open it.
+    </p>
+  } @else {
+    <p class="ip-lead">
+      Put the admin on your phone’s home screen, with its own icon. It opens full screen, here, and
+      shows each new release the next time you open it. Nothing to download from an app store.
+    </p>
+    @if (model.canInstall()) {
+      <div>
+        <button appButton type="button" [disabled]="model.busy()" (click)="model.install()">
+          Install
+        </button>
+      </div>
+    }
+    <p class="ip-answer" role="status">{{ model.answer() }}</p>
+    <section class="ip-card" aria-labelledby="ip-android">
+      <h2 id="ip-android">On Android</h2>
+      <ol>
+        <li>Open this page in Chrome.</li>
+        <li>Tap the menu <span aria-hidden="true">⋮</span> at the top right.</li>
+        <li>Tap <b>Install app</b> (or <b>Add to Home screen</b>), then <b>Install</b>.</li>
+      </ol>
+    </section>
+    <section class="ip-card" aria-labelledby="ip-iphone">
+      <h2 id="ip-iphone">On iPhone</h2>
+      <ol>
+        <li>Open this page in Safari.</li>
+        <li>Tap <b>Share</b> at the bottom of the screen.</li>
+        <li>Tap <b>Add to Home Screen</b>, then <b>Add</b>.</li>
+      </ol>
+      <p class="ip-note">
+        The first time you open it from the home screen, sign in once: the app keeps its own
+        sign-in, apart from Safari’s.
+      </p>
+    </section>
+  }
+</div>

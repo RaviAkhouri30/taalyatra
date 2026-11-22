@@ -23,7 +23,7 @@ describe('HelpMenuComponent', () => {
     return { fixture, element, help, open, tour: TestBed.inject(TourService) };
   }
 
-  it('should open a menu with the tour, Features and What’s new', () => {
+  it('should open a menu with the tour, Features, What’s new and Install (0026)', () => {
     const { element, help, open } = render();
 
     open();
@@ -31,8 +31,11 @@ describe('HelpMenuComponent', () => {
     expect(help.getAttribute('aria-expanded')).toBe('true');
     expect(
       Array.from(element.querySelectorAll('li')).map((item) => item.textContent.trim()),
-    ).toEqual(['Take the tour', 'Features', 'What’s new']);
+    ).toEqual(['Take the tour', 'Features', 'What’s new', 'Install on your phone']);
     expect(element.querySelector('a')?.getAttribute('href')).toBe('/admin/features');
+    expect(Array.from(element.querySelectorAll('a')).at(-1)?.getAttribute('href')).toBe(
+      '/admin/install',
+    );
   });
 
   it('should start the tour, closing the menu and keeping focus on Help', () => {

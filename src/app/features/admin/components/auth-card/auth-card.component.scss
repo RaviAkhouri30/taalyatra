@@ -11,6 +11,8 @@
   align-items: center;
   justify-content: center;
   padding: 40px 20px;
+  // The installed app on iPhone runs under the status bar (0026); `env()` is 0 everywhere else.
+  padding-top: calc(40px + env(safe-area-inset-top));
   box-sizing: border-box;
   background:
     radial-gradient(900px 520px at 72% 28%, t.with-alpha(t.$color-clay, 22%), transparent 70%),

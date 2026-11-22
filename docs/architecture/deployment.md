@@ -47,6 +47,14 @@ Until the first three are set, the admin shows no AI buttons and nothing else ch
 a settings change, with no rebuild. A free Groq account has no card, so there's nothing to pay; past its limits the
 buttons say the help isn't available.
 
+**The admin as an app (2.8.0, [0026](../aidlc/0026-admin-app/02-design.md)):** `public/admin.webmanifest` and the
+`public/icons/admin-*.png` icons ship with the site; `staticwebapp.config.json` serves the manifest as
+`application/manifest+json` with `no-cache`. There's no service worker, so each open loads the latest release. After a
+deploy that changes it, check on both phones: install it (Chrome → ⋮ → Install app; Safari → Share → Add to Home
+Screen), the icon and name, that it opens full screen at the admin with the top bar below the status bar, and that View
+site opens the browser. To replace the icons, swap the four `admin-*.png` files (192, 512, maskable 512 with a 20 %
+margin, and 180 for iPhone).
+
 **Runtime config:** the Firebase web config is public by design (it's protected by
 `firestore.rules`) but kept out of git (CLAUDE.md §10).
 
