@@ -375,7 +375,11 @@ service cloud.firestore {
       return {
         'hero': 'hero', 'offer': 'offer', 'audiences': 'audiences', 'experiences': 'experiences',
         'shows': 'shows', 'drumCircle': 'drum-circle', 'rhythmGame': 'rhythm-game',
-        'videos': 'videos', 'gallery': 'gallery', 'team': 'team', 'contact': 'proposal-form'
+        'videos': 'videos', 'gallery': 'gallery', 'team': 'team', 'contact': 'proposal-form',
+        // 0028: the sections made editable in 2.10.0, each on its editor page.
+        'marquee': 'hero', 'trust': 'hero', 'philosophy': 'philosophy', 'midCta': 'philosophy',
+        'cities': 'cities', 'how': 'how', 'instagram': 'instagram', 'proof': 'testimonials',
+        'faq': 'faq'
       };
     }
 
@@ -388,7 +392,10 @@ service cloud.firestore {
         'home/drumCircle': 'drum-circle', 'home/rhythmGame': 'rhythm-game',
         'home/videos': 'videos', 'videos': 'videos', 'home/gallery': 'gallery',
         'gallery': 'gallery', 'home/team': 'team', 'team': 'team',
-        'home/contact': 'proposal-form', 'site/visibility': 'visibility', 'site/theme': 'theme'
+        'home/contact': 'proposal-form', 'site/visibility': 'visibility', 'site/theme': 'theme',
+        'home/marquee': 'hero', 'home/trust': 'hero', 'home/philosophy': 'philosophy',
+        'home/midCta': 'philosophy', 'home/cities': 'cities', 'home/how': 'how',
+        'home/instagram': 'instagram', 'home/proof': 'testimonials', 'home/faq': 'faq'
       };
     }
 
@@ -428,7 +435,7 @@ service cloud.firestore {
     // The documents a manager who can approve may name in a self-approved record: their pages'.
     function approvablePaths() {
       let pages = role().pages;
-      return pathsIfSeen(pages, 'hero', ['home/hero'])
+      return pathsIfSeen(pages, 'hero', ['home/hero', 'home/marquee', 'home/trust'])
         .concat(pathsIfSeen(pages, 'offer', ['home/offer', 'site/config']))
         .concat(pathsIfSeen(pages, 'audiences', ['home/audiences']))
         .concat(pathsIfSeen(pages, 'experiences', ['home/experiences']))
@@ -442,13 +449,19 @@ service cloud.firestore {
         .concat(pathsIfSeen(pages, 'business', ['site/config']))
         .concat(pathsIfSeen(pages, 'contact', ['site/config']))
         .concat(pathsIfSeen(pages, 'visibility', ['site/visibility']))
-        .concat(pathsIfSeen(pages, 'theme', ['site/theme']));
+        .concat(pathsIfSeen(pages, 'theme', ['site/theme']))
+        .concat(pathsIfSeen(pages, 'philosophy', ['home/philosophy', 'home/midCta']))
+        .concat(pathsIfSeen(pages, 'cities', ['home/cities']))
+        .concat(pathsIfSeen(pages, 'how', ['home/how']))
+        .concat(pathsIfSeen(pages, 'instagram', ['home/instagram']))
+        .concat(pathsIfSeen(pages, 'testimonials', ['home/proof']))
+        .concat(pathsIfSeen(pages, 'faq', ['home/faq']));
     }
 
     // The documents a manager may name in a publish record. Called for managers only.
     function publishablePaths() {
       let pages = role().pages;
-      return pathsIf(pages, 'hero', ['home/hero'])
+      return pathsIf(pages, 'hero', ['home/hero', 'home/marquee', 'home/trust'])
         .concat(pathsIf(pages, 'offer', ['home/offer', 'site/config']))
         .concat(pathsIf(pages, 'audiences', ['home/audiences']))
         .concat(pathsIf(pages, 'experiences', ['home/experiences']))
@@ -462,7 +475,13 @@ service cloud.firestore {
         .concat(pathsIf(pages, 'business', ['site/config']))
         .concat(pathsIf(pages, 'contact', ['site/config']))
         .concat(pathsIf(pages, 'visibility', ['site/visibility']))
-        .concat(pathsIf(pages, 'theme', ['site/theme']));
+        .concat(pathsIf(pages, 'theme', ['site/theme']))
+        .concat(pathsIf(pages, 'philosophy', ['home/philosophy', 'home/midCta']))
+        .concat(pathsIf(pages, 'cities', ['home/cities']))
+        .concat(pathsIf(pages, 'how', ['home/how']))
+        .concat(pathsIf(pages, 'instagram', ['home/instagram']))
+        .concat(pathsIf(pages, 'testimonials', ['home/proof']))
+        .concat(pathsIf(pages, 'faq', ['home/faq']));
     }
 
     // A draft id is its path with `/` as `__` (draftId in i-draft.ts).
@@ -497,7 +516,8 @@ service cloud.firestore {
         && data.pages.keys().hasOnly(['hero', 'offer', 'audiences', 'experiences', 'shows',
                                       'drum-circle', 'rhythm-game', 'videos', 'gallery', 'team',
                                       'proposal-form', 'business', 'contact', 'visibility',
-                                      'theme'])
+                                      'theme', 'philosophy', 'cities', 'how', 'instagram',
+                                      'testimonials', 'faq'])
         && data.pages.values().hasOnly(['hidden', 'approval', 'publish'])
         && data.uploads is bool
         && isText(data.addedAt, 20, 40);

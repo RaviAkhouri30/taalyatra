@@ -31,7 +31,7 @@ export const FIND_MAX_RESULTS = 8;
 
 /** Everyday words people type for a tab, which its labels don't say. */
 const KEYWORDS: Partial<Record<EditorTab, string>> = {
-  [EditorTab.Hero]: 'top banner headline first screen',
+  [EditorTab.Hero]: 'top banner headline first screen marquee scrolling words trust strip',
   [EditorTab.Offer]: 'diwali festival discount promotion deal',
   [EditorTab.DrumCircle]: 'about djembe signature',
   [EditorTab.Team]: 'people members staff facilitators',
@@ -42,6 +42,12 @@ const KEYWORDS: Partial<Record<EditorTab, string>> = {
   [EditorTab.Visibility]: 'hide show turn off switch fold collapse',
   [EditorTab.Theme]: 'colour color theme palette font background dark light contrast style',
   [EditorTab.ProposalForm]: 'enquiry booking form request',
+  [EditorTab.Philosophy]: 'about story values mission goals journey history pillars',
+  [EditorTab.Cities]: 'locations places travel city where',
+  [EditorTab.How]: 'process steps',
+  [EditorTab.Instagram]: 'insta social posts feed',
+  [EditorTab.Testimonials]: 'reviews quotes proof clients logos numbers stats',
+  [EditorTab.Faq]: 'questions answers help',
 };
 
 function entry(

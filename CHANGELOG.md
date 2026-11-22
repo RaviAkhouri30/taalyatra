@@ -6,6 +6,17 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.10.0] - 2026-11-22
+
+### Added
+
+- **Every home section can now be edited in the admin.** Six new pages: **Our philosophy** (pillars, goals and
+  journey, with the call to action below it), **Where we play**, **How it works**, **Instagram** (each post's photo
+  from the library), **Testimonials** (the numbers, testimonials and clients) and **FAQ**.
+- **Hero** now also edits the scrolling words and the trust strip below it, and **Who it's for** its cards.
+- Each new page works like the others: drafts, preview, approval, history, backups, Find and AI help. On Team access,
+  a manager's new pages start at Needs approval.
+
 ## [2.9.1] - 2026-11-22
 
 ### Fixed

@@ -93,4 +93,14 @@ export const EDITABLE_HOME_SECTIONS: readonly string[] = [
   'gallery',
   'shows',
   'drumCircle',
+  // 0028 (2.10.0): the rest of the home page but the chat's script.
+  'marquee',
+  'trust',
+  'philosophy',
+  'midCta',
+  'cities',
+  'how',
+  'instagram',
+  'proof',
+  'faq',
 ];
