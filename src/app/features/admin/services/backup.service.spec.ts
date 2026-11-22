@@ -10,6 +10,7 @@ import { type IBackup } from '../models/backup-file';
 import { BROWSER_BACKUP_KEY, BROWSER_BACKUP_MAX_CHARS } from '../models/editor-storage.constants';
 import { provideSignedIn } from '../testing/editor-testing';
 import { MemoryDocumentStore } from '../testing/memory-document-store';
+import { SAVED_THEME_DOCUMENT, SAVED_THEME_PATH } from '../testing/saved-theme.fixture';
 import { BackupService } from './backup.service';
 
 const NOW = new Date('2026-11-18T05:12:00.000Z');
@@ -60,6 +61,15 @@ describe('BackupService', () => {
       expect(backup.documents['team']).toEqual({ _items: [{ name: 'Asha' }] });
       expect(backup.documents[PHOTO]).toEqual({ name: 'a.jpg' });
       expect(Object.keys(backup.documents)).not.toContain('home/offer');
+    });
+
+    it('should hold the saved themes (0027 D6)', async () => {
+      const { service, files } = setUp({ [SAVED_THEME_PATH]: SAVED_THEME_DOCUMENT });
+
+      await firstValueFrom(service.make());
+
+      const backup = JSON.parse(files.downloads[0]?.text ?? '') as IBackup;
+      expect(backup.documents[SAVED_THEME_PATH]).toEqual(SAVED_THEME_DOCUMENT);
     });
 
     it('should keep a copy in this browser and record the date for every device', async () => {
@@ -160,6 +170,41 @@ describe('BackupService', () => {
       await firstValueFrom(service.restore(backup));
 
       expect(store.commits).toHaveLength(1);
+    });
+  });
+
+  describe('restoring saved themes (0027 D6)', () => {
+    const NEWER = 'savedThemes/2f8fad5b-d9cb-469f-a165-70867728950e';
+    const withThemes = (documents: IBackup['documents']): IBackup => ({
+      format: 1,
+      site: 'taal-yatra',
+      version: '2.9.0',
+      createdAt: '2026-11-22T00:00:00.000Z',
+      documents,
+    });
+
+    it('should put them back and keep any saved since', async () => {
+      const { service, store } = setUp({
+        [SAVED_THEME_PATH]: { ...SAVED_THEME_DOCUMENT, name: 'Renamed since' },
+        [NEWER]: { ...SAVED_THEME_DOCUMENT, name: 'Newer' },
+      });
+
+      await firstValueFrom(
+        service.restore(withThemes({ [SAVED_THEME_PATH]: SAVED_THEME_DOCUMENT })),
+      );
+
+      expect(store.documents.get(SAVED_THEME_PATH)).toEqual(SAVED_THEME_DOCUMENT);
+      expect(store.documents.get(NEWER)).toMatchObject({ name: 'Newer' });
+    });
+
+    it('should leave out one that isn’t a saved theme', async () => {
+      const { service, store } = setUp();
+
+      await firstValueFrom(
+        service.restore(withThemes({ [SAVED_THEME_PATH]: { ...SAVED_THEME_DOCUMENT, name: '' } })),
+      );
+
+      expect(store.documents.has(SAVED_THEME_PATH)).toBe(false);
     });
   });
 

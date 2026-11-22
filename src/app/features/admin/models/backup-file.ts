@@ -35,6 +35,8 @@ export type BackupCheck = { readonly backup: IBackup } | { readonly problem: str
 const CONTENT_PATHS = new Set<string>(Object.values(ContentPath));
 /** A library entry (`media/{id}`), with the id as `firestore.rules` accepts it. */
 const MEDIA_PATH = /^media\/[0-9a-f-]{36}$/;
+/** A saved theme (`savedThemes/{id}`, 0027 D6), with the id as `firestore.rules` accepts it. */
+const SAVED_THEME_PATH = /^savedThemes\/[0-9a-f-]{36}$/;
 /** A lead (`proposals/{id}`), in a backup made with "Include leads" (0018 D6). */
 const LEAD_PATH = /^proposals\/[A-Za-z0-9]{1,40}$/;
 /** `YYYY-MM-DD`, the start of an ISO 8601 moment. */
@@ -45,9 +47,14 @@ export function isContentPath(path: string): boolean {
   return CONTENT_PATHS.has(path);
 }
 
-/** @returns Whether a backup may hold this path: content, a library entry, or a lead. */
+/** @returns Whether a backup may hold this path: content, a library entry, a lead or a saved theme. */
 export function isBackupPath(path: string): boolean {
-  return isContentPath(path) || MEDIA_PATH.test(path) || LEAD_PATH.test(path);
+  return (
+    isContentPath(path) ||
+    MEDIA_PATH.test(path) ||
+    LEAD_PATH.test(path) ||
+    SAVED_THEME_PATH.test(path)
+  );
 }
 
 /**

@@ -1,4 +1,5 @@
-import { DEFAULT_THEME_COLOURS, THEME_PRESETS } from '@shared/constants/theme.constants';
+import { THEME_PRESETS } from '@shared/constants/theme-presets.constants';
+import { DEFAULT_THEME_COLOURS } from '@shared/constants/theme.constants';
 import { toRgb } from '@shared/utils/colour.util';
 import { DARK_DANGER, LIGHT_DANGER, THEME_TOKENS, dangerSet } from './theme-tokens';
 

@@ -6,6 +6,22 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.9.0] - 2026-11-22
+
+### Added
+
+- **12 more ready-made themes** on the Theme page: Indigo night, Monsoon, Forest, Diwali, Ocean and Charcoal (dark),
+  Marigold, Sandstone, Holi, Mint, Rose and Slate (light). Each passes the contrast check, and the themes are grouped
+  into Dark and Light.
+- **Your own themes, saved:** **Save as my theme** keeps everything on the Theme page (colours, background, text and
+  fonts) under a name, listed first under **Your themes** to choose again, on every device. Rename or delete them under
+  **Saved themes**. Saving changes nothing on the site: only publishing does, with approval where the page needs it.
+- Backups hold the saved themes, and restoring puts them back beside any saved since.
+
+### Changed
+
+- The Theme page says which theme the form is now: a ready-made one, one of yours, or your own colours.
+
 ## [2.8.0] - 2026-11-22
 
 ### Added

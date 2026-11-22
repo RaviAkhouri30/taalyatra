@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { type IThemePresetDefinition } from '@shared/constants/theme.constants';
+import { type ThemeColours } from '@shared/constants/theme.constants';
 
 /**
- * A ready-made theme in miniature (0021): its background, a card with a line of text, and an accent
+ * A theme in miniature (0021): its background, a card with a line of text, and an accent
  * button. Decorative: the button around it names the theme. Its colours are the theme's own, so they
  * come in as variables on the host rather than from the site's tokens.
  */
@@ -13,13 +13,13 @@ import { type IThemePresetDefinition } from '@shared/constants/theme.constants';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     'aria-hidden': 'true',
-    '[style.--sw-bg]': 'preset().colours.background',
-    '[style.--sw-card]': 'preset().colours.cards',
-    '[style.--sw-text]': 'preset().colours.text',
-    '[style.--sw-accent]': 'preset().colours.accent',
+    '[style.--sw-bg]': 'colours().background',
+    '[style.--sw-card]': 'colours().cards',
+    '[style.--sw-text]': 'colours().text',
+    '[style.--sw-accent]': 'colours().accent',
   },
 })
 export class ThemeSwatchComponent {
-  /** The theme to show. */
-  public readonly preset = input.required<IThemePresetDefinition>();
+  /** The colours of the theme to show, ready-made or saved (0027). */
+  public readonly colours = input.required<ThemeColours>();
 }

@@ -1,0 +1,100 @@
+@use 'tokens' as t;
+
+:host {
+  display: block;
+}
+
+.st {
+  display: grid;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid t.$color-line;
+
+  h3 {
+    margin: 0;
+    font-size: t.size(15px);
+    font-weight: 700;
+    color: t.$color-cream;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.st-note,
+.st-name span {
+  font-size: t.size(13px);
+  color: t.$color-muted;
+}
+
+.st-save {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+
+  label {
+    flex-basis: 100%;
+    font-size: t.size(13.5px);
+    font-weight: 600;
+  }
+
+  input {
+    flex: 1 1 200px;
+    min-width: 0;
+    padding: 9px 12px;
+    border: 1px solid t.$color-field-border;
+    border-radius: 10px;
+    background: t.$color-ink;
+    color: t.$color-cream;
+    font: inherit;
+  }
+}
+
+.st-done:empty {
+  display: none;
+}
+
+.st-error {
+  color: t.$color-danger-text;
+}
+
+.st-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1px solid t.$color-line;
+    border-radius: 10px;
+  }
+}
+
+.st-name {
+  overflow-wrap: anywhere;
+}
+
+.st-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.st-confirm {
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px;
+  border-left: 3px solid t.$color-danger-line;
+  border-radius: 8px;
+  background: t.$color-danger-tint;
+
+  p {
+    color: t.$color-danger-text;
+  }
+}

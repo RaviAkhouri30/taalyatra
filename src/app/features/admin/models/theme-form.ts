@@ -1,10 +1,9 @@
 import { type DocumentFields } from '@core/interfaces/i-document-store';
 import {
-  DEFAULT_FONT_PAIR,
-  DEFAULT_THEME_COLOURS,
   THEME_PRESETS,
   type IThemePresetDefinition,
-} from '@shared/constants/theme.constants';
+} from '@shared/constants/theme-presets.constants';
+import { DEFAULT_FONT_PAIR, DEFAULT_THEME_COLOURS } from '@shared/constants/theme.constants';
 import { ThemeBackdrop } from '@shared/enums/theme-backdrop.enum';
 import { ThemeColour } from '@shared/enums/theme-colour.enum';
 import { ThemeHeadingWeight } from '@shared/enums/theme-heading-weight.enum';
@@ -62,6 +61,15 @@ export function presetOf(edited: DocumentFields): ThemePreset {
  */
 export function storedTheme(edited: DocumentFields): DocumentFields {
   return { ...normalised(edited), preset: presetOf(edited) };
+}
+
+/**
+ * @param edited The form's values.
+ * @returns Them as a saved theme keeps them (0027 D2): everything on the page, normalised, without
+ *   `preset`, which is worked out again whenever the theme is stored.
+ */
+export function savedThemeValues(edited: DocumentFields): DocumentFields {
+  return normalised(edited);
 }
 
 /**

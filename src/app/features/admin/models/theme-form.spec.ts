@@ -1,4 +1,4 @@
-import { THEME_PRESETS } from '@shared/constants/theme.constants';
+import { THEME_PRESETS } from '@shared/constants/theme-presets.constants';
 import { ThemePreset } from '@shared/enums/theme-preset.enum';
 import { RESET_VALUES, presetOf, presetValues, storedTheme, themeOfForm } from './theme-form';
 

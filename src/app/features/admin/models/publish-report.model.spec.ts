@@ -1,4 +1,4 @@
-import { THEME_PRESETS } from '@shared/constants/theme.constants';
+import { THEME_PRESETS } from '@shared/constants/theme-presets.constants';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { ContentPath } from './content-path.enum';
 import fakeDb from '@core/backends/fake/fake-db.json';

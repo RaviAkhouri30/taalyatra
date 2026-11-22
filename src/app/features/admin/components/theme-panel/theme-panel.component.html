@@ -1,21 +1,48 @@
 @switch (panel()) {
   @case (panels.ThemePresets) {
     <fieldset class="tp-presets">
-      <legend>Ready-made themes</legend>
-      <p class="tp-note">Each fills the colours and background below; adjust them afterwards.</p>
-      <div class="tp-swatches">
-        @for (preset of model.presets; track preset.preset) {
-          <button
-            type="button"
-            class="tp-swatch"
-            [attr.aria-pressed]="model.preset() === preset.preset"
-            (click)="model.choose(preset)"
-          >
-            <app-theme-swatch [preset]="preset" />
-            {{ preset.label }}
-          </button>
-        }
-      </div>
+      <legend>Themes</legend>
+      <p class="tp-note">
+        A ready-made theme fills the colours and background below, and one of yours fills
+        everything. Adjust them afterwards.
+      </p>
+      <p class="tp-current" aria-live="polite">Below now: {{ model.themeLabel() }}</p>
+      @if (model.saved().length > 0) {
+        <fieldset class="tp-group">
+          <legend>Your themes</legend>
+          <div class="tp-swatches">
+            @for (theme of model.saved(); track theme.id) {
+              <button
+                type="button"
+                class="tp-swatch"
+                [attr.aria-pressed]="model.savedMatch()?.id === theme.id"
+                (click)="model.chooseSaved(theme)"
+              >
+                <app-theme-swatch [colours]="theme.colours" />
+                {{ theme.name }}
+              </button>
+            }
+          </div>
+        </fieldset>
+      }
+      @for (group of groups; track group.label) {
+        <fieldset class="tp-group">
+          <legend>{{ group.label }}</legend>
+          <div class="tp-swatches">
+            @for (preset of group.presets; track preset.preset) {
+              <button
+                type="button"
+                class="tp-swatch"
+                [attr.aria-pressed]="model.preset() === preset.preset"
+                (click)="model.choose(preset)"
+              >
+                <app-theme-swatch [colours]="preset.colours" />
+                {{ preset.label }}
+              </button>
+            }
+          </div>
+        </fieldset>
+      }
     </fieldset>
   }
   @case (panels.ThemeContrast) {
@@ -61,5 +88,8 @@
         Puts today’s look back as a draft; the site changes only when it’s published.
       </p>
     </div>
+  }
+  @case (panels.ThemeSaved) {
+    <app-saved-themes-panel [form]="form()" [failing]="model.failing().length" />
   }
 }

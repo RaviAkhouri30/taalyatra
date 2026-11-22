@@ -194,6 +194,18 @@ service cloud.firestore {
         && isValidVisitDay(request.resource.data);
     }
 
+    // Themes saved from the Theme page (0027), one per document, apart from the site: visitors never
+    // read them, and saving one changes nothing live, so it needs no draft or approval. Whoever sees
+    // the Theme page uses them; Backups reads them into a backup and writes them back on restore,
+    // but doesn't delete. The ids mirror SAVED_THEME_ID (saved-theme.constants.ts). The 20-theme
+    // limit and the different names are the page's: rules can't count or compare documents.
+    match /savedThemes/{id} {
+      allow read: if canSee('theme') || canUseArea('backups');
+      allow create, update: if (canSee('theme') || canUseArea('backups'))
+        && id.matches('^[0-9a-f-]{36}$') && isValidSavedTheme(request.resource.data);
+      allow delete: if canSee('theme');
+    }
+
     // Anonymous speed reports from real visits (0012). Visitors may create a well-formed one and
     // nothing else; only the admin reads or deletes them. Nothing in them identifies anyone.
     match /vitals/{report} {
@@ -587,12 +599,23 @@ service cloud.firestore {
         && isColourOrMissing(data, 'text') && isColourOrMissing(data, 'quietText')
         && isColourOrMissing(data, 'accent') && isColourOrMissing(data, 'secondAccent')
         && isOneOfOrMissing(data, 'preset',
-                            ['warm-night', 'daylight', 'festival', 'high-contrast', 'custom'])
+                            ['warm-night', 'daylight', 'festival', 'high-contrast',
+                             'indigo-night', 'monsoon', 'forest', 'diwali', 'ocean', 'charcoal',
+                             'marigold', 'sandstone', 'holi', 'mint', 'rose', 'slate', 'custom'])
         && isOneOfOrMissing(data, 'backdrop', ['plain', 'gradient'])
         && isOneOfOrMissing(data, 'textSize', ['smaller', 'standard', 'larger'])
         && isOneOfOrMissing(data, 'headingWeight', ['bold', 'extra-bold'])
         && isOneOfOrMissing(data, 'fonts', ['bricolage-dm', 'fraunces-inter', 'playfair-source',
                                             'poppins-nunito', 'space-work', 'yatra-mukta']);
+    }
+
+    // A saved theme: its name, when, and a theme in exactly a published theme's shape. Contrast is
+    // checked by the page before saving, and again at publish and by the site, as for `site/theme`.
+    function isValidSavedTheme(data) {
+      return data.keys().hasAll(['name', 'savedAt', 'theme'])
+        && data.keys().hasOnly(['name', 'savedAt', 'theme'])
+        && isText(data.name, 1, 40) && isText(data.savedAt, 20, 40)
+        && data.theme is map && isValidTheme(data.theme);
     }
 
     function isColourOrMissing(data, field) {

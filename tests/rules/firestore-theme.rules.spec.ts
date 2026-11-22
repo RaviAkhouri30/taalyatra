@@ -1,6 +1,6 @@
 import { type RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import { doc, setDoc } from 'firebase/firestore';
-import { THEME_PRESETS } from '../../src/app/shared/constants/theme.constants';
+import { THEME_PRESETS } from '../../src/app/shared/constants/theme-presets.constants';
 import { ThemeBackdrop } from '../../src/app/shared/enums/theme-backdrop.enum';
 import { ThemeFonts } from '../../src/app/shared/enums/theme-fonts.enum';
 import { ThemeHeadingWeight } from '../../src/app/shared/enums/theme-heading-weight.enum';

@@ -11,8 +11,9 @@
   color: t.$color-muted;
 }
 
-// Ready-made themes: a swatch of each, its own colours shown on it.
-.tp-presets {
+// Themes: yours, then the ready-made ones, dark and light (0027 D5), each swatch in its own colours.
+.tp-presets,
+.tp-group {
   display: grid;
   gap: 10px;
   margin: 0;
@@ -27,6 +28,17 @@
     font-weight: 700;
     color: t.$color-cream;
   }
+}
+
+.tp-group legend {
+  font-size: t.size(13px);
+  color: t.$color-muted-strong;
+}
+
+.tp-current {
+  margin: 0;
+  font-size: t.size(13.5px);
+  font-weight: 600;
 }
 
 .tp-swatches {

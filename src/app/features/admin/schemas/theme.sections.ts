@@ -102,5 +102,6 @@ export const THEME_SECTION: IEditorSection = {
     { panel: SectionPanel.ThemePresets, after: null },
     { panel: SectionPanel.ThemeContrast, after: ThemeColour.SecondAccent },
     { panel: SectionPanel.ThemeReset, after: THEME_FORM_KEYS.fonts },
+    { panel: SectionPanel.ThemeSaved, after: THEME_FORM_KEYS.fonts },
   ],
 };
