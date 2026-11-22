@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core
 import { BaseComponent } from '@shared/base/base-component';
 import { FoldComponent } from '@shared/components/fold/fold.component';
 import { FoldMode } from '@shared/enums/fold-mode.enum';
+import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { HomeCitiesViewModel } from './home-cities.view-model';
 import { type ICitiesDto } from './i-cities';
 
@@ -18,4 +19,5 @@ export class HomeCitiesComponent extends BaseComponent<ICitiesDto> {
   /** When the section's content folds behind Show more (0015 V15). */
   public readonly fold = input(FoldMode.Never);
   protected override readonly model = inject(HomeCitiesViewModel);
+  protected readonly anchor = PageAnchor.Cities;
 }

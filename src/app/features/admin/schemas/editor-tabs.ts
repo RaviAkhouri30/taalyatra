@@ -23,6 +23,19 @@ import { OFFER_SECTIONS } from './offer.sections';
 import { THEME_SECTION } from './theme.sections';
 import { VISIBILITY_SECTIONS } from './visibility.sections';
 import { DRUM_CIRCLE_SECTIONS } from './drum-circle.sections';
+import {
+  CITIES_SECTION,
+  FAQ_SECTION,
+  HOW_SECTION,
+  INSTAGRAM_SECTION,
+  TESTIMONIALS_SECTIONS,
+} from './home-lists.sections';
+import {
+  AUDIENCE_CARDS_SECTION,
+  MARQUEE_SECTION,
+  PHILOSOPHY_SECTIONS,
+  TRUST_SECTION,
+} from './home-story.sections';
 
 /** One editor tab: its label and the sections it edits. */
 export interface IEditorTabSchema {
@@ -41,8 +54,9 @@ export const EDITOR_TABS: readonly IEditorTabSchema[] = [
   {
     tab: EditorTab.Hero,
     label: 'Hero',
-    description: 'The top of the home page: the headline, the buttons and the audience tags.',
-    sections: [HERO_SECTION],
+    description:
+      'The top of the home page: the headline, the buttons and the audience tags, then the scrolling words and the trust strip below it.',
+    sections: [HERO_SECTION, MARQUEE_SECTION, TRUST_SECTION],
   },
   {
     tab: EditorTab.Offer,
@@ -53,8 +67,8 @@ export const EDITOR_TABS: readonly IEditorTabSchema[] = [
   {
     tab: EditorTab.Audiences,
     label: 'Who it’s for',
-    description: 'The heading of the section about who the sessions are for.',
-    sections: [AUDIENCES_HEADING],
+    description: 'The section about who the sessions are for: its heading and cards.',
+    sections: [AUDIENCES_HEADING, AUDIENCE_CARDS_SECTION],
   },
   {
     tab: EditorTab.Experiences,
@@ -94,10 +108,46 @@ export const EDITOR_TABS: readonly IEditorTabSchema[] = [
     sections: GALLERY_SECTIONS,
   },
   {
+    tab: EditorTab.Philosophy,
+    label: 'Our philosophy',
+    description: 'Our philosophy: its pillars, goals and journey, and the call to action below it.',
+    sections: PHILOSOPHY_SECTIONS,
+  },
+  {
+    tab: EditorTab.Cities,
+    label: 'Where we play',
+    description: 'The cities you play in, and which are highlighted.',
+    sections: [CITIES_SECTION],
+  },
+  {
+    tab: EditorTab.How,
+    label: 'How it works',
+    description: 'The steps from enquiry to session.',
+    sections: [HOW_SECTION],
+  },
+  {
     tab: EditorTab.Team,
     label: 'Team',
     description: 'The team members, their photos and details, and the section heading.',
     sections: [TEAM_HEADING, ...TEAM_SECTIONS],
+  },
+  {
+    tab: EditorTab.Instagram,
+    label: 'Instagram',
+    description: 'The Instagram posts on the home page, with their photos and links.',
+    sections: [INSTAGRAM_SECTION],
+  },
+  {
+    tab: EditorTab.Testimonials,
+    label: 'Testimonials',
+    description: 'The numbers, testimonials and clients on the home page.',
+    sections: TESTIMONIALS_SECTIONS,
+  },
+  {
+    tab: EditorTab.Faq,
+    label: 'FAQ',
+    description: 'The questions and answers near the end of the home page.',
+    sections: [FAQ_SECTION],
   },
   {
     tab: EditorTab.ProposalForm,

@@ -16,6 +16,7 @@ export const ANCHOR_SECTIONS: ReadonlyMap<PageAnchor, HomeSection> = new Map([
   [PageAnchor.Watch, HomeSection.Videos],
   [PageAnchor.Gallery, HomeSection.Gallery],
   [PageAnchor.Philosophy, HomeSection.Philosophy],
+  [PageAnchor.Cities, HomeSection.Cities],
   [PageAnchor.How, HomeSection.How],
   [PageAnchor.Team, HomeSection.Team],
   [PageAnchor.Insta, HomeSection.Instagram],

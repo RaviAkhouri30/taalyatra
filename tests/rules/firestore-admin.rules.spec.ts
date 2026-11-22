@@ -57,7 +57,11 @@ describe('firestore.rules · admin editor', () => {
 
   describe('home sections', () => {
     it.each(EDITABLE_HOME_SECTIONS)('should let the admin change the title of %s', async (id) => {
-      const changed = { ...home[id], title: 'A new title' };
+      const stored: unknown = home[id];
+      // A list section (the scrolling words, the trust strip) has no title: it changes its items.
+      const changed = Array.isArray(stored)
+        ? { _items: (stored as unknown[]).slice(1) }
+        : { ...home[id], title: 'A new title' };
 
       await expect(setDoc(doc(admin, `home/${id}`), changed)).resolves.toBeUndefined();
     });
@@ -100,7 +104,8 @@ describe('firestore.rules · admin editor', () => {
 
     it('should stop the admin changing a section the editor does not cover yet', async () => {
       await expect(
-        setDoc(doc(admin, 'home/faq'), { ...home['faq'], title: 'Changed' }),
+        // The chat's script: editable from 2.12.0 (0028).
+        setDoc(doc(admin, 'home/assistant'), { ...home['assistant'], title: 'Changed' }),
       ).rejects.toMatchObject(DENIED);
     });
 

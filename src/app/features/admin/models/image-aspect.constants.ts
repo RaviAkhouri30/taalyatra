@@ -12,4 +12,5 @@ export const IMAGE_ASPECT = {
   drumCircle: 0.8,
   /** 16:9 */
   videos: 1.777_778,
+  instagram: 1,
 } as const;

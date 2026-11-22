@@ -37,3 +37,4 @@ Each phase ends with **human approval** recorded at the bottom of its file. No p
 | 0025 | [AI help: the admin, the leads and the site’s chat](0025-ai-help/)   | 2.6.0, 2.7.0  | Merged 2026-11-22, released in `v2.8.0` (no own tags) · 01–05 approved                                                     |
 | 0026 | [The admin on your phone](0026-admin-app/)                           | 2.8.0         | Released 2026-11-22 · tag `v2.8.0` · 01–05 approved                                                                        |
 | 0027 | [More themes, and your own saved](0027-more-themes/)                 | 2.9.0, 2.9.1  | 2.9.0 merged 2026-11-22, release and rules to do · 01–05 approved · 2.9.1: 03–05 approved                                  |
+| 0028 | [The rest of the content](0028-content-programme/)                   | 2.10.0–       | 2.10.0: 01–03 approved 2026-11-22; 04–05 to write                                                                          |

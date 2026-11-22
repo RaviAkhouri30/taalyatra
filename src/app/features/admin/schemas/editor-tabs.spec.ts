@@ -157,6 +157,7 @@ describe('editor schemas', () => {
 
   it('should list each clickable page section with the tab that edits it', () => {
     expect(PICKABLE_SECTIONS.get(PageAnchor.DrumCircleDetails)).toBe('Drum circle');
-    expect(cardForAnchor('cities')).toBeNull();
+    expect(PICKABLE_SECTIONS.get(PageAnchor.Cities)).toBe('Where we play');
+    expect(cardForAnchor('nowhere')).toBeNull();
   });
 });

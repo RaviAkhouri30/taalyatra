@@ -27,7 +27,7 @@ describe('role form', () => {
   it('should start with the defaults: needs approval everywhere, uploads on', () => {
     const value = roleFormValue(form());
 
-    expect(value.pages.size).toBe(15);
+    expect(value.pages.size).toBe(21);
     expect([...value.pages.values()].every((access) => access === PageAccess.Approval)).toBe(true);
     expect(value.uploads).toBe(true);
   });
