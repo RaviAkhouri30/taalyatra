@@ -9,11 +9,11 @@ import {
 import { RouterLink } from '@angular/router';
 import { AppRoute } from '@shared/enums/app-route.enum';
 import { TourTargetDirective } from '../../directives/tour-target.directive';
-import { FEATURES_PATH, RELEASES_PATH } from '../../models/editor-nav.constants';
+import { FEATURES_PATH, INSTALL_PATH, RELEASES_PATH } from '../../models/editor-nav.constants';
 import { TourTarget } from '../../models/tour.model';
 import { TourService } from '../../services/tour.service';
 
-/** The top bar's Help (0020): take the tour, see every feature, read what's new. */
+/** The top bar's Help (0020): take the tour, see every feature, read what's new, install the app (0026). */
 @Component({
   selector: 'app-help-menu',
   imports: [RouterLink, TourTargetDirective],
@@ -30,6 +30,7 @@ export class HelpMenuComponent {
   protected readonly helpTarget = TourTarget.Help;
   protected readonly featuresUrl = `${AppRoute.Admin}/${FEATURES_PATH}`;
   protected readonly releasesUrl = `${AppRoute.Admin}/${RELEASES_PATH}`;
+  protected readonly installUrl = `${AppRoute.Admin}/${INSTALL_PATH}`;
 
   private readonly tour = inject(TourService);
   private readonly button = viewChild.required<ElementRef<HTMLButtonElement>>('button');

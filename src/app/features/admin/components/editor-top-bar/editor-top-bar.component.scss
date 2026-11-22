@@ -3,6 +3,9 @@
 
 :host {
   display: block;
+  // The installed app on iPhone runs under the status bar (0026): this keeps the bar below it.
+  // `env()` is 0 everywhere else.
+  padding-top: env(safe-area-inset-top);
 }
 
 .ed-menu {

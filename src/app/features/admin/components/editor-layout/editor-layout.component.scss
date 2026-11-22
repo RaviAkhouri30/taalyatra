@@ -73,17 +73,16 @@ $rail-width: 64px;
     inset: 0 auto 0 0;
     z-index: t.$z-loader;
     width: min($side-width + 44px, 85vw);
-    height: 100vh;
+    // Pinned to the top and bottom by `inset`, with the base height of 100%: no height of its own.
     // Hidden, not just moved: a closed menu mustn't take keyboard focus.
     visibility: hidden;
     transform: translateX(-100%);
-  }
-}
 
-@include bp.down(bp.$tablet) {
-  .ed--drawer .ed-side {
-    visibility: visible;
-    transform: none;
+    // In the same media block: a second one would repeat its query (0026: the styles' budget).
+    .ed--drawer & {
+      visibility: visible;
+      transform: none;
+    }
   }
 }
 
@@ -91,7 +90,8 @@ $rail-width: 64px;
   display: flex;
   flex: none;
   justify-content: flex-end;
-  padding: 10px 10px 0;
+  // Below iPhone's status bar in the installed app (0026); `env()` is 0 everywhere else.
+  padding: max(10px, env(safe-area-inset-top)) 10px 0;
 }
 
 .ed-backdrop {

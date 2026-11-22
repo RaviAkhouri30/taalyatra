@@ -108,3 +108,18 @@ flowchart TD
   AA2 --> S
   LA --> S
 ```
+
+## The admin as an app (2.8.0)
+
+The shell adds the manifest and iPhone tags while the admin is open, through `AdminAppService`, and keeps the browser's
+install offer for the Install page ([0026 design](../aidlc/0026-admin-app/02-design.md)).
+
+```mermaid
+flowchart TD
+  SH["AdminShellComponent (AdminShellViewModel)<br/>provides AdminAppService · IInstallPrompt"] --> S["AdminAppService<br/>manifest · iPhone tags · canInstall"]
+  S --> P[(IInstallPrompt · BrowserInstallPrompt)]
+  SH --> EL["EditorLayoutComponent"]
+  EL --> HM["HelpMenuComponent<br/>+ Install on your phone"]
+  EL -->|install| IP["InstallPageComponent (InstallPageViewModel)<br/>steps · Install"]
+  IP --> S
+```

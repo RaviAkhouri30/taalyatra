@@ -26,6 +26,8 @@ export const MEDIA_PATH = 'media';
 
 /** What's new's path under `/admin` (0016 V1). */
 export const RELEASES_PATH = 'releases';
+/** How to install the admin on a phone (0026 D6). */
+export const INSTALL_PATH = 'install';
 
 /** The Visits page's path under `/admin` (0018 V11). */
 export const VISITS_PATH = 'visits';
@@ -41,6 +43,7 @@ export const TEAM_ACCESS_PATH = 'team-access';
 
 /** What's new's name in the menu and its title. */
 export const RELEASES_LABEL = 'What’s new';
+export const INSTALL_LABEL = 'Install on your phone';
 
 /** The media library's name in the menu and its title (0017 U4: plain words). */
 export const MEDIA_LABEL = 'Photo library';
