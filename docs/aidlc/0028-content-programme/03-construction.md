@@ -74,3 +74,32 @@ Built on the approved [design](02-design.md) (2.11.0).
 ---
 
 **Approval (2.11.0):** ☑ Approved by Ravi Akhouri on 2026-11-23.
+
+# 2.12.0 · The chat and the proposal form
+
+Built on the approved [design](02-design.md) (2.12.0).
+
+| #   | Increment           | Files                                                                                                                                                                           | Tests                                                                                                                                                                         |
+| --- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Schemas and pages   | `chat-form-limits.constants.ts`; `ContentPath.HomeAssistant`, `EditorTab.Chat`; `chat.sections.ts` (4 cards), `proposal-form.sections.ts` (5 cards); tabs, menu, Find, Features | `chat-form.sections.spec.ts`: every stored value of both documents has a field, down to the nested ones, and today's content of every card loads unchanged; the count specs   |
+| 2   | The starting choice | `form-choices-rule.ts`, in `PublishReport.rules`                                                                                                                                | `form-choices-rule.spec.ts`: today's choices pass, a missing one blocks, "not sure" is a valid start, missing lists, checked on the Choices card only                         |
+| 3   | Case-blind chat     | `assistant-replies.ts`                                                                                                                                                          | `assistant-replies.spec.ts`: a word written with capitals matches                                                                                                             |
+| 4   | Rules               | `homePages()`, `draftPages()`, `approvablePaths()`, `publishablePaths()`, a role's page keys; `EDITABLE_HOME_SECTIONS`                                                          | `firestore-chat.rules.spec.ts` (7): owner, manager publishing, needing approval, drafting, hidden, self-approving, shape, the role; the admin's test of an uncovered document |
+| 5   | E2E and records     | `admin-chat-form.e2e.ts`; component tree, data model, CHANGELOG                                                                                                                 | a changed answer given by the chat on the site; the event types starting on the chosen one; a start that isn't a choice blocking publishing; axe on both pages; three sizes   |
+
+## Decisions & deviations from design
+
+- **Two cards share the proposal form's `form` part**, Choices and Form wording, each editing its own fields inside
+  it; saving one keeps the other's, as the editor merges a group into what's stored.
+- **The chat's preview stays at the top of the home page:** the preview never opens the chat (0017), so its wording
+  shows once published, or in the full preview.
+- **An answer's last word can't be removed**, so a stored answer can always be found. A new answer starts with no
+  words, and **Add word** adds the first; until then the chat never gives it.
+- **The admin's rules test of "a document no page edits"** now stores one for the test, as every home section is
+  editable.
+- **The first download didn't change** (the chat's matching is in the home page's own code).
+- **No dependency added.**
+
+---
+
+**Approval (2.12.0):** ☑ Approved by Ravi Akhouri on 2026-11-23.

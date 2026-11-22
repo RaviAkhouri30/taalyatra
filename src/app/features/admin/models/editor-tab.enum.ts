@@ -29,6 +29,8 @@ export enum EditorTab {
   /** Each page's title and search description (0028). */
   Seo = 'seo',
   Contact = 'contact',
+  /** The chat assistant's script (0028). */
+  Chat = 'chat',
   Visibility = 'visibility',
   /** The site's colours, background, text and fonts (0021). */
   Theme = 'theme',

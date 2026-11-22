@@ -387,7 +387,9 @@ service cloud.firestore {
         // 0028: the sections made editable in 2.10.0, each on its editor page.
         'marquee': 'hero', 'trust': 'hero', 'philosophy': 'philosophy', 'midCta': 'philosophy',
         'cities': 'cities', 'how': 'how', 'instagram': 'instagram', 'proof': 'testimonials',
-        'faq': 'faq'
+        'faq': 'faq',
+        // 0028: the chat's script (2.12.0), on its own editor page.
+        'assistant': 'chat'
       };
     }
 
@@ -411,6 +413,7 @@ service cloud.firestore {
         'home/marquee': 'hero', 'home/trust': 'hero', 'home/philosophy': 'philosophy',
         'home/midCta': 'philosophy', 'home/cities': 'cities', 'home/how': 'how',
         'home/instagram': 'instagram', 'home/proof': 'testimonials', 'home/faq': 'faq',
+        'home/assistant': 'chat',
         'pages/videos': 'videos', 'pages/team': 'team', 'pages/shows': 'shows',
         'pages/achievements': 'achievements'
       };
@@ -477,7 +480,8 @@ service cloud.firestore {
         .concat(pathsIfSeen(pages, 'instagram', ['home/instagram']))
         .concat(pathsIfSeen(pages, 'testimonials', ['home/proof']))
         .concat(pathsIfSeen(pages, 'faq', ['home/faq']))
-        .concat(pathsIfSeen(pages, 'achievements', ['pages/achievements']));
+        .concat(pathsIfSeen(pages, 'achievements', ['pages/achievements']))
+        .concat(pathsIfSeen(pages, 'chat', ['home/assistant']));
     }
 
     // The documents a manager may name in a publish record. Called for managers only.
@@ -505,7 +509,8 @@ service cloud.firestore {
         .concat(pathsIf(pages, 'instagram', ['home/instagram']))
         .concat(pathsIf(pages, 'testimonials', ['home/proof']))
         .concat(pathsIf(pages, 'faq', ['home/faq']))
-        .concat(pathsIf(pages, 'achievements', ['pages/achievements']));
+        .concat(pathsIf(pages, 'achievements', ['pages/achievements']))
+        .concat(pathsIf(pages, 'chat', ['home/assistant']));
     }
 
     // A draft id is its path with `/` as `__` (draftId in i-draft.ts).
@@ -541,7 +546,7 @@ service cloud.firestore {
                                       'drum-circle', 'rhythm-game', 'videos', 'gallery', 'team',
                                       'proposal-form', 'business', 'contact', 'visibility',
                                       'theme', 'philosophy', 'cities', 'how', 'instagram',
-                                      'testimonials', 'faq', 'achievements', 'seo'])
+                                      'testimonials', 'faq', 'achievements', 'seo', 'chat'])
         && data.pages.values().hasOnly(['hidden', 'approval', 'publish'])
         && data.uploads is bool
         && isText(data.addedAt, 20, 40);

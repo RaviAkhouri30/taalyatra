@@ -72,7 +72,7 @@ app routes.
   Backups; the 20-theme limit and distinct names are the page's, since rules can't count documents (2.9.0);
   `site/visibility` may also hold `folded`, one of `never`,
   `phone`, `desktop`, `always` per foldable section (1.10.0) (the editable `home` sections are listed in
-  `EDITABLE_HOME_SECTIONS`; `drumCircle` joined them in 1.9.0, and every other section but `assistant` in 2.10.0, each on its editor page in `homePages()`); `pages/{videos, team, shows, achievements}` are updatable since 2.11.0 the same way (`innerPages()`, keys kept, the heading's limits checked), never `pages/admin`; `proposals` is create-only for visitors, with exact keys, length limits from `PROPOSAL_MAX_LENGTH`, a required email (since 1.8.1), and
+  `EDITABLE_HOME_SECTIONS`; `drumCircle` joined them in 1.9.0, and every other section but `assistant` in 2.10.0, each on its editor page in `homePages()`, and `assistant` in 2.12.0 on the chat page); `pages/{videos, team, shows, achievements}` are updatable since 2.11.0 the same way (`innerPages()`, keys kept, the heading's limits checked), never `pages/admin`; `proposals` is create-only for visitors, with exact keys, length limits from `PROPOSAL_MAX_LENGTH`, a required email (since 1.8.1), and
   `createdAt == request.time`; the admin reads and deletes them and may change only `status` and `statusAt` (1.13.0). `visits`
   accept only a listed page and device with the server's time; `visitDays` are admin create-only.
 
