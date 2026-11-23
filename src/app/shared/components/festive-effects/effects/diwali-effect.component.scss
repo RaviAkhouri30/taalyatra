@@ -1,29 +1,11 @@
 @use 'tokens' as t;
 @use 'breakpoints' as bp;
+@use 'festive';
 
-:host {
-  display: contents;
-}
+@include festive.layer;
 
-.fx {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 0;
-}
-
+// Crackers bursting outward (the design's `.a-sparks`, as before 2.16.0).
 .fp {
-  position: absolute;
-  left: var(--l);
-  top: var(--t);
-  opacity: 0;
-  animation-delay: var(--d);
-  animation-iteration-count: infinite;
-}
-
-// ---- Theme: sparks (design: `.a-sparks`) ----
-.a-sparks .fp {
   width: 10px;
   height: 10px;
   border-radius: 50%;

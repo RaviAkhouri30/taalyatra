@@ -1,12 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ApiEndpoint } from '@shared/enums/api-endpoint.enum';
-import { FestiveTheme } from '@shared/enums/festive-theme.enum';
 import { SiteConfigModel } from '@shared/models/site-config.model';
-import { SITE, SITE_DTO, provideSiteConfig, queryAll, texts } from '@shared/testing/fixtures';
+import { SITE_DTO, provideSiteConfig, queryAll, texts } from '@shared/testing/fixtures';
 import { OFFER_DTO, stubBackend } from '../../testing/home-fixtures';
 import { HomeOfferComponent } from './home-offer.component';
-import { OfferModel } from './offer.model';
 
 describe('HomeOfferComponent', () => {
   function render(body: unknown): { element: HTMLElement; get: ReturnType<typeof vi.fn> } {
@@ -23,7 +21,26 @@ describe('HomeOfferComponent', () => {
     expect(get).toHaveBeenCalledWith(ApiEndpoint.HomeOffer);
     expect(element.querySelector('section')?.id).toBe('diwali');
     expect(element.querySelector('h2')?.textContent).toBe(OFFER_DTO.title);
-    expect(element.querySelector('.fx.a-sparks')).not.toBeNull();
+    expect(element.querySelector('app-festive-effects')).not.toBeNull();
+    // Diwali keeps the theme's colours.
+    expect(element.querySelector('section')?.classList).not.toContain('festival-look');
+  });
+
+  it('should take the colours of the festival chosen with the offer’s dates (2.16.0)', () => {
+    const promotion = { ...SITE_DTO.promotion!, festival: 'holi' };
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        stubBackend(OFFER_DTO).provider,
+        provideSiteConfig(new SiteConfigModel({ ...SITE_DTO, promotion })),
+      ],
+    });
+    const fixture = TestBed.createComponent(HomeOfferComponent);
+    fixture.detectChanges();
+    const section = (fixture.nativeElement as HTMLElement).querySelector('section');
+
+    expect(section?.classList).toContain('festival-look');
+    expect(section?.style.getPropertyValue('--fest-base')).toBe('#e4428f');
   });
 
   it('should render a card per package and both calls to action', () => {
@@ -46,13 +63,6 @@ describe('HomeOfferComponent', () => {
 });
 
 describe('OfferModel', () => {
-  it('should fall back to no effect for an unknown theme', () => {
-    const model = new OfferModel({ ...OFFER_DTO, theme: 'fireworks' }, SITE.contact);
-
-    expect(model.theme).toBe(FestiveTheme.None);
-    expect(model.footnote).toBe(OFFER_DTO.footnote);
-  });
-
   it('should render nothing when no promotion is running', () => {
     TestBed.configureTestingModule({
       providers: [

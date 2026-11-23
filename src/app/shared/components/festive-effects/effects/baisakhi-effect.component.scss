@@ -1,0 +1,53 @@
+@use 'tokens' as t;
+@use 'festive';
+
+@include festive.layer;
+
+// Swaying wheat: every other position becomes a stalk along the bottom, swaying in the wind.
+.fp {
+  top: auto;
+  bottom: -6px;
+  width: 3px;
+  height: 56px;
+  border-radius: 2px;
+  background: linear-gradient(t.$color-fx-wheat, t.$color-fx-wheat-deep 40%, t.$color-fx-stalk);
+  transform-origin: 50% 100%;
+  opacity: 0.9;
+  animation-name: sway;
+  animation-duration: 3.4s;
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: 11px;
+    height: 26px;
+    border-radius: 50%;
+    background: repeating-linear-gradient(t.$color-fx-wheat 0 4px, t.$color-fx-wheat-deep 4px 6px);
+  }
+
+  &:nth-child(2n) {
+    display: none;
+  }
+
+  &:nth-child(3n) {
+    height: 76px;
+  }
+
+  &:nth-child(5n) {
+    height: 42px;
+  }
+}
+
+@keyframes sway {
+  0% {
+    transform: rotate(-7deg);
+  }
+
+  100% {
+    transform: rotate(7deg);
+  }
+}

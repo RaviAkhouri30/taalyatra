@@ -1,22 +1,20 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DiyaIconComponent } from '@shared/components/diya-icon/diya-icon.component';
+import { FestivalIconComponent } from '@shared/components/festival-icon/festival-icon.component';
+import { FestiveEffectsComponent } from '@shared/components/festive-effects/festive-effects.component';
+import { PromoStyle } from '@shared/components/layout/promo-badge/promo-style';
 import { CARD_DIYA, CARD_PROMO_SPARKS } from '@shared/constants/promo.constants';
-import { type IPromotion } from '@shared/interfaces/i-promotion';
+import { FestivalLookDirective } from '@shared/directives/festival-look.directive';
 
 /** Card-style promo badge (presentational). Owned by `PromoBadgeComponent`. */
 @Component({
   selector: 'app-promo-card',
-  imports: [DiyaIconComponent, RouterLink],
+  imports: [FestivalIconComponent, FestivalLookDirective, FestiveEffectsComponent, RouterLink],
   templateUrl: './promo-card.component.html',
   styleUrl: './promo-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PromoCardComponent {
-  public readonly promotion = input.required<IPromotion>();
-  /** Emits when the visitor closes the badge. */
-  public readonly dismiss = output();
-
+export class PromoCardComponent extends PromoStyle {
   protected readonly diya = CARD_DIYA;
   protected readonly sparks = CARD_PROMO_SPARKS;
 }

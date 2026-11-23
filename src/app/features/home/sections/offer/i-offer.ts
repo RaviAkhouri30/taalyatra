@@ -9,8 +9,11 @@ export interface IOfferCardDto extends IHideable {
 
 /** Seasonal offer as stored in the backend (`home/offer`). Editable from the admin "Offers" tab. */
 export interface IOfferDto {
-  /** Festive particle theme name, e.g. "sparks". */
-  readonly theme: string;
+  /**
+   * The animation as chosen before 2.16.0 ("sparks" or "none"), read only while the offer has no
+   * festival (`site/config` `promotion.festival`).
+   */
+  readonly theme?: string;
   readonly eyebrow: string;
   readonly title: string;
   readonly lead: string;

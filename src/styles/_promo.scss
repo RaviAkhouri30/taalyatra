@@ -25,6 +25,30 @@
   font-family: inherit;
 }
 
+// A festival with its own colours (2.16.0): the badge on its base, its glow as the border and
+// ring, the icon in its base on the dark tile. Diwali and no festival keep the theme's.
+@mixin festival-look {
+  .promo {
+    &.festival-look {
+      background: var(--fest-base);
+      color: var(--fest-text);
+      border-color: var(--fest-glow);
+    }
+
+    .promo-ico {
+      color: t.$color-amber-soft;
+    }
+
+    &.festival-look .promo-ico {
+      color: var(--fest-base);
+    }
+
+    &.festival-look .promo-x {
+      color: inherit;
+    }
+  }
+}
+
 @keyframes promo-in {
   from {
     opacity: 0;

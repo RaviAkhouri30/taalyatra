@@ -46,3 +46,18 @@ export const FESTIVE_PARTICLES: readonly IFestiveParticle[] = [
   { left: 18, top: 32, delay: 0.78 },
   { left: 12, top: 22, delay: 0.49 },
 ];
+
+/**
+ * Particle layout around the offer badge (2.16.0): eight positions on the badge's edges, as % of
+ * the layer that reaches a little outside it.
+ */
+export const FESTIVE_BADGE_PARTICLES: readonly IFestiveParticle[] = [
+  { left: 4, top: 20, delay: 0.2 },
+  { left: 92, top: 15, delay: 0.9 },
+  { left: 20, top: 85, delay: 1.4 },
+  { left: 80, top: 90, delay: 0.5 },
+  { left: 50, top: 0, delay: 1.1 },
+  { left: 0, top: 60, delay: 1.7 },
+  { left: 100, top: 55, delay: 0.7 },
+  { left: 60, top: 100, delay: 1.9 },
+];

@@ -145,4 +145,49 @@ export const ICON_REGISTRY: Readonly<Record<IconName, readonly IconNode[]>> = {
       d: 'M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5',
     },
   ],
+  [IconName.Flower]: [
+    { tag: 'circle', cx: 12, cy: 12, r: 2.6 },
+    {
+      tag: 'path',
+      d: 'M12 9.4C10 6 10.5 3.5 12 3.5s2 2.5 0 5.9zM14.6 12c3.4-2 5.9-1.5 5.9 0s-2.5 2-5.9 0zM12 14.6c2 3.4 1.5 5.9 0 5.9s-2-2.5 0-5.9zM9.4 12C6 14 3.5 13.5 3.5 12s2.5-2 5.9 0z',
+    },
+  ],
+  [IconName.FourPointStar]: [
+    { tag: 'path', d: 'M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z' },
+  ],
+  [IconName.Pennant]: [{ tag: 'path', d: 'M6 21V3M6 4l13 4.5L6 13' }],
+  [IconName.Wheat]: [
+    {
+      tag: 'path',
+      d: 'M12 22V6M12 6c0-2 1-3.5 0-4-1 .5 0 2 0 4zM12 10c-2.5 0-4-1.5-4-3 2 0 4 1 4 3zM12 10c2.5 0 4-1.5 4-3-2 0-4 1-4 3zM12 14c-2.5 0-4-1.5-4-3 2 0 4 1 4 3zM12 14c2.5 0 4-1.5 4-3-2 0-4 1-4 3zM12 18c-2.5 0-4-1.5-4-3 2 0 4 1 4 3zM12 18c2.5 0 4-1.5 4-3-2 0-4 1-4 3z',
+    },
+  ],
+  [IconName.Wheel]: [
+    { tag: 'circle', cx: 12, cy: 12, r: 8.5 },
+    { tag: 'circle', cx: 12, cy: 12, r: 2 },
+    {
+      tag: 'path',
+      d: 'M12 3.5V10M12 14v6.5M3.5 12H10M14 12h6.5M6 6l4.6 4.6M13.4 13.4L18 18M18 6l-4.6 4.6M10.6 13.4L6 18',
+    },
+  ],
+  [IconName.Snowflake]: [
+    {
+      tag: 'path',
+      d: 'M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7M9.5 3.5L12 5.5l2.5-2M9.5 20.5L12 18.5l2.5 2',
+    },
+  ],
+  [IconName.Moon]: [{ tag: 'path', d: 'M20 15.5A8.5 8.5 0 0 1 8.5 4a8.5 8.5 0 1 0 11.5 11.5z' }],
+  [IconName.Twinkle]: [
+    {
+      tag: 'path',
+      d: 'M12 3c.6 4.4 2.6 6.4 7 7-4.4.6-6.4 2.6-7 7-.6-4.4-2.6-6.4-7-7 4.4-.6 6.4-2.6 7-7z',
+    },
+    { tag: 'circle', cx: 19, cy: 19, r: 1.2 },
+    { tag: 'circle', cx: 5, cy: 4.5, r: 1 },
+  ],
+  [IconName.MusicNote]: [
+    { tag: 'path', d: 'M9 18V5l11-2v13' },
+    { tag: 'circle', cx: 6.5, cy: 18, r: 2.5 },
+    { tag: 'circle', cx: 17.5, cy: 16, r: 2.5 },
+  ],
 };

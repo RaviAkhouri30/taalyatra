@@ -1,12 +1,19 @@
-<div class="promo">
+<div class="promo" [appFestivalLook]="festival()">
   <span class="fx" aria-hidden="true">
-    <span class="burst"></span><span class="burst"></span>
-    @for (slot of sparks; track slot) {
-      <span class="cspark"></span>
+    @if (animated()) {
+      <span class="burst"></span><span class="burst"></span>
+    }
+    @if (isDiwali()) {
+      @for (slot of sparks; track slot) {
+        <span class="cspark"></span>
+      }
     }
   </span>
+  @if (animated() && !isDiwali()) {
+    <app-festive-effects [festival]="festival()" [compact]="true" />
+  }
   <a class="promo-l" [routerLink]="promotion().link.route" [fragment]="promotion().link.fragment">
-    <span class="promo-ico"><app-diya-icon [palette]="diya" /></span>
+    <span class="promo-ico"><app-festival-icon [festival]="festival()" [diya]="diya" /></span>
     <b>{{ promotion().link.label }}</b>
   </a>
   <button

@@ -1,0 +1,33 @@
+@use 'tokens' as t;
+@use 'festive';
+
+@include festive.layer;
+
+// A soft glow: warm lights that brighten and fade, like lamps at the gurdwara.
+.fp {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    t.with-alpha(t.$color-fx-glow, 95%),
+    t.with-alpha(t.$color-fx-glow, 35%) 45%,
+    transparent 70%
+  );
+  animation-name: glow;
+  animation-duration: 4s;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.2);
+    opacity: 0.9;
+  }
+}

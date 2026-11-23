@@ -1,0 +1,44 @@
+@use 'tokens' as t;
+@use 'festive';
+
+@include festive.layer;
+
+// Colour puffs: soft clouds of gulal that swell and fade.
+.fp {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  filter: blur(7px);
+  background: t.$color-fx-pink;
+  animation-name: puff;
+  animation-duration: 3.2s;
+  animation-timing-function: ease-out;
+
+  &:nth-child(4n + 1) {
+    background: t.$color-fx-yellow;
+  }
+
+  &:nth-child(4n + 2) {
+    background: t.$color-fx-teal;
+  }
+
+  &:nth-child(4n + 3) {
+    background: t.$color-fx-blue;
+  }
+}
+
+@keyframes puff {
+  0% {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 0.75;
+  }
+
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}

@@ -204,6 +204,25 @@ $color-spark-pale: #fff0d2;
 $color-spark-glow: #ffe6b8;
 $color-spark-gold: #ffd79a;
 $color-spark-orange: #f3a24b;
+// The festival animations' particles (2.16.0): decoration only, never under words.
+$color-fx-pink: #ff5fa8;
+$color-fx-yellow: #ffd23f;
+$color-fx-teal: #3bceac;
+$color-fx-blue: #5f8bff;
+$color-fx-violet: #9b8cff;
+$color-fx-garba: #ffe066;
+$color-fx-marigold: #ffb347;
+$color-fx-vermilion: #ff7043;
+$color-fx-petal-pale: #fff1c1;
+$color-fx-flame-core: #fff4c2;
+$color-fx-flame: #ffb627;
+$color-fx-flame-edge: #ff5a1f;
+$color-fx-wheat: #f7d35a;
+$color-fx-wheat-deep: #d7a91f;
+$color-fx-stalk: #6a8f2a;
+$color-fx-glow: #fff4c8;
+$color-fx-bat: #1a0a22;
+$color-fx-bat-violet: #3c1361;
 
 // ---- Typography ----------------------------------------------------------
 // Each web font is followed by a metric-matched local fallback (see _fonts.scss), so the swap

@@ -1,0 +1,38 @@
+@use 'tokens' as t;
+@use 'festive';
+
+@include festive.layer;
+
+// Swirling garba dots: each circles its place, as dancers circle the lamp.
+.fp {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: t.$color-fx-garba;
+  box-shadow: 0 0 8px t.$color-fx-garba;
+  animation-name: swirl;
+  animation-duration: 3s;
+  animation-timing-function: linear;
+
+  &:nth-child(2n) {
+    background: t.$color-spark-white;
+    box-shadow: 0 0 8px t.$color-spark-white;
+  }
+}
+
+@keyframes swirl {
+  0% {
+    transform: rotate(0deg) translateX(18px) rotate(0deg);
+    opacity: 0;
+  }
+
+  15%,
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: rotate(360deg) translateX(18px) rotate(-360deg);
+    opacity: 0;
+  }
+}

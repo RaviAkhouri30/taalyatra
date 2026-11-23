@@ -116,6 +116,21 @@ flowchart TD
   LA --> S
 ```
 
+## Festival looks (2.16.0)
+
+The offer's festival (`site/config` `promotion.festival`) sets the badge's and the band's colours
+(`FestivalLookDirective`), icon (`FestivalIconComponent`) and animation. Each festival's animation is its own
+component, loaded only when used ([0028 design](../aidlc/0028-content-programme/02-design.md)).
+
+```mermaid
+flowchart TD
+  SH["SiteShellComponent"] -->|"@defer (on idle)"| PB["PromoBadgeComponent<br/>PromoPill · PromoCard (PromoStyle): appFestivalLook · FestivalIcon"]
+  HO["HomeOfferComponent"] --> BAND["#diwali band: appFestivalLook · FestivalIcon per card"]
+  PB -->|"not Diwali, animated: compact"| FE["FestiveEffectsComponent<br/>@switch (festival) → @defer"]
+  BAND --> FE
+  FE --> E["DiwaliEffect · HoliEffect · NavratriEffect · GaneshChaturthiEffect · DussehraEffect<br/>BaisakhiEffect · GurpurabEffect · ChristmasEffect · HalloweenEffect · NewYearEffect<br/>(FestiveEffect: one shared template, styles of their own)"]
+```
+
 ## The admin as an app (2.8.0)
 
 The shell adds the manifest and iPhone tags while the admin is open, through `AdminAppService`, and keeps the browser's

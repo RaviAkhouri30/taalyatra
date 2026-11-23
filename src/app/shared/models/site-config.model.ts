@@ -18,6 +18,7 @@ import { type SeoTexts } from '@shared/interfaces/i-seo-text';
 import { type ISocialLink } from '@shared/interfaces/i-social-link';
 import { PromotionSchedule } from '@shared/models/promotion-schedule.model';
 import { toWhatsAppUrl } from '@shared/utils/contact-links.util';
+import { toFestival } from '@shared/utils/festival.util';
 import { navLink } from '@shared/utils/link.util';
 
 /**
@@ -103,6 +104,7 @@ export class SiteConfigModel implements ISiteConfig {
       link: navLink(dto.label, AppRoute.Home, { fragment: PageAnchor.Diwali }),
       subtitle: dto.subtitle,
       dismissLabel: dto.dismissLabel,
+      festival: toFestival(dto.festival),
     };
   }
 }

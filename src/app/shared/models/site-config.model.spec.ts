@@ -1,7 +1,9 @@
 import { AppRoute } from '@shared/enums/app-route.enum';
+import { Festival } from '@shared/enums/festival.enum';
 import { IconName } from '@shared/enums/icon-name.enum';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { SocialPlatform } from '@shared/enums/social-platform.enum';
+import { type IPromotionDto } from '@shared/interfaces/i-site-config';
 import { SITE_DTO } from '@shared/testing/fixtures';
 import { SiteConfigModel } from './site-config.model';
 
@@ -63,6 +65,20 @@ describe('SiteConfigModel', () => {
       fragment: PageAnchor.Diwali,
     });
     expect(site.promotion?.subtitle).toBe('Light up your celebration');
+  });
+
+  it('should read the festival chosen with the offer’s dates (2.16.0)', () => {
+    const promotion = { ...SITE_DTO.promotion!, festival: 'holi' };
+
+    expect(new SiteConfigModel({ ...SITE_DTO, promotion }).promotion?.festival).toBe(Festival.Holi);
+  });
+
+  it('should have no festival chosen for a promotion from before 2.16.0', () => {
+    const promotion = Object.fromEntries(
+      Object.entries(SITE_DTO.promotion!).filter(([key]) => key !== 'festival'),
+    ) as unknown as IPromotionDto;
+
+    expect(new SiteConfigModel({ ...SITE_DTO, promotion }).promotion?.festival).toBeNull();
   });
 
   it('should have no promotion when none is stored', () => {

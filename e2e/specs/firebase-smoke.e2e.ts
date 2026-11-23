@@ -157,6 +157,30 @@ test.describe('Firebase smoke (emulator)', () => {
     await expect(page.getByRole('main')).toContainText('[Video title 1]');
   });
 
+  test('should publish a festival look through the Firestore rules, then set Diwali back', async ({
+    editor,
+    home,
+    page,
+  }) => {
+    // The viewports share one database: Diwali, the seeded look, is set back at the end.
+    const choose = async (label: string): Promise<void> => {
+      await editor.openTab('Offer');
+      await editor.card('Offer switch and dates').getByLabel('Festival').selectOption({ label });
+      await editor.waitForSave();
+      await editor.publish();
+    };
+    await editor.signIn({ email: 'admin@taalyatra.test', password: 'emulator-admin-password' });
+
+    await choose('Christmas · December');
+    await home.open();
+    await expect(home.offerSection).toHaveClass(/festival-look/);
+    await page.goto('/admin');
+    await choose('Diwali · Oct / Nov');
+    await home.open();
+
+    await expect(home.offerSection).not.toHaveClass(/festival-look/);
+  });
+
   test('should publish a change to the experiences through the Firestore rules', async ({
     editor,
     page,

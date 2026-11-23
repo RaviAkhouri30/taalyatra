@@ -1,7 +1,7 @@
 @if (model.data(); as offer) {
-  <section class="diwali" [id]="anchor">
+  <section class="diwali" [id]="anchor" [appFestivalLook]="offer.festival">
     <img class="dbg" ngSrc="/images/home/diwali-bg.svg" fill alt="" />
-    <app-festive-effects [theme]="offer.theme" />
+    <app-festive-effects [festival]="offer.festival" />
     <div class="wrap diwali-in">
       <p class="eyebrow">{{ offer.eyebrow }}</p>
       <h2 class="d title">{{ offer.title }}</h2>
@@ -9,7 +9,9 @@
       <div class="dgrid">
         @for (card of offer.cards; track card.title) {
           <div class="dcard">
-            <span class="dico"><app-diya-icon [palette]="diya" /></span>
+            <span class="dico"
+              ><app-festival-icon [festival]="offer.festival" [diya]="diya"
+            /></span>
             <h3 class="d">{{ card.title }}</h3>
             <p>{{ card.text }}</p>
             <p class="dnote">{{ card.note }}</p>

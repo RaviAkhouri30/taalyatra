@@ -1016,7 +1016,8 @@
         "dismissLabel": "Dismiss Diwali offer",
         "live": true,
         "startsOn": null,
-        "endsOn": null
+        "endsOn": null,
+        "festival": "diwali"
       },
       "copyrightYear": 2026,
       "labels": {

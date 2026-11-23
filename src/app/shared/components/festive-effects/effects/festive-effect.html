@@ -1,0 +1,5 @@
+<span class="fx" [class.fx--compact]="compact()" aria-hidden="true">
+  @for (particle of particles(); track $index) {
+    <span class="fp" [appParticle]="particle"></span>
+  }
+</span>

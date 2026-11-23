@@ -63,7 +63,11 @@ describe('SiteShellComponent', () => {
   }
 
   it('should frame the home page with home chrome and no WhatsApp button', async () => {
-    const { element } = await renderAt('/');
+    const { fixture, element } = await renderAt('/');
+    // The badge loads after the first screen (@defer on idle, 2.16.0); finish loading it.
+    await Promise.all(
+      (await fixture.getDeferBlocks()).map((block) => block.render(DeferBlockState.Complete)),
+    );
 
     expect(element.querySelector('main .page')).not.toBeNull();
     expect(element.querySelector('app-header a.navhot')).not.toBeNull();

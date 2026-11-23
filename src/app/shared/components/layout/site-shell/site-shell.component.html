@@ -16,7 +16,10 @@
   @if (chrome && site) {
     <app-footer [site]="site" [chrome]="chrome" />
     @if (model.showPromoBadge() && site.promotion; as promotion) {
-      <app-promo-badge [promotion]="promotion" [variant]="chrome.promo" />
+      <!-- Floats over the page, so it can arrive later: its looks stay out of the first download. -->
+      @defer (on idle) {
+        <app-promo-badge [promotion]="promotion" [variant]="chrome.promo" />
+      }
     }
     @if (model.showActionBar()) {
       <app-mobile-action-bar [contact]="site.contact" [cta]="chrome.actionBarCta" />
