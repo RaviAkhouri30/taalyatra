@@ -129,6 +129,34 @@ test.describe('Firebase smoke (emulator)', () => {
     await expect(editor.card('Photos').getByLabel('Description').first()).toHaveValue(second);
   });
 
+  test('should publish a hidden video through the Firestore rules, then show it again', async ({
+    editor,
+    page,
+  }) => {
+    // The viewports share one database: the video is shown again at the end, as it was.
+    const toggle = async (on: boolean): Promise<void> => {
+      await editor.openTab('Videos');
+      const videos = editor.card('Videos');
+      await videos.getByRole('button', { name: /^\[Video title 1\]/ }).click();
+      const hidden = videos
+        .getByRole('group', { name: 'Video 1', exact: true })
+        .getByRole('switch', { name: 'Hidden' });
+      await (on ? hidden.check() : hidden.uncheck());
+      await editor.waitForSave();
+      await editor.publish();
+    };
+    await editor.signIn({ email: 'admin@taalyatra.test', password: 'emulator-admin-password' });
+
+    await toggle(true);
+    await page.goto('/videos');
+    await expect(page.getByRole('main')).not.toContainText('[Video title 1]');
+    await page.goto('/admin');
+    await toggle(false);
+    await page.goto('/videos');
+
+    await expect(page.getByRole('main')).toContainText('[Video title 1]');
+  });
+
   test('should publish a change to the experiences through the Firestore rules', async ({
     editor,
     page,

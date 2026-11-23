@@ -4,6 +4,7 @@ import { ViewModel } from '@shared/base/view-model';
 import { AppRoute } from '@shared/enums/app-route.enum';
 import { SiteVisibilityService } from '@shared/services/site-visibility.service';
 import { navLink } from '@shared/utils/link.util';
+import { shownOnly } from '@shared/utils/shown-only.util';
 import { visibleLink } from '@shared/utils/visibility.util';
 import { HomeProofService } from './home-proof.service';
 import { type IProofView } from './i-proof';
@@ -21,7 +22,8 @@ export class HomeProofViewModel extends ViewModel<IProofView> {
     ]).pipe(
       tap(([dto, visibility]) => {
         const achievementsPage = visibleLink(navLink(dto.cta, AppRoute.Achievements), visibility);
-        this.setData({ ...dto, achievementsPage });
+        // shownOnly: a hidden testimonial (2.15.0) isn't shown.
+        this.setData({ ...dto, testimonials: shownOnly(dto.testimonials), achievementsPage });
       }),
     );
   }

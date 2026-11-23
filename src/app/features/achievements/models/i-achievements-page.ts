@@ -1,3 +1,4 @@
+import { type IHideable } from '@shared/interfaces/i-hideable';
 import { type IPageCtaDto } from '@shared/interfaces/i-page-cta';
 import { type IPageHeroDto } from '@shared/interfaces/i-page-hero';
 
@@ -8,7 +9,7 @@ export interface IAchievementStatDto {
 }
 
 /** A point on the milestones timeline. */
-export interface IMilestoneDto {
+export interface IMilestoneDto extends IHideable {
   /** A year, or a word such as "Today". */
   readonly year: string;
   readonly title: string;

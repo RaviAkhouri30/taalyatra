@@ -1,5 +1,6 @@
+import { type IHideable } from '@shared/interfaces/i-hideable';
 /** A question and its answer; `open` shows it expanded on load. */
-export interface IFaqItemDto {
+export interface IFaqItemDto extends IHideable {
   readonly question: string;
   readonly answer: string;
   readonly open: boolean;

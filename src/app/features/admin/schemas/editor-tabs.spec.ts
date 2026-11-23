@@ -82,8 +82,10 @@ describe('editor schemas', () => {
     const fields =
       list?.kind === FieldKind.List && list.item.kind === FieldKind.Group ? list.item.fields : [];
 
+    // `hidden` (2.15.0) is optional: today's items don't have it.
+    const edited = new Set(fields.map((field) => field.key).filter((key) => key !== 'hidden'));
     for (const item of items) {
-      expect(new Set(fields.map((field) => field.key))).toEqual(new Set(Object.keys(item)));
+      expect(edited).toEqual(new Set(Object.keys(item)));
     }
   });
 

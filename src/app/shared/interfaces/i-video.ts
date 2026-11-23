@@ -1,7 +1,8 @@
+import { type IHideable } from '@shared/interfaces/i-hideable';
 import { type IImage } from './i-image';
 
 /** A video as stored in the backend (`videos`), shared by the home teaser and the Videos page. */
-export interface IVideoDto {
+export interface IVideoDto extends IHideable {
   readonly title: string;
   /** Filter category on the Videos page. */
   readonly category: string;

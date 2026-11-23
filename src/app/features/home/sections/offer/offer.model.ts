@@ -1,3 +1,4 @@
+import { shownOnly } from '@shared/utils/shown-only.util';
 import { AppRoute } from '@shared/enums/app-route.enum';
 import { type FestiveTheme } from '@shared/enums/festive-theme.enum';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
@@ -24,7 +25,8 @@ export class OfferModel {
     this.eyebrow = dto.eyebrow;
     this.title = dto.title;
     this.lead = dto.lead;
-    this.cards = dto.cards;
+    // A hidden card (2.15.0) isn't shown.
+    this.cards = shownOnly(dto.cards);
     this.proposal = navLink(dto.primaryCta, AppRoute.Home, { fragment: PageAnchor.Contact });
     this.whatsApp = externalLink(dto.whatsAppCta, toWhatsAppUrl(contact.phone));
     this.footnote = dto.footnote;

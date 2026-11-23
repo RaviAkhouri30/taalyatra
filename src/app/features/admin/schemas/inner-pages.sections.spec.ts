@@ -1,6 +1,7 @@
 import fakeDb from '@core/backends/fake/fake-db.json';
 import { AppRoute } from '@shared/enums/app-route.enum';
 import { buildFormGroup } from '../forms/schema-control.factory';
+import { withoutHiddenOff } from '../testing/hidden-off';
 import { ContentPath } from '../models/content-path.enum';
 import { EditorTab } from '../models/editor-tab.enum';
 import { type IEditorSection } from '../models/i-editor-section';
@@ -32,7 +33,7 @@ describe('inner page schemas', () => {
       const values = buildFormGroup(section.fields, document).getRawValue();
 
       for (const field of section.fields) {
-        expect(values[field.key], field.key).toEqual(document[field.key]);
+        expect(withoutHiddenOff(values[field.key]), field.key).toEqual(document[field.key]);
       }
     },
   );

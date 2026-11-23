@@ -43,7 +43,7 @@ export function groupList(
   [label, addLabel, itemLabel]: readonly [string, string, string],
   maxItems: number,
   fields: readonly FieldSchema[],
-): IListFieldSchema {
+): IListFieldSchema & { readonly item: IGroupFieldSchema } {
   const item: IGroupFieldSchema = { key: 'item', label: itemLabel, kind: FieldKind.Group, fields };
   return { key, label, kind: FieldKind.List, addLabel, maxItems, item };
 }

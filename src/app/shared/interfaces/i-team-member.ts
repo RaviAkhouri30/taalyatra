@@ -1,7 +1,8 @@
+import { type IHideable } from '@shared/interfaces/i-hideable';
 import { type IImage } from './i-image';
 
 /** A team member as stored in the backend (`team`); edited from the admin "Team" tab. */
-export interface ITeamMemberDto {
+export interface ITeamMemberDto extends IHideable {
   readonly name: string;
   readonly role: string;
   readonly bio: string;

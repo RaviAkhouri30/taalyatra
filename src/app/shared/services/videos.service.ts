@@ -1,8 +1,9 @@
 import { Service } from '@angular/core';
-import { type Observable } from 'rxjs';
+import { type Observable, map } from 'rxjs';
 import { ApiBaseService } from '@shared/base/api-base.service';
 import { ApiEndpoint } from '@shared/enums/api-endpoint.enum';
 import { cacheLatest } from '@shared/utils/cache-latest.util';
+import { shownOnly } from '@shared/utils/shown-only.util';
 import { type IVideoDto } from '@shared/interfaces/i-video';
 
 /**
@@ -11,7 +12,8 @@ import { type IVideoDto } from '@shared/interfaces/i-video';
  */
 @Service()
 export class VideosService extends ApiBaseService<readonly IVideoDto[]> {
-  private readonly cached$ = this.attachViewDataHandler().pipe(cacheLatest());
+  // shownOnly: a hidden item (2.15.0) never reaches a page, whichever page reads the list.
+  private readonly cached$ = this.attachViewDataHandler().pipe(map(shownOnly), cacheLatest());
 
   public override attachViewDataHandler(): Observable<readonly IVideoDto[]> {
     return this.attachViewApiHandler(ApiEndpoint.Videos);

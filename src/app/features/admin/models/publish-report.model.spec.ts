@@ -122,6 +122,21 @@ describe('PublishReport', () => {
         [],
       );
     });
+
+    it('should warn, without blocking, when the featured show is hidden (2.15.0)', () => {
+      const result = report([{ featured: true, hidden: true }, { featured: false }]);
+
+      expect(result.canPublish).toBe(true);
+      expect(result.warnings).toEqual([
+        expect.objectContaining({
+          message: 'The featured show is hidden, so the spotlight shows none.',
+        }),
+      ]);
+    });
+
+    it('should not warn about a hidden show that isn’t featured', () => {
+      expect(report([{ featured: true }, { featured: false, hidden: true }]).warnings).toEqual([]);
+    });
   });
 
   describe('images no longer in the library', () => {

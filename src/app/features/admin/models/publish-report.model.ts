@@ -5,6 +5,7 @@ import { FormChoicesRule } from './form-choices-rule';
 import { IssueSeverity } from './issue-severity.enum';
 import {
   ContrastRule,
+  HiddenFeaturedShowRule,
   ImageInLibraryRule,
   type IPublishRule,
   OneFeaturedShowRule,
@@ -20,6 +21,7 @@ export class PublishReport {
     new SchemaRule(),
     new OneFeaturedShowRule(),
     new FormChoicesRule(),
+    new HiddenFeaturedShowRule(),
     new ImageInLibraryRule(),
     new PromotionDatesRule(),
     new ContrastRule(),

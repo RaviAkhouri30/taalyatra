@@ -78,10 +78,15 @@ function resolveFakePath(path: string): unknown {
 /**
  * A synchronous `IHttpBackend` that answers every read from `fake-db.json` (404 when missing), for
  * specs that render whole pages. Returns the provider and its `get` spy.
+ * @param overrides Answers for some paths instead of `fake-db.json`'s, e.g. a list with a hidden item.
  */
-export function provideFakeContent(): { provider: Provider; get: ReturnType<typeof vi.fn> } {
+export function provideFakeContent(overrides: Readonly<Record<string, unknown>> = {}): {
+  provider: Provider;
+  get: ReturnType<typeof vi.fn>;
+} {
+  const replaced = new Map(Object.entries(overrides));
   const get = vi.fn((path: string) => {
-    const body = resolveFakePath(path);
+    const body = replaced.has(path) ? replaced.get(path) : resolveFakePath(path);
     return of(
       body === undefined
         ? new HttpResponse({ status: HttpStatusCode.NotFound })

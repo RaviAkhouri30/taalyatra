@@ -16,3 +16,12 @@ export function entriesOf(node: unknown): Map<string, unknown> {
 export function fieldOf(node: unknown, key: string): unknown {
   return entriesOf(node).get(key);
 }
+
+/**
+ * @param node Any value.
+ * @param path Keys joined by dots, e.g. `photo.alt`.
+ * @returns The value at that path, or `undefined` where a step is missing.
+ */
+export function fieldAt(node: unknown, path: string): unknown {
+  return path.split('.').reduce<unknown>((value, key) => fieldOf(value, key), node);
+}

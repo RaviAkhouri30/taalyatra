@@ -23,12 +23,15 @@ function within(prefix: string, label: string): string {
  * @param fields The fields edited.
  * @param source The stored document (or nested object).
  * @param prefix Label of the list item being entered, if any.
+ * @param itemLabel That item's label, e.g. "Photo": a field named the same adds nothing, so a
+ *   gallery photo reads "Photos · Photo 1", not "Photos · Photo 1 · Photo" (2.15.0).
  * @returns Every edited value, in form order.
  */
 export function schemaLeaves(
   fields: readonly FieldSchema[],
   source: unknown,
   prefix = '',
+  itemLabel = '',
 ): ISchemaLeaf[] {
   return fields.flatMap((field): ISchemaLeaf[] => {
     const value = fieldOf(source, field.key);
@@ -38,17 +41,18 @@ export function schemaLeaves(
         return [];
       }
       // Groups mirror nested storage; the owner sees their fields directly, so no label part.
-      return schemaLeaves(field.fields, value, prefix);
+      return schemaLeaves(field.fields, value, prefix, itemLabel);
     }
     if (field.kind === FieldKind.List) {
       const { item } = field;
       return (Array.isArray(value) ? value : []).flatMap((entry: unknown, index) => {
         const label = within(prefix, `${item.label} ${String(index + 1)}`);
         return item.kind === FieldKind.Group
-          ? schemaLeaves(item.fields, entry, label)
+          ? schemaLeaves(item.fields, entry, label, item.label)
           : [{ label, field: item, value: entry }];
       });
     }
-    return [{ label: within(prefix, field.label), field, value }];
+    const label = field.label === itemLabel ? prefix : within(prefix, field.label);
+    return [{ label, field, value }];
   });
 }

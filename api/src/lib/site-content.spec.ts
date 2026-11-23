@@ -70,6 +70,18 @@ describe('site content (0025 V7)', () => {
     expect(wordsOf({ integerValue: '3' })).toEqual([]);
   });
 
+  it('should leave out an item the owner hid, keeping the rest (2.15.0)', () => {
+    const question = (text: string, hidden: boolean) => ({
+      mapValue: { fields: { question: restText(text), hidden: { booleanValue: hidden } } },
+    });
+
+    expect(
+      wordsOf({
+        arrayValue: { values: [question('Shown?', false), question('Hidden?', true)] },
+      }),
+    ).toEqual(['Shown?']);
+  });
+
   it('should read the chosen sections, the show formats and the business, not the offer or the gallery', async () => {
     const text = siteText({
       home: await restList('home', HOME).json(),

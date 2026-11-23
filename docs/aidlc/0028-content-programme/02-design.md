@@ -242,3 +242,68 @@ The **Proposal form** page, which edits only the section's heading today, gains 
 ---
 
 **Approval (2.12.0):** ☑ Approved by Ravi Akhouri on 2026-11-23.
+
+# 2.15.0 · Hide one item
+
+The fourth release of the programme (inception D4): a **Hidden** switch on each item of eight lists, so the owner can
+take one off the site without deleting it.
+
+| List           | Stored in                       | Where the site shows it                             |
+| -------------- | ------------------------------- | --------------------------------------------------- |
+| Videos         | `videos` (collection)           | the home page's videos, the Videos page             |
+| Team members   | `team` (collection)             | the home page's team, the Team page                 |
+| Show formats   | `showFormats` (collection)      | the home page's shows and spotlight, the Shows page |
+| Gallery photos | `gallery` (collection)          | the home page's gallery and its full-size view      |
+| Testimonials   | `home/proof.testimonials`       | the home page                                       |
+| FAQ questions  | `home/faq.items`                | the home page, and the AI chat's knowledge          |
+| Offer cards    | `home/offer.cards`              | the home page's offer                               |
+| Milestones     | `pages/achievements.milestones` | the Achievements page                               |
+
+## How it works
+
+- **Stored as `hidden: true`** on the item; a missing `hidden` is shown, so today's data needs nothing.
+- **The editor:** each of these lists' items gains a **Hidden** switch, off by default ("Kept here, but not shown on
+  the site"). A hidden item stays in its place in the list and in the Order panel, marked **Hidden** beside its
+  title, and can be edited as before. One flag on the list's schema, `hideable`, adds the switch and the mark, so a
+  later list is one line.
+- **The site:** each page skips hidden items before anything else, with one shared function, `shownOnly(items)`
+  (`shared/utils`), in the view models that read these lists. So counts, filters ("Showing 6 videos", the video
+  categories), the gallery's full-size view, and the next and previous buttons only know the items that show.
+- **The featured show:** a hidden featured show gives no spotlight. Publishing then warns: "The featured show is
+  hidden, so the spotlight shows none".
+- **The AI chat (0025):** the function skips any item with `hidden: true` when it reads the site's published text, so
+  it never answers from a hidden FAQ question.
+- **Not private:** a hidden item is still in the published data (D4). The switch's hint says so: "Visitors don't see
+  it, but it isn't secret: delete it to remove it."
+- **The first download doesn't change:** these lists are read only by the home page's sections and the inner pages,
+  which load later. The build's budget checks it.
+
+## The rules
+
+| Rule                                                                           | Change                                                                        |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| `isValidVideo`, `isValidTeamMember`, `isValidShowFormat`, `isValidGalleryItem` | allow one more key, `hidden`, which must be `true` or `false` when it's there |
+| home and page documents                                                        | nothing: their lists aren't checked item by item (held by the editor)         |
+
+## Tests
+
+- **Unit:** `shownOnly`; each list's view model with a hidden item (home and inner pages, the gallery's full-size
+  view, the video counts and categories, the spotlight); the switch and the Hidden mark in the editor; the publish
+  warning; the drift guard counting `hidden` as an optional key.
+- **Function:** the chat's text without a hidden FAQ question.
+- **Rules:** each collection accepts `hidden` as true or false, and refuses any other value.
+- **E2E (three sizes, axe):** hide a video and a FAQ question, publish, and see neither on the site; show them again;
+  the Hidden mark in the editor.
+- **Firebase smoke:** a hidden video published through the rules.
+
+## Increments
+
+1. `shownOnly`; the site's view models.
+2. The list schema's `hideable`, the switch and the mark; the eight lists.
+3. The publish warning; the rules and their tests.
+4. The chat function.
+5. E2E, docs, CHANGELOG.
+
+---
+
+**Approval (2.15.0):** ☑ Approved by Ravi Akhouri on 2026-11-23.

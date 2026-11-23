@@ -73,7 +73,10 @@ export interface IGroupFieldSchema extends IFieldBase {
 
 /** A list that gets an Order panel and folding items (0015 V14). */
 export interface ISortableList {
-  /** The item value's key that names it in the Order panel, e.g. `title` (or `alt` for a picture). */
+  /**
+   * The item value's key that names it in the Order panel, e.g. `title`, or a dotted path into a
+   * group, e.g. `photo.alt`.
+   */
   readonly titleKey: string;
   /** The item's on/off key that marks it featured: pinned first, and can't be moved below others. */
   readonly featuredKey?: string;
@@ -91,6 +94,8 @@ export interface IListFieldSchema extends IFieldBase {
   readonly minItems?: number;
   /** Long lists get an Order panel above them, and their items fold (0015 V14). */
   readonly sortable?: ISortableList;
+  /** Its items have a Hidden switch, and a hidden one is marked (2.15.0); see `hideable()`. */
+  readonly hideable?: boolean;
 }
 
 /** Any editor field. */

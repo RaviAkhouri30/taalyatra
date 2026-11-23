@@ -30,6 +30,29 @@ describe('ListOrderComponent', () => {
     };
   }
 
+  it('should mark a hidden item when the list can hide them (2.15.0)', async () => {
+    const hiddenShow = new FormGroup({
+      title: new FormControl('Two', { nonNullable: true }),
+      hidden: new FormControl(true, { nonNullable: true }),
+    });
+    const items = new FormArray<FormGroup>([show('One'), hiddenShow]);
+    const fixture = TestBed.createComponent(ListOrderComponent);
+    fixture.componentRef.setInput('items', items);
+    fixture.componentRef.setInput('sortable', { titleKey: 'title' });
+    fixture.componentRef.setInput('itemLabel', 'Show');
+    fixture.componentRef.setInput('value', items.value);
+    fixture.componentRef.setInput('hideable', true);
+    await fixture.whenStable();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(
+      Array.from(
+        element.querySelectorAll('.lo-row'),
+        (row) => row.querySelector('.lo-hidden') !== null,
+      ),
+    ).toEqual([false, true]);
+  });
+
   it('should list the items by title, in order', async () => {
     const { names } = await render(new FormArray([show('Live band'), show('Acoustic')]));
 

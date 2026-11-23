@@ -12,6 +12,20 @@ describe('AchievementsPageModel', () => {
     expect(page.performances.items).toHaveLength(5);
   });
 
+  it('should leave a hidden milestone out (2.15.0)', () => {
+    const milestones = PAGES.achievements.milestones;
+    const page = new AchievementsPageModel({
+      ...PAGES.achievements,
+      milestones: {
+        ...milestones,
+        items: milestones.items.map((item, index) => ({ ...item, hidden: index === 0 })),
+      },
+    });
+
+    expect(page.milestones.items).toHaveLength(milestones.items.length - 1);
+    expect(page.milestones.items[0]?.title).toBe(milestones.items[1]?.title);
+  });
+
   it('should keep a press link only when the article is known', () => {
     const page = new AchievementsPageModel({
       ...PAGES.achievements,

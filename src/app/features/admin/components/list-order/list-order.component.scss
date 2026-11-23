@@ -103,3 +103,16 @@
     transition: none;
   }
 }
+
+// Taken off the site but kept here (2.15.0): a quiet tag, so it reads as set aside.
+.lo-hidden {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border: 1px dashed t.$color-line;
+  border-radius: 999px;
+  color: t.$color-muted-strong;
+  font-size: t.size(12px);
+  font-weight: 700;
+  vertical-align: middle;
+}

@@ -6,6 +6,7 @@ import { type IEditorSection } from '../models/i-editor-section';
 import { type ITextFieldSchema, type IToggleFieldSchema } from '../models/i-field-schema';
 import { IMAGE_ASPECT } from '../models/image-aspect.constants';
 import { CARD_TEXT, CARD_TITLE, ITEM_NUMBER, groupList } from './home-parts';
+import { hideable } from './hideable';
 import { HEADING_FIELDS, buttonLabel, image, multiline, text } from './schema-fields';
 
 const { eyebrow, title, lead } = HEADING_FIELDS;
@@ -104,19 +105,21 @@ export const TESTIMONIALS_SECTIONS: readonly IEditorSection[] = [
     path: ContentPath.HomeProof,
     anchor: PageAnchor.Proof,
     fields: [
-      groupList(
-        'testimonials',
-        ['Testimonials', 'Add testimonial', 'Testimonial'],
-        HOME_MAX_ITEMS.testimonials,
-        [
-          multiline('quote', 'Quote', { required: true, maxLength: L.quote }),
-          text('name', 'Name', { required: true, maxLength: L.name }),
-          text('detail', 'Role, company or occasion', { maxLength: L.detail }),
-          text('initial', 'Letter in the circle', {
-            maxLength: L.initial,
-            hint: 'Usually the first letter of the name.',
-          }),
-        ],
+      hideable(
+        groupList(
+          'testimonials',
+          ['Testimonials', 'Add testimonial', 'Testimonial'],
+          HOME_MAX_ITEMS.testimonials,
+          [
+            multiline('quote', 'Quote', { required: true, maxLength: L.quote }),
+            text('name', 'Name', { required: true, maxLength: L.name }),
+            text('detail', 'Role, company or occasion', { maxLength: L.detail }),
+            text('initial', 'Letter in the circle', {
+              maxLength: L.initial,
+              hint: 'Usually the first letter of the name.',
+            }),
+          ],
+        ),
       ),
     ],
   },
@@ -144,10 +147,12 @@ export const FAQ_SECTION: IEditorSection = {
   fields: [
     eyebrow,
     title,
-    groupList('items', ['Questions', 'Add question', 'Question'], HOME_MAX_ITEMS.faq, [
-      text('question', 'Question', { required: true, maxLength: L.question }),
-      multiline('answer', 'Answer', { required: true, maxLength: L.answer }),
-      offSwitch('open', 'Open at first', 'Shows the answer without a click.'),
-    ]),
+    hideable(
+      groupList('items', ['Questions', 'Add question', 'Question'], HOME_MAX_ITEMS.faq, [
+        text('question', 'Question', { required: true, maxLength: L.question }),
+        multiline('answer', 'Answer', { required: true, maxLength: L.answer }),
+        offSwitch('open', 'Open at first', 'Shows the answer without a click.'),
+      ]),
+    ),
   ],
 };
