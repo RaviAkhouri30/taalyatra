@@ -15,6 +15,7 @@
           [value]="list.items.value"
           [sortable]="sortable"
           [itemLabel]="list.schema.item.label"
+          [hideable]="list.schema.hideable === true"
         />
       }
       @if (list.items.length === 0) {
@@ -28,6 +29,7 @@
         <div
           class="sf-item"
           role="group"
+          [class.sf-item--hidden]="isHidden(list.schema, item)"
           [attr.aria-label]="list.schema.item.label + ' ' + (i + 1)"
         >
           @if (list.schema.sortable; as sortable) {
@@ -40,6 +42,9 @@
               (click)="toggleItem(item)"
             >
               {{ itemTitle(sortable, list.schema.item.label, item, i) }}
+              @if (isHidden(list.schema, item)) {
+                <span class="sf-hidden">Hidden</span>
+              }
               <svg class="sf-chev" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" />
               </svg>
@@ -52,7 +57,12 @@
           >
             @if (list.schema.item.kind === kind.Group) {
               @if (!list.schema.sortable) {
-                <p class="sf-item-title">{{ list.schema.item.label }} {{ i + 1 }}</p>
+                <p class="sf-item-title">
+                  {{ list.schema.item.label }} {{ i + 1 }}
+                  @if (isHidden(list.schema, item)) {
+                    <span class="sf-hidden">Hidden</span>
+                  }
+                </p>
               }
               <app-schema-fields
                 [fields]="list.schema.item.fields"

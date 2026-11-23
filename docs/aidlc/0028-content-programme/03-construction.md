@@ -103,3 +103,33 @@ Built on the approved [design](02-design.md) (2.12.0).
 ---
 
 **Approval (2.12.0):** ☑ Approved by Ravi Akhouri on 2026-11-23.
+
+# 2.15.0 · Hide one item
+
+Built on the approved [design](02-design.md) (2.15.0).
+
+| #   | Increment         | Files                                                                                                                                                                                                                                                                    | Tests                                                                                                                                                                                                                              |
+| --- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | The site          | `IHideable`, `shownOnly`; the four collection services (`videos`, `team`, `showFormats`, `gallery`); the FAQ and proof view models; the offer and achievements models                                                                                                    | `shown-only.util.spec.ts`; `hidden-items.spec.ts` (each collection); the FAQ and proof view models', the offer and achievements models' specs                                                                                      |
+| 2   | The editor        | `IListFieldSchema.hideable`, `hideable()`, `HIDDEN_FIELD`; the eight lists; `GALLERY_VIEW` (each photo a picture and its switch, stored as before); `fieldAt` (dotted titles); the Hidden marks in the list and its Order panel; `schemaLeaves` without a repeated label | `hideable.spec.ts` (exactly the eight lists), `gallery-view.spec.ts`, `json-node.spec.ts`, `schema-leaves.spec.ts`, `list-order.component.spec.ts`, `schema-fields-hidden.spec.ts`; the load and drift checks ignore an off switch |
+| 3   | Warning and rules | `HiddenFeaturedShowRule`; `isHiddenOrMissing` in the four collections' rules                                                                                                                                                                                             | `publish-report.model.spec.ts`; `firestore-hidden-items.rules.spec.ts` (12)                                                                                                                                                        |
+| 4   | The chat          | `wordsOf` (`api/`) leaves out a map with `hidden: true`                                                                                                                                                                                                                  | `site-content.spec.ts`                                                                                                                                                                                                             |
+| 5   | E2E and records   | `admin-hide-items.e2e.ts`; `firebase-smoke.e2e.ts` (a hidden video through the rules, then shown again); data model, CHANGELOG                                                                                                                                           | a video and a question taken off and put back, the marks, axe; three sizes                                                                                                                                                         |
+
+## Decisions & deviations from design
+
+- **The collections are filtered in their shared services**, not in each view model as the design said: seven pages
+  read those four lists, and one place can't be missed by a page added later.
+- **The gallery needed a view:** its items were bare pictures, with nowhere for a switch. The editor now shows each
+  as a group (the picture and Hidden) while the stored item stays the picture, `hidden: true` only when hidden, so
+  the site, backups, the photo library's uses and the rules see the same shape. Its Order panel names a photo by
+  `photo.alt`, so titles may now be dotted paths.
+- **A location doesn't repeat its item's label:** a gallery photo is "Photos · Photo 1", not "… · Photo 1 · Photo".
+- **The chat skips any map marked hidden**, so hidden shows are left out too, not only questions.
+- **A hidden item's fold button reads "… Hidden"**, so screen readers hear it as well.
+- **The first download didn't change** (509.99 kB).
+- **No dependency added.**
+
+---
+
+**Approval (2.15.0):** ☑ Approved by Ravi Akhouri on 2026-11-23.

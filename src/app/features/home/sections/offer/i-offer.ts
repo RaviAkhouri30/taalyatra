@@ -1,5 +1,6 @@
+import { type IHideable } from '@shared/interfaces/i-hideable';
 /** One package in a seasonal offer. */
-export interface IOfferCardDto {
+export interface IOfferCardDto extends IHideable {
   readonly title: string;
   readonly text: string;
   /** Duration and price line (a visible placeholder until the business fills it in). */

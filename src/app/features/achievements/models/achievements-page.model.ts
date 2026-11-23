@@ -1,3 +1,4 @@
+import { shownOnly } from '@shared/utils/shown-only.util';
 import { AppRoute } from '@shared/enums/app-route.enum';
 import { type IconName } from '@shared/enums/icon-name.enum';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
@@ -44,7 +45,8 @@ export class AchievementsPageModel {
   public constructor(dto: IAchievementsPageDto) {
     this.hero = dto.hero;
     this.stats = dto.stats;
-    this.milestones = dto.milestones;
+    // A hidden milestone (2.15.0) isn't shown.
+    this.milestones = { ...dto.milestones, items: shownOnly(dto.milestones.items) };
     this.recognition = {
       eyebrow: dto.recognition.eyebrow,
       title: dto.recognition.title,

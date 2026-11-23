@@ -67,7 +67,8 @@ function entries(value: unknown): ReadonlyMap<string, unknown> {
 /**
  * @param value A Firestore REST value.
  * @param key Its field's name.
- * @returns Its words: strings that aren't addresses, from maps and lists too.
+ * @returns Its words: strings that aren't addresses, from maps and lists too, leaving out a map
+ *   the owner hid (`hidden: true`, 2.15.0).
  */
 export function wordsOf(value: unknown, key = ''): string[] {
   const parts = entries(value);
@@ -77,9 +78,12 @@ export function wordsOf(value: unknown, key = ''): string[] {
     return SKIPPED_KEYS.has(key) || isAddress || !text.trim() ? [] : [text.trim()];
   }
   if (parts.has('mapValue')) {
-    return [...entries(entries(parts.get('mapValue')).get('fields'))].flatMap(([name, inner]) =>
-      wordsOf(inner, name),
-    );
+    const fields = entries(entries(parts.get('mapValue')).get('fields'));
+    // An item the owner hid (2.15.0), a FAQ question or a show: the chat never answers from it.
+    if (entries(fields.get('hidden')).get('booleanValue') === true) {
+      return [];
+    }
+    return [...fields].flatMap(([name, inner]) => wordsOf(inner, name));
   }
   const list = entries(parts.get('arrayValue')).get('values');
   return Array.isArray(list) ? list.flatMap((inner: unknown) => wordsOf(inner, key)) : [];

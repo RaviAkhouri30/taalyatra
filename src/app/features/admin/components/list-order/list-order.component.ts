@@ -10,7 +10,8 @@ import {
   untracked,
 } from '@angular/core';
 import { type AbstractControl, type FormArray } from '@angular/forms';
-import { fieldOf } from '../../forms/json-node';
+import { fieldAt, fieldOf } from '../../forms/json-node';
+import { HIDDEN_KEY } from '../../schemas/hideable';
 import { moveListItemTo } from '../../forms/list-items';
 import { type ISortableList } from '../../models/i-field-schema';
 
@@ -20,6 +21,8 @@ interface IOrderRow {
   readonly index: number;
   readonly title: string;
   readonly featured: boolean;
+  /** Taken off the site (2.15.0). */
+  readonly hidden: boolean;
 }
 
 /**
@@ -41,6 +44,8 @@ export class ListOrderComponent {
   public readonly sortable = input.required<ISortableList>();
   /** An item's label, e.g. "Show", for untitled items. */
   public readonly itemLabel = input.required<string>();
+  /** Its items can be hidden (2.15.0): a hidden one is marked. */
+  public readonly hideable = input(false);
   /**
    * The list's current value. A form list changes in place, so this is what tells the panel it
    * changed: the editor passes `items.value`, a new array after every change. (Not `toSignal` of
@@ -105,7 +110,7 @@ export class ListOrderComponent {
     const { titleKey, featuredKey } = this.sortable();
     return list.controls.map((control, index) => {
       const value: unknown = control.value;
-      const title = fieldOf(value, titleKey);
+      const title = fieldAt(value, titleKey);
       return {
         control,
         index,
@@ -114,6 +119,7 @@ export class ListOrderComponent {
             ? title.trim()
             : `${this.itemLabel()} ${String(index + 1)}`,
         featured: featuredKey !== undefined && fieldOf(value, featuredKey) === true,
+        hidden: this.hideable() && fieldOf(value, HIDDEN_KEY) === true,
       };
     });
   }

@@ -13,6 +13,7 @@ import {
   LIST_TITLE,
   groupList,
 } from './home-parts';
+import { hideable } from './hideable';
 import { PAGE_CTA_FIELD, PAGE_HERO_FIELD, group } from './page-parts';
 import { text } from './schema-fields';
 
@@ -67,16 +68,23 @@ export const ACHIEVEMENTS_SECTIONS: readonly IEditorSection[] = [
     ]),
   ]),
   card('achievements-milestones', 'Milestones', [
-    titledList(
-      'milestones',
-      ['Milestones', 'Add milestone', 'Milestone'],
-      PAGE_MAX_ITEMS.milestones,
-      [
-        { ...YEAR, required: true, hint: 'A year, or a word such as Today.' },
-        CARD_TITLE,
-        CARD_TEXT,
-      ],
-    ),
+    // Built here rather than with titledList: its milestones can be hidden (2.15.0).
+    group('milestones', 'Milestones', [
+      LIST_EYEBROW,
+      LIST_TITLE,
+      hideable(
+        groupList(
+          'items',
+          ['Milestones', 'Add milestone', 'Milestone'],
+          PAGE_MAX_ITEMS.milestones,
+          [
+            { ...YEAR, required: true, hint: 'A year, or a word such as Today.' },
+            CARD_TITLE,
+            CARD_TEXT,
+          ],
+        ),
+      ),
+    ]),
   ]),
   card('achievements-recognition', 'Recognition', [
     titledList('recognition', ['Recognition', 'Add award', 'Award'], PAGE_MAX_ITEMS.recognition, [

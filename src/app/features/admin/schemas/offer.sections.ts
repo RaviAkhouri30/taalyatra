@@ -4,6 +4,7 @@ import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { ContentPath } from '../models/content-path.enum';
 import { FieldKind } from '../models/field-kind.enum';
 import { type IEditorSection } from '../models/i-editor-section';
+import { hideable } from './hideable';
 import { HEADING_FIELDS, buttonLabel, multiline, text } from './schema-fields';
 
 /** The offer tab: the badge's switch, dates and text, then the home page's offer section. */
@@ -61,7 +62,7 @@ export const OFFER_SECTIONS: readonly IEditorSection[] = [
       HEADING_FIELDS.eyebrow,
       { ...HEADING_FIELDS.title, recommended: 40 },
       HEADING_FIELDS.lead,
-      {
+      hideable({
         key: 'cards',
         label: 'Offer cards',
         kind: FieldKind.List,
@@ -77,7 +78,7 @@ export const OFFER_SECTIONS: readonly IEditorSection[] = [
             text('note', 'Duration and price', { maxLength: 120 }),
           ],
         },
-      },
+      }),
       buttonLabel('primaryCta', 'Main button'),
       buttonLabel('whatsAppCta', 'WhatsApp button'),
       multiline('footnote', 'Small print', { maxLength: 300 }),

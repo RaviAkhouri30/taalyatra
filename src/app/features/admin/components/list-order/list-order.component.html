@@ -24,6 +24,9 @@
         @if (row.featured) {
           <span class="lo-star">★ Featured, always first</span>
         }
+        @if (row.hidden) {
+          <span class="lo-hidden">Hidden</span>
+        }
         <span class="lo-actions">
           <button
             type="button"

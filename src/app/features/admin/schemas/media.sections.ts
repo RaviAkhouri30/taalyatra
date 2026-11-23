@@ -15,10 +15,13 @@ import { FieldKind } from '../models/field-kind.enum';
 import { type IEditorSection } from '../models/i-editor-section';
 import {
   type FieldSchema,
+  type IGroupFieldSchema,
   type IListFieldSchema,
   type ISortableList,
 } from '../models/i-field-schema';
 import { IMAGE_ASPECT } from '../models/image-aspect.constants';
+import { GALLERY_PHOTO_FIELD, GALLERY_VIEW } from '../models/gallery-view';
+import { hideable } from './hideable';
 import { HEADING_FIELDS, buttonLabel, image, multiline, text } from './schema-fields';
 
 const { eyebrow, title, lead } = HEADING_FIELDS;
@@ -26,14 +29,17 @@ const { eyebrow, title, lead } = HEADING_FIELDS;
 /** Short labels on a skill chip, so they stay on one line. */
 const SKILL_MAX_LENGTH = 40;
 
-/** Each collection's one list field, stored in the draft's list envelope (D15). */
+/**
+ * Each collection's one list field, stored in the draft's list envelope (D15). Its items can be
+ * hidden (2.15.0): each has a Hidden switch.
+ */
 function items(
   [label, addLabel]: readonly [label: string, addLabel: string],
   maxItems: number,
-  item: IListFieldSchema['item'],
+  item: IGroupFieldSchema,
   sortable: ISortableList,
 ): IListFieldSchema {
-  return {
+  return hideable({
     key: COLLECTION_ITEMS_FIELD,
     label,
     kind: FieldKind.List,
@@ -41,10 +47,10 @@ function items(
     maxItems,
     item,
     sortable,
-  };
+  });
 }
 
-function group(label: string, fields: readonly FieldSchema[]): IListFieldSchema['item'] {
+function group(label: string, fields: readonly FieldSchema[]): IGroupFieldSchema {
   return { key: 'item', label, kind: FieldKind.Group, fields };
 }
 
@@ -133,12 +139,14 @@ export const GALLERY_SECTIONS: readonly IEditorSection[] = [
     path: ContentPath.Gallery,
     anchor: PageAnchor.Gallery,
     tip: 'Move your best photo to the top: it’s shown largest.',
+    // Each photo is a picture and its Hidden switch in the editor; stored as the picture (2.15.0).
+    view: GALLERY_VIEW,
     fields: [
       items(
         ['Photos', 'Add photo'],
         COLLECTION_MAX_ITEMS.gallery,
-        image('photo', 'Photo', IMAGE_ASPECT.gallery),
-        { titleKey: 'alt' },
+        group('Photo', [image(GALLERY_PHOTO_FIELD, 'Photo', IMAGE_ASPECT.gallery)]),
+        { titleKey: `${GALLERY_PHOTO_FIELD}.alt` },
       ),
     ],
   },

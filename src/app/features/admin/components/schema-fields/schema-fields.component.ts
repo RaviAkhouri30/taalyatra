@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { type AbstractControl, FormArray, FormRecord } from '@angular/forms';
-import { fieldOf } from '../../forms/json-node';
+import { fieldAt, fieldOf } from '../../forms/json-node';
 import { ensureOneOn } from '../../forms/one-in-list';
 import { buildListItem } from '../../forms/schema-control.factory';
 import { moveListItem } from '../../forms/list-items';
 import { cardContext } from '../../models/ai-assist';
+import { HIDDEN_KEY } from '../../schemas/hideable';
 import { FieldKind } from '../../models/field-kind.enum';
 import {
   type FieldSchema,
@@ -113,10 +114,15 @@ export class SchemaFieldsComponent {
     item: AbstractControl,
     index: number,
   ): string {
-    const title = fieldOf(item.value, sortable.titleKey);
+    const title = fieldAt(item.value, sortable.titleKey);
     return typeof title === 'string' && title.trim()
       ? title.trim()
       : `${label} ${String(index + 1)}`;
+  }
+
+  /** @returns Whether a hideable list's item is hidden (2.15.0), to mark it. */
+  protected isHidden(list: IListFieldSchema, item: AbstractControl): boolean {
+    return list.hideable === true && fieldOf(item.value, HIDDEN_KEY) === true;
   }
 
   protected remove(list: IListFieldSchema, items: FormArray, index: number): void {

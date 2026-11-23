@@ -1,3 +1,4 @@
+import { type IHideable } from '@shared/interfaces/i-hideable';
 import { type INavLink } from '@shared/interfaces/i-site-link';
 
 /** A headline number, e.g. "150+" sessions delivered. */
@@ -7,7 +8,7 @@ export interface IStatDto {
 }
 
 /** A client testimonial. */
-export interface ITestimonialDto {
+export interface ITestimonialDto extends IHideable {
   readonly quote: string;
   readonly name: string;
   /** Role and organisation or occasion. */

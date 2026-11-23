@@ -60,6 +60,10 @@ app routes.
 - `site/config.promotion` has `live`, `startsOn` and `endsOn` (YYYY-MM-DD, Pune time); missing
   means on with no dates.
 - DTO interfaces (`i-*.ts`) describe stored shapes; model classes add behaviour.
+- **An item can be hidden (2.15.0):** `hidden: true` on an item of `videos`, `team`, `showFormats` or `gallery`
+  (the rules allow the key, true or false), and of `home/proof.testimonials`, `home/faq.items`, `home/offer.cards`
+  and `pages/achievements.milestones`. A missing `hidden` is shown. The site skips hidden items (`shownOnly`), and
+  the AI chat leaves them out; they're still in the published data, so not private.
 - **Optional parts of `site/config` degrade item by item.** Only brand, contact and year are
   required. Missing `labels` become empty, so "Call us" falls back to the number, the copyable
   address to plain text, and video cards to their titles. A missing `credit` hides the credit, and

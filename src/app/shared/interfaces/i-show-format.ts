@@ -1,3 +1,4 @@
+import { type IHideable } from '@shared/interfaces/i-hideable';
 import { type IImage } from './i-image';
 
 /** Extra copy for the featured format's spotlight. */
@@ -14,7 +15,7 @@ export interface IShowSpotlightDto {
  * A show format as stored in `showFormats` (ADR-0011): one source for the home teaser (icon,
  * title, text) and the Shows page (plus the specs).
  */
-export interface IShowFormatDto {
+export interface IShowFormatDto extends IHideable {
   /** Name of a registered icon; unknown names fall back to a default icon. */
   readonly icon: string;
   readonly title: string;

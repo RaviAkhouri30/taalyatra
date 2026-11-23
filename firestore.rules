@@ -732,14 +732,16 @@ service cloud.firestore {
 
     function isValidGalleryItem(data) {
       let fields = ['src', 'alt', 'width', 'height', 'order'];
-      return data.keys().hasAll(fields) && data.keys().hasOnly(fields)
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields.concat(['hidden']))
+        && isHiddenOrMissing(data)
         && isValidImageFields(data)
         && isOrder(data.order);
     }
 
     function isValidTeamMember(data) {
       let fields = ['name', 'role', 'bio', 'skills', 'funFact', 'photo', 'order'];
-      return data.keys().hasAll(fields) && data.keys().hasOnly(fields)
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields.concat(['hidden']))
+        && isHiddenOrMissing(data)
         && isText(data.name, 1, 80)
         && isText(data.role, 0, 80)
         && isText(data.bio, 0, 400)
@@ -752,7 +754,8 @@ service cloud.firestore {
     function isValidShowFormat(data) {
       let fields = ['icon', 'title', 'text', 'ensemble', 'setLength', 'bestFor', 'image', 'featured',
                     'spotlight', 'order'];
-      return data.keys().hasAll(fields) && data.keys().hasOnly(fields)
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields.concat(['hidden']))
+        && isHiddenOrMissing(data)
         && isText(data.icon, 1, 40)
         && isText(data.title, 1, 80)
         && isText(data.text, 0, 400)
@@ -774,9 +777,15 @@ service cloud.firestore {
         && isText(spotlight.secondaryCta, 0, 40);
     }
 
+    // An item the owner took off the site (2.15.0): `hidden` is optional, and true or false.
+    function isHiddenOrMissing(data) {
+      return !('hidden' in data) || data.hidden is bool;
+    }
+
     function isValidVideo(data) {
       let fields = ['title', 'category', 'caption', 'image', 'duration', 'url', 'order'];
-      return data.keys().hasAll(fields) && data.keys().hasOnly(fields)
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields.concat(['hidden']))
+        && isHiddenOrMissing(data)
         && isText(data.title, 1, 120)
         && isText(data.category, 0, 40)
         && isText(data.caption, 0, 200)

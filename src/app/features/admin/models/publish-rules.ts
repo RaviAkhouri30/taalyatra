@@ -124,6 +124,33 @@ export class OneFeaturedShowRule implements IPublishRule {
   }
 }
 
+/**
+ * A featured show that's hidden (2.15.0): the spotlight shows none. A warning: hiding it may be
+ * meant, until another is featured.
+ */
+export class HiddenFeaturedShowRule implements IPublishRule {
+  public check(section: IEditorSection, content: DocumentFields): IPublishIssue[] {
+    if (section.path !== ContentPath.ShowFormats) {
+      return [];
+    }
+    const shows = fieldOf(content, COLLECTION_ITEMS_FIELD);
+    const hiddenFeatured = (Array.isArray(shows) ? shows : []).some(
+      (show: unknown) => fieldOf(show, 'featured') === true && fieldOf(show, 'hidden') === true,
+    );
+    return hiddenFeatured
+      ? [
+          {
+            severity: IssueSeverity.Warning,
+            sectionId: section.id,
+            section: section.title,
+            field: 'Featured',
+            message: 'The featured show is hidden, so the spotlight shows none.',
+          },
+        ]
+      : [];
+  }
+}
+
 /** An offer whose dates contradict each other (error) or have already passed (warning). */
 export class PromotionDatesRule implements IPublishRule {
   public check(section: IEditorSection, content: DocumentFields, now: Date): IPublishIssue[] {

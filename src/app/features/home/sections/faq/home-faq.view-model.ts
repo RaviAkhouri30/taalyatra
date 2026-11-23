@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { type Observable, tap } from 'rxjs';
 import { ViewModel } from '@shared/base/view-model';
+import { shownOnly } from '@shared/utils/shown-only.util';
 import { HomeFaqService } from './home-faq.service';
 import { type IFaqDto } from './i-faq';
 
@@ -12,7 +13,8 @@ export class HomeFaqViewModel extends ViewModel<IFaqDto> {
   protected override attachViewHandler(): Observable<unknown> {
     return this.faqService.attachViewDataHandler().pipe(
       tap((dto) => {
-        this.setData(dto);
+        // shownOnly: a hidden question (2.15.0) isn't shown.
+        this.setData({ ...dto, items: shownOnly(dto.items) });
       }),
     );
   }
