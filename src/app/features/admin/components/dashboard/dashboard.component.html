@@ -7,79 +7,185 @@
     @if (dash.superNotice) {
       <p class="db-super" role="status">{{ dash.superNotice }}</p>
     }
+    <!-- What asks for the account, first; the rest after, grouped by what it's about (0030). -->
+    <h2 class="db-heading" id="db-needs">Needs you</h2>
+    @if (dash.caughtUp) {
+      <p class="db-caught">You’re all caught up. Nothing is waiting for you.</p>
+    }
     <div class="db-grid">
-      <section class="db-card" aria-labelledby="db-changes">
-        <h2 id="db-changes">Changes not on the website yet</h2>
-        <p class="db-big">{{ dash.changeCount }}</p>
-        <p>{{ dash.changes }}</p>
-        <a [routerLink]="links.publish">Review &amp; publish</a>
-      </section>
-      @if (dash.access.showApprovals) {
-        <section class="db-card" aria-labelledby="db-approvals">
-          <h2 id="db-approvals">{{ dash.access.approvalsHeading }}</h2>
-          <p>{{ dash.access.approvals }}</p>
-          <a [routerLink]="links.publish">See them on Review &amp; publish</a>
-        </section>
+      @if (dash.changeCount > 0) {
+        <app-dash-card
+          headingId="db-changes"
+          heading="Changes not on the website yet"
+          [tone]="tones.Publish"
+          [icon]="icons.Send"
+          [urgent]="true"
+          [link]="links.publish"
+          linkText="Review & publish"
+        >
+          <p class="db-big">{{ dash.changeCount }}</p>
+          <p>{{ dash.changes }}</p>
+        </app-dash-card>
       }
+      @if (dash.access.approvalsWaiting) {
+        <app-dash-card
+          headingId="db-approvals"
+          [heading]="dash.access.approvalsHeading"
+          [tone]="tones.Attention"
+          [icon]="icons.Check"
+          [urgent]="true"
+          [link]="links.publish"
+          linkText="See them on Review & publish"
+        >
+          <p>{{ dash.access.approvals }}</p>
+        </app-dash-card>
+      }
+      @if (dash.access.backups && dash.backup.due) {
+        <app-dash-card
+          headingId="db-backup"
+          heading="Backups"
+          [badge]="dash.backup.due ? 'Due' : ''"
+          [tone]="tones.Attention"
+          [icon]="icons.Copy"
+          [urgent]="true"
+          [link]="links.publish"
+          fragment="backups"
+          [linkText]="dash.access.owner ? 'Make or restore a backup' : 'Make a backup'"
+        >
+          <p>{{ dash.backup.text }}</p>
+        </app-dash-card>
+      }
+      @if (dash.access.leads && dash.newLeads > 0) {
+        <app-dash-card
+          headingId="db-leads"
+          heading="Leads"
+          [badge]="dash.newLeads > 0 ? dash.newLeads + ' new' : ''"
+          [tone]="tones.Visitors"
+          [icon]="icons.Briefcase"
+          [urgent]="true"
+          [link]="links.leads"
+          linkText="See the leads"
+        >
+          <p>{{ dash.leads }}</p>
+        </app-dash-card>
+      }
+    </div>
+
+    <h2 class="db-heading">Your site</h2>
+    <div class="db-grid">
       @if (dash.access.canSeeOffer) {
-        <section class="db-card" aria-labelledby="db-offer">
-          <h2 id="db-offer">Offer</h2>
-          <span class="db-pill" [attr.data-status]="dash.offerStatus">{{ dash.offerStatus }}</span>
+        <app-dash-card
+          headingId="db-offer"
+          heading="Offer"
+          [badge]="dash.offerStatus"
+          [tone]="tones.Site"
+          [icon]="icons.Sparkle"
+          [link]="links.offer"
+          linkText="Edit the offer"
+        >
           <p>{{ dash.offer }}</p>
-          <a [routerLink]="links.offer">Edit the offer</a>
-        </section>
+        </app-dash-card>
       }
       @if (dash.access.canSeeVisibility) {
-        <section class="db-card" aria-labelledby="db-visibility">
-          <h2 id="db-visibility">Shown sections</h2>
+        <app-dash-card
+          headingId="db-visibility"
+          heading="Shown sections"
+          [tone]="tones.Site"
+          [icon]="icons.Toggle"
+          [link]="links.visibility"
+          linkText="Show or hide sections"
+        >
           <p>{{ dash.hidden }}</p>
-          <a [routerLink]="links.visibility">Show or hide sections</a>
-        </section>
+        </app-dash-card>
       }
-      <section class="db-card" aria-labelledby="db-history">
-        <h2 id="db-history">History</h2>
+      @if (dash.access.showApprovals && !dash.access.approvalsWaiting) {
+        <app-dash-card
+          headingId="db-approvals"
+          [heading]="dash.access.approvalsHeading"
+          [tone]="tones.Attention"
+          [icon]="icons.Check"
+          [link]="links.publish"
+          linkText="See them on Review & publish"
+        >
+          <p>{{ dash.access.approvals }}</p>
+        </app-dash-card>
+      }
+      <app-dash-card
+        headingId="db-history"
+        heading="History"
+        [tone]="tones.Quiet"
+        [icon]="icons.Clock"
+        [link]="links.publish"
+        linkText="See the publish history"
+      >
         <p>{{ dash.lastPublished }}</p>
         @if (dash.selfApproved) {
           <p class="db-count-line">{{ dash.selfApproved }}</p>
         }
-        <a [routerLink]="links.publish">See the publish history</a>
-      </section>
-      @if (dash.access.backups) {
-        <section class="db-card" aria-labelledby="db-backup">
-          <h2 id="db-backup">
-            Backups
-            @if (dash.backup.due) {
-              <span class="db-count">Due</span>
-            }
-          </h2>
+      </app-dash-card>
+      @if (dash.access.backups && !dash.backup.due) {
+        <app-dash-card
+          headingId="db-backup"
+          heading="Backups"
+          [badge]="dash.backup.due ? 'Due' : ''"
+          [tone]="tones.Attention"
+          [icon]="icons.Copy"
+          [urgent]="false"
+          [link]="links.publish"
+          fragment="backups"
+          [linkText]="dash.access.owner ? 'Make or restore a backup' : 'Make a backup'"
+        >
           <p>{{ dash.backup.text }}</p>
-          <a [routerLink]="links.publish" fragment="backups">{{
-            dash.access.owner ? 'Make or restore a backup' : 'Make a backup'
-          }}</a>
-        </section>
+        </app-dash-card>
       }
-      @if (dash.access.leads) {
-        <section class="db-card" aria-labelledby="db-leads">
-          <h2 id="db-leads">
-            Leads
-            @if (dash.newLeads > 0) {
-              <span class="db-count">{{ dash.newLeads }} new</span>
+    </div>
+
+    @if (dash.access.visits || (dash.access.leads && dash.newLeads === 0)) {
+      <h2 class="db-heading">Visitors</h2>
+      <div class="db-grid">
+        @if (dash.access.leads && dash.newLeads === 0) {
+          <app-dash-card
+            headingId="db-leads"
+            heading="Leads"
+            [badge]="dash.newLeads > 0 ? dash.newLeads + ' new' : ''"
+            [tone]="tones.Visitors"
+            [icon]="icons.Briefcase"
+            [urgent]="false"
+            [link]="links.leads"
+            linkText="See the leads"
+          >
+            <p>{{ dash.leads }}</p>
+          </app-dash-card>
+        }
+        @if (dash.access.visits) {
+          <app-dash-card
+            headingId="db-visits"
+            heading="Visits"
+            [tone]="tones.Visitors"
+            [icon]="icons.ArrowUpRight"
+            [link]="links.visits"
+            linkText="See the graphs"
+          >
+            <p>{{ dash.visits }}</p>
+            @if (dash.visitsWeek.length > 0) {
+              <app-mini-bars [days]="dash.visitsWeek" />
             }
-          </h2>
-          <p>{{ dash.leads }}</p>
-          <a [routerLink]="links.leads">See the leads</a>
-        </section>
-      }
-      @if (dash.access.visits) {
-        <section class="db-card" aria-labelledby="db-visits">
-          <h2 id="db-visits">Visits</h2>
-          <p>{{ dash.visits }}</p>
-          <a [routerLink]="links.visits">See the graphs</a>
-        </section>
-      }
-      @if (model.release; as release) {
-        <section class="db-card" aria-labelledby="db-release">
-          <h2 id="db-release">What’s new</h2>
+          </app-dash-card>
+        }
+      </div>
+    }
+
+    @if (model.release; as release) {
+      <h2 class="db-heading">News</h2>
+      <div class="db-grid">
+        <app-dash-card
+          headingId="db-release"
+          heading="What’s new"
+          [tone]="tones.Quiet"
+          [icon]="icons.Star"
+          [link]="links.releases"
+          linkText="See everything that’s new"
+        >
           <p>
             <b>Version {{ release.version }}</b> · {{ release.when }}
           </p>
@@ -88,9 +194,11 @@
               <li>{{ note }}</li>
             }
           </ul>
-          <a [routerLink]="links.releases">See everything that’s new</a>
-        </section>
-      }
+        </app-dash-card>
+      </div>
+    }
+
+    <div class="db-grid db-grid--end">
       <section class="db-card db-card--wide" aria-labelledby="db-warnings">
         <h2 id="db-warnings">
           Still to fill in
@@ -142,4 +250,4 @@
     </div>
   }
 </div>
-<app-publish-bar />
+<app-publish-bar [onlyWhenNeeded]="true" />

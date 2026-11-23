@@ -26,7 +26,7 @@ test.describe('Admin visits and leads', () => {
     await expect(page.getByRole('status').filter({ hasText: 'Showing' })).toHaveText(
       'Showing 1 of 2 leads',
     );
-    await page.getByRole('button', { name: 'Show all' }).click();
+    await page.getByRole('button', { name: 'Clear filters' }).click();
 
     await asha.getByLabel('Status').selectOption('contacted');
     await expect(asha.getByLabel('Status')).toHaveValue('contacted');

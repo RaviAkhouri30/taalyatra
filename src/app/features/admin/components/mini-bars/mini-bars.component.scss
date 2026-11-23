@@ -1,0 +1,28 @@
+@use 'tokens' as t;
+
+:host {
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  height: 40px;
+  margin-top: 10px;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+// The bars take the card's colour, set by its tone.
+rect {
+  fill: var(--dc-hue, #{t.$color-sage});
+}
+
+rect:last-child {
+  opacity: 1;
+}
+
+rect:not(:last-child) {
+  opacity: 0.6;
+}

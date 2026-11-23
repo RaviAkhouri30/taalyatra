@@ -21,26 +21,31 @@
   }
 }
 
-.mf-steps,
+.mf-lead,
 .mf-hint {
   margin: 0;
   color: t.$color-muted-strong;
 }
 
-.mf-steps {
-  display: grid;
-  gap: 6px;
-  padding-left: 20px;
-}
-
 .mf-hint {
-  font-size: t.size(14px);
+  font-size: t.size(13.5px);
 }
 
+// Both boxes from the top, so they line up whatever is under each (0030).
 .mf-account {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 12px;
+  gap: 14px;
+  align-items: start;
+}
+
+.mf-problem {
+  margin: 0;
+  padding: 10px 14px;
+  border-left: 3px solid t.$color-amber-soft;
+  border-radius: 8px;
+  background: t.$color-surface;
+  color: t.$color-cream;
 }
 
 .mf-field {
@@ -77,29 +82,110 @@
   }
 }
 
+.mf-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: t.size(12.5px);
+  color: t.$color-muted-strong;
+
+  li {
+    padding: 3px 10px;
+    border: 1px solid t.$color-line;
+    border-radius: 999px;
+  }
+
+  b {
+    color: t.$color-cream;
+  }
+}
+
+.mf-setall {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin: 6px 0 2px;
+  font-size: t.size(13.5px);
+  color: t.$color-muted-strong;
+}
+
+.mf-chip {
+  padding: 4px 12px;
+  border: 1px solid t.$color-line;
+  border-radius: 999px;
+  background: transparent;
+  color: t.$color-cream;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    border-color: t.$color-amber;
+  }
+}
+
+// A page and its three settings, as one segmented choice (0030).
 .mf-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(150px, 200px);
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 12px;
   align-items: center;
-  padding: 6px 0;
+  padding: 8px 0;
   border-bottom: 1px solid t.$color-line;
   color: t.$color-cream;
 
   @include bp.down(bp.$phone) {
     grid-template-columns: minmax(0, 1fr);
-    gap: 4px;
+    gap: 6px;
+  }
+}
+
+.mf-seg {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid t.$color-field-border;
+  border-radius: 999px;
+  background: t.$color-ink-deep;
+}
+
+.mf-opt {
+  position: relative;
+
+  // Invisible, but covering its segment, so a click or tap lands on the radio itself.
+  input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
   }
 
-  select {
-    box-sizing: border-box;
-    min-height: 44px;
-    padding: 9px 10px;
-    border: 1px solid t.$color-field-border;
-    border-radius: 10px;
-    background: t.$color-surface;
-    color: t.$color-cream;
-    font: inherit;
+  span {
+    display: block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    color: t.$color-muted-strong;
+    font-size: t.size(13.5px);
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  input:checked + span {
+    background: t.$color-amber;
+    color: t.$color-ink-deep;
+  }
+
+  input:focus-visible + span {
+    outline: 2px solid t.$color-amber;
+    outline-offset: 2px;
   }
 }
 

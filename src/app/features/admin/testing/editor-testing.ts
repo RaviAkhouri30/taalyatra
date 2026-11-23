@@ -8,6 +8,8 @@ import { provideRouter } from '@angular/router';
 import { EMPTY, Subject, of } from 'rxjs';
 import { FakeFileService } from '@core/backends/fake/fake-file.service';
 import { IAiService, NO_AI } from '@core/interfaces/i-ai-service';
+import { FakeAccountService } from '@core/backends/fake/fake-account.service';
+import { IAccountService } from '@core/interfaces/i-account-service';
 import { IAuthService } from '@core/interfaces/i-auth-service';
 import { type DocumentFields, IDocumentStore } from '@core/interfaces/i-document-store';
 import { IFileService } from '@core/interfaces/i-file-service';
@@ -73,6 +75,8 @@ export function provideEditorTesting(seed: Readonly<Record<string, DocumentField
       { provide: IAuthService, useValue: { user$: of(EDITOR_ADMIN), signOut } },
       { provide: APP_ENVIRONMENT, useValue: { ...environment, adminUid: EDITOR_ADMIN.uid } },
       { provide: IFileService, useValue: files },
+      // Team access makes managers' accounts (0030).
+      { provide: IAccountService, useFactory: () => new FakeAccountService() },
       BackupService,
       SavedThemesService,
       { provide: DeviceStoreService, useValue: localStore },

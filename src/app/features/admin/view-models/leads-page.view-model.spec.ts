@@ -41,12 +41,15 @@ describe('LeadsPageViewModel', () => {
   it('should follow the filters, and show everything again when cleared', () => {
     const { model } = setUp();
 
+    expect(model.filtering()).toBe(false);
     model.filters.patchValue({ eventType: 'Wedding' });
     expect(model.shown().map((lead) => lead.name)).toEqual(['Ravi']);
     expect(model.count()).toBe('Showing 1 of 2 leads');
+    expect(model.filtering()).toBe(true);
 
     model.clearFilters();
     expect(model.shown()).toHaveLength(2);
+    expect(model.filtering()).toBe(false);
   });
 
   it('should save a status and show it', () => {

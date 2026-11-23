@@ -1,7 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { type FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ButtonDirective } from '@shared/directives/button.directive';
-import { ButtonVariant } from '@shared/enums/button-variant.enum';
 import { type ILeadFilterControls } from '../../forms/lead-filter-form';
 import { LEAD_STATUSES } from '../../models/lead.model';
 import { type ILeadFilterOptions } from '../../models/leads-page.model';
@@ -9,7 +7,7 @@ import { type ILeadFilterOptions } from '../../models/leads-page.model';
 /** The Leads page's filters (0018 V12): status, event, group size, month and a search. */
 @Component({
   selector: 'app-lead-filters',
-  imports: [ButtonDirective, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './lead-filters.component.html',
   styleUrl: './lead-filters.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,7 +19,8 @@ export class LeadFiltersComponent {
   public readonly options = input.required<ILeadFilterOptions>();
   /** The owner asked to see every lead again. */
   public readonly cleared = output();
+  /** Some filter is set: Clear filters shows. */
+  public readonly filtering = input(false);
 
   protected readonly statuses = LEAD_STATUSES;
-  protected readonly ghost = ButtonVariant.Ghost;
 }

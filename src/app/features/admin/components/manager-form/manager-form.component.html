@@ -7,33 +7,12 @@
 >
   <h2 id="mf-heading">{{ heading() }}</h2>
   @if (adding()) {
-    <ol class="mf-steps">
-      <li>
-        In the Firebase console, open <strong>Authentication → Users → Add user</strong>, and give
-        them an email and a password. Tell them the password yourself; it never passes through this
-        site.
-      </li>
-      <li>Copy that user’s <strong>User UID</strong> from the same list.</li>
-      <li>Paste it below, choose what they can do, and save. They can sign in at once.</li>
-    </ol>
+    <p class="mf-lead">
+      Enter their email and choose what they can do. We make their account and email them a link to
+      set their own password; then they can sign in.
+    </p>
   }
   <div class="mf-account">
-    <label class="mf-field">
-      <span>User UID</span>
-      @let uidError = errorOf('uid');
-      <input
-        type="text"
-        formControlName="uid"
-        autocomplete="off"
-        spellcheck="false"
-        required
-        [attr.aria-invalid]="uidError !== null"
-        [attr.aria-describedby]="uidError ? 'mf-uid-error' : null"
-      />
-      @if (uidError) {
-        <small class="mf-error" id="mf-uid-error">{{ uidError }}</small>
-      }
-    </label>
     <label class="mf-field">
       <span>Their email</span>
       @let emailError = errorOf('email');
@@ -55,22 +34,69 @@
         >
       }
     </label>
+    @if (adding() && pasteUid()) {
+      <label class="mf-field">
+        <span>Their User UID</span>
+        @let uidError = errorOf('uid');
+        <input
+          type="text"
+          formControlName="uid"
+          autocomplete="off"
+          spellcheck="false"
+          required
+          [attr.aria-invalid]="uidError !== null"
+          [attr.aria-describedby]="uidError ? 'mf-uid-error' : 'mf-uid-hint'"
+        />
+        @if (uidError) {
+          <small class="mf-error" id="mf-uid-error">{{ uidError }}</small>
+        } @else {
+          <small class="mf-hint" id="mf-uid-hint"
+            >Firebase console → Authentication → Users: copy their User UID.</small
+          >
+        }
+      </label>
+    }
   </div>
+  @if (adding()) {
+    @if (inviteProblem()) {
+      <p class="mf-problem" role="alert">{{ inviteProblem() }}</p>
+    }
+    <label class="mf-check mf-paste">
+      <input type="checkbox" [checked]="pasteUid()" (change)="togglePaste($event)" />
+      <span>They already have an account: paste their User UID instead</span>
+    </label>
+  } @else {
+    <p class="mf-hint">
+      User UID: <code>{{ form().controls.uid.value }}</code>
+    </p>
+  }
   <fieldset class="mf-pages" formGroupName="pages">
     <legend>What they can do on each page</legend>
-    <p class="mf-hint">
-      <strong>Needs approval</strong>: they edit and send it to you. <strong>Can publish</strong>:
-      it goes live without you. <strong>Hidden</strong>: not in their menu.
-    </p>
+    <ul class="mf-legend">
+      <li><b>Hidden</b> not in their menu</li>
+      <li><b>Needs approval</b> you approve first</li>
+      <li><b>Can publish</b> goes live</li>
+    </ul>
+    <div class="mf-setall" role="group" aria-labelledby="mf-setall-label">
+      <span id="mf-setall-label">Set all to</span>
+      @for (choice of choices; track choice.access) {
+        <button type="button" class="mf-chip" (click)="allSet.emit(choice.access)">
+          {{ choice.label }}
+        </button>
+      }
+    </div>
     @for (row of rows; track row.tab) {
-      <label class="mf-row">
-        <span>{{ row.label }}</span>
-        <select [formControlName]="row.tab">
+      <div class="mf-row" role="radiogroup" [attr.aria-labelledby]="'mf-page-' + row.tab">
+        <span class="mf-page" [id]="'mf-page-' + row.tab">{{ row.label }}</span>
+        <div class="mf-seg">
           @for (choice of choices; track choice.access) {
-            <option [value]="choice.access">{{ choice.label }}</option>
+            <label class="mf-opt">
+              <input type="radio" [formControlName]="row.tab" [value]="choice.access" />
+              <span>{{ choice.label }}</span>
+            </label>
           }
-        </select>
-      </label>
+        </div>
+      </div>
     }
   </fieldset>
   <label class="mf-check">
@@ -146,7 +172,7 @@
   </fieldset>
   <div class="mf-actions">
     <button appButton type="submit" [disabled]="saving()">
-      {{ saving() ? 'Saving…' : 'Save' }}
+      {{ submitLabel() }}
     </button>
     <button appButton type="button" [variant]="ghost" (click)="cancelled.emit()">Cancel</button>
   </div>

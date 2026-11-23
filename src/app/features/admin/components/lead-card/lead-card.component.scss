@@ -1,4 +1,5 @@
 @use 'tokens' as t;
+@use 'forms';
 
 :host {
   display: block;
@@ -96,12 +97,7 @@
   color: t.$color-muted-strong;
 
   select {
-    padding: 8px 10px;
-    border: 1px solid t.$color-field-border;
-    border-radius: 10px;
-    background: t.$color-surface;
-    color: t.$color-cream;
-    font: inherit;
+    @include forms.select;
   }
 }
 

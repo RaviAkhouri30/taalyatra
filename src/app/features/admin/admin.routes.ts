@@ -1,4 +1,5 @@
 import { type Routes } from '@angular/router';
+import { provideAccounts } from '@core/config/provide-accounts';
 import { provideAi } from '@core/config/provide-ai';
 import { provideFiles } from '@core/config/provide-files';
 import { provideMedia } from '@core/config/provide-media';
@@ -48,6 +49,7 @@ const adminRoutes: Routes = [
     providers: [
       ...provideMedia(),
       ...provideAi(),
+      ...provideAccounts(),
       provideFiles(),
       BackupService,
       SavedThemesService,

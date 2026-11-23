@@ -9,6 +9,8 @@
 }
 
 :host {
+  // Its screen-reader-only text is placed inside the field, never relative to the page.
+  position: relative;
   display: block;
 }
 

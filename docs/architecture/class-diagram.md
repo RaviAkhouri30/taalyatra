@@ -313,3 +313,24 @@ classDiagram
   LeadsAnalysisViewModel ..> leadsSummary
   HttpAiService ..> AiError
 ```
+
+## Manager accounts (0030, 2.14.0)
+
+```mermaid
+classDiagram
+  class IAccountService {
+    <<abstract port>>
+    +create(email) Observable~string~
+  }
+  class FirebaseAccountService { accounts:signUp with the web key, random one-time password }
+  class FakeAccountService { an id from the email, the Fake's own accounts taken }
+  class accountServiceFactory { <<factory>> Firebase → Firebase, else Fake }
+  class AccountError { +kind: AccountErrorKind +messageOf(error)$ }
+  class TeamAccessViewModel { +pasteUid +inviteProblem +usePastedUid() +setAll() +save() }
+  IAccountService <|.. FirebaseAccountService
+  IAccountService <|.. FakeAccountService
+  accountServiceFactory ..> IAccountService : creates
+  TeamAccessViewModel --> IAccountService : create, then save the role
+  TeamAccessViewModel --> IAuthService : sendPasswordReset
+  FirebaseAccountService ..> AccountError
+```

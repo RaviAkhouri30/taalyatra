@@ -24,6 +24,10 @@
 
 // The fields scroll on their own, with the publish bar always under them.
 .ep-main {
+  // A positioned scroll panel: absolutely placed descendants (screen-reader-only text, menus) stay
+  // inside it. Without this they belong to the page, stretch it past the screen, and
+  // scrollIntoView then scrolls the whole page away (2.13.1).
+  position: relative;
   display: flex;
   flex-direction: column;
   min-width: 0;

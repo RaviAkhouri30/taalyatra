@@ -1,0 +1,109 @@
+@use 'tokens' as t;
+
+// Each tone is a colour of the theme; tints mix it with the card's surface, so every theme keeps
+// its harmony, and text keeps the theme's own colours (0030).
+:host {
+  --dc-hue: #{t.$color-muted-strong};
+
+  display: block;
+}
+
+:host(.dc--publish) {
+  --dc-hue: #{t.$color-amber};
+}
+
+:host(.dc--attention) {
+  --dc-hue: #{t.$color-clay};
+}
+
+:host(.dc--visitors) {
+  --dc-hue: #{t.$color-sage};
+}
+
+:host(.dc--site) {
+  --dc-hue: #{t.$color-bronze};
+}
+
+.dc {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  padding: 18px 20px;
+  border: 1px solid color-mix(in srgb, var(--dc-hue) 28%, #{t.$color-line});
+  border-radius: 18px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--dc-hue) 12%, #{t.$color-surface-raised}),
+    #{t.$color-surface-raised} 60%
+  );
+  box-sizing: border-box;
+}
+
+// In Needs you: a stronger edge of its colour.
+:host(.dc--urgent) .dc {
+  border-color: var(--dc-hue);
+  box-shadow: inset 4px 0 0 var(--dc-hue);
+}
+
+.dc-head {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  h3 {
+    margin: 0;
+    font-size: t.size(15.5px);
+    font-weight: 700;
+    color: t.$color-cream;
+  }
+}
+
+.dc-icon {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--dc-hue) 22%, transparent);
+  color: var(--dc-hue);
+}
+
+// The theme's own text on a tint of the tone: readable in every theme (axe, 4.5:1).
+.dc-badge {
+  padding: 2px 9px;
+  border: 1px solid var(--dc-hue);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--dc-hue) 20%, transparent);
+  color: t.$color-cream;
+  font-size: t.size(12.5px);
+  font-weight: 700;
+}
+
+.dc-body {
+  flex: 1;
+  color: t.$color-muted-strong;
+
+  :where(p) {
+    margin: 0;
+  }
+}
+
+.dc-link {
+  align-self: flex-start;
+  color: t.$color-cream;
+  font-weight: 700;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--dc-hue);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}

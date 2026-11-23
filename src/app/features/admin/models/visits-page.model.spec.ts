@@ -1,6 +1,6 @@
 import { ChartPeriod } from './chart';
 import { type IVisitDay } from './visit-days';
-import { VisitsPageModel, recentVisitsText } from './visits-page.model';
+import { VisitsPageModel, lastWeek, recentVisitsText } from './visits-page.model';
 
 describe('VisitsPageModel', () => {
   const day = (date: string, total: number, extra: Partial<IVisitDay> = {}): IVisitDay => ({
@@ -76,5 +76,25 @@ describe('recentVisitsText', () => {
     expect(recentVisitsText([day('2026-11-18', 1)], '2026-11-18')).toBe(
       '1 visit in the last 7 days.',
     );
+  });
+});
+
+describe('lastWeek (0030)', () => {
+  it('should give the last 7 days, oldest first, with 0 for a day nobody came', () => {
+    const days: IVisitDay[] = [
+      { day: '2026-11-10', total: 9, pages: {}, devices: {} },
+      { day: '2026-11-17', total: 2, pages: {}, devices: {} },
+      { day: '2026-11-18', total: 5, pages: {}, devices: {} },
+    ];
+
+    expect(lastWeek(days, '2026-11-18')).toEqual([
+      { day: '2026-11-12', total: 0 },
+      { day: '2026-11-13', total: 0 },
+      { day: '2026-11-14', total: 0 },
+      { day: '2026-11-15', total: 0 },
+      { day: '2026-11-16', total: 0 },
+      { day: '2026-11-17', total: 2 },
+      { day: '2026-11-18', total: 5 },
+    ]);
   });
 });

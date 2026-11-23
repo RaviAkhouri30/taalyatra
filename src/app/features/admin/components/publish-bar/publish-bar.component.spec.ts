@@ -30,6 +30,7 @@ describe('PublishBarComponent', () => {
   function render(
     seed: Parameters<typeof provideEditorTesting>[0] = {},
     user?: { uid: string; email: string },
+    onlyWhenNeeded = false,
   ) {
     const testing = provideEditorTesting(seed);
     const layout = layoutStub();
@@ -43,6 +44,7 @@ describe('PublishBarComponent', () => {
       ],
     });
     const fixture = TestBed.createComponent(PublishBarComponent);
+    fixture.componentRef.setInput('onlyWhenNeeded', onlyWhenNeeded);
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
     const button = (name: string) =>
@@ -59,6 +61,18 @@ describe('PublishBarComponent', () => {
     expect(status()).toBe('All changes published.');
     expect(button('Publish')?.disabled).toBe(true);
     expect(button('Undo changes')?.disabled).toBe(true);
+  });
+
+  it('should hide away from the editor when there is nothing to do (0030)', () => {
+    const { element } = render({}, undefined, true);
+
+    expect(element.hidden).toBe(true);
+  });
+
+  it('should show away from the editor while there are changes to publish', () => {
+    const { element } = render({ 'drafts/home__hero': heroDraft }, undefined, true);
+
+    expect(element.hidden).toBe(false);
   });
 
   it('should count unpublished changes and allow publishing them', () => {

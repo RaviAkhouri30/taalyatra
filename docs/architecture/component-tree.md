@@ -14,7 +14,7 @@ flowchart TD
   RO -->|"videos · team · shows · achievements: pageEnabledGuard (canMatch)"| V
   RO -->|"admin (lazy, layout: Bare)"| AD["AdminShellComponent (noindex)<br/>sign-in · signedOutGuard → SignIn · reset-password → ResetPassword (app-auth-card)"]
   AD -->|"'' · adminGuard"| EL["EditorLayoutComponent<br/>account bar · side panel (What’s new and new-leads markers) · save status (EditorLayoutViewModel)<br/>route providers: IMediaService · IFileService · BackupService"]
-  EL --> DB["'' → DashboardComponent"]
+  EL --> DB["'' → DashboardComponent<br/>Needs you · Your site · Visitors · News (DashCardComponent, MiniBarsComponent, 2.14.0)"]
   EL --> EP["one tab per site section (hero · offer · audiences · experiences · shows · drum-circle · rhythm-game · videos · gallery · philosophy · cities · how · team · instagram · testimonials · faq · proposal-form; 2.10.0 added six), the achievements page (2.11.0; Videos, Team and Shows edit their own pages too, and a card on an inner page previews that page) and settings (business · seo · contact · chat · visibility · theme; 2.12.0 added chat and the rest of the proposal form) → EditorPageComponent<br/>(unsavedChangesGuard) · unsaved-changes bar (safety copy, 0016) · cards with appInView · schema-fields · schema-field · preview-frame (PreviewScroller)"]
   EL --> ML["media → MediaLibraryComponent (MediaManageViewModel)<br/>MediaUploadComponent · MediaCardComponent"]
   EL --> PP["publish → PublishPageComponent<br/>BackupPanelComponent (BackupPanelViewModel, 0016) · PublishHistoryComponent (go back, 0016)"]
@@ -64,7 +64,8 @@ flowchart TD
   L["EditorLayoutComponent<br/>menu from navGroupsFor(permissions) · approvals badge"]
   L -->|team-access · ownerGuard| TA["TeamAccessPageComponent (TeamAccessViewModel)"]
   TA --> MC["ManagerCardComponent"]
-  TA --> MF["ManagerFormComponent<br/>UID · email · setting per page · uploads"]
+  TA --> MF["ManagerFormComponent<br/>email (Create and invite) or pasted UID · three-way setting per page · Set all · uploads"]
+  TA -.->|IAccountService, ADR-0021| AS[(FirebaseAccountService)]
   L -->|publish| PP["PublishPageComponent (PublishPageViewModel)<br/>authors · ticks · publish or send · note"]
   PP --> AP["ApprovalsPanelComponent (ApprovalsPanelViewModel)"]
   AP --> AC["ApprovalCardComponent<br/>approve · send back · withdraw · clear"]

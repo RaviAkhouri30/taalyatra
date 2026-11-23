@@ -6,6 +6,31 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.14.0] - 2026-11-23
+
+### Added
+
+- **Add a manager with just their email.** **Create and invite** makes their account and Firebase emails them a link
+  to set their own password; you stay signed in. If the email already has an account, the form says so and asks for
+  their User UID, as before.
+- **Set all to** on Team access sets every page at once.
+
+### Changed
+
+- **The dashboard puts what needs you first** (changes to publish, approvals, a backup due, new leads), or says
+  you're all caught up, then groups the rest under Your site, Visitors and News. Each card has a colour and icon for
+  what it's about, and Visits shows the last 7 days as a small chart.
+- **Each page's setting on Team access** is three buttons in a row (Hidden · Needs approval · Can publish), with a
+  short legend instead of the long line.
+- **Every dropdown in the admin** now matches the text boxes.
+- **Leads:** "Show all" is now **Clear filters**, in the filters' row, shown only while a filter is set.
+- **The publish bar** shows on the Dashboard and Photo library only when there's something to publish.
+
+### Fixed
+
+- **On a wide screen, the editor could slide up** and leave a blank space below it after AI help opened (2.13.0).
+  The editor's panels now keep their own content inside them.
+
 ## [2.13.0] - 2026-11-23
 
 ### Changed

@@ -5,7 +5,11 @@ import { RoleFormMode } from '../../models/team-access.model';
 import { ManagerFormComponent } from './manager-form.component';
 
 describe('ManagerFormComponent', () => {
-  function render(mode = RoleFormMode.Adding, saving = false) {
+  function render(
+    mode = RoleFormMode.Adding,
+    saving = false,
+    invite: { pasteUid?: boolean; problem?: string; uid?: string } = {},
+  ) {
     const form = createRoleForm(
       'owner-uid',
       () => new Set(),
@@ -20,29 +24,70 @@ describe('ManagerFormComponent', () => {
     fixture.componentRef.setInput('mode', mode);
     fixture.componentRef.setInput('heading', 'Add a manager');
     fixture.componentRef.setInput('saving', saving);
+    fixture.componentRef.setInput('pasteUid', invite.pasteUid ?? false);
+    fixture.componentRef.setInput('inviteProblem', invite.problem ?? '');
+    form.controls.uid.setValue(invite.uid ?? '');
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
     return { fixture, form, component: fixture.componentInstance, element };
   }
 
-  it('should show how to add a manager, and a setting for every page', () => {
+  it('should ask for their email alone, with three choices for every page (0030)', () => {
     const { element } = render();
+    const first = element.querySelector('.mf-row');
 
     expect(element.querySelector('h2')?.textContent).toBe('Add a manager');
-    expect(element.querySelector('.mf-steps')?.textContent).toContain('User UID');
-    expect(element.querySelectorAll('.mf-row select')).toHaveLength(24);
-    expect(element.querySelector<HTMLSelectElement>('.mf-row select')?.value).toBe('approval');
-    expect(element.querySelector<HTMLInputElement>('.mf-check input')?.checked).toBe(true);
+    expect(element.querySelector('.mf-lead')?.textContent).toContain('email them a link');
+    expect(element.querySelector('input[formControlName="uid"]')).toBeNull();
+    expect(element.querySelectorAll('.mf-row')).toHaveLength(24);
+    expect(first?.getAttribute('role')).toBe('radiogroup');
+    expect(first?.querySelectorAll('input[type="radio"]')).toHaveLength(3);
+    expect(first?.querySelector('input:checked')?.closest('label')?.textContent.trim()).toBe(
+      'Needs approval',
+    );
+    expect(
+      element.querySelector<HTMLInputElement>('input[formControlName="uploads"]')?.checked,
+    ).toBe(true);
+    expect(element.querySelector('button[type="submit"]')?.textContent.trim()).toBe(
+      'Create and invite',
+    );
   });
 
-  it('should leave out the steps when changing a manager', () => {
-    const { element } = render(RoleFormMode.Editing);
+  it('should show the id as text, not a box, when changing a manager', () => {
+    const { element } = render(RoleFormMode.Editing, false, { uid: 'manager-uid' });
 
-    expect(element.querySelector('.mf-steps')).toBeNull();
+    expect(element.querySelector('.mf-lead')).toBeNull();
+    expect(element.querySelector('code')?.textContent).toBe('manager-uid');
+    expect(element.querySelector('.mf-paste')).toBeNull();
+  });
+
+  it('should ask for the id when pasting it, and say why the account couldn’t be made', () => {
+    const { element } = render(RoleFormMode.Adding, false, {
+      pasteUid: true,
+      problem: 'This email already has an account.',
+    });
+
+    expect(element.querySelector('input[formControlName="uid"]')).not.toBeNull();
+    expect(element.querySelector('[role="alert"]')?.textContent).toContain('already has');
+    expect(element.querySelector('button[type="submit"]')?.textContent.trim()).toBe('Save');
+  });
+
+  it('should pass on the paste switch and Set all', () => {
+    const { component, element } = render();
+    const pasted: boolean[] = [];
+    const set: string[] = [];
+    component.pasteUidChanged.subscribe((on) => pasted.push(on));
+    component.allSet.subscribe((access) => set.push(access));
+
+    element.querySelector<HTMLInputElement>('.mf-paste input')?.click();
+    element.querySelector<HTMLButtonElement>('.mf-chip:last-of-type')?.click();
+
+    expect(pasted).toEqual([true]);
+    expect(set).toEqual(['publish']);
   });
 
   it('should explain what to fix once a field was left', () => {
-    const { fixture, form, element } = render();
+    const { fixture, form, element } = render(RoleFormMode.Adding, false, { pasteUid: true });
 
     form.controls.uid.setValue('has space');
     form.controls.uid.markAsTouched();
@@ -51,7 +96,9 @@ describe('ManagerFormComponent', () => {
 
     expect(element.querySelector('#mf-uid-error')?.textContent).toContain('User UID');
     expect(element.querySelector('#mf-email-error')?.textContent).toBe('Fill this in.');
-    expect(element.querySelector('input')?.getAttribute('aria-invalid')).toBe('true');
+    expect(
+      element.querySelector('input[formControlName="uid"]')?.getAttribute('aria-invalid'),
+    ).toBe('true');
   });
 
   it('should ask to save, or to close', () => {
@@ -62,17 +109,22 @@ describe('ManagerFormComponent', () => {
     component.cancelled.subscribe(cancelled);
 
     element.querySelector<HTMLButtonElement>('button[type="submit"]')?.click();
-    element.querySelector<HTMLButtonElement>('button[type="button"]')?.click();
+    Array.from(element.querySelectorAll<HTMLButtonElement>('button'))
+      .find((button) => button.textContent.trim() === 'Cancel')
+      ?.click();
 
     expect(submitted).toHaveBeenCalled();
     expect(cancelled).toHaveBeenCalled();
   });
 
-  it('should show that it is saving', () => {
-    const { element } = render(RoleFormMode.Adding, true);
+  it.each([
+    [false, 'Inviting…'],
+    [true, 'Saving…'],
+  ])('should show that it is working, pasting the id: %s', (pasteUid, label) => {
+    const { element } = render(RoleFormMode.Adding, true, { pasteUid });
     const save = element.querySelector<HTMLButtonElement>('button[type="submit"]');
 
-    expect(save?.textContent.trim()).toBe('Saving…');
+    expect(save?.textContent.trim()).toBe(label);
     expect(save?.disabled).toBe(true);
   });
 
