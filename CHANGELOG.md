@@ -6,6 +6,16 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.15.0] - 2026-11-23
+
+### Added
+
+- **Hide one item** without deleting it: a **Hidden** switch on each video, team member, show format, gallery photo,
+  testimonial, FAQ question, offer card and milestone. A hidden item stays in the editor, marked Hidden, and comes
+  back with the switch. Visitors don't see it anywhere, and the chat assistant doesn't answer from it; it isn't
+  secret, though: delete an item to remove it.
+- Publishing warns when the featured show is hidden, as the spotlight then shows none.
+
 ## [2.14.0] - 2026-11-23
 
 ### Added
