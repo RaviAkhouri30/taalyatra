@@ -42,3 +42,21 @@
   font-weight: 700;
   color: t.$color-amber-soft;
 }
+
+/// A dropdown that matches the text inputs (0030): their height, border, corner and focus ring,
+/// with the browser's arrow replaced by one drawn in the theme's muted ink.
+@mixin select {
+  @include text-input;
+
+  appearance: none;
+  padding-right: 38px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, t.$color-muted-strong 50%),
+    linear-gradient(135deg, t.$color-muted-strong 50%, transparent 50%);
+  background-position:
+    calc(100% - 19px) 50%,
+    calc(100% - 14px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}

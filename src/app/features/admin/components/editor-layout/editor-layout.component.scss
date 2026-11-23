@@ -50,6 +50,10 @@ $rail-width: 64px;
 }
 
 .ed-main {
+  // A positioned scroll panel: absolutely placed descendants (screen-reader-only text, menus) stay
+  // inside it. Without this they belong to the page, stretch it past the screen, and
+  // scrollIntoView then scrolls the whole page away (2.13.1).
+  position: relative;
   min-width: 0;
   height: 100%;
   overflow-y: auto;
@@ -61,6 +65,7 @@ $rail-width: 64px;
 }
 
 .ed-side {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -176,7 +181,7 @@ $rail-width: 64px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box;
+  // No padding or border, so 32 px whatever the box model (and the styles' budget is tight).
   width: 32px;
   height: 32px;
   padding: 0;

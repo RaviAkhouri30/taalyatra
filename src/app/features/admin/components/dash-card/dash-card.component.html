@@ -1,0 +1,11 @@
+<section class="dc" [attr.aria-labelledby]="headingId()">
+  <div class="dc-head">
+    <span class="dc-icon" aria-hidden="true"><app-icon [name]="icon()" [size]="18" /></span>
+    <h3 [id]="headingId()">{{ heading() }}</h3>
+    @if (badge()) {
+      <span class="dc-badge">{{ badge() }}</span>
+    }
+  </div>
+  <div class="dc-body"><ng-content /></div>
+  <a class="dc-link" [routerLink]="link()" [fragment]="fragment()">{{ linkText() }} →</a>
+</section>

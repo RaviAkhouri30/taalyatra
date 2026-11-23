@@ -16,9 +16,12 @@
   }
 
   input:not([type='checkbox']),
-  select,
   textarea {
     @include forms.text-input;
+  }
+
+  select {
+    @include forms.select;
   }
 
   textarea {

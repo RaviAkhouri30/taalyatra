@@ -80,3 +80,8 @@
   font-weight: 600;
   color: t.$color-cream;
 }
+
+// Its own display would otherwise win over the hidden attribute.
+:host([hidden]) {
+  display: none;
+}

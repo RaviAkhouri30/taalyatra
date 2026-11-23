@@ -431,3 +431,30 @@ sequenceDiagram
   F-->>VM: { text }, at most 600 characters
   Note over VM,F: off, a limit, a failure, offline or past 12 s, and the script answers, as before
 ```
+
+## 15. Adding a manager with their email (0030, 2.14.0)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor O as Owner
+  participant VM as TeamAccessViewModel
+  participant A as IAccountService
+  participant FB as Firebase Auth (accounts:signUp)
+  participant R as RolesService (Firestore, rules)
+  participant AU as IAuthService
+
+  O->>VM: their email and settings, then Create and invite
+  VM->>A: create(email)
+  A->>FB: the site's web key, a random one-time password
+  FB-->>A: their new id
+  A-->>VM: the id
+  VM->>R: save roles/{id} (only the owner may)
+  VM->>AU: sendPasswordReset(email, /admin/sign-in)
+  VM-->>O: their card, and "We've emailed them a link to set their password"
+  Note over A,FB: a plain request, so the owner stays signed in
+  alt email taken, or sign-up turned off
+    A-->>VM: AccountError
+    VM-->>O: why, and the box to paste their User UID
+  end
+```

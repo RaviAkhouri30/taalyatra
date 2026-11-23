@@ -77,6 +77,19 @@ export class PublishBarViewModel extends ViewModel<IPublishBarState> {
   public readonly failed = computed(() => this.layout.status() === SaveStatus.Failed);
   /** Whether the bar has something to act on. */
   public readonly hasChanges = computed(() => this.count() > 0);
+  /**
+   * Whether the bar has anything to say on a page that isn't an editor page (0030): something to
+   * publish, approve or retry, a backup offered, or an action in progress.
+   */
+  public readonly needed = computed(
+    () =>
+      (this.data()?.drafts.size ?? 0) > 0 ||
+      this.toApprove() > 0 ||
+      this.failed() ||
+      this.offerBackup() ||
+      this.busy() ||
+      this.confirmingDiscard(),
+  );
   /** Publishing is off while a save is running or failed, or while something needs fixing. */
   public readonly canPublish = computed(
     () =>

@@ -10,9 +10,14 @@ async function addManager(editor: EditorPage, page: Page): Promise<void> {
   await editor.openTab('Team access');
   await page.getByRole('button', { name: 'Add a manager' }).click();
   const form = page.getByRole('form', { name: 'Add a manager' });
+  // An existing account: pasted by its id (0030).
+  await form.getByRole('checkbox', { name: /paste their User UID/ }).check();
   await form.getByRole('textbox', { name: 'User UID' }).fill(FAKE_MANAGER_ACCOUNT.uid);
   await form.getByRole('textbox', { name: 'Their email' }).fill(FAKE_MANAGER_ACCOUNT.email);
-  await form.getByRole('combobox', { name: 'Team', exact: true }).selectOption('hidden');
+  await form
+    .getByRole('radiogroup', { name: 'Team', exact: true })
+    .getByRole('radio', { name: 'Hidden' })
+    .check();
   await form.getByRole('button', { name: 'Save' }).click();
   await page.getByRole('article', { name: FAKE_MANAGER_ACCOUNT.email }).waitFor();
 }

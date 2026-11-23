@@ -10,6 +10,11 @@ const OWNER = { Authorization: 'Bearer owner' };
 const SIGN_IN_URL =
   'http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=demo';
 
+/** The auth emulator's password emails (kept, not sent) and its reset, for an invited manager. */
+const OOB_CODES_URL = 'http://127.0.0.1:9099/emulator/v1/projects/demo-taal-yatra/oobCodes';
+const RESET_URL =
+  'http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:resetPassword?key=demo';
+
 const ADMIN = { email: 'admin@taalyatra.test', password: 'emulator-admin-password' };
 const MANAGER = {
   uid: 'emulator-manager-uid',
@@ -90,6 +95,8 @@ test.describe('Firebase roles (emulator)', () => {
     await editor.openTab('Team access');
     await page.getByRole('button', { name: 'Add a manager' }).click();
     const form = page.getByRole('form', { name: 'Add a manager' });
+    // An existing account: pasted by its id (0030).
+    await form.getByRole('checkbox', { name: /paste their User UID/ }).check();
     await form.getByRole('textbox', { name: 'User UID' }).fill(MANAGER.uid);
     await form.getByRole('textbox', { name: 'Their email' }).fill(MANAGER.email);
     await form.getByRole('button', { name: 'Save' }).click();
@@ -189,5 +196,40 @@ test.describe('Firebase roles (emulator)', () => {
       await page.reload();
       await editor.signOut();
     }
+  });
+
+  test('should make an invited manager’s account, who sets a password and signs in (0030)', async ({
+    editor,
+    page,
+    request,
+  }, info) => {
+    // Two sign-ins, the owner's sign-out and a password set: longer than the default on a phone.
+    test.slow();
+    // Unique per viewport: the projects share one emulator, one after another.
+    const email = `invited-${info.project.name}@taalyatra.test`;
+    const password = 'invited-manager-password';
+
+    await editor.signIn(ADMIN);
+    await editor.openTab('Team access');
+    await page.getByRole('button', { name: 'Add a manager' }).click();
+    const form = page.getByRole('form', { name: 'Add a manager' });
+    await form.getByRole('textbox', { name: 'Their email' }).fill(email);
+    await form.getByRole('button', { name: 'Create and invite' }).click();
+    await expect(page.getByRole('article', { name: email })).toBeVisible();
+    await editor.signOut();
+
+    // The emulator keeps the password email's code instead of sending it.
+    const codes = (await (await request.get(OOB_CODES_URL)).json()) as {
+      oobCodes: { email: string; requestType: string; oobCode: string }[];
+    };
+    const code = codes.oobCodes.find(
+      (entry) => entry.email === email && entry.requestType === 'PASSWORD_RESET',
+    );
+    expect(code).toBeDefined();
+    await request.post(RESET_URL, { data: { oobCode: code?.oobCode, newPassword: password } });
+
+    // Signed in as the new manager is the proof; a new account is offered the tour, so no sign-out.
+    await editor.signIn({ email, password });
+    await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible();
   });
 });

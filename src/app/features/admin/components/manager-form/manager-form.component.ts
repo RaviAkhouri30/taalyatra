@@ -6,7 +6,7 @@ import { ButtonVariant } from '@shared/enums/button-variant.enum';
 import { EMAIL_MAX_LENGTH } from '../../forms/auth-limits.constants';
 import { fieldErrorMessage } from '../../forms/field-errors';
 import { type IRoleControls } from '../../forms/role-form';
-import { PAGE_ACCESS_CHOICES } from '../../models/role.model';
+import { PAGE_ACCESS_CHOICES, type PageAccess } from '../../models/role.model';
 import { siteDay } from '../../models/site-days';
 import { AREA_ROWS, PAGE_ROWS, RoleFormMode, accessLabel } from '../../models/team-access.model';
 
@@ -34,6 +34,14 @@ export class ManagerFormComponent {
   public readonly submitted = output();
   /** The owner closed the form without saving. */
   public readonly cancelled = output();
+  /** Adding by an account's pasted id instead of making one from the email (0030). */
+  public readonly pasteUid = input(false);
+  /** Why the account couldn't be made; empty when nothing went wrong. */
+  public readonly inviteProblem = input('');
+  /** The owner switched between pasting an id and making the account. */
+  public readonly pasteUidChanged = output<boolean>();
+  /** The owner set every page to one setting. */
+  public readonly allSet = output<PageAccess>();
 
   protected readonly ghost = ButtonVariant.Ghost;
   protected readonly rows = PAGE_ROWS;
@@ -44,6 +52,14 @@ export class ManagerFormComponent {
   }));
   protected readonly emailMax = EMAIL_MAX_LENGTH;
   protected readonly adding = computed(() => this.mode() === RoleFormMode.Adding);
+  /** The account is made from the email (0030), or a pasted or existing one is saved. */
+  protected readonly submitLabel = computed(() => {
+    const inviting = this.adding() && !this.pasteUid();
+    if (this.saving()) {
+      return inviting ? 'Inviting…' : 'Saving…';
+    }
+    return inviting ? 'Create and invite' : 'Save';
+  });
   /** The earliest last day a super manager can be given: today, in India (0024 D3). */
   protected readonly today = siteDay(inject(CLOCK).now().getTime());
 
@@ -54,6 +70,11 @@ export class ManagerFormComponent {
   protected errorOf(field: CheckedField): string | null {
     const control = this.form().get(field);
     return control?.invalid && control.touched ? fieldErrorMessage(control.errors) : null;
+  }
+
+  /** @param event The paste switch changed. */
+  protected togglePaste(event: Event): void {
+    this.pasteUidChanged.emit((event.target as HTMLInputElement).checked);
   }
 
   /** @returns What to fix in a super manager's last day, once the owner has left it; else `null`. */

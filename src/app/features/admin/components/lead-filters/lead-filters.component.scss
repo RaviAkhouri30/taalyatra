@@ -1,4 +1,5 @@
 @use 'tokens' as t;
+@use 'forms';
 
 :host {
   display: block;
@@ -18,20 +19,27 @@
   }
 
   // The same height for the search box and the lists, so their labels line up.
-  input,
-  select {
-    box-sizing: border-box;
-    min-height: 44px;
-    padding: 9px 10px;
-    border: 1px solid t.$color-field-border;
-    border-radius: 10px;
-    background: t.$color-surface;
-    color: t.$color-cream;
-    font: inherit;
+  input {
+    @include forms.text-input;
   }
 
-  button {
+  select {
+    @include forms.select;
+  }
+
+  .lf-clear {
     justify-self: start;
+    align-self: center;
+    margin-top: 18px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: t.$color-amber-soft;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
   }
 
   input::placeholder {

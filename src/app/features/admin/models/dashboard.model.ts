@@ -19,7 +19,7 @@ import { type Permissions } from './permissions.model';
 import { type IUnseenApprovals, unseenApprovalsText } from './self-approvals';
 import { superNotice } from './super-manager';
 import { type IVisitDay } from './visit-days';
-import { recentVisitsText } from './visits-page.model';
+import { type IDayTotal, lastWeek, recentVisitsText } from './visits-page.model';
 
 /** What the dashboard is built from. */
 export interface IDashboardSource {
@@ -54,6 +54,8 @@ export interface IDashboardAccess {
   readonly canSeeVisibility: boolean;
   /** The approvals card: always for a manager, for the owner only when something waits. */
   readonly showApprovals: boolean;
+  /** Changes wait for the owner's approval: the card is in Needs you (0030). */
+  readonly approvalsWaiting: boolean;
   readonly approvalsHeading: string;
   readonly approvals: string;
 }
@@ -86,6 +88,10 @@ export class DashboardModel {
   public readonly leads: string;
   /** Which cards the account sees, and its approvals (0019). */
   public readonly access: IDashboardAccess;
+  /** The last 7 days' visits, for the Visits card's small chart (0030); empty when unread. */
+  public readonly visitsWeek: readonly IDayTotal[];
+  /** Nothing waits for the account: no changes, approvals, due backup or new leads (0030). */
+  public readonly caughtUp: boolean;
 
   /** @param source What the dashboard is built from. */
   public constructor(source: IDashboardSource) {
@@ -114,6 +120,21 @@ export class DashboardModel {
     this.newLeads = source.leads?.filter((lead) => lead.status === LeadStatus.New).length ?? 0;
     this.leads = DashboardModel.leadsText(source.leads, this.newLeads);
     this.access = DashboardModel.accessOf(source);
+    this.visitsWeek = source.visits ? lastWeek(source.visits.days, source.visits.today) : [];
+    this.caughtUp = DashboardModel.nothingWaits(this);
+  }
+
+  /** @returns Whether nothing asks for the account: the "all caught up" line (0030). */
+  private static nothingWaits(
+    model: Pick<DashboardModel, 'changeCount' | 'access' | 'backup' | 'newLeads'>,
+  ): boolean {
+    const { access } = model;
+    return (
+      model.changeCount === 0 &&
+      !access.approvalsWaiting &&
+      !(access.backups && model.backup.due) &&
+      !(access.leads && model.newLeads > 0)
+    );
   }
 
   private static accessOf(source: IDashboardSource): IDashboardAccess {
@@ -129,6 +150,7 @@ export class DashboardModel {
       canSeeOffer: permissions.canSee(EditorTab.Offer),
       canSeeVisibility: permissions.canSee(EditorTab.Visibility),
       showApprovals: !owner || waiting.length > 0,
+      approvalsWaiting: owner && waiting.length > 0,
       approvalsHeading: owner ? 'Waiting for approval' : 'Your requests',
       approvals: owner
         ? `${plural(waiting.length, 'change waits', 'changes wait')} for your approval.`

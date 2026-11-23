@@ -49,6 +49,10 @@ test.describe('Admin theme', () => {
   });
 
   test.describe('signed in as the owner', () => {
+    // Each publishes a theme and checks two pages on three sizes: under the full run's load these
+    // passed the default timeout (0030), so they get three times as long.
+    test.slow();
+
     test.beforeEach(async ({ editor }) => {
       await editor.signIn();
     });
@@ -177,6 +181,8 @@ test.describe('Admin theme', () => {
     await editor.openTab('Team access');
     await page.getByRole('button', { name: 'Add a manager' }).click();
     const form = page.getByRole('form', { name: 'Add a manager' });
+    // An existing account: pasted by its id (0030).
+    await form.getByRole('checkbox', { name: /paste their User UID/ }).check();
     await form.getByRole('textbox', { name: 'User UID' }).fill(FAKE_MANAGER_ACCOUNT.uid);
     await form.getByRole('textbox', { name: 'Their email' }).fill(FAKE_MANAGER_ACCOUNT.email);
     await form.getByRole('button', { name: 'Save' }).click();

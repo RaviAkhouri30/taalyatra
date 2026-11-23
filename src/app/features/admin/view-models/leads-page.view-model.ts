@@ -59,6 +59,10 @@ export class LeadsPageViewModel extends ViewModel<readonly Lead[]> {
   public readonly removing = signal(false);
   public readonly options = computed(() => filterOptions(this.data() ?? []));
   public readonly shown = computed(() => filterLeads(this.data() ?? [], this.filter()));
+  /** Some filter is set, so Clear filters is offered (0030). */
+  public readonly filtering = computed(() =>
+    Object.values(this.filter()).some((value) => value !== ''),
+  );
   public readonly count = computed(() => {
     const all = this.data()?.length ?? 0;
     const shown = this.shown().length;

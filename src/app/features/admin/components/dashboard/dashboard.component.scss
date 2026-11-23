@@ -81,20 +81,31 @@
   color: t.$color-cream;
 }
 
-.db-pill {
-  justify-self: start;
-  padding: 2px 10px;
-  border-radius: t.$radius-pill;
-  background: t.$color-surface;
-  color: t.$color-cream;
-  font-size: t.size(12.5px);
+// A group's quiet heading (0030): Needs you, Your site, Visitors, News.
+.db-heading {
+  margin: 26px 0 12px;
+  font-size: t.size(13px);
   font-weight: 700;
-  text-transform: capitalize;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: t.$color-muted-strong;
 
-  &[data-status='live'] {
-    background: t.$color-amber;
-    color: t.$color-ink-deep;
+  &:first-of-type {
+    margin-top: 4px;
   }
+}
+
+// Nothing waits: one calm line instead of empty cards.
+.db-caught {
+  margin: 0;
+  padding: 14px 18px;
+  border: 1px dashed t.$color-line;
+  border-radius: 14px;
+  color: t.$color-muted-strong;
+}
+
+.db-grid--end {
+  margin-top: 26px;
 }
 
 // The to-do list (0017 U3): one row per item, its Fix link on the right.

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BaseComponent } from '@shared/base/base-component';
 import { ButtonDirective } from '@shared/directives/button.directive';
@@ -18,8 +18,12 @@ import {
   styleUrl: './publish-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [PublishBarViewModel],
+  host: { '[hidden]': 'onlyWhenNeeded() && !model.needed()' },
 })
 export class PublishBarComponent extends BaseComponent<IPublishBarState> {
+  /** Away from the editor pages, the bar shows only while there's something to do (0030). */
+  public readonly onlyWhenNeeded = input(false);
+
   protected override readonly model = inject(PublishBarViewModel);
   protected readonly reviewUrl = `${AppRoute.Admin}/${PUBLISH_PATH}`;
   protected readonly ghost = ButtonVariant.Ghost;

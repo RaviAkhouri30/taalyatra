@@ -128,6 +128,25 @@ test.describe('Admin AI help', () => {
     await expect(member.getByLabel('Description')).toHaveValue(FAKE_AI_DESCRIPTION);
   });
 
+  test('should keep the editor in place on a wide screen while AI help opens', async ({
+    editor,
+    page,
+  }, info) => {
+    // Only the wide layout has panels that scroll on their own; the page itself never should.
+    test.skip(info.project.name !== 'desktop-chrome', 'the wide layout only');
+    await page.setViewportSize({ width: 1800, height: 900 });
+    await editor.openTab('Hero');
+    const reason = editor.card('Trust strip').getByRole('group', { name: 'Reason 4' });
+
+    await reason.getByRole('button', { name: 'AI help', description: 'For Text' }).click();
+    await page.getByRole('menuitem', { name: 'Shorter' }).click();
+    await page.getByRole('button', { name: 'Use this' }).waitFor();
+
+    expect(
+      await page.evaluate(() => [window.scrollY, document.documentElement.scrollHeight]),
+    ).toEqual([0, 900]);
+  });
+
   test('should match the approved look of the menu and a suggestion', async ({ editor, page }) => {
     await editor.openTab('Hero');
     const hero = editor.card('Hero');

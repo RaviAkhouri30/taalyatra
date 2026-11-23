@@ -31,18 +31,21 @@ describe('DashboardComponent', () => {
 
   it('should welcome the owner and show a card per topic, each linking to where it changes', () => {
     const element = render({ 'site/config': fakeDb.site.config });
-    const links = Array.from(element.querySelectorAll('.db-card a')).map((link) =>
+    const links = Array.from(element.querySelectorAll('.dc-link')).map((link) =>
       link.getAttribute('href'),
     );
 
     expect(element.querySelector('h1')?.textContent).toBe('Welcome back');
-    expect(element.querySelector('.db-pill')?.textContent).toBe('live');
+    expect(
+      element.querySelector('#db-offer')?.closest('section')?.querySelector('.dc-badge')
+        ?.textContent,
+    ).toBe('live');
+    // Needs you: only the backup due; then Your site, Visitors and News (0030).
     expect(links).toEqual([
-      '/admin/publish',
+      '/admin/publish#backups',
       '/admin/offer',
       '/admin/visibility',
       '/admin/publish',
-      '/admin/publish#backups',
       '/admin/leads',
       '/admin/visits',
       '/admin/releases',
@@ -53,16 +56,36 @@ describe('DashboardComponent', () => {
   it('should remind the owner to make a backup, and show the newest release in brief', () => {
     const element = render({});
 
-    expect(element.querySelector('#db-backup')?.textContent).toContain('Due');
+    expect(element.querySelector('#db-backup')?.closest('section')?.textContent).toContain('Due');
     expect(element.textContent).toContain('No backup yet.');
     expect(element.querySelector('#db-release')).not.toBeNull();
     expect(element.querySelectorAll('.db-notes li').length).toBeGreaterThan(0);
   });
 
+  it('should put the changes to publish first, marked, and not say all caught up', () => {
+    const element = render({
+      'drafts/home__hero': { path: 'home/hero', content: { title: 'x' }, savedAt: 'x' },
+      'adminState/backups': { lastAt: '2026-10-30T10:00:00.000Z' },
+    });
+
+    const first = element.querySelector('app-dash-card');
+    expect(first?.querySelector('h3')?.textContent).toBe('Changes not on the website yet');
+    expect(first?.classList.contains('dc--urgent')).toBe(true);
+    expect(element.querySelector('.db-caught')).toBeNull();
+  });
+
+  it('should say all caught up when nothing waits', () => {
+    const element = render({ 'adminState/backups': { lastAt: '2026-10-30T10:00:00.000Z' } });
+
+    expect(element.querySelector('.db-caught')?.textContent).toContain('all caught up');
+  });
+
   it('should say when the last backup was, without a reminder, when it is recent', () => {
     const element = render({ 'adminState/backups': { lastAt: '2026-10-30T10:00:00.000Z' } });
 
-    expect(element.querySelector('#db-backup')?.textContent).not.toContain('Due');
+    expect(element.querySelector('#db-backup')?.closest('section')?.textContent).not.toContain(
+      'Due',
+    );
     expect(element.textContent).toContain('Last backup: 30 Oct 2026, 3:30 pm.');
   });
 
@@ -102,7 +125,7 @@ describe('DashboardComponent', () => {
       },
       manager,
     );
-    const headings = Array.from(element.querySelectorAll('.db-card h2')).map((heading) =>
+    const headings = Array.from(element.querySelectorAll('app-dash-card h3')).map((heading) =>
       heading.textContent.trim(),
     );
 

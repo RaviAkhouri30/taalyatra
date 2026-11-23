@@ -1,0 +1,11 @@
+<svg [attr.viewBox]="viewBox" preserveAspectRatio="none" aria-hidden="true">
+  @for (bar of bars(); track $index) {
+    <rect
+      rx="2"
+      [attr.x]="bar.x"
+      [attr.y]="bar.y"
+      [attr.width]="bar.width"
+      [attr.height]="bar.height"
+    />
+  }
+</svg>

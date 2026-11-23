@@ -20,6 +20,7 @@
       <app-lead-filters
         [form]="model.filters"
         [options]="model.options()"
+        [filtering]="model.filtering()"
         (cleared)="model.clearFilters()"
       />
       <p class="lp-count" role="status">{{ model.count() }}</p>

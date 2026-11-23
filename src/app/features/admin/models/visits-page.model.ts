@@ -152,3 +152,23 @@ export function recentVisitsText(days: readonly IVisitDay[], today: string): str
   const previous = sum(before, weekStart);
   return `${head}, ${comparison(recent, previous)} ${previous.toLocaleString('en-IN')} the week before.`;
 }
+
+/** One day's visits, for the dashboard's small chart (0030). */
+export interface IDayTotal {
+  /** `YYYY-MM-DD`. */
+  readonly day: string;
+  readonly total: number;
+}
+
+/**
+ * @param days Every day's visits.
+ * @param today `YYYY-MM-DD`, in India.
+ * @returns The last 7 days, oldest first, with 0 for a day nobody came.
+ */
+export function lastWeek(days: readonly IVisitDay[], today: string): IDayTotal[] {
+  const totals = new Map(days.map((day) => [day.day, day.total]));
+  return Array.from({ length: WEEK_DAYS }, (_, index) => {
+    const day = addDays(today, index + 1 - WEEK_DAYS);
+    return { day, total: totals.get(day) ?? 0 };
+  });
+}

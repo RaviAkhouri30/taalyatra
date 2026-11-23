@@ -138,6 +138,43 @@ describe('DashboardModel', () => {
     expect(dashboard.visits).toBe('5 visits in the last 7 days.');
   });
 
+  describe('what needs the owner (0030)', () => {
+    const recent = '2026-11-01T10:00:00.000Z';
+
+    it('should be all caught up with nothing to publish, approve, back up or answer', () => {
+      expect(new DashboardModel(source({ lastBackupAt: recent })).caughtUp).toBe(true);
+    });
+
+    it.each([
+      ['changes to publish', { changeCount: 1, lastBackupAt: recent }],
+      ['a backup due', {}],
+    ])('should not be caught up with %s', (_case, change) => {
+      expect(new DashboardModel(source(change)).caughtUp).toBe(false);
+    });
+
+    it('should mark approvals as waiting only for the owner, when one waits', () => {
+      const waiting = { status: ApprovalStatus.Waiting } as IApproval;
+
+      const dashboard = new DashboardModel(source({ requests: [waiting], lastBackupAt: recent }));
+
+      expect(dashboard.access.approvalsWaiting).toBe(true);
+      expect(dashboard.caughtUp).toBe(false);
+    });
+
+    it('should give the Visits card the last 7 days, and none when unread', () => {
+      const visits = {
+        days: [{ day: '2026-11-05', total: 3, pages: {}, devices: {} }],
+        today: '2026-11-05',
+      };
+
+      expect(new DashboardModel(source({ visits })).visitsWeek.at(-1)).toEqual({
+        day: '2026-11-05',
+        total: 3,
+      });
+      expect(new DashboardModel(source()).visitsWeek).toEqual([]);
+    });
+  });
+
   describe('who is looking (0019)', () => {
     const request = (by: string, status: ApprovalStatus): IApproval => ({
       id: `${by}-${status}`,

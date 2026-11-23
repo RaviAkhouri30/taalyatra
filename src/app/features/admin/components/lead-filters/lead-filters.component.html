@@ -39,5 +39,8 @@
       }
     </select>
   </label>
-  <button appButton type="button" [variant]="ghost" (click)="cleared.emit()">Show all</button>
+  @if (filtering()) {
+    <!-- A reset in the filters' own row, only while there's something to clear (0030). -->
+    <button type="button" class="lf-clear" (click)="cleared.emit()">Clear filters</button>
+  }
 </form>

@@ -3,10 +3,11 @@ import { createLeadFilterForm } from '../../forms/lead-filter-form';
 import { LeadFiltersComponent } from './lead-filters.component';
 
 describe('LeadFiltersComponent', () => {
-  function render() {
+  function render(filtering = false) {
     const form = createLeadFilterForm();
     const fixture = TestBed.createComponent(LeadFiltersComponent);
     fixture.componentRef.setInput('form', form);
+    fixture.componentRef.setInput('filtering', filtering);
     fixture.componentRef.setInput('options', {
       eventTypes: [{ value: 'Corporate', label: 'Corporate' }],
       groupSizes: [],
@@ -41,13 +42,19 @@ describe('LeadFiltersComponent', () => {
     expect(form.getRawValue()).toMatchObject({ search: 'Asha', status: 'won' });
   });
 
-  it('should ask to show every lead again', () => {
-    const { component, element } = render();
+  it('should offer to clear the filters while one is set, and ask for every lead again', () => {
+    const { component, element } = render(true);
     const cleared = vi.fn();
     component.cleared.subscribe(cleared);
 
-    element.querySelector<HTMLButtonElement>('button')!.click();
+    element.querySelector<HTMLButtonElement>('.lf-clear')?.click();
 
     expect(cleared).toHaveBeenCalled();
+  });
+
+  it('should offer no reset when no filter is set', () => {
+    const { element } = render();
+
+    expect(element.querySelector('.lf-clear')).toBeNull();
   });
 });

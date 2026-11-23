@@ -17,6 +17,10 @@
       [mode]="model.mode()"
       [heading]="model.formHeading()"
       [saving]="model.saving()"
+      [pasteUid]="model.pasteUid()"
+      [inviteProblem]="model.inviteProblem()"
+      (pasteUidChanged)="model.usePastedUid($event)"
+      (allSet)="model.setAll($event)"
       (submitted)="model.save()"
       (cancelled)="model.closeForm()"
     />
