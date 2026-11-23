@@ -63,6 +63,8 @@ export interface IPromotionDto {
   readonly startsOn?: string | null;
   /** Last day shown (YYYY-MM-DD, Pune time), or `null` for no end date. */
   readonly endsOn?: string | null;
+  /** The festival look (a `Festival` name, 2.16.0); missing in older data. */
+  readonly festival?: string;
 }
 
 /**

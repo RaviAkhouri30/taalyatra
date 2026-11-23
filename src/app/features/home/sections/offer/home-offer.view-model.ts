@@ -19,7 +19,7 @@ export class HomeOfferViewModel extends ViewModel<OfferModel> {
       // No running promotion (switched off or outside its dates): the section stays unrendered.
       filter(([, site]) => site.promotion !== null),
       tap(([offer, site]) => {
-        this.setData(new OfferModel(offer, site.contact));
+        this.setData(new OfferModel(offer, site.contact, site.promotion?.festival ?? null));
       }),
     );
   }

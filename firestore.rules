@@ -642,8 +642,12 @@ service cloud.firestore {
     function isValidPromotion(promotion) {
       return promotion is map
         && promotion.keys().hasOnly(['label', 'subtitle', 'dismissLabel', 'live', 'startsOn',
-                                     'endsOn'])
+                                     'endsOn', 'festival'])
         && isText(promotion.label, 1, 40)
+        // The festival look (2.16.0); names mirror the Festival enum (festival.enum.ts).
+        && (!('festival' in promotion) || promotion.festival in ['diwali', 'holi', 'navratri',
+            'ganesh-chaturthi', 'dussehra', 'baisakhi', 'gurpurab', 'christmas', 'halloween',
+            'new-year', 'none'])
         && (!('live' in promotion) || promotion.live is bool)
         && (!('startsOn' in promotion) || isDateOrNull(promotion.startsOn))
         && (!('endsOn' in promotion) || isDateOrNull(promotion.endsOn));

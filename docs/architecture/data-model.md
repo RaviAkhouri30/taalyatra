@@ -58,7 +58,9 @@ app routes.
   `export:firestore` backs the content up. `fake-db.json` stays the fixture for development
   and e2e.
 - `site/config.promotion` has `live`, `startsOn` and `endsOn` (YYYY-MM-DD, Pune time); missing
-  means on with no dates.
+  means on with no dates. `festival` (2.16.0) is one of the eleven `Festival` names (the rules list
+  them) and sets the badge's and the offer band's look; missing, the badge is Diwali's and the band
+  reads `home/offer.theme` (`sparks` is Diwali), which the editor no longer offers.
 - DTO interfaces (`i-*.ts`) describe stored shapes; model classes add behaviour.
 - **An item can be hidden (2.15.0):** `hidden: true` on an item of `videos`, `team`, `showFormats` or `gallery`
   (the rules allow the key, true or false), and of `home/proof.testimonials`, `home/faq.items`, `home/offer.cards`

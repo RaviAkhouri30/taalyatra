@@ -1,5 +1,5 @@
 import { CONTENT_MAX_LENGTH } from '@shared/constants/content-limits.constants';
-import { FestiveTheme } from '@shared/enums/festive-theme.enum';
+import { FESTIVAL_LOOKS } from '@shared/constants/festival-looks.constants';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { ContentPath } from '../models/content-path.enum';
 import { FieldKind } from '../models/field-kind.enum';
@@ -29,6 +29,16 @@ export const OFFER_SECTIONS: readonly IEditorSection[] = [
           },
           { key: 'startsOn', label: 'Live from', kind: FieldKind.Date },
           { key: 'endsOn', label: 'Ends on', kind: FieldKind.Date },
+          {
+            key: 'festival',
+            label: 'Festival',
+            kind: FieldKind.Choice,
+            hint: 'Sets the badge’s and the offer section’s colours, icon and animation.',
+            options: FESTIVAL_LOOKS.map((look) => ({
+              value: look.festival,
+              label: `${look.label} · ${look.season}`,
+            })),
+          },
           text('label', 'Badge text', {
             required: true,
             maxLength: CONTENT_MAX_LENGTH.promotionLabel,
@@ -50,15 +60,6 @@ export const OFFER_SECTIONS: readonly IEditorSection[] = [
     anchor: PageAnchor.Diwali,
     tip: 'Keep the title under 40 characters so it stays on two lines.',
     fields: [
-      {
-        key: 'theme',
-        label: 'Festive animation',
-        kind: FieldKind.Choice,
-        options: [
-          { value: FestiveTheme.Sparks, label: 'Diwali sparks' },
-          { value: FestiveTheme.None, label: 'No animation' },
-        ],
-      },
       HEADING_FIELDS.eyebrow,
       { ...HEADING_FIELDS.title, recommended: 40 },
       HEADING_FIELDS.lead,

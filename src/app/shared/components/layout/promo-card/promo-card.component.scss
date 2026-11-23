@@ -16,6 +16,8 @@ $sparks: (
   display: contents;
 }
 
+@include promo.festival-look;
+
 .promo {
   @include promo.badge;
 
@@ -34,6 +36,14 @@ $sparks: (
     border: 1px solid t.with-alpha(t.$color-amber-soft, 50%);
     animation: pulse 2.2s ease-out infinite;
     pointer-events: none;
+  }
+
+  &.festival-look::after {
+    border-color: var(--fest-glow);
+  }
+
+  &.promo--still::after {
+    display: none;
   }
 
   @include bp.down(bp.$tablet) {
@@ -91,6 +101,10 @@ $sparks: (
     font-size: t.size(12px);
     font-weight: 600;
     color: t.$color-promo-ink;
+
+    .festival-look & {
+      color: inherit;
+    }
 
     @include bp.down(bp.$tablet) {
       display: none;

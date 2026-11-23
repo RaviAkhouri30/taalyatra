@@ -1,0 +1,41 @@
+@use 'tokens' as t;
+@use 'festive';
+
+@include festive.layer;
+
+// Falling snow.
+.fp {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: t.$color-spark-white;
+  box-shadow: 0 0 6px rgb(255 255 255 / 80%);
+  animation-name: snow;
+  animation-duration: 5s;
+  animation-timing-function: linear;
+
+  &:nth-child(3n) {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+@keyframes snow {
+  0% {
+    transform: translate(0, -60px);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  50% {
+    transform: translate(12px, 20px);
+  }
+
+  100% {
+    transform: translate(-6px, 110px);
+    opacity: 0;
+  }
+}

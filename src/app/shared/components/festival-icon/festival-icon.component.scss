@@ -1,0 +1,12 @@
+@use 'tokens' as t;
+
+:host {
+  display: contents;
+}
+
+// The Om sign as text, in the device's own Devanagari font, the size of the other icons.
+.om {
+  font-size: t.size(18px);
+  font-weight: 600;
+  line-height: 1;
+}

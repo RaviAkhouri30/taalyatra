@@ -1,0 +1,67 @@
+@use 'tokens' as t;
+@use 'festive';
+
+@include festive.layer;
+
+// Drifting bats, flapping as they cross.
+.fp {
+  width: 26px;
+  height: 12px;
+  background: t.$color-fx-bat;
+  clip-path: polygon(
+    0 30%,
+    15% 10%,
+    30% 35%,
+    42% 15%,
+    50% 30%,
+    58% 15%,
+    70% 35%,
+    85% 10%,
+    100% 30%,
+    82% 70%,
+    65% 55%,
+    50% 100%,
+    35% 55%,
+    18% 70%
+  );
+  animation-name: drift, flap;
+  animation-duration: 6s, 0.35s;
+  animation-timing-function: ease-in-out;
+  animation-direction: normal, alternate;
+
+  &:nth-child(2n) {
+    background: t.$color-fx-bat-violet;
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translate(-30px, 10px);
+    opacity: 0;
+  }
+
+  15%,
+  85% {
+    opacity: 0.9;
+  }
+
+  50% {
+    transform: translate(30px, -18px);
+  }
+
+  100% {
+    transform: translate(80px, 4px);
+    opacity: 0;
+  }
+}
+
+// The wings: a turn about the bat's width, apart from its drift and the badge's smaller size.
+@keyframes flap {
+  0% {
+    rotate: x 0deg;
+  }
+
+  100% {
+    rotate: x 60deg;
+  }
+}

@@ -307,3 +307,95 @@ take one off the site without deleting it.
 ---
 
 **Approval (2.15.0):** ☑ Approved by Ravi Akhouri on 2026-11-23.
+
+# 2.16.0 · The festival looks
+
+The last release of the programme (inception D5). The owner confirmed `taal-yatra-admin-festival-themes.xlsx` as the
+list: **eleven looks**, each with its own colours, an animation and an icon for the badge. Prototype:
+[Taal Yatra festival looks](https://claude.ai/artifact/TydMpTXRgBjhKfEsVDZ4fB).
+
+| Festival         | Animation                 | Colour 1  | Colour 2  | Words     | Badge icon      | Usual season        |
+| ---------------- | ------------------------- | --------- | --------- | --------- | --------------- | ------------------- |
+| Diwali           | Crackers bursting outward | the theme | the theme | the theme | Diya (today's)  | Oct / Nov           |
+| Holi             | Colour puffs              | `#E4428F` | `#F2B705` | `#2A0B18` | Flower          | March               |
+| Navratri         | Swirling garba dots       | `#DE4B5E` | `#F46036` | `#2B0709` | Four-point star | Sep / Oct           |
+| Ganesh Chaturthi | Falling petals            | `#F2994A` | `#C1272D` | `#2B0A08` | Om              | Aug / Sep           |
+| Dussehra         | Rising flame              | `#F7C948` | `#A4161A` | `#2B0709` | Pennant         | Sep / Oct           |
+| Baisakhi         | Swaying wheat             | `#F7C948` | `#3F7D20` | `#16200C` | Wheat ear       | April               |
+| Gurpurab         | Soft glow                 | `#F3D77F` | `#1F4E79` | `#0E1B26` | Wheel           | Nov (varies)        |
+| Christmas        | Falling snow              | `#C1121F` | `#2D6A4F` | `#FFF6F0` | Snowflake       | December            |
+| Halloween        | Drifting bats             | `#FF7B00` | `#5A189A` | `#1A0A22` | Crescent moon   | 31 October          |
+| New Year         | Confetti                  | `#E9A552` | `#6D4AFF` | `#120C28` | Sparkle         | 31 Dec / 1 Jan      |
+| No festival      | None                      | the theme | the theme | the theme | Music note      | Default, off-season |
+
+## Decisions for the owner
+
+| #   | Decision                           | Recommendation                                                                                                                                                                                                                                                                                                                 |
+| --- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| F1  | **Where the two colours go**       | **Words sit on colour 1; colour 2 glows in the band's corners and rings the badge**, away from the text. A full colour 1 → colour 2 gradient under the words, as the sheet describes, falls below WCAG's 4.5:1 for seven of the ten (Gurpurab's words on its blue reach 2.0:1), and the site must stay AA                      |
+| F2  | **Navratri's colour 1**            | **Lifted a little, `#D7263D` → `#DE4B5E`**: its dark words on the sheet's red reach 3.7:1; the lighter red reaches 4.6:1. Every other colour is the sheet's                                                                                                                                                                    |
+| F3  | **Diwali and No festival**         | **Keep today's look and follow the site's theme** (the sheet's colours for them are the default theme's amber and clay), so the 16 themes and your own still shape the offer                                                                                                                                                   |
+| F4  | **The icons**                      | **As the sheet, with three changes:** Diwali keeps today's diya (the sheet gives Om to both Diwali and Ganesh Chaturthi); Gurpurab gets a plain wheel rather than the Khanda itself, as a sacred emblem drawn small and simplified risks looking wrong; Baisakhi gets a wheat ear rather than a shamrock, which reads as Irish |
+| F5  | **"No festival: badge hidden"**    | **The badge still shows, with no animation and the music note.** Whether it shows is already the offer's switch and dates; "No festival" is for an offer outside a festival (a monsoon or corporate offer)                                                                                                                     |
+| F6  | **The badge loads a moment later** | **After the page is idle, as the WhatsApp button does.** The badge is in the first download, which has 0.01 kB left: ten looks can't fit there. Deferred, it leaves the first download smaller than today. It floats over the page, so nothing moves when it arrives                                                           |
+
+## How it works
+
+```mermaid
+flowchart TD
+  ED["Offer tab · Offer switch and dates<br/>Festival: Holi (March) …"] -->|site/config promotion.festival| SC["SiteConfigModel.promotion.festival"]
+  SC --> SH["SiteShell · @defer (on idle)"] --> PB["PromoBadge (pill or card)<br/>the look's colours, icon, ring"]
+  SC --> OF["Offer band (home page, already deferred)<br/>colour 1 under the words, colour 2 in the corners"]
+  PB & OF --> FE["FestiveEffectsComponent<br/>@switch (festival) → @defer: one chunk per festival"]
+  FE --> E1["DiwaliEffect · HoliEffect · … · NewYearEffect<br/>each its own particle styles"]
+```
+
+- **One choice, made with the dates:** a **Festival** dropdown in the Offer tab's "Offer switch and dates" card, each
+  option with its usual season ("Holi · March"), stored as `promotion.festival` in `site/config`. The badge and the
+  offer band both follow it, so they always match. The Offer section's own "Festive animation" choice goes.
+- **Today's data keeps working:** with no `promotion.festival`, the site reads the offer's old `theme` (`sparks` is
+  Diwali, `none` is No festival), so the live offer looks as it does now until the owner picks.
+- **`Festival` enum and `FESTIVAL_LOOKS`** (`shared/constants`): each look's label, season, colours and icon, as the
+  theme presets hold their colours. The colours reach the styles as custom properties through a small directive
+  (`FestivalLookDirective`, host bindings), as `ParticleDirective` does today; Diwali and No festival set none, so the
+  theme's tokens apply.
+- **The animations:** `FestiveEffectsComponent` keeps the forty particle positions it has today, and switches on the
+  festival to one small effect component per festival, each inside its own `@defer`, so a visitor downloads only the
+  one in use. Each effect draws in the band and, smaller, around the badge.
+- **Icons** (`FESTIVAL_ICONS`): drawn on the site's 24-point grid like its other icons, loaded with the badge.
+- **Less motion:** visitors who ask for it see the colours and the icon, and nothing moves (no particles, no ring), as
+  the sparks do today. Each animation is declared inside `prefers-reduced-motion: no-preference`.
+- **Screen readers:** the effects stay `aria-hidden`; the badge's name and the band's words don't change.
+- **Preview:** choosing a festival in the editor shows it in the preview at once, before publishing.
+
+## The rules
+
+| Rule               | Change                                                                                       |
+| ------------------ | -------------------------------------------------------------------------------------------- |
+| `isValidPromotion` | allow one more key, `festival`, which must be one of the eleven names (mirroring `Festival`) |
+| who may publish it | nothing: `promotion` is already the Offer page's, for managers too                           |
+| `home/offer.theme` | nothing: still accepted, as old data and backups hold it                                     |
+
+## Tests
+
+- **Unit:** every look's words against colour 1 at 4.5:1 or more; the old `theme` read when `festival` is missing;
+  an unknown festival treated as No festival; the effect chosen per festival; the look's custom properties set, and
+  none for Diwali and No festival; the badge's icon and ring per look; the dropdown's eleven options.
+- **Rules:** `festival` accepted for each name, refused for any other value; a manager with the Offer page may change it.
+- **E2E (three sizes, axe):** choose Holi in the editor, see it in the preview, publish, and see the badge and band in
+  Holi's colours with its effect; reduced motion shows no particles; a screenshot of the band and badge for each of
+  the eleven looks, motion off, checked by eye.
+- **Firebase smoke:** a festival published through the rules.
+- **Budget:** the first download goes down (the badge leaves it); each effect's chunk is small.
+
+## Increments
+
+1. `Festival`, `FESTIVAL_LOOKS`, the reading of `promotion.festival` with the old `theme`; the contrast test.
+2. The badge deferred; `FestivalLookDirective`; the pill and card with the look's icon and ring.
+3. The effect components, one per festival, and the band's colours.
+4. The editor's dropdown; the rules and their tests.
+5. E2E, screenshots, the Firebase smoke, docs (component tree, data model), CHANGELOG.
+
+---
+
+**Approval (2.16.0):** ☑ Approved by Ravi Akhouri on 2026-11-23, with F1–F6 as recommended.

@@ -2,24 +2,26 @@ import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BaseComponent } from '@shared/base/base-component';
-import { DiyaIconComponent } from '@shared/components/diya-icon/diya-icon.component';
+import { FestivalIconComponent } from '@shared/components/festival-icon/festival-icon.component';
 import { FestiveEffectsComponent } from '@shared/components/festive-effects/festive-effects.component';
 import { CARD_DIYA } from '@shared/constants/promo.constants';
 import { ButtonDirective } from '@shared/directives/button.directive';
+import { FestivalLookDirective } from '@shared/directives/festival-look.directive';
 import { ButtonVariant } from '@shared/enums/button-variant.enum';
 import { PageAnchor } from '@shared/enums/page-anchor.enum';
 import { HomeOfferViewModel } from './home-offer.view-model';
 import { type OfferModel } from './offer.model';
 
 /**
- * Seasonal offer band (design `#diwali`): festive background and particles, three package
- * cards and two calls to action. Renders nothing when no offer is running.
+ * Seasonal offer band (design `#diwali`): the festival's colours and animation (2.16.0), the
+ * package cards and two calls to action. Renders nothing when no offer is running.
  */
 @Component({
   selector: 'app-home-offer',
   imports: [
     ButtonDirective,
-    DiyaIconComponent,
+    FestivalIconComponent,
+    FestivalLookDirective,
     FestiveEffectsComponent,
     NgOptimizedImage,
     RouterLink,

@@ -137,3 +137,37 @@
   color: t.$color-promo-ink;
   font-weight: 600;
 }
+
+// A festival with its own colours (2.16.0, F1): the words on its base, its glow in two corners,
+// sized to the screen so it stays in the band's padding, away from the words. The Diwali pattern
+// stays Diwali's.
+.festival-look {
+  background:
+    radial-gradient(circle min(300px, 24vw) at 100% 0, var(--fest-glow), transparent),
+    radial-gradient(circle min(240px, 20vw) at 0 100%, var(--fest-glow), transparent),
+    var(--fest-base);
+  color: var(--fest-text);
+
+  .dbg {
+    display: none;
+  }
+
+  .eyebrow,
+  .lead,
+  .dsmall {
+    color: inherit;
+  }
+
+  .dico {
+    color: var(--fest-base);
+  }
+
+  .btn--line {
+    color: inherit;
+    border-color: currentcolor;
+  }
+}
+
+.dico {
+  color: t.$color-amber-soft;
+}

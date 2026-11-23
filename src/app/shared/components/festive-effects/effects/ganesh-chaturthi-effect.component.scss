@@ -1,0 +1,39 @@
+@use 'tokens' as t;
+@use 'festive';
+
+@include festive.layer;
+
+// Falling petals: marigold and hibiscus, turning as they drift down.
+.fp {
+  width: 12px;
+  height: 16px;
+  border-radius: 0 100%;
+  background: t.$color-fx-marigold;
+  animation-name: petal;
+  animation-duration: 4.2s;
+  animation-timing-function: ease-in-out;
+
+  &:nth-child(3n) {
+    background: t.$color-fx-vermilion;
+  }
+
+  &:nth-child(5n) {
+    background: t.$color-fx-petal-pale;
+  }
+}
+
+@keyframes petal {
+  0% {
+    transform: translate(0, -40px) rotate(0deg);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: translate(28px, 90px) rotate(260deg);
+    opacity: 0;
+  }
+}

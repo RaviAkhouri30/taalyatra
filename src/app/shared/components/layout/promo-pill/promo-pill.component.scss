@@ -24,6 +24,8 @@ $sparks: (
   display: contents;
 }
 
+@include promo.festival-look;
+
 .promo {
   @include promo.badge;
 
@@ -102,6 +104,14 @@ $sparks: (
   & + & {
     animation-delay: 1.2s;
     border-color: t.$color-amber-pale;
+  }
+
+  .festival-look & {
+    border-color: var(--fest-glow);
+  }
+
+  .festival-look & + & {
+    border-color: var(--fest-base);
   }
 }
 

@@ -1,7 +1,53 @@
-@if (isVisible()) {
-  <span class="fx" [class.a-sparks]="isSparks()" aria-hidden="true">
-    @for (particle of particles; track $index) {
-      <span class="fp" [appParticle]="particle"></span>
+<!-- Each festival is its own chunk: a visitor downloads only the one the offer uses. -->
+@switch (festival()) {
+  @case (festivals.Diwali) {
+    @defer {
+      <app-diwali-effect [compact]="compact()" />
     }
-  </span>
+  }
+  @case (festivals.Holi) {
+    @defer {
+      <app-holi-effect [compact]="compact()" />
+    }
+  }
+  @case (festivals.Navratri) {
+    @defer {
+      <app-navratri-effect [compact]="compact()" />
+    }
+  }
+  @case (festivals.GaneshChaturthi) {
+    @defer {
+      <app-ganesh-chaturthi-effect [compact]="compact()" />
+    }
+  }
+  @case (festivals.Dussehra) {
+    @defer {
+      <app-dussehra-effect [compact]="compact()" />
+    }
+  }
+  @case (festivals.Baisakhi) {
+    @defer {
+      <app-baisakhi-effect [compact]="compact()" />
+    }
+  }
+  @case (festivals.Gurpurab) {
+    @defer {
+      <app-gurpurab-effect [compact]="compact()" />
+    }
+  }
+  @case (festivals.Christmas) {
+    @defer {
+      <app-christmas-effect [compact]="compact()" />
+    }
+  }
+  @case (festivals.Halloween) {
+    @defer {
+      <app-halloween-effect [compact]="compact()" />
+    }
+  }
+  @case (festivals.NewYear) {
+    @defer {
+      <app-new-year-effect [compact]="compact()" />
+    }
+  }
 }

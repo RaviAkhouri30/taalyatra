@@ -1,0 +1,43 @@
+@use 'tokens' as t;
+@use 'festive';
+
+@include festive.layer;
+
+// Confetti, tumbling down.
+.fp {
+  width: 6px;
+  height: 11px;
+  border-radius: 1px;
+  background: t.$color-fx-yellow;
+  animation-name: confetti;
+  animation-duration: 3.6s;
+  animation-timing-function: linear;
+
+  &:nth-child(4n + 1) {
+    background: t.$color-fx-pink;
+  }
+
+  &:nth-child(4n + 2) {
+    background: t.$color-spark-white;
+  }
+
+  &:nth-child(4n + 3) {
+    background: t.$color-fx-violet;
+  }
+}
+
+@keyframes confetti {
+  0% {
+    transform: translateY(-50px) rotate3d(1, 1, 0, 0deg);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(100px) rotate3d(1, 1, 0, 720deg);
+    opacity: 0;
+  }
+}

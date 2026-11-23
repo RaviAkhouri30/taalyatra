@@ -40,4 +40,14 @@ export enum IconName {
   ExternalLink = 'external-link',
   Columns = 'columns',
   ArrowUpRight = 'arrow-up-right',
+  // The festival badges' icons (2.16.0).
+  Flower = 'flower',
+  FourPointStar = 'four-point-star',
+  Pennant = 'pennant',
+  Wheat = 'wheat',
+  Wheel = 'wheel',
+  Snowflake = 'snowflake',
+  Moon = 'moon',
+  Twinkle = 'twinkle',
+  MusicNote = 'music-note',
 }

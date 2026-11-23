@@ -133,3 +133,41 @@ Built on the approved [design](02-design.md) (2.15.0).
 ---
 
 **Approval (2.15.0):** ☑ Approved by Ravi Akhouri on 2026-11-23.
+
+# 2.16.0 · The festival looks
+
+Built on the approved [design](02-design.md) (2.16.0, F1–F6 as recommended).
+
+| #   | Increment        | Files                                                                                                                                                                                                        | Tests                                                                                                                                |
+| --- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | The looks        | `Festival`, `FestivalGlyph`, `IFestivalLook`, `FESTIVAL_LOOKS` (`festivalLook`); `toFestival`, `festivalOfTheme` (replacing `FestiveTheme`); `IPromotion.festival`; `OfferModel.festival`                    | `festival-looks.constants.spec.ts` (every pair at 4.5:1 or more), `festival.util.spec.ts`, the site config and offer models' specs   |
+| 2   | The badge        | the badge deferred in the shell; `FestivalLookDirective`; `PromoStyle` (shared by the pill and the card); `FestivalIconComponent` and nine stroke icons; `_promo.scss` `festival-look`                       | `festival-look.directive.spec.ts`, `promo-style.spec.ts`, `festival-icon.component.spec.ts`, the shell's spec                        |
+| 3   | The animations   | `FestiveEffectsComponent` (`@switch`, one `@defer` per festival); `FestiveEffect` and its shared template; ten effect components; `_festive.scss`; particle colour tokens; the band's colours and card icons | one spec per effect, `festive-effects.component.spec.ts`, `home-offer.component.spec.ts`                                             |
+| 4   | Editor and rules | the **Festival** dropdown in "Offer switch and dates"; the offer section's own choice removed; `isValidPromotion` accepts `festival`                                                                         | `offer.sections.spec.ts`; `firestore-festival.rules.spec.ts` (16)                                                                    |
+| 5   | E2E and records  | `admin-festival.e2e.ts`, `home-festival.e2e.ts`; `firebase-smoke.e2e.ts` (Christmas through the rules, then Diwali back); component tree, data model, CHANGELOG                                              | eleven looks (band and badge) and the card badge as screenshots, less motion, axe for Christmas, Gurpurab and Halloween; three sizes |
+
+## Decisions & deviations from design
+
+- **The glow is sized to the screen** (`min(300px, 24vw)` and `min(240px, 20vw)`). The design's ellipses became a
+  muddy strip down a phone's edge in the first screenshots; circles keep it in the corners at every size.
+- **The offer cards' icons follow the festival too**, so the band doesn't show diyas at Christmas.
+- **Diwali's badge keeps its own sparks**, and today's look; the other festivals draw their effect around the badge,
+  and the pill's two rings take the festival's glow and base. No festival has neither, and the card loses its pulse.
+- **Less motion** comes from the site's existing rule in `_base.scss`, which stops every animation (a particle then
+  rests invisible), rather than a media query in each effect. The e2e checks it.
+- **The Om sign is the Unicode character** in the device's Devanagari font; the other icons join the site's icon set.
+- **The first download is smaller: 499.22 kB** (509.99 kB before), as the badge now loads when the page is idle.
+- **The old `home/offer.theme` is still read** while an offer has no festival, and kept by the editor when it saves.
+- **No dependency added.**
+
+## Results
+
+- `npm run verify`: ✔ 2,491 unit tests; statements 99.23 %, branches 96.6 %; 111 diagrams; function 195 tests;
+  first download 499.22 kB, no budget warnings.
+- `npm run e2e` (8 workers): ✔ 778 passed, 2 skipped (by design).
+- `npm run test:rules`: ✔ 439 passed (16 new).
+- `npm run e2e:firebase`: ✔ 51 passed.
+
+---
+
+**Approval (2.16.0):** ☑ Approved by Ravi Akhouri on 2026-11-23.

@@ -1,0 +1,36 @@
+// The layer every festival animation draws in (2.16.0), and its smaller form around the badge.
+// Each particle is placed by ParticleDirective (--l, --t, --d). Visitors who ask for less motion
+// see none: _base.scss stops every animation, and a particle rests invisible.
+
+@mixin layer {
+  :host {
+    display: contents;
+  }
+
+  .fx {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  // Around the badge: a little outside it, and smaller.
+  .fx--compact {
+    inset: -22px -18px;
+    overflow: visible;
+
+    .fp {
+      scale: 0.55;
+    }
+  }
+
+  .fp {
+    position: absolute;
+    left: var(--l);
+    top: var(--t);
+    opacity: 0;
+    animation-delay: var(--d);
+    animation-iteration-count: infinite;
+  }
+}
