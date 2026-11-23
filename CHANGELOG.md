@@ -6,6 +6,21 @@ See [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+## [2.16.0] - 2026-11-23
+
+### Added
+
+- **A festival look for each season's offer.** Choose the festival with the offer's dates: Diwali, Holi, Navratri,
+  Ganesh Chaturthi, Dussehra, Baisakhi, Gurpurab, Christmas, Halloween, New Year, or no festival. The badge and the
+  offer section take its colours, its icon and its animation (colour puffs, garba dots, falling petals, rising
+  flame, swaying wheat, a soft glow, snow, bats, confetti), all still for visitors who ask for less motion.
+  Each animation is downloaded only when the offer uses it.
+
+### Changed
+
+- **The offer badge appears a moment after the page loads**, which makes the site's first download smaller.
+- The offer section's own "Festive animation" choice is gone: the festival you pick sets it.
+
 ## [2.15.0] - 2026-11-23
 
 ### Added
